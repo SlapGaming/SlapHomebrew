@@ -1,0 +1,81 @@
+public class DBDatabase {
+	public static DecoyBlocks m;
+	public List<Block> decoyList = new ArrayList<Block>();
+	public DBDatabase(DecoyBlocks instance) {
+		m = instance;
+	}
+ 
+	public void SaveList() {
+		File savefile = new File("plugins" + File.separator + "DecoyBlocks" + File.separator + "DBList.dat");
+		if (!savefile.exists()) {
+			try {
+				new File("plugins" + File.separator + "DecoyBlocks").mkdir();
+				savefile.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+        try {
+            FileOutputStream fstream = new FileOutputStream("plugins" + File.separator + "DecoyBlocks" + File.separator + "DBList.dat");
+            ObjectOutputStream ostream = new ObjectOutputStream(fstream);
+ 
+            long recordcount = 0;
+            for (@SuppressWarnings("unused") Block b : decoyList) {
+            	recordcount ++;
+            }
+            ostream.writeLong(recordcount);
+ 
+            for (Block b : decoyList) {
+            	recordcount ++;
+ 
+            	ostream.writeObject(b.getLocation().getWorld().getName());
+            	ostream.writeDouble(b.getLocation().getX());
+            	ostream.writeDouble(b.getLocation().getY());
+            	ostream.writeDouble(b.getLocation().getZ());
+            }
+ 
+            ostream.close();
+ 
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+ 
+    public void LoadList() {
+        File savefile = new File("plugins" + File.separator + "DecoyBlocks" + File.separator + "DBList.dat");
+        boolean exists = savefile.exists();
+        if (exists) {
+        	FileInputStream ifstream = null;
+            ObjectInputStream iostream = null;
+            try {
+                ifstream = new FileInputStream("plugins" + File.separator + "DecoyBlocks" + File.separator + "DBList.dat");
+                iostream = new ObjectInputStream(ifstream);
+ 
+                long recordcount = iostream.readLong();
+                for (int i = 0; i < recordcount; i++)  {
+                   World w = Bukkit.getServer().getWorld(iostream.readObject().toString());
+                   Double x = iostream.readDouble();
+                   Double y = iostream.readDouble();
+                   Double z = iostream.readDouble();
+                   decoyList.add(w.getBlockAt(new Location(w, x, y, z)));
+                }
+ 
+            } catch (FileNotFoundException e) {
+                m.l.info("Could not locate DBList.data");
+                e.printStackTrace();
+            } catch(IOException e) {
+                m.l.info("I\\O error while attempting to read DBList.dat");
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                m.l.info( "Could not read DBList.dat, class not found.");
+                e.printStackTrace();
+            } finally {
+                try {
+                    ifstream.close();
+                } catch (IOException e) {
+                    m.l.info( "Error reading DBList.dat, could not close stream.");
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
