@@ -22,12 +22,15 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import me.naithantu.SlapHomebrew.Commands.SlapHomebrewCommand;
 import net.milkbowl.vault.Vault;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -107,6 +110,7 @@ public class SlapHomebrew extends JavaPlugin {
 	static int amsgId;
 
 	VipForumMarkCommands vipForumMarkCommands = new VipForumMarkCommands(this);
+	SlapHomebrewCommand slapHomebrewCommand = new SlapHomebrewCommand();
 
 	@Override
 	public void onEnable() {
@@ -116,7 +120,7 @@ public class SlapHomebrew extends JavaPlugin {
 		loadItems();
 		tpBlocks = loadHashSet("tpblocks");
 		guides = loadHashSet("guides");
-		Commands.chatBotBlocks = loadHashSet("chatbotblocks");
+		TempCommands.chatBotBlocks = loadHashSet("chatbotblocks");
 		this.getDescription();
 		setupEconomy();
 		setupCommands();
@@ -158,7 +162,7 @@ public class SlapHomebrew extends JavaPlugin {
 		saveworldGuard();
 		saveHashSet(tpBlocks, "tpblocks");
 		saveHashSet(guides, "guides");
-		saveHashSet(Commands.chatBotBlocks, "chatbotblocks");
+		saveHashSet(TempCommands.chatBotBlocks, "chatbotblocks");
 		saveUnfinishedPlots();
 		savePlots();
 		saveForumVip();
@@ -275,34 +279,33 @@ public class SlapHomebrew extends JavaPlugin {
 	}
 
 	public void setupCommands() {
-		getCommand("blockfaq").setExecutor(new Commands(this));
+		getCommand("blockfaq").setExecutor(new TempCommands(this));
 		getCommand("vip").setExecutor(new VipCommands(this));
 		getCommand("slap").setExecutor(new SlapCommands(this));
-		getCommand("minecart").setExecutor(new Commands(this));
 		getCommand("backdeath").setExecutor(new VipCommands(this));
-		getCommand("te").setExecutor(new Commands(this));
-		getCommand("tpblock").setExecutor(new Commands(this));
-		getCommand("tpallow").setExecutor(new Commands(this));
-		getCommand("warppvp").setExecutor(new Commands(this));
-		getCommand("warpcakedefence").setExecutor(new Commands(this));
-		getCommand("cakedefence").setExecutor(new Commands(this));
-		getCommand("message").setExecutor(new Commands(this));
-		getCommand("searchregion").setExecutor(new Commands(this));
-		getCommand("roll").setExecutor(new Commands(this));
-		getCommand("note").setExecutor(new Commands(this));
-		getCommand("mobcheck").setExecutor(new Commands(this));
-		getCommand("leavecake").setExecutor(new Commands(this));
-		getCommand("sgm").setExecutor(new Commands(this));
-		getCommand("group").setExecutor(new Commands(this));
-		getCommand("potion").setExecutor(new Commands(this));
-		getCommand("ride").setExecutor(new Commands(this));
+		getCommand("te").setExecutor(new TempCommands(this));
+		getCommand("tpblock").setExecutor(new TempCommands(this));
+		getCommand("tpallow").setExecutor(new TempCommands(this));
+		getCommand("warppvp").setExecutor(new TempCommands(this));
+		getCommand("warpcakedefence").setExecutor(new TempCommands(this));
+		getCommand("cakedefence").setExecutor(new TempCommands(this));
+		getCommand("message").setExecutor(new TempCommands(this));
+		getCommand("searchregion").setExecutor(new TempCommands(this));
+		getCommand("roll").setExecutor(new TempCommands(this));
+		getCommand("note").setExecutor(new TempCommands(this));
+		getCommand("mobcheck").setExecutor(new TempCommands(this));
+		getCommand("leavecake").setExecutor(new TempCommands(this));
+		getCommand("sgm").setExecutor(new TempCommands(this));
+		getCommand("group").setExecutor(new TempCommands(this));
+		getCommand("potion").setExecutor(new TempCommands(this));
+		getCommand("ride").setExecutor(new TempCommands(this));
 		getCommand("plot").setExecutor(new PlotCommands(this));
 		getCommand("pmark").setExecutor(new PlotCommands(this));
 		getCommand("pcheck").setExecutor(new PlotCommands(this));
 		getCommand("ptp").setExecutor(new PlotCommands(this));
 		getCommand("pdone").setExecutor(new PlotCommands(this));
-		getCommand("bumpdone").setExecutor(new Commands(this));
-		getCommand("bwoke").setExecutor(new Commands(this));
+		getCommand("bumpdone").setExecutor(new TempCommands(this));
+		getCommand("bwoke").setExecutor(new TempCommands(this));
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -746,5 +749,9 @@ public class SlapHomebrew extends JavaPlugin {
 			homes += 20 * vipConfig.getConfigurationSection("homes").getInt(playerName);
 		}
 		return homes;
+	}
+	
+	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args){
+		return slapHomebrewCommand.handle(sender, cmd, args);
 	}
 }

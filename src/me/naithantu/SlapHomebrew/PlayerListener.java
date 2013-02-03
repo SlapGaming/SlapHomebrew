@@ -266,7 +266,7 @@ public class PlayerListener implements Listener {
 	@EventHandler
 	public void onPlayerChat(AsyncPlayerChatEvent event) {
 		player = event.getPlayer();
-		if (!Commands.chatBotBlocks.contains(player.getName())) {
+		if (!TempCommands.chatBotBlocks.contains(player.getName())) {
 			String message = event.getMessage().toLowerCase();
 			if (message.contains("i") && message.contains("can") && message.contains("member") || message.contains("how") && message.contains("get") && message.contains("member")
 					|| message.contains("how") && message.contains("become") && message.contains("member")) {
@@ -334,9 +334,9 @@ public class PlayerListener implements Listener {
 		}
 		if (SlapHomebrew.message.contains(player.getName())) {
 			String message = event.getMessage();
-			player.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + "The new message has " + Commands.messageName + " as name and " + message + " as message.");
+			player.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + "The new message has " + TempCommands.messageName + " as name and " + message + " as message.");
 			SlapHomebrew.message.remove(player.getName());
-			plugin.getConfig().set("messages." + Commands.messageName, message);
+			plugin.getConfig().set("messages." + TempCommands.messageName, message);
 			event.setCancelled(true);
 			plugin.saveConfig();
 		}
