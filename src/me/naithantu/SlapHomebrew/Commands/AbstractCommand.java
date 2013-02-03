@@ -4,9 +4,17 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public abstract class AbstractCommandHandler {
+public abstract class AbstractCommand {
 	
 	abstract public boolean handle();
+	
+	CommandSender sender;
+	String[] args;
+	
+	public AbstractCommand(CommandSender sender, String[] args){
+		this.sender = sender;
+		this.args = args;
+	}
 	
 	public void msg(CommandSender sender, String msg){
 		if(sender instanceof Player){

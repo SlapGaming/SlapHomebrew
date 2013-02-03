@@ -8,13 +8,10 @@ import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-public class MinecartCommand extends AbstractCommandHandler {
-	CommandSender sender;
-	String[] args;
+public class MinecartCommand extends AbstractCommand {
 
 	public MinecartCommand(CommandSender sender, String[] args) {
-		this.sender = sender;
-		this.args = args;
+		super(sender, args);
 	}
 
 	public boolean handle() {
