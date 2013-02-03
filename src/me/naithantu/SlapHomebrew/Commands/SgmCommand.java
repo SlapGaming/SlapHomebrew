@@ -14,15 +14,17 @@ public class SgmCommand extends AbstractCommand {
 			this.badMsg(sender, "You need to be in-game to do that!");
 			return true;
 		}
-		Player player = (Player) sender;
-		if (player.hasPermission("slaphomebrew.sgm")) {
-			if (player.getGameMode() == GameMode.SURVIVAL || player.getGameMode() == GameMode.ADVENTURE) {
-				player.setGameMode(GameMode.CREATIVE);
-			} else if (player.getGameMode() == GameMode.CREATIVE) {
-				player.setGameMode(GameMode.SURVIVAL);
-			}
-		} else {
+
+		if (!testPermission(sender, "sgm")) {
 			this.noPermission(sender);
+			return true;
+		}
+
+		Player player = (Player) sender;
+		if (player.getGameMode() == GameMode.SURVIVAL || player.getGameMode() == GameMode.ADVENTURE) {
+			player.setGameMode(GameMode.CREATIVE);
+		} else if (player.getGameMode() == GameMode.CREATIVE) {
+			player.setGameMode(GameMode.SURVIVAL);
 		}
 		return true;
 	}

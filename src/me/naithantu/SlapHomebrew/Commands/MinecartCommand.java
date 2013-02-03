@@ -21,7 +21,7 @@ public class MinecartCommand extends AbstractCommand {
 		}
 		
 		Player player = (Player) sender;
-		if (!player.hasPermission("slaphomebrew.minecart")) {
+		if (!testPermission(player, "minecart")) {
 			this.noPermission(sender);
 			return true;
 		}
