@@ -192,42 +192,6 @@ public class TempCommands implements CommandExecutor {
 			}
 		}
 
-		if (cmd.getName().equalsIgnoreCase("minecart")) {
-			Player player = (Player) sender;
-			if (!player.hasPermission("slaphomebrew.minecart")) {
-				sender.sendMessage("You don't have permission.");
-				return false;
-			}
-
-			World w = ((Player) sender).getWorld();
-			int railBlock = w.getBlockTypeIdAt(((Player) sender).getLocation());
-			if (railBlock == 66 || railBlock == 27 || railBlock == 28) {
-				Minecart m = w.spawn(((Player) sender).getLocation(), Minecart.class);
-				m.setPassenger(((Player) sender));
-				SlapHomebrew.mCarts.add(m.getUniqueId());
-				Vector v = m.getVelocity();
-				double degreeRotation = (((Player) sender).getLocation().getYaw() - 90.0F) % 360.0F;
-				if (degreeRotation < 0.0D) {
-					degreeRotation += 360.0D;
-				}
-
-				if (degreeRotation <= 45.0D || degreeRotation > 315.0D) {
-					v.setX(-7);
-				}
-				if (degreeRotation > 45.0D && degreeRotation <= 135.0D) {
-					v.setZ(-7);
-				}
-				if (degreeRotation > 135.0D && degreeRotation <= 225.0D) {
-					v.setX(7);
-				}
-				if (degreeRotation > 225.0D && degreeRotation <= 315.0D) {
-					v.setZ(7);
-				}
-				m.setVelocity(v);
-			}
-			return true;
-		}
-
 		if (cmd.getName().equalsIgnoreCase("searchregion")) {
 			Player player = (Player) sender;
 			if (player.hasPermission("slaphomebrew.searchregion")) {
@@ -671,19 +635,6 @@ public class TempCommands implements CommandExecutor {
 				} else {
 					player.sendMessage(ChatColor.GOLD + "[SLAP]" + ChatColor.WHITE + " You are currently allowing:");
 					player.sendMessage(ChatColor.GOLD + "[SLAP]" + ChatColor.WHITE + " " + config.getStringList("tpallow." + player.getName()));
-				}
-			} else {
-				player.sendMessage(ChatColor.RED + "You do not have access to that command.");
-			}
-		}
-
-		if (cmd.getName().equalsIgnoreCase("sgm")) {
-			Player player = (Player) sender;
-			if (player.hasPermission("slaphomebrew.sgm")) {
-				if (player.getGameMode() == GameMode.SURVIVAL || player.getGameMode() == GameMode.ADVENTURE) {
-					player.setGameMode(GameMode.CREATIVE);
-				} else if (player.getGameMode() == GameMode.CREATIVE) {
-					player.setGameMode(GameMode.SURVIVAL);
 				}
 			} else {
 				player.sendMessage(ChatColor.RED + "You do not have access to that command.");

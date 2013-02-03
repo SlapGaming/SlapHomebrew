@@ -22,7 +22,7 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import me.naithantu.SlapHomebrew.Commands.SlapHomebrewCommand;
+import me.naithantu.SlapHomebrew.Commands.CommandHandler;
 import net.milkbowl.vault.Vault;
 import net.milkbowl.vault.economy.Economy;
 
@@ -110,7 +110,7 @@ public class SlapHomebrew extends JavaPlugin {
 	static int amsgId;
 
 	VipForumMarkCommands vipForumMarkCommands = new VipForumMarkCommands(this);
-	SlapHomebrewCommand slapHomebrewCommand = new SlapHomebrewCommand();
+	CommandHandler slapHomebrewCommand = new CommandHandler();
 
 	@Override
 	public void onEnable() {
@@ -295,7 +295,6 @@ public class SlapHomebrew extends JavaPlugin {
 		getCommand("note").setExecutor(new TempCommands(this));
 		getCommand("mobcheck").setExecutor(new TempCommands(this));
 		getCommand("leavecake").setExecutor(new TempCommands(this));
-		getCommand("sgm").setExecutor(new TempCommands(this));
 		getCommand("group").setExecutor(new TempCommands(this));
 		getCommand("potion").setExecutor(new TempCommands(this));
 		getCommand("ride").setExecutor(new TempCommands(this));
