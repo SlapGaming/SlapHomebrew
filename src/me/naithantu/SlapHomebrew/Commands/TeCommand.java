@@ -1,5 +1,7 @@
 package me.naithantu.SlapHomebrew.Commands;
 
+import java.util.HashSet;
+
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 
 import org.bukkit.Bukkit;
@@ -10,7 +12,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class TeCommand extends AbstractCommand {
-	public TeCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
+	static HashSet<String> chatBotBlocks = new HashSet<String>();
+	
+	public TeCommand(CommandSender sender, String[] args) {
 		super(sender, args);
 	}
 

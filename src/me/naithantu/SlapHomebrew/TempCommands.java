@@ -37,7 +37,6 @@ import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 public class TempCommands implements CommandExecutor {
-	static HashSet<String> chatBotBlocks = new HashSet<String>();
 	SlapHomebrew slapRef = new SlapHomebrew();
 	String message;
 	private SlapHomebrew plugin;
@@ -104,21 +103,6 @@ public class TempCommands implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
-		if (cmd.getName().equalsIgnoreCase("blockfaq")) {
-			Player player = (Player) sender;
-			if (player.hasPermission("slaphomebrew.blockfaq")) {
-				if (chatBotBlocks.contains(player.getName())) {
-					chatBotBlocks.remove(player.getName());
-					player.sendMessage(ChatColor.RED + "[FAQ] " + ChatColor.DARK_AQUA + "FAQ messages are no longer being blocked!");
-				} else {
-					chatBotBlocks.add(player.getName());
-					player.sendMessage(ChatColor.RED + "[FAQ] " + ChatColor.DARK_AQUA + "All FAQ messages for you will be blocked from now on!");
-				}
-			} else {
-				player.sendMessage(ChatColor.RED + "You do not have access to that command.");
-			}
-		}
-
 		if (cmd.getName().equalsIgnoreCase("roll")) {
 			Player player = (Player) sender;
 			if (player.hasPermission("slaphomebrew.roll")) {
@@ -216,51 +200,6 @@ public class TempCommands implements CommandExecutor {
 			}
 		}
 
-		if (cmd.getName().equalsIgnoreCase("te")) {
-			String arg = null;
-			Player player = (Player) sender;
-			if (player.hasPermission("slaphomebrew.tp")) {
-				if (args.length == 1) {
-					arg = args[0];
-					String tpPlayer;
-					try {
-						tpPlayer = plugin.getServer().getPlayer(arg).getName();
-					} catch (NullPointerException e) {
-						player.sendMessage(ChatColor.RED + "Error: Player not found.");
-						return true;
-					}
-					if (SlapHomebrew.tpBlocks.contains(tpPlayer)) {
-						if (!player.hasPermission("slaphomebrew.tpblockoverride") && !plugin.getConfig().getStringList("tpallow." + tpPlayer).contains(player.getName().toLowerCase())) {
-							player.sendMessage(ChatColor.RED + "You may not tp to that player at the moment, use /tpa [playername] to request a teleport!");
-							return true;
-						}
-					}
-					if (!plugin.getServer().getPlayer(arg).getWorld().getName().equalsIgnoreCase("world_pvp") && !plugin.getServer().getPlayer(arg).getWorld().getName().equalsIgnoreCase("world_the_end")) {
-						double yLocation = 0;
-						Location tpLocation = null;
-						for (yLocation = 0; yLocation > -300 && plugin.getServer().getPlayer(arg).getLocation().add(0, yLocation, 0).getBlock().getType() == Material.AIR; yLocation--) {
-
-						}
-						if (yLocation < -299) {
-							player.sendMessage(ChatColor.RED + "There is no floor below the target player!");
-						} else {
-							tpLocation = plugin.getServer().getPlayer(tpPlayer).getLocation().add(0, yLocation + 1, 0);
-							player.teleport(tpLocation);
-						}
-						player.sendMessage(ChatColor.GRAY + "Teleporting...");
-					} else {
-						player.sendMessage(ChatColor.RED + "You may not tp to that player at the moment, he/she is in a pvp world!");
-					}
-
-				} else {
-					return false;
-				}
-
-			} else {
-				player.sendMessage(ChatColor.RED + "You do not have access to that command.");
-			}
-		}
-
 		if (cmd.getName().equalsIgnoreCase("tpblock")) {
 			Player player = (Player) sender;
 			if (player.hasPermission("slaphomebrew.tpblock")) {
@@ -284,79 +223,6 @@ public class TempCommands implements CommandExecutor {
 					player.sendMessage(ChatColor.RED + "[WARNING] You do not have enough money, if you die you will lose all your items!");
 				}
 				player.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + "You have been teleported to the pvp world!");
-			}
-		}
-
-		if (cmd.getName().equalsIgnoreCase("warpcakedefence")) {
-			Player player = (Player) sender;
-			if (player.hasPermission("slaphomebrew.warpcakedefence")) {
-				if (SlapHomebrew.allowCakeTp == true) {
-					Boolean emptyInv = true;
-					World world = plugin.getServer().getWorld("world");
-					PlayerInventory inv = player.getInventory();
-					for (ItemStack stack : inv.getContents()) {
-						try {
-							if (stack.getType() != (Material.AIR)) {
-								emptyInv = false;
-							}
-						} catch (NullPointerException e) {
-						}
-					}
-					for (ItemStack stack : inv.getArmorContents()) {
-						try {
-							if (stack.getType() != (Material.AIR)) {
-								emptyInv = false;
-							}
-						} catch (NullPointerException e) {
-						}
-					}
-					if (emptyInv == true) {
-						player.teleport(new Location(world, 333.0, 28.0, -722.0));
-						player.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + "You have been teleported to cake defence!");
-					} else {
-						player.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + "Empty your inventory and take of your armor, then use /warpcakedefence again!");
-					}
-				} else {
-					Boolean emptyInv = true;
-					World world = plugin.getServer().getWorld("world");
-					PlayerInventory inv = player.getInventory();
-					for (ItemStack stack : inv.getContents()) {
-						try {
-							if (stack.getType() != (Material.AIR)) {
-								emptyInv = false;
-							}
-						} catch (NullPointerException e) {
-						}
-					}
-					for (ItemStack stack : inv.getArmorContents()) {
-						try {
-							if (stack.getType() != (Material.AIR)) {
-								emptyInv = false;
-							}
-						} catch (NullPointerException e) {
-						}
-					}
-					if (emptyInv == true) {
-						player.teleport(new Location(world, 333.0, 45.0, -751.0));
-						player.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + "You aren't allowed to tp to cakedefence now, you have been teleported to the spectator area!");
-					} else {
-						player.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + "Empty your inventory and take of your armor, then use /warpcakedefence again!");
-					}
-				}
-
-			} else {
-				player.sendMessage(ChatColor.RED + "You do not have access to that command.");
-			}
-		}
-
-		if (cmd.getName().equalsIgnoreCase("leavecake")) {
-			Player player = (Player) sender;
-			if (player.hasPermission("slaphomebrew.leavecake")) {
-				player.getInventory().clear();
-				World world = plugin.getServer().getWorld("world");
-				player.teleport(world.getSpawnLocation());
-				player.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + "You have been teleported back to spawn and your inventory has been cleared!");
-
 			}
 		}
 
@@ -747,26 +613,6 @@ public class TempCommands implements CommandExecutor {
 				deathPacket.lowPriority = false;
 
 				v.playerConnection.sendPacket(deathPacket);
-			}
-		}
-		
-		if(cmd.getName().equalsIgnoreCase("bumpdone")){
-			Player player = (Player) sender;
-			if(!player.hasPermission("slaphomebrew.bump"))
-				return true;
-			if(!plugin.getBumpIsDone()){
-				plugin.setBumpIsDone(true);
-				plugin.addBumpDone(player.getName());
-				plugin.bumpTimer();
-				plugin.getServer().getScheduler().cancelTask(plugin.getShortBumpTimer());
-				player.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + "Thanks for bumping! :)");
-				for(Player onlinePlayer: Bukkit.getOnlinePlayers()){
-					if(!onlinePlayer.getName().equals(player.getName()) && onlinePlayer.hasPermission("slaphomebrew.bump")){
-						player.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + player.getName() + " has bumped!");
-					}
-				}
-			}else{
-				player.sendMessage(ChatColor.RED + "Someone else is already bumping!");
 			}
 		}
 		return true;

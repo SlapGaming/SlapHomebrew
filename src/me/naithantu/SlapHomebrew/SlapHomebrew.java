@@ -22,6 +22,7 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import me.naithantu.SlapHomebrew.Commands.BlockfaqCommand;
 import me.naithantu.SlapHomebrew.Commands.CommandHandler;
 import net.milkbowl.vault.Vault;
 import net.milkbowl.vault.economy.Economy;
@@ -110,7 +111,7 @@ public class SlapHomebrew extends JavaPlugin {
 	static int amsgId;
 
 	VipForumMarkCommands vipForumMarkCommands = new VipForumMarkCommands(this);
-	CommandHandler slapHomebrewCommand = new CommandHandler();
+	CommandHandler commandHandler = new CommandHandler(this);
 
 	@Override
 	public void onEnable() {
@@ -120,7 +121,7 @@ public class SlapHomebrew extends JavaPlugin {
 		loadItems();
 		tpBlocks = loadHashSet("tpblocks");
 		guides = loadHashSet("guides");
-		TempCommands.chatBotBlocks = loadHashSet("chatbotblocks");
+		BlockfaqCommand.chatBotBlocks = loadHashSet("chatbotblocks");
 		this.getDescription();
 		setupEconomy();
 		setupCommands();
@@ -162,7 +163,7 @@ public class SlapHomebrew extends JavaPlugin {
 		saveworldGuard();
 		saveHashSet(tpBlocks, "tpblocks");
 		saveHashSet(guides, "guides");
-		saveHashSet(TempCommands.chatBotBlocks, "chatbotblocks");
+		saveHashSet(BlockfaqCommand.chatBotBlocks, "chatbotblocks");
 		saveUnfinishedPlots();
 		savePlots();
 		saveForumVip();
@@ -283,18 +284,15 @@ public class SlapHomebrew extends JavaPlugin {
 		getCommand("vip").setExecutor(new VipCommands(this));
 		getCommand("slap").setExecutor(new SlapCommands(this));
 		getCommand("backdeath").setExecutor(new VipCommands(this));
-		getCommand("te").setExecutor(new TempCommands(this));
 		getCommand("tpblock").setExecutor(new TempCommands(this));
 		getCommand("tpallow").setExecutor(new TempCommands(this));
 		getCommand("warppvp").setExecutor(new TempCommands(this));
-		getCommand("warpcakedefence").setExecutor(new TempCommands(this));
 		getCommand("cakedefence").setExecutor(new TempCommands(this));
 		getCommand("message").setExecutor(new TempCommands(this));
 		getCommand("searchregion").setExecutor(new TempCommands(this));
 		getCommand("roll").setExecutor(new TempCommands(this));
 		getCommand("note").setExecutor(new TempCommands(this));
 		getCommand("mobcheck").setExecutor(new TempCommands(this));
-		getCommand("leavecake").setExecutor(new TempCommands(this));
 		getCommand("group").setExecutor(new TempCommands(this));
 		getCommand("potion").setExecutor(new TempCommands(this));
 		getCommand("ride").setExecutor(new TempCommands(this));
@@ -303,7 +301,6 @@ public class SlapHomebrew extends JavaPlugin {
 		getCommand("pcheck").setExecutor(new PlotCommands(this));
 		getCommand("ptp").setExecutor(new PlotCommands(this));
 		getCommand("pdone").setExecutor(new PlotCommands(this));
-		getCommand("bumpdone").setExecutor(new TempCommands(this));
 		getCommand("bwoke").setExecutor(new TempCommands(this));
 	}
 
@@ -751,6 +748,6 @@ public class SlapHomebrew extends JavaPlugin {
 	}
 	
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args){
-		return slapHomebrewCommand.handle(sender, cmd, args);
+		return commandHandler.handle(sender, cmd, args);
 	}
 }

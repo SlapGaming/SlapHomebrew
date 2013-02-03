@@ -20,6 +20,12 @@ public class CommandHandler {
 			commandObj = new SgmCommand(sender, args);
 		}else if (command.equals("bumpdone")){
 			commandObj = new BumpdoneCommand(sender, args, plugin);
+		} else if (command.equals("te")){
+			commandObj = new TeCommand(sender, args);
+		} else if (command.equals("warpcakedefence")){
+			commandObj = new WarpcakedefenceCommand(sender, args);
+		} else if (command.equals("leavecake")){
+			commandObj = new LeavecakeCommand(sender, args);
 		}
 		
 		if(commandObj != null){

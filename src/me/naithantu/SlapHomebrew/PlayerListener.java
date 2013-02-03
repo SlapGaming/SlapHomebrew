@@ -5,6 +5,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import me.naithantu.SlapHomebrew.Commands.BlockfaqCommand;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
@@ -266,7 +269,7 @@ public class PlayerListener implements Listener {
 	@EventHandler
 	public void onPlayerChat(AsyncPlayerChatEvent event) {
 		player = event.getPlayer();
-		if (!TempCommands.chatBotBlocks.contains(player.getName())) {
+		if (!BlockfaqCommand.chatBotBlocks.contains(player.getName())) { //TODO
 			String message = event.getMessage().toLowerCase();
 			if (message.contains("i") && message.contains("can") && message.contains("member") || message.contains("how") && message.contains("get") && message.contains("member")
 					|| message.contains("how") && message.contains("become") && message.contains("member")) {
