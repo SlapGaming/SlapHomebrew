@@ -26,6 +26,8 @@ public class CommandHandler {
 			commandObj = new WarpcakedefenceCommand(sender, args);
 		} else if (command.equals("leavecake")){
 			commandObj = new LeavecakeCommand(sender, args);
+		} else if (command.equals("tpblock")){
+			commandObj = new TeBlockCommand(sender, args);
 		}
 		
 		if(commandObj != null){

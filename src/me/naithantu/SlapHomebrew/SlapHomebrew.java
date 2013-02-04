@@ -284,7 +284,6 @@ public class SlapHomebrew extends JavaPlugin {
 		getCommand("vip").setExecutor(new VipCommands(this));
 		getCommand("slap").setExecutor(new SlapCommands(this));
 		getCommand("backdeath").setExecutor(new VipCommands(this));
-		getCommand("tpblock").setExecutor(new TempCommands(this));
 		getCommand("tpallow").setExecutor(new TempCommands(this));
 		getCommand("warppvp").setExecutor(new TempCommands(this));
 		getCommand("cakedefence").setExecutor(new TempCommands(this));

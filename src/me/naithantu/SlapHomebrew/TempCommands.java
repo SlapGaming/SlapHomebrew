@@ -200,20 +200,7 @@ public class TempCommands implements CommandExecutor {
 			}
 		}
 
-		if (cmd.getName().equalsIgnoreCase("tpblock")) {
-			Player player = (Player) sender;
-			if (player.hasPermission("slaphomebrew.tpblock")) {
-				if (SlapHomebrew.tpBlocks.contains(player.getName())) {
-					SlapHomebrew.tpBlocks.remove(player.getName());
-					player.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + "You have been removed from the tpblock list!");
-				} else {
-					SlapHomebrew.tpBlocks.add(player.getName());
-					player.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + "You have been added to the tpblock list!");
-				}
-			} else {
-				player.sendMessage(ChatColor.RED + "You do not have access to that command.");
-			}
-		}
+		
 		if (cmd.getName().equalsIgnoreCase("warppvp")) {
 			Player player = (Player) sender;
 			World world = plugin.getServer().getWorld("world_pvp");
