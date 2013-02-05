@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import me.naithantu.SlapHomebrew.Commands.BlockfaqCommand;
+import me.naithantu.SlapHomebrew.Commands.MessageCommand;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -337,9 +338,9 @@ public class PlayerListener implements Listener {
 		}
 		if (SlapHomebrew.message.contains(player.getName())) {
 			String message = event.getMessage();
-			player.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + "The new message has " + TempCommands.messageName + " as name and " + message + " as message.");
+			player.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + "The new message has " + MessageCommand.messageName + " as name and " + message + " as message.");
 			SlapHomebrew.message.remove(player.getName());
-			plugin.getConfig().set("messages." + TempCommands.messageName, message);
+			plugin.getConfig().set("messages." + MessageCommand.messageName, message);
 			event.setCancelled(true);
 			plugin.saveConfig();
 		}

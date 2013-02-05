@@ -46,6 +46,7 @@ commands:
   note:
     aliases: [n]
     description: Command to see and change the tone/octave of a note.
+	usage: "Usage: /note [octave] [tone]"
   mobcheck:
     description: Searches all mobs nearby online players.
   leavecake:
@@ -66,8 +67,6 @@ commands:
   pmark:
     description: Mark a plot to be cleared.
   pcheck:
-    
   ptp:
   pdone:
   bumpdone:
-  bwoke:

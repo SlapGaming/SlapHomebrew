@@ -7,32 +7,59 @@ import org.bukkit.command.CommandSender;
 
 public class CommandHandler {
 	SlapHomebrew plugin;
-	public CommandHandler(SlapHomebrew plugin){
+
+	public CommandHandler(SlapHomebrew plugin) {
 		this.plugin = plugin;
 	}
-	
-	public boolean handle(CommandSender sender, Command cmd, String[] args){
+
+	public boolean handle(CommandSender sender, Command cmd, String[] args) {
 		String command = cmd.getName().toLowerCase();
 		AbstractCommand commandObj = null;
-		if(command.equals("minecart")){
+		if (command.equals("minecart")) {
 			commandObj = new MinecartCommand(sender, args);
-		} else if (command.equals("sgm")){
+		} else if (command.equals("sgm")) {
 			commandObj = new SgmCommand(sender, args);
-		}else if (command.equals("bumpdone")){
+		} else if (command.equals("bumpdone")) {
 			commandObj = new BumpdoneCommand(sender, args, plugin);
-		} else if (command.equals("te")){
+		} else if (command.equals("te")) {
 			commandObj = new TeCommand(sender, args);
-		} else if (command.equals("warpcakedefence")){
+		} else if (command.equals("tpblock")) {
+			commandObj = new TpBlockCommand(sender, args);
+		} else if (command.equals("warpcakedefence")) {
 			commandObj = new WarpcakedefenceCommand(sender, args);
-		} else if (command.equals("leavecake")){
+		} else if (command.equals("leavecake")) {
 			commandObj = new LeavecakeCommand(sender, args);
-		} else if (command.equals("tpblock")){
-			commandObj = new TeBlockCommand(sender, args);
+		} else if (command.equals("ride")){
+			commandObj = new RideCommand(sender, args);
+		} else if (command.equals("potion")){
+			commandObj = new PotionCommand(sender, args);
+		} else if (command.equals("mobcheck")){
+			commandObj = new MobcheckCommand(sender, args);
+		} else if (command.equals("warppvp")){
+			commandObj = new WarppvpCommand(sender, args);
+		}else if (command.equals("searchregion")){
+			commandObj = new SearchregionCommand(sender, args);
+		}else if (command.equals("cakedefence")){
+			commandObj = new CakedefenceCommand(sender, args, plugin);
+		}else if (command.equals("blockfaq")){
+			commandObj = new BlockfaqCommand(sender, args);
+		} else if (command.equals("tpallow")){
+			commandObj = new TpallowCommand(sender, args, plugin);
+		} else if (command.equals("message")){
+			commandObj = new MessageCommand(sender, args, plugin);
+		} else if (command.equals("note")){
+			commandObj = new NoteCommand(sender, args);
+		} else if (command.equals("roll")){
+			commandObj = new RollCommand(sender, args);
+		} else if (command.equals("group")){
+			commandObj = new GroupCommand(sender, args);
 		}
 		
-		if(commandObj != null){
+		//tpallow, message, note, roll group
+
+		if (commandObj != null) {
 			boolean handled = commandObj.handle();
-			if(!handled) {
+			if (!handled) {
 				commandObj.badMsg(sender, cmd.getUsage());
 			}
 		}

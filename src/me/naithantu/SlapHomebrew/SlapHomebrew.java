@@ -104,7 +104,7 @@ public class SlapHomebrew extends JavaPlugin {
 	PluginManager pm;
 	Boolean debug = false;
 
-	static Economy econ = null;
+	public static Economy econ = null;
 
 	public static Vault vault = null;
 	int used;
@@ -280,27 +280,14 @@ public class SlapHomebrew extends JavaPlugin {
 	}
 
 	public void setupCommands() {
-		getCommand("blockfaq").setExecutor(new TempCommands(this));
 		getCommand("vip").setExecutor(new VipCommands(this));
 		getCommand("slap").setExecutor(new SlapCommands(this));
 		getCommand("backdeath").setExecutor(new VipCommands(this));
-		getCommand("tpallow").setExecutor(new TempCommands(this));
-		getCommand("warppvp").setExecutor(new TempCommands(this));
-		getCommand("cakedefence").setExecutor(new TempCommands(this));
-		getCommand("message").setExecutor(new TempCommands(this));
-		getCommand("searchregion").setExecutor(new TempCommands(this));
-		getCommand("roll").setExecutor(new TempCommands(this));
-		getCommand("note").setExecutor(new TempCommands(this));
-		getCommand("mobcheck").setExecutor(new TempCommands(this));
-		getCommand("group").setExecutor(new TempCommands(this));
-		getCommand("potion").setExecutor(new TempCommands(this));
-		getCommand("ride").setExecutor(new TempCommands(this));
 		getCommand("plot").setExecutor(new PlotCommands(this));
 		getCommand("pmark").setExecutor(new PlotCommands(this));
 		getCommand("pcheck").setExecutor(new PlotCommands(this));
 		getCommand("ptp").setExecutor(new PlotCommands(this));
 		getCommand("pdone").setExecutor(new PlotCommands(this));
-		getCommand("bwoke").setExecutor(new TempCommands(this));
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
