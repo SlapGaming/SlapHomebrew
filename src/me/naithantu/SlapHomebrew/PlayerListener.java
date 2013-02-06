@@ -170,6 +170,25 @@ public class PlayerListener implements Listener {
 		player = event.getPlayer();
 		String message = event.getMessage().toLowerCase().trim();
 		String[] commandMessage = message.split(" ");
+		if (commandMessage[0].equalsIgnoreCase("/tjail") || commandMessage[0].equalsIgnoreCase("/jail") || commandMessage[0].equalsIgnoreCase("/togglejail")) {
+			if (!player.hasPermission("slaphomebrew.jail")) {
+				//Check the number of args, to not block usage messages.
+				if (commandMessage.length > 3) {
+					String time = "";
+					int i = 0;
+					for (String string : commandMessage) {
+						if (i > 2)
+							time += string + " ";
+						i++;
+					}
+					Jail jail = new Jail();
+					if (!jail.testJail(time)) {
+						player.sendMessage(ChatColor.RED + "You may not jail someone for that long!");
+						event.setCancelled(true);
+					}
+				}
+			}
+		}
 		if (commandMessage.length < 3)
 			return;
 		if (commandMessage[0].equals("/rg") || commandMessage[0].equals("/region")) {
@@ -252,18 +271,6 @@ public class PlayerListener implements Listener {
 					SlapHomebrew.worldGuard.put(commandMessage[2], SlapHomebrew.worldGuard.get(commandMessage[2]) + "<==>" + cmdDate.format(date) + " " + player.getName() + " redefined region"
 							+ message.replace("/region setpriority " + commandMessage[2], ""));
 			}
-		} else if (commandMessage[0].equalsIgnoreCase("tjail")||commandMessage[0].equalsIgnoreCase("jail")||commandMessage[0].equalsIgnoreCase("togglejail")){
-			String time = "";
-			int i = 0;
-			for(String string: commandMessage){
-				if(i > 2)
-					time+=string + " ";
-				i++;
-			}
-			Jail jail = new Jail();
-			System.out.println("Time: " + time);
-			System.out.println("Allowed: " + jail.testJail(time));
-			//TODO
 		}
 	}
 

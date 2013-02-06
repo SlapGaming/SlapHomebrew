@@ -46,7 +46,7 @@ commands:
   note:
     aliases: [n]
     description: Command to see and change the tone/octave of a note.
-	usage: "Usage: /note [octave] [tone]"
+    usage: "Usage: /note [octave] [tone]"
   mobcheck:
     description: Searches all mobs nearby online players.
   leavecake:
