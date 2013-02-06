@@ -24,6 +24,14 @@ import java.util.logging.Logger;
 
 import me.naithantu.SlapHomebrew.Commands.BlockfaqCommand;
 import me.naithantu.SlapHomebrew.Commands.CommandHandler;
+import me.naithantu.SlapHomebrew.Listeners.ChatListener;
+import me.naithantu.SlapHomebrew.Listeners.CommandListener;
+import me.naithantu.SlapHomebrew.Listeners.DeathListener;
+import me.naithantu.SlapHomebrew.Listeners.DispenseListener;
+import me.naithantu.SlapHomebrew.Listeners.InteractListener;
+import me.naithantu.SlapHomebrew.Listeners.LoginListener;
+import me.naithantu.SlapHomebrew.Listeners.TeleportListener;
+import me.naithantu.SlapHomebrew.Listeners.VehicleListener;
 import net.milkbowl.vault.Vault;
 import net.milkbowl.vault.economy.Economy;
 
@@ -52,8 +60,6 @@ public class SlapHomebrew extends JavaPlugin {
 	public SlapHomebrew plugin;
 	public final Logger logger = Logger.getLogger("Minecraft");
 
-	public final PlayerListener playerListener = new PlayerListener(this);
-	public final VehicleListener vehicleListener = new VehicleListener(this);
 	public final BlockListener blockListener = new BlockListener(this);
 
 	public static HashMap<String, Integer> usedGrant = new HashMap<String, Integer>();
@@ -136,8 +142,15 @@ public class SlapHomebrew extends JavaPlugin {
 		bumpTimer();
 		lotteryTimer();
 		pm = getServer().getPluginManager();
-		pm.registerEvents(this.playerListener, this);
-		pm.registerEvents(this.vehicleListener, this);
+		pm.registerEvents(new InteractListener(), this);
+		pm.registerEvents(new ChatListener(this), this);
+		pm.registerEvents(new CommandListener(), this);
+		pm.registerEvents(new DeathListener(), this);
+		pm.registerEvents(new DispenseListener(), this);
+		pm.registerEvents(new LoginListener(this), this);
+		pm.registerEvents(new TeleportListener(), this);
+		//TODO
+		pm.registerEvents(new VehicleListener(), this);
 		pm.registerEvents(this.blockListener, this);
 		Plugin x = this.getServer().getPluginManager().getPlugin("Vault");
 		if (x != null & x instanceof Vault) {
@@ -170,7 +183,7 @@ public class SlapHomebrew extends JavaPlugin {
 		saveUnfinishedForumVip();
 	}
 
-	List<Integer> getUnfinishedPlots() {
+	public List<Integer> getUnfinishedPlots() {
 		return unfinishedPlots;
 	}
 
@@ -178,7 +191,7 @@ public class SlapHomebrew extends JavaPlugin {
 		return plots;
 	}
 
-	List<Integer> getUnfinishedForumVip() {
+	public List<Integer> getUnfinishedForumVip() {
 		return unfinishedForumVip;
 	}
 
