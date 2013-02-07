@@ -26,10 +26,12 @@ import me.naithantu.SlapHomebrew.Commands.BlockfaqCommand;
 import me.naithantu.SlapHomebrew.Commands.CommandHandler;
 import me.naithantu.SlapHomebrew.Listeners.ChatListener;
 import me.naithantu.SlapHomebrew.Listeners.CommandListener;
+import me.naithantu.SlapHomebrew.Listeners.CreatureSpawnListener;
 import me.naithantu.SlapHomebrew.Listeners.DeathListener;
 import me.naithantu.SlapHomebrew.Listeners.DispenseListener;
 import me.naithantu.SlapHomebrew.Listeners.InteractListener;
 import me.naithantu.SlapHomebrew.Listeners.LoginListener;
+import me.naithantu.SlapHomebrew.Listeners.PotionListener;
 import me.naithantu.SlapHomebrew.Listeners.TeleportListener;
 import me.naithantu.SlapHomebrew.Listeners.VehicleListener;
 import net.milkbowl.vault.Vault;
@@ -60,13 +62,10 @@ public class SlapHomebrew extends JavaPlugin {
 	public SlapHomebrew plugin;
 	public final Logger logger = Logger.getLogger("Minecraft");
 
-	public final BlockListener blockListener = new BlockListener(this);
-
 	public static HashMap<String, Integer> usedGrant = new HashMap<String, Integer>();
 	public static HashMap<Integer, Integer> vipItems = new HashMap<Integer, Integer>();
 	public static HashMap<String, Location> backDeath = new HashMap<String, Location>();
 	public static HashMap<String, String> worldGuard = new HashMap<String, String>();
-	public static HashMap<Integer, String> blackList = new HashMap<Integer, String>();
 	public static HashMap<String, Integer> lottery = new HashMap<String, Integer>();
 	HashMap<Integer, String> plots = new HashMap<Integer, String>();
 	List<Integer> unfinishedPlots = new ArrayList<Integer>();
@@ -138,20 +137,20 @@ public class SlapHomebrew extends JavaPlugin {
 		loadUnfinishedForumVip();
 		loadForumVip();
 		loadUnfinishedPlots();
-		// loadBlackList(); //
 		bumpTimer();
 		lotteryTimer();
 		pm = getServer().getPluginManager();
-		pm.registerEvents(new InteractListener(), this);
 		pm.registerEvents(new ChatListener(this), this);
 		pm.registerEvents(new CommandListener(), this);
+		pm.registerEvents(new CreatureSpawnListener(), this);
 		pm.registerEvents(new DeathListener(), this);
 		pm.registerEvents(new DispenseListener(), this);
+		pm.registerEvents(new InteractListener(), this);
 		pm.registerEvents(new LoginListener(this), this);
+		pm.registerEvents(new PotionListener(), this);
 		pm.registerEvents(new TeleportListener(), this);
-		//TODO
 		pm.registerEvents(new VehicleListener(), this);
-		pm.registerEvents(this.blockListener, this);
+
 		Plugin x = this.getServer().getPluginManager().getPlugin("Vault");
 		if (x != null & x instanceof Vault) {
 			vault = (Vault) x;
@@ -566,29 +565,6 @@ public class SlapHomebrew extends JavaPlugin {
 
 	}
 
-	@SuppressWarnings("unchecked")
-	public void loadBlackList() {
-		if (config.get("blacklist") != null) {
-			tempArrayList = (ArrayList<String>) config.get("blacklist");
-			String vipItemConfigString = null;
-			Integer i = 0;
-			Iterator<String> itr = tempArrayList.iterator();
-			while (itr.hasNext()) {
-				itr.next();
-				try {
-					vipItemConfigString = tempArrayList.get(i);
-				} catch (IndexOutOfBoundsException e) {
-					System.out.println(e);
-				}
-				String[] vipItemConfigMap = vipItemConfigString.split(":");
-				blackList.put(Integer.valueOf(vipItemConfigMap[0]), vipItemConfigMap[1]);
-				i += 1;
-			}
-		} else {
-			System.out.println("No vipitems in the config file found!");
-		}
-	}
-
 	public void promoteVip(String playerName) {
 		String[] vipGroup = { "VIP" };
 		String[] vipGuideGroup = { "VIPGuide" };
@@ -745,8 +721,8 @@ public class SlapHomebrew extends JavaPlugin {
 		}
 		return homes;
 	}
-	
-	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args){
+
+	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
 		return commandHandler.handle(sender, cmd, args);
 	}
 }

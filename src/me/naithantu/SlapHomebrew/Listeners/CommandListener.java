@@ -116,10 +116,10 @@ public class CommandListener implements Listener {
 			} else if (commandMessage[1].equals("redefine")) {
 				if (commandMessage[0].equals("/rg"))
 					SlapHomebrew.worldGuard.put(commandMessage[2], SlapHomebrew.worldGuard.get(commandMessage[2]) + "<==>" + cmdDate.format(date) + " " + player.getName() + " redefined region"
-							+ message.replace("/rg setpriority " + commandMessage[2], ""));
+							+ message.replace("/rg redefine " + commandMessage[2], ""));
 				else
 					SlapHomebrew.worldGuard.put(commandMessage[2], SlapHomebrew.worldGuard.get(commandMessage[2]) + "<==>" + cmdDate.format(date) + " " + player.getName() + " redefined region"
-							+ message.replace("/region setpriority " + commandMessage[2], ""));
+							+ message.replace("/region redefine " + commandMessage[2], ""));
 			}
 		}
 	}
