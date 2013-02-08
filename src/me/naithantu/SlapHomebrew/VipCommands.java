@@ -114,11 +114,15 @@ public class VipCommands implements CommandExecutor {
 						} catch (Exception e3) {
 							e3.printStackTrace();
 						}
+						
+						Material item = Material.matchMaterial(arg);
+						plugin.getServer().broadcastMessage("Item from bukkit: " + item);
 
 						try {
 							type = Integer.valueOf(arg);
 						} catch (NumberFormatException e) {
 							PlayerInventory inventory = player.getInventory();
+							
 							String name = player.getName();
 							String typeName = arg;
 							typeName = typeName.toUpperCase();

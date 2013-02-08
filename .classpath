@@ -4,8 +4,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="lib" path="C:/Users/spel/Downloads/Vault.jar"/>
 	<classpathentry kind="lib" path="C:/Users/spel/Downloads/PermissionsEx-1.19.3-package/PermissionsEx.jar"/>
-	<classpathentry kind="lib" path="C:/Users/spel/Downloads/bukkit-1.4.5-R0.3-20121214.081038-20.jar"/>
 	<classpathentry kind="lib" path="C:/Users/spel/Desktop/Slap Gaming FTP/Essentials.jar"/>
-	<classpathentry kind="lib" path="C:/Users/spel/Documents/Server/craftbukkit.jar"/>
+	<classpathentry kind="lib" path="C:/Users/spel/Downloads/bukkit-1.4.7-R1.1-20130206.060129-4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
