@@ -292,9 +292,7 @@ public class SlapHomebrew extends JavaPlugin {
 	}
 
 	public void setupCommands() {
-		getCommand("vip").setExecutor(new VipCommands(this));
 		getCommand("slap").setExecutor(new SlapCommands(this));
-		getCommand("backdeath").setExecutor(new VipCommands(this));
 		getCommand("plot").setExecutor(new PlotCommands(this));
 		getCommand("pmark").setExecutor(new PlotCommands(this));
 		getCommand("pcheck").setExecutor(new PlotCommands(this));
