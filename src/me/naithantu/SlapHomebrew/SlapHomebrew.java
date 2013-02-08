@@ -164,7 +164,6 @@ public class SlapHomebrew extends JavaPlugin {
 			getVipConfig().createSection("vipdays");
 		}
 		saveConfig();
-		//TODO remove invisibility remover.
 		removeInvisibility();
 	}
 
