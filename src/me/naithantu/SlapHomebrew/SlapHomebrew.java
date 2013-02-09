@@ -16,7 +16,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -39,14 +38,12 @@ import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -66,7 +63,6 @@ public class SlapHomebrew extends JavaPlugin {
 	public static HashMap<Integer, Integer> vipItems = new HashMap<Integer, Integer>();
 	public static HashMap<String, Location> backDeath = new HashMap<String, Location>();
 	public static HashMap<String, String> worldGuard = new HashMap<String, String>();
-	public static HashMap<String, Integer> lottery = new HashMap<String, Integer>();
 	HashMap<Integer, String> plots = new HashMap<Integer, String>();
 	List<Integer> unfinishedPlots = new ArrayList<Integer>();
 	HashMap<Integer, String> forumVip = new HashMap<Integer, String>();
@@ -86,8 +82,7 @@ public class SlapHomebrew extends JavaPlugin {
 	public static HashSet<UUID> mCarts = new HashSet<UUID>();
 
 	public static boolean allowCakeTp;
-	public static boolean lotteryPlaying = false;
-	public static boolean lotteryEnabled = true;
+	
 
 	boolean safetyTpDebug = false;
 
@@ -138,7 +133,8 @@ public class SlapHomebrew extends JavaPlugin {
 		loadForumVip();
 		loadUnfinishedPlots();
 		bumpTimer();
-		lotteryTimer();
+		Lottery lottery = new Lottery(this);
+		lottery.lotteryTimer();
 		pm = getServer().getPluginManager();
 		pm.registerEvents(new ChatListener(this), this);
 		pm.registerEvents(new CommandListener(), this);
@@ -180,7 +176,7 @@ public class SlapHomebrew extends JavaPlugin {
 		saveForumVip();
 		saveUnfinishedForumVip();
 	}
-	
+
 	//TESTING DEM GITIGNOREZZZ
 
 	public List<Integer> getUnfinishedPlots() {
@@ -313,68 +309,6 @@ public class SlapHomebrew extends JavaPlugin {
 		List<String> tempList = dataConfig.getStringList(configString);
 		HashSet<String> hashSet = new HashSet<String>(tempList);
 		return hashSet;
-	}
-
-	public void lotteryTimer() {
-		this.getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
-			public void run() {
-				if (lotteryEnabled == true) {
-					lotteryPlaying = true;
-					getServer().broadcastMessage(ChatColor.GOLD + "[SLAP]" + ChatColor.WHITE + " The lottery has started! Type /roll to play!");
-					shortLotteryTimer();
-					lotteryTimer();
-				}
-			}
-		}, 72000);
-	}
-
-	public void shortLotteryTimer() {
-		this.getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
-			public void run() {
-				if (!lottery.isEmpty()) {
-					int highestNumber = -1;
-					Player winningPlayer = null;
-					//Loop through the hashmap from top to bottom (keep original order!)
-					for (String playerName : lottery.keySet()) {
-						//Get number that the player rolled.
-						int rolledNumber = lottery.get(playerName);
-						// If number is higher than currently highestNumber and player is online, 
-						//make it the new highestNumber and change the winningPlayer.	
-						if (rolledNumber > highestNumber && getServer().getPlayer(playerName) != null) {
-							highestNumber = rolledNumber;
-							winningPlayer = getServer().getPlayer(playerName);
-						}
-					}
-
-					//If winningPlayer is null, no one played, return.
-					if (winningPlayer == null) {
-						getServer().broadcastMessage(ChatColor.GOLD + "[SLAP]" + ChatColor.WHITE + " The lottery is over! But no one played...");
-						lottery.clear();
-						lotteryPlaying = false;
-						return;
-					}
-
-					//Give reward to winner.
-					Random random = new Random();
-					if (random.nextInt(101) == 0) {
-						winningPlayer.getInventory().addItem(new ItemStack(Material.DIAMOND, 5));
-						getServer().broadcastMessage(ChatColor.GOLD + "[SLAP]" + ChatColor.WHITE + " Jackpot! " + winningPlayer.getName() + " gets 5 diamonds!");
-					} else if (random.nextInt(101) < 5) {
-						winningPlayer.getInventory().addItem(new ItemStack(Material.COOKIE, 64));
-						getServer().broadcastMessage(ChatColor.GOLD + "[SLAP]" + ChatColor.WHITE + " Cookies! " + winningPlayer.getName() + " gets a stack of cookies!");
-					} else {
-						winningPlayer.getInventory().addItem(new ItemStack(Material.CAKE, 1));
-						getServer().broadcastMessage(ChatColor.GOLD + "[SLAP]" + ChatColor.WHITE + " The lottery is over! The winner is " + winningPlayer.getName() + "!");
-					}
-
-					lottery.clear();
-					lotteryPlaying = false;
-				} else {
-					lotteryPlaying = false;
-					getServer().broadcastMessage(ChatColor.GOLD + "[SLAP]" + ChatColor.WHITE + " The lottery is over! But noone played...");
-				}
-			}
-		}, 1200);
 	}
 
 	public void saveTheConfig() {

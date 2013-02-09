@@ -40,7 +40,7 @@ public class CommandHandler {
 		} else if (command.equals("ride")) {
 			commandObj = new RideCommand(sender, args);
 		} else if (command.equals("roll")) {
-			commandObj = new RollCommand(sender, args);
+			commandObj = new RollCommand(sender, args, plugin);
 		} else if (command.equals("searchregion")) {
 			commandObj = new SearchregionCommand(sender, args);
 		} else if (command.equals("sgm")) {

@@ -25,9 +25,11 @@ public class SlapCommands implements CommandExecutor {
 	public static HashSet<String> retroBow = new HashSet<String>();
 	public static HashSet<String> bazooka = new HashSet<String>();
 
+	Lottery lottery;
 	
 	public SlapCommands(SlapHomebrew plugin) {
 		this.plugin = plugin;
+		lottery = new Lottery(plugin);
 	}
 
 	@Override
@@ -244,14 +246,13 @@ public class SlapCommands implements CommandExecutor {
 
 			if (arg.equalsIgnoreCase("lottery")) {
 				if (player.hasPermission("slaphomebrew.manage")) {
-					player.sendMessage(SlapHomebrew.lottery.toString());
+					player.sendMessage(lottery.getLottery().toString());
 				}
 			}
-
-			if (arg.equalsIgnoreCase("clearlottery")) {
-				if (player.hasPermission("slaphomebrew.manage")) {
-					SlapHomebrew.lottery.clear();
-					player.sendMessage(SlapHomebrew.lottery.toString());
+			
+			if(arg.equalsIgnoreCase("startlottery")){
+				if(player.hasPermission("slaphomebrew.manage")){
+					lottery.startLottery();
 				}
 			}
 
@@ -409,19 +410,7 @@ public class SlapCommands implements CommandExecutor {
 					}
 				}
 			}
-			if (arg.equalsIgnoreCase("startlottery")) {
-				if (player.hasPermission("slaphomebrew.manage")) {
-					if (SlapHomebrew.lotteryEnabled == true) {
-						SlapHomebrew.lotteryEnabled = false;
-						player.sendMessage(ChatColor.DARK_AQUA + "[SLAP] " + ChatColor.WHITE + "The lottery has been disabled!");
-					} else {
-						SlapHomebrew.lotteryEnabled = true;
-						plugin.lotteryTimer();
-						player.sendMessage(ChatColor.DARK_AQUA + "[SLAP] " + ChatColor.WHITE + "The lottery has been enabled!");
-					}
-
-				}
-			}
+			
 			if(arg.equals("notify")){
 				if(player.hasPermission("slaphomebrew.notify")){
 					player.playSound(player.getLocation(), Sound.NOTE_PIANO , 1 , 1);
