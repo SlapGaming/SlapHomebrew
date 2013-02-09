@@ -291,8 +291,9 @@ public class SlapCommands implements CommandExecutor {
 					}
 
 					if (arg.equalsIgnoreCase("restart")) {
-						plugin.getServer().getScheduler().cancelTask(SlapHomebrew.amsgId);
-						plugin.bumpTimer();
+						Bump bump = new Bump(plugin);
+						bump.cancelTimer();
+						bump.bumpTimer();
 						player.sendMessage(ChatColor.DARK_AQUA + "[SLAP] " + ChatColor.WHITE + "The amsg timer has been restarted!");
 					} else if (arg.equalsIgnoreCase("change")) {
 						int intArg;

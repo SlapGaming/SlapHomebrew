@@ -86,9 +86,6 @@ public class SlapHomebrew extends JavaPlugin {
 
 	boolean safetyTpDebug = false;
 
-	boolean bumpIsDone = true;
-	int shortBumpTimer;
-
 	Configuration config;
 
 	String tempString = "";
@@ -107,7 +104,6 @@ public class SlapHomebrew extends JavaPlugin {
 	public static Economy econ = null;
 
 	public static Vault vault = null;
-	static int amsgId;
 
 	VipForumMarkCommands vipForumMarkCommands = new VipForumMarkCommands(this);
 	CommandHandler commandHandler = new CommandHandler(this);
@@ -131,7 +127,8 @@ public class SlapHomebrew extends JavaPlugin {
 		loadUnfinishedForumVip();
 		loadForumVip();
 		loadUnfinishedPlots();
-		bumpTimer();
+		Bump bump = new Bump(this);
+		bump.bumpTimer();
 		Lottery lottery = new Lottery(this);
 		lottery.lotteryTimer();
 		pm = getServer().getPluginManager();
@@ -192,18 +189,6 @@ public class SlapHomebrew extends JavaPlugin {
 
 	HashMap<Integer, String> getForumVip() {
 		return forumVip;
-	}
-
-	public boolean getBumpIsDone() {
-		return bumpIsDone;
-	}
-
-	public int getShortBumpTimer() {
-		return shortBumpTimer;
-	}
-
-	public void setBumpIsDone(boolean bumpIsDone) {
-		this.bumpIsDone = bumpIsDone;
 	}
 
 	public VipForumMarkCommands getVipForumMarkCommands() {
@@ -315,7 +300,7 @@ public class SlapHomebrew extends JavaPlugin {
 		saveConfig();
 	}
 
-	public void bumpTimer() {
+	/*public void bumpTimer() {
 		amsgId = this.getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
 			public void run() {
 				//Aggresive bumping thing here. Start 5 minute timer.
@@ -351,7 +336,7 @@ public class SlapHomebrew extends JavaPlugin {
 			}
 		}
 		return onlineStaff;
-	}
+	}*/
 
 	public void setupChatBot() {
 		if (!config.contains("chatmessages.member") || reloadChatBot == true) {

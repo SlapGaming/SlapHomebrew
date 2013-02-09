@@ -1,5 +1,6 @@
 package me.naithantu.SlapHomebrew.Commands;
 
+import me.naithantu.SlapHomebrew.Bump;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 
 import org.bukkit.Bukkit;
@@ -8,10 +9,12 @@ import org.bukkit.entity.Player;
 
 public class BumpdoneCommand extends AbstractCommand {
 	SlapHomebrew plugin;
+	Bump bump;
 
 	public BumpdoneCommand(CommandSender sender, String args[], SlapHomebrew plugin) {
 		super(sender, args);
 		this.plugin = plugin;
+		bump = new Bump(plugin);
 	}
 
 	public boolean handle() {
@@ -20,11 +23,9 @@ public class BumpdoneCommand extends AbstractCommand {
 			return true;
 		}
 
-		if (!plugin.getBumpIsDone()) {
-			plugin.setBumpIsDone(true);
+		if (!bump.getBumpIsDone()) {
+			bump.bump();
 			plugin.addBumpDone(sender.getName());
-			plugin.bumpTimer();
-			plugin.getServer().getScheduler().cancelTask(plugin.getShortBumpTimer());
 			this.msg(sender, "Thanks for bumping! :)");
 			for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
 				if (!onlinePlayer.getName().equals(sender.getName()) && onlinePlayer.hasPermission("slaphomebrew.bump")) {
