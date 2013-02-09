@@ -2,6 +2,7 @@ package me.naithantu.SlapHomebrew.Commands;
 
 import java.util.Random;
 
+import me.naithantu.SlapHomebrew.Lottery;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 
 import org.bukkit.Bukkit;
@@ -9,8 +10,12 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 public class RollCommand extends AbstractCommand {
-	public RollCommand(CommandSender sender, String[] args) {
+	SlapHomebrew plugin;
+	Lottery lottery = new Lottery(plugin);
+
+	public RollCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
 		super(sender, args);
+		this.plugin = plugin;
 	}
 
 	public boolean handle() {
@@ -19,13 +24,11 @@ public class RollCommand extends AbstractCommand {
 			return true;
 		}
 
-		if (SlapHomebrew.lotteryPlaying == true) {
-			if (!SlapHomebrew.lottery.containsKey(sender.getName())) {
+		if (lottery.getPlaying()) {
+			if (!lottery.getLottery().containsKey(sender.getName())) {
 				Random random = new Random();
 				int randInt = random.nextInt(101);
-				if (!SlapHomebrew.lottery.containsValue(randInt)) {
-					SlapHomebrew.lottery.put(sender.getName(), randInt);
-				}
+				lottery.getLottery().put(sender.getName(), randInt);
 				Bukkit.getServer().broadcastMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + sender.getName() + " rolled " + Integer.toString(randInt) + "!");
 			} else {
 				this.badMsg(sender, "You have already rolled in this lottery!");
