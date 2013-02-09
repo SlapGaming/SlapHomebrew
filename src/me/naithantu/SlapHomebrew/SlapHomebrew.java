@@ -99,6 +99,8 @@ public class SlapHomebrew extends JavaPlugin {
 	public void setReloadChatBot(boolean reloadChatBot) {
 		this.reloadChatBot = reloadChatBot;
 	}
+	
+	//Bloedneus #rood #yoloIBEN EEN YOLO SWAG
 
 	int timerTime = 144000;
 	PluginManager pm;
