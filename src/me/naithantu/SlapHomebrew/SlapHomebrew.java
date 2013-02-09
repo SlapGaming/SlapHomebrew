@@ -107,7 +107,6 @@ public class SlapHomebrew extends JavaPlugin {
 	public static Economy econ = null;
 
 	public static Vault vault = null;
-	int used;
 	static int amsgId;
 
 	VipForumMarkCommands vipForumMarkCommands = new VipForumMarkCommands(this);
