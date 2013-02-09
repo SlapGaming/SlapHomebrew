@@ -21,7 +21,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-import com.earth2me.essentials.Essentials;
 import com.google.common.base.Joiner;
 
 import ru.tehkode.permissions.PermissionUser;
