@@ -93,18 +93,6 @@ public class VipCommand extends AbstractVipCommand {
 						return true;
 					}
 
-					Essentials ess = new Essentials();
-					try {
-						System.out.println(arg);
-						ItemStack stack = ess.getItemDb().get(arg);
-						System.out.println(stack.getType());
-					} catch (Exception e3) {
-						e3.printStackTrace();
-					}
-
-					Material item = Material.matchMaterial(arg);
-					plugin.getServer().broadcastMessage("Item from bukkit: " + item);
-
 					try {
 						type = Integer.valueOf(arg);
 					} catch (NumberFormatException e) {

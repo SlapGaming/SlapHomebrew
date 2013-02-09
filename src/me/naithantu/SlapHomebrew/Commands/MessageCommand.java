@@ -8,7 +8,7 @@ import org.bukkit.configuration.MemorySection;
 public class MessageCommand extends AbstractCommand {
 	SlapHomebrew plugin;
 
-	boolean allowMessage;
+	boolean allowMessage = true;
 	public static String messageName;
 	
 	public MessageCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
@@ -35,7 +35,7 @@ public class MessageCommand extends AbstractCommand {
 					}
 					message = plugin.getConfig().getString("messages." + arg);
 					message = ChatColor.translateAlternateColorCodes('&', message);
-					this.msg(sender, message);
+					sender.sendMessage(message);
 				} else {
 					this.badMsg(sender, "Usage: /message show [message]");
 				}
