@@ -173,8 +173,6 @@ public class SlapHomebrew extends JavaPlugin {
 		saveUnfinishedForumVip();
 	}
 
-	//TESTING DEM GITIGNOREZZZ
-
 	public List<Integer> getUnfinishedPlots() {
 		return unfinishedPlots;
 	}
