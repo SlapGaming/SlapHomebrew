@@ -200,7 +200,7 @@ public class SlapHomebrew extends JavaPlugin {
 		dataConfig = YamlConfiguration.loadConfiguration(dataConfigFile);
 
 		// Look for defaults in the jar
-		InputStream defConfigStream = this.getResource("data.yml");
+		InputStream defConfigStream = getResource("data.yml");
 		if (defConfigStream != null) {
 			YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
 			dataConfig.setDefaults(defConfig);
@@ -298,44 +298,6 @@ public class SlapHomebrew extends JavaPlugin {
 		saveConfig();
 	}
 
-	/*public void bumpTimer() {
-		amsgId = this.getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
-			public void run() {
-				//Aggresive bumping thing here. Start 5 minute timer.
-				bumpIsDone = false;
-				getServer().dispatchCommand(getServer().getConsoleSender(), "mod-broadcast Post On Yogscast/Minecraftforums, Use /Bumpdone When You Are Going Bump!");
-				if (getOnlineStaff() > 0) {
-					shortBumpTimer();
-				} else {
-					bumpTimer();
-				}
-			}
-		}, 144000);
-	}
-
-	public void shortBumpTimer() {
-		shortBumpTimer = getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
-			public void run() {
-				if (getOnlineStaff() > 0 && !bumpIsDone) {
-					getServer().dispatchCommand(getServer().getConsoleSender(), "mod-broadcast Post On Yogscast/Minecraftforums, Use /Bumpdone When You Are Going To Bump!");
-					shortBumpTimer();
-				} else {
-					bumpTimer();
-				}
-			}
-		}, 1200);
-	}
-
-	public int getOnlineStaff() {
-		int onlineStaff = 0;
-		for (Player player : getServer().getOnlinePlayers()) {
-			if (player.hasPermission("slaphomebrew.bump")) {
-				onlineStaff++;
-			}
-		}
-		return onlineStaff;
-	}*/
-
 	public void setupChatBot() {
 		if (!config.contains("chatmessages.member") || reloadChatBot == true) {
 			config.set("chatmessages.member", "&c[FAQ] &3Go to &bwww.slap-gaming.com/apply &3to apply for member!");
@@ -367,15 +329,6 @@ public class SlapHomebrew extends JavaPlugin {
 
 		reloadChatBot = false;
 		this.saveConfig();
-	}
-
-	public void setupBlackList() {
-		tempArrayList.add("7: You are not allowed to place that!");
-		tempArrayList.add("46: You are not allowed to place that!");
-		tempArrayList.add("49: You are not allowed to place that!");
-		tempArrayList.add("49: You are not allowed to place that!");
-
-		// config.set("blacklist", );
 	}
 
 	public void saveUses() {
