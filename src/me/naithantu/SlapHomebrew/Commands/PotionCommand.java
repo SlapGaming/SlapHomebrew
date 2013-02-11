@@ -6,55 +6,29 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-public class PotionCommand extends AbstractCommand{
-	public PotionCommand(CommandSender sender, String[] args){
+public class PotionCommand extends AbstractCommand {
+	public PotionCommand(CommandSender sender, String[] args) {
 		super(sender, args);
 	}
-	
-	public boolean handle(){
-		if (!(sender instanceof Player)) {
-			this.badMsg(sender, "You need to be in-game to do that!");
-			return true;
-		}
 
+	public boolean handle() {
 		if (!testPermission(sender, "potion")) {
 			this.noPermission(sender);
 			return true;
 		}
-		
-		Player player = (Player) sender;
-		String name = "";
-		String target = player.getName();
+
 		Player potionPlayer;
 		int time = 30;
 		int power = 3;
-		if (args.length > 0) {
-			name = args[0];
-			if (name.equals("remove") || name.equals("cleanse")) {
-				if (args.length > 1) {
-					if (!target.equals("me") && !target.equals("self"))
-						target = args[1];
-				}
-				potionPlayer = Bukkit.getServer().getPlayer(target);
-				if (potionPlayer == null) {
-					this.badMsg(sender, "Player not found!");
-					return true;
-				}
-				for (PotionEffect effect : player.getActivePotionEffects())
-					potionPlayer.removePotionEffect(effect.getType());
-				this.msg(sender, "Potion effects removed for player " + potionPlayer.getName() + "!");
-				return true;
-			}
-		} else {
+		if (!(args.length > 1))
 			return false;
-		}
-		if (args.length > 1) {
-			if (!args[1].equalsIgnoreCase("me") && !args[1].equalsIgnoreCase("self"))
-				target = args[1];
-		}
-		potionPlayer = Bukkit.getServer().getPlayer(target);
-		if (potionPlayer == null) {
-			this.badMsg(sender, "Player not found!");
+		String name = args[0];
+		if ((potionPlayer = getTarget(args[1])) == null)
+			return true;
+		if (name.equals("remove") || name.equals("cleanse")) {
+			for (PotionEffect effect : potionPlayer.getActivePotionEffects())
+				potionPlayer.removePotionEffect(effect.getType());
+			this.msg(sender, "Potion effects removed for player " + potionPlayer.getName() + "!");
 			return true;
 		}
 		if (args.length > 2) {
@@ -73,13 +47,13 @@ public class PotionCommand extends AbstractCommand{
 		}
 		if (getPotionEffect(name, time, power) != null) {
 			potionPlayer.addPotionEffect(getPotionEffect(name, time, power), true);
-			this.msg(sender, "Potion effect added for player " + target + "!");
+			this.msg(sender, "Potion effect added for player " + potionPlayer.getName() + "!");
 		} else {
 			this.badMsg(sender, "That potion effect does not exist!");
 		}
 		return true;
 	}
-	
+
 	private PotionEffect getPotionEffect(String name, int time, int power) {
 		name = name.toLowerCase();
 		time = time * 20;
@@ -124,5 +98,24 @@ public class PotionCommand extends AbstractCommand{
 			effect = new PotionEffect(PotionEffectType.WEAKNESS, time, power);
 		}
 		return effect;
+	}
+
+	private Player getTarget(String target) {
+		Player targetPlayer;
+		if (!target.equals("me") && !target.equals("self")) {
+			targetPlayer = Bukkit.getServer().getPlayer(args[1]);
+			if (targetPlayer == null) {
+				this.badMsg(sender, "Player not found!");
+				return null;
+			}
+		} else {
+			if (sender instanceof Player) {
+				targetPlayer = (Player) sender;
+			} else {
+				this.badMsg(sender, "You need to be in-game to do that!");
+				return null;
+			}
+		}
+		return targetPlayer;
 	}
 }
