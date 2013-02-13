@@ -14,7 +14,7 @@ public class BumpdoneCommand extends AbstractCommand {
 	public BumpdoneCommand(CommandSender sender, String args[], SlapHomebrew plugin) {
 		super(sender, args);
 		this.plugin = plugin;
-		bump = new Bump(plugin);
+		bump = plugin.getBump();
 	}
 
 	public boolean handle() {

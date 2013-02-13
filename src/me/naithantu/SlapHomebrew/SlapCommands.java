@@ -291,7 +291,7 @@ public class SlapCommands implements CommandExecutor {
 					}
 
 					if (arg.equalsIgnoreCase("restart")) {
-						Bump bump = new Bump(plugin);
+						Bump bump = plugin.getBump();
 						bump.cancelTimer();
 						bump.bumpTimer();
 						player.sendMessage(ChatColor.DARK_AQUA + "[SLAP] " + ChatColor.WHITE + "The amsg timer has been restarted!");

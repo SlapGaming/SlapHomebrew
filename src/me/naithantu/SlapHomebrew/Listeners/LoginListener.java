@@ -27,6 +27,13 @@ public class LoginListener implements Listener {
 	@EventHandler
 	public void onPlayerLogin(PlayerLoginEvent event) {
 		final Player player = event.getPlayer();
+		if(player.hasPermission("slaphomebrew.staff")){
+			String date = new SimpleDateFormat("MMM-d HH:mm:ss z").format(new Date());
+			date = date.substring(0, 1).toUpperCase() + date.substring(1);
+			addToConfig(date, player.getName() + " logged in.");
+			plugin.saveTimeConfig();
+		}
+		
 		//Plot message
 		if (player.hasPermission("slaphomebrew.plot.admin") && plugin.getUnfinishedPlots().size() > 0) {
 			plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
@@ -96,5 +103,14 @@ public class LoginListener implements Listener {
 			}
 		}
 		plugin.saveVipConfig();
+	}
+	
+	void addToConfig(String date, String message){
+		int i = 1;
+		while(plugin.getTimeConfig().contains(date)){
+			date += "(" + i + ")";
+			i++;
+		}
+		plugin.getTimeConfig().set(date, message);
 	}
 }

@@ -31,6 +31,7 @@ import me.naithantu.SlapHomebrew.Listeners.DispenseListener;
 import me.naithantu.SlapHomebrew.Listeners.InteractListener;
 import me.naithantu.SlapHomebrew.Listeners.LoginListener;
 import me.naithantu.SlapHomebrew.Listeners.PotionListener;
+import me.naithantu.SlapHomebrew.Listeners.QuitListener;
 import me.naithantu.SlapHomebrew.Listeners.TeleportListener;
 import me.naithantu.SlapHomebrew.Listeners.VehicleListener;
 import net.milkbowl.vault.Vault;
@@ -75,11 +76,14 @@ public class SlapHomebrew extends JavaPlugin {
 	private File dataConfigFile = null;
 	private FileConfiguration vipConfig = null;
 	private File vipConfigFile = null;
+	private FileConfiguration timeConfig = null;
+	private File timeConfigFile = null;
 
 	public static HashSet<String> message = new HashSet<String>();
 	public static HashSet<String> guides = new HashSet<String>();
 	public static HashSet<String> tpBlocks = new HashSet<String>();
 	public static HashSet<UUID> mCarts = new HashSet<UUID>();
+	Bump bump = new Bump(this);
 
 	public static boolean allowCakeTp;
 	
@@ -113,6 +117,7 @@ public class SlapHomebrew extends JavaPlugin {
 		config = getConfig();
 		dataConfig = getDataConfig();
 		vipConfig = getVipConfig();
+		timeConfig = getTimeConfig();
 		loadItems();
 		tpBlocks = loadHashSet("tpblocks");
 		guides = loadHashSet("guides");
@@ -127,7 +132,6 @@ public class SlapHomebrew extends JavaPlugin {
 		loadUnfinishedForumVip();
 		loadForumVip();
 		loadUnfinishedPlots();
-		Bump bump = new Bump(this);
 		bump.bumpTimer();
 		Lottery lottery = new Lottery(this);
 		lottery.lotteryTimer();
@@ -140,6 +144,7 @@ public class SlapHomebrew extends JavaPlugin {
 		pm.registerEvents(new InteractListener(), this);
 		pm.registerEvents(new LoginListener(this), this);
 		pm.registerEvents(new PotionListener(), this);
+		pm.registerEvents(new QuitListener(this), this);
 		pm.registerEvents(new TeleportListener(), this);
 		pm.registerEvents(new VehicleListener(), this);
 
@@ -588,6 +593,42 @@ public class SlapHomebrew extends JavaPlugin {
 			homes += 20 * vipConfig.getConfigurationSection("homes").getInt(playerName);
 		}
 		return homes;
+	}
+	
+	public Bump getBump(){
+		return bump;
+	}
+	//TODO
+	public void reloadTimeConfig() {
+		if (timeConfigFile == null) {
+			timeConfigFile = new File(getDataFolder(), "time.yml");
+		}
+		timeConfig = YamlConfiguration.loadConfiguration(timeConfigFile);
+
+		// Look for defaults in the jar
+		InputStream defConfigStream = getResource("time.yml");
+		if (defConfigStream != null) {
+			YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
+			timeConfig.setDefaults(defConfig);
+		}
+	}
+
+	public FileConfiguration getTimeConfig() {
+		if (timeConfig == null) {
+			this.reloadTimeConfig();
+		}
+		return timeConfig;
+	}
+
+	public void saveTimeConfig() {
+		if (timeConfig == null || timeConfigFile == null) {
+			return;
+		}
+		try {
+			getTimeConfig().save(timeConfigFile);
+		} catch (IOException ex) {
+			this.getLogger().log(Level.SEVERE, "Could not save config to " + timeConfigFile, ex);
+		}
 	}
 
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
