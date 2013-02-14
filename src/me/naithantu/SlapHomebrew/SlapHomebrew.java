@@ -101,9 +101,9 @@ public class SlapHomebrew extends JavaPlugin {
 		this.reloadChatBot = reloadChatBot;
 	}
 
-	int timerTime = 144000;
+	public int timerTime = 144000;
 	PluginManager pm;
-	Boolean debug = false;
+	public Boolean debug = false;
 
 	public static Economy econ = null;
 
@@ -276,7 +276,6 @@ public class SlapHomebrew extends JavaPlugin {
 	}
 
 	public void setupCommands() {
-		getCommand("slap").setExecutor(new SlapCommands(this));
 		getCommand("plot").setExecutor(new PlotCommands(this));
 		getCommand("pmark").setExecutor(new PlotCommands(this));
 		getCommand("pcheck").setExecutor(new PlotCommands(this));

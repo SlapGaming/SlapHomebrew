@@ -57,6 +57,8 @@ public class CommandHandler {
 			commandObj = new WarpcakedefenceCommand(sender, args);
 		} else if (command.equals("warppvp")) {
 			commandObj = new WarppvpCommand(sender, args);
+		} else if (command.equals("slap")) {
+			commandObj = new SlapCommand(sender, args, plugin);
 		}
 
 		if (commandObj != null) {

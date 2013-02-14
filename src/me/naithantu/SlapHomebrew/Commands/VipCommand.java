@@ -29,12 +29,11 @@ import ru.tehkode.permissions.bukkit.PermissionsEx;
 public class VipCommand extends AbstractVipCommand {
 
 	String header = ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE;
-	SlapHomebrew slapRef = new SlapHomebrew();
 
 	Integer used = 0;
 	HashSet<String> vipItemsList = new HashSet<String>();
 
-	private SlapHomebrew plugin;
+	SlapHomebrew plugin;
 
 	public VipCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
 		super(sender, args);
