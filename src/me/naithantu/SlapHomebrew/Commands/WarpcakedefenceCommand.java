@@ -32,14 +32,14 @@ public class WarpcakedefenceCommand extends AbstractCommand {
 				player.teleport(new Location(Bukkit.getServer().getWorld("world") , 333.0, 28.0, -722.0));
 				this.msg(sender, "You have been teleported to cake defence!");
 			} else {
-				this.badMsg(sender, "Empty your inventory and take of your armor, then use /warpcakedefence again!");
+				this.badMsg(sender, "Empty your inventory and take off your armor, then use /warpcakedefence again!");
 			}
 		} else {
 			if (emptyInv()) {
 				player.teleport(new Location(Bukkit.getServer().getWorld("world"), 333.0, 45.0, -751.0));
 				this.msg(sender, "You aren't allowed to tp to cakedefence now, you have been teleported to the spectator area!");
 			} else {
-				this.badMsg(sender, "Empty your inventory and take of your armor, then use /warpcakedefence again!");
+				this.badMsg(sender, "Empty your inventory and take off your armor, then use /warpcakedefence again!");
 			}
 		}
 		return true;
