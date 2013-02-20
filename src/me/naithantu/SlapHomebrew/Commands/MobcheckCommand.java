@@ -13,7 +13,7 @@ public class MobcheckCommand extends AbstractCommand {
 	}
 
 	public boolean handle() {
-		if (!testPermission(sender, "potion")) {
+		if (!testPermission(sender, "mobcheck")) {
 			this.noPermission(sender);
 			return true;
 		}
