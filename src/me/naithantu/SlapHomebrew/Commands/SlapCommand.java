@@ -173,7 +173,8 @@ public class SlapCommand extends AbstractVipCommand {
 			}
 			for (Entity entity : player.getNearbyEntities(50, 50, 50)) {
 				if (entity instanceof Wolf) {
-					if (((Wolf) entity).getOwner().equals(player)) {
+					Wolf wolf = (Wolf) entity;
+					if (wolf.getOwner() != null && wolf.getOwner().equals(player)) {
 						entity.remove();
 					}
 				}
@@ -186,7 +187,8 @@ public class SlapCommand extends AbstractVipCommand {
 			}
 			for (Entity entity : player.getNearbyEntities(50, 50, 50)) {
 				if (entity instanceof Ocelot) {
-					if (((Ocelot) entity).getOwner().equals(player)) {
+					Ocelot ocelot = (Ocelot) entity;
+					if (ocelot.getOwner() != null && ocelot.getOwner().equals(player)) {
 						entity.remove();
 					}
 				}
