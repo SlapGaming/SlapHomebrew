@@ -28,6 +28,7 @@ import me.naithantu.SlapHomebrew.Listeners.CommandListener;
 import me.naithantu.SlapHomebrew.Listeners.CreatureSpawnListener;
 import me.naithantu.SlapHomebrew.Listeners.DeathListener;
 import me.naithantu.SlapHomebrew.Listeners.DispenseListener;
+import me.naithantu.SlapHomebrew.Listeners.PlayerInteractEntityListener;
 import me.naithantu.SlapHomebrew.Listeners.InteractListener;
 import me.naithantu.SlapHomebrew.Listeners.LoginListener;
 import me.naithantu.SlapHomebrew.Listeners.PotionListener;
@@ -147,6 +148,7 @@ public class SlapHomebrew extends JavaPlugin {
 		pm.registerEvents(new QuitListener(this), this);
 		pm.registerEvents(new TeleportListener(), this);
 		pm.registerEvents(new VehicleListener(), this);
+		pm.registerEvents(new PlayerInteractEntityListener(), this);
 
 		Plugin x = this.getServer().getPluginManager().getPlugin("Vault");
 		if (x != null & x instanceof Vault) {
