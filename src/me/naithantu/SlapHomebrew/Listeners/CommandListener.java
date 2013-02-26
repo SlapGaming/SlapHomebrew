@@ -21,7 +21,7 @@ public class CommandListener implements Listener {
 		String message = event.getMessage().toLowerCase().trim();
 		String[] commandMessage = message.split(" ");
 		if (commandMessage[0].equalsIgnoreCase("/tjail") || commandMessage[0].equalsIgnoreCase("/jail") || commandMessage[0].equalsIgnoreCase("/togglejail")) {
-			if (!player.hasPermission("slaphomebrew.jail")) {
+			if (!player.hasPermission("slaphomebrew.longjail") && player.hasPermission("essentials.togglejail")) {
 				//Check the number of args, to not block usage messages.
 				if (commandMessage.length > 3) {
 					String time = "";
@@ -39,6 +39,17 @@ public class CommandListener implements Listener {
 				}
 			}
 		}
+		
+		if (commandMessage[0].equalsIgnoreCase("/jails")) {
+			if (player.hasPermission("slaphomebrew.jails") && player.hasPermission("essentials.togglejail")) {
+				player.sendMessage(ChatColor.GRAY + "one two three");
+				event.setCancelled(true);
+			}
+		}
+		
+		
+		
+		//Worldguard logger.
 		if (commandMessage.length < 3)
 			return;
 		if (commandMessage[0].equals("/rg") || commandMessage[0].equals("/region")) {
