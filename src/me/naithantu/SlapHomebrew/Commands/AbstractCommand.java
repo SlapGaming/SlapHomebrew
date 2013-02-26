@@ -1,5 +1,7 @@
 package me.naithantu.SlapHomebrew.Commands;
 
+import me.naithantu.SlapHomebrew.SlapHomebrew;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -10,10 +12,12 @@ public abstract class AbstractCommand {
 
 	CommandSender sender;
 	String[] args;
+	SlapHomebrew plugin;
 
-	public AbstractCommand(CommandSender sender, String[] args) {
+	public AbstractCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
 		this.sender = sender;
 		this.args = args;
+		this.plugin = plugin;
 	}
 
 	public void msg(CommandSender sender, String msg) {

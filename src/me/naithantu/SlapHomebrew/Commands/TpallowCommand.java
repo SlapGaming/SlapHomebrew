@@ -8,11 +8,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 
 public class TpallowCommand extends AbstractCommand {
-	SlapHomebrew plugin;
 	
 	public TpallowCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
-		super(sender, args);
-		this.plugin = plugin;
+		super(sender, args, plugin);
 	}
 
 	public boolean handle() {

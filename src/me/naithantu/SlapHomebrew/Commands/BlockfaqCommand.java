@@ -2,15 +2,17 @@ package me.naithantu.SlapHomebrew.Commands;
 
 import java.util.HashSet;
 
+import me.naithantu.SlapHomebrew.SlapHomebrew;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class BlockfaqCommand extends AbstractCommand{
+public class BlockfaqCommand extends AbstractCommand {
 	public static HashSet<String> chatBotBlocks = new HashSet<String>();
-	
-	public BlockfaqCommand(CommandSender sender, String[] args){
-		super(sender, args);
+
+	public BlockfaqCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
+		super(sender, args, plugin);
 	}
 
 	public boolean handle() {

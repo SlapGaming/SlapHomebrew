@@ -12,7 +12,7 @@ public class BumpdoneCommand extends AbstractCommand {
 	Bump bump;
 
 	public BumpdoneCommand(CommandSender sender, String args[], SlapHomebrew plugin) {
-		super(sender, args);
+		super(sender, args, plugin);
 		this.plugin = plugin;
 		bump = plugin.getBump();
 	}

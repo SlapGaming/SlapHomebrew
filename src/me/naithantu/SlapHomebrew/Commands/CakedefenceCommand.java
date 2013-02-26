@@ -17,7 +17,7 @@ public class CakedefenceCommand extends AbstractCommand {
 	SlapHomebrew plugin;
 	
 	public CakedefenceCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
-		super(sender, args);
+		super(sender, args, plugin);
 		this.plugin = plugin;
 	}
 

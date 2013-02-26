@@ -9,8 +9,8 @@ import org.bukkit.command.CommandSender;
 public class TpBlockCommand extends AbstractCommand {
 	static HashSet<String> chatBotBlocks = new HashSet<String>();
 
-	public TpBlockCommand(CommandSender sender, String[] args) {
-		super(sender, args);
+	public TpBlockCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
+		super(sender, args, plugin);
 	}
 
 	public boolean handle() {

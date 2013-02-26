@@ -7,8 +7,8 @@ import org.bukkit.entity.Player;
 
 public class BackdeathCommand extends AbstractVipCommand {
 
-	public BackdeathCommand(CommandSender sender, String[] args) {
-		super(sender, args);
+	public BackdeathCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
+		super(sender, args, plugin);
 	}
 
 	public boolean handle() {

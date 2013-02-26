@@ -6,14 +6,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.MemorySection;
 
 public class MessageCommand extends AbstractCommand {
-	SlapHomebrew plugin;
-
 	boolean allowMessage = true;
 	public static String messageName;
 	
 	public MessageCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
-		super(sender, args);
-		this.plugin = plugin;
+		super(sender, args, plugin);
 	}
 
 	public boolean handle() {

@@ -10,8 +10,8 @@ import org.bukkit.util.Vector;
 
 public class MinecartCommand extends AbstractCommand {
 
-	public MinecartCommand(CommandSender sender, String[] args) {
-		super(sender, args);
+	public MinecartCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
+		super(sender, args, plugin);
 	}
 
 	public boolean handle() {

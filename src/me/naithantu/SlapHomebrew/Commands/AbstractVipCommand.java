@@ -1,13 +1,15 @@
 package me.naithantu.SlapHomebrew.Commands;
 
+import me.naithantu.SlapHomebrew.SlapHomebrew;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public abstract class AbstractVipCommand extends AbstractCommand {
 
-	public AbstractVipCommand(CommandSender sender, String[] args) {
-		super(sender, args);
+	public AbstractVipCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
+		super(sender, args, plugin);
 	}
 	
 	@Override

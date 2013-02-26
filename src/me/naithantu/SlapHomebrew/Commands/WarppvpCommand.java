@@ -2,6 +2,8 @@ package me.naithantu.SlapHomebrew.Commands;
 
 import java.util.HashSet;
 
+import me.naithantu.SlapHomebrew.SlapHomebrew;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -11,8 +13,8 @@ import org.bukkit.entity.Player;
 public class WarppvpCommand extends AbstractCommand {
 	static HashSet<String> chatBotBlocks = new HashSet<String>();
 
-	public WarppvpCommand(CommandSender sender, String[] args) {
-		super(sender, args);
+	public WarppvpCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
+		super(sender, args, plugin);
 	}
 
 	public boolean handle() {

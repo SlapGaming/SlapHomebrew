@@ -14,8 +14,8 @@ import org.bukkit.entity.Player;
 public class TeCommand extends AbstractCommand {
 	static HashSet<String> chatBotBlocks = new HashSet<String>();
 	
-	public TeCommand(CommandSender sender, String[] args) {
-		super(sender, args);
+	public TeCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
+		super(sender, args, plugin);
 	}
 
 	public boolean handle() {

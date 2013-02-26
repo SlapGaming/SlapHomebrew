@@ -1,5 +1,7 @@
 package me.naithantu.SlapHomebrew.Commands;
 
+import me.naithantu.SlapHomebrew.SlapHomebrew;
+
 import org.bukkit.Material;
 import org.bukkit.Note;
 import org.bukkit.Note.Tone;
@@ -8,8 +10,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class NoteCommand extends AbstractCommand {
-	public NoteCommand(CommandSender sender, String[] args) {
-		super(sender, args);
+	public NoteCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
+		super(sender, args, plugin);
 	}
 
 	public boolean handle() {

@@ -11,8 +11,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 public class WarpcakedefenceCommand extends AbstractCommand {
-	public WarpcakedefenceCommand(CommandSender sender, String[] args) {
-		super(sender, args);
+	public WarpcakedefenceCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
+		super(sender, args, plugin);
 	}
 
 	public boolean handle() {

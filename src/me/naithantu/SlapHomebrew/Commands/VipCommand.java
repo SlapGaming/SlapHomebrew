@@ -33,11 +33,8 @@ public class VipCommand extends AbstractVipCommand {
 	Integer used = 0;
 	HashSet<String> vipItemsList = new HashSet<String>();
 
-	SlapHomebrew plugin;
-
 	public VipCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
-		super(sender, args);
-		this.plugin = plugin;
+		super(sender, args, plugin);
 	}
 
 	public boolean handle() {

@@ -1,5 +1,7 @@
 package me.naithantu.SlapHomebrew.Commands;
 
+import me.naithantu.SlapHomebrew.SlapHomebrew;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
@@ -7,8 +9,8 @@ import org.bukkit.entity.Player;
 
 public class RideCommand extends AbstractCommand {
 
-	public RideCommand(CommandSender sender, String[] args){
-		super(sender, args);
+	public RideCommand(CommandSender sender, String[] args, SlapHomebrew plugin){
+		super(sender, args, plugin);
 	}
 
 	@Override

@@ -26,12 +26,10 @@ public class SlapCommand extends AbstractVipCommand {
 	HashSet<String> vipItemsList = new HashSet<String>();
 	public static HashSet<String> retroBow = new HashSet<String>();
 
-	SlapHomebrew plugin;
 	Lottery lottery;
 
 	public SlapCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
-		super(sender, args);
-		this.plugin = plugin;
+		super(sender, args, plugin);
 	}
 
 	public boolean handle() {
