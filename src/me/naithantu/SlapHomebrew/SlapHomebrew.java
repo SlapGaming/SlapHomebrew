@@ -184,7 +184,7 @@ public class SlapHomebrew extends JavaPlugin {
 		return unfinishedPlots;
 	}
 
-	HashMap<Integer, String> getPlots() {
+	public HashMap<Integer, String> getPlots() {
 		return plots;
 	}
 

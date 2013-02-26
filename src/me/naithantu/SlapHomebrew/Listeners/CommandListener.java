@@ -50,6 +50,7 @@ public class CommandListener implements Listener {
 		
 		
 		//Worldguard logger.
+		//TODO Make worldguard logger less messy.
 		if (commandMessage.length < 3)
 			return;
 		if (commandMessage[0].equals("/rg") || commandMessage[0].equals("/region")) {
