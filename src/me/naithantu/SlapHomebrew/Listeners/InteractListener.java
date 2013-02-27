@@ -25,7 +25,6 @@ public class InteractListener implements Listener{
 			player.launchProjectile(Arrow.class);
 		}
 		
-		System.out.println(event.getClickedBlock().getType());
 		if(event.getAction().equals(Action.RIGHT_CLICK_BLOCK)){
 			Material clickedBlock = event.getClickedBlock().getType();
 			if(clickedBlock == Material.NOTE_BLOCK || clickedBlock == Material.DIODE_BLOCK_ON || clickedBlock == Material.DIODE_BLOCK_OFF){

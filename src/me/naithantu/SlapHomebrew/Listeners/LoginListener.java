@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
+import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -19,8 +20,11 @@ import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 public class LoginListener implements Listener {
 	SlapHomebrew plugin;
+	YamlStorage timeConfig;
+	
 	public LoginListener(SlapHomebrew plugin){
 		this.plugin = plugin;
+		timeConfig = plugin.getTimeConfig();
 	}
 	
 
@@ -31,7 +35,7 @@ public class LoginListener implements Listener {
 			String date = new SimpleDateFormat("MMM-d HH:mm:ss z").format(new Date());
 			date = date.substring(0, 1).toUpperCase() + date.substring(1);
 			addToConfig(date, player.getName() + " logged in.");
-			plugin.saveTimeConfig();
+			timeConfig.saveConfig();
 		}
 		
 		//Plot message
@@ -111,6 +115,6 @@ public class LoginListener implements Listener {
 			date += "(" + i + ")";
 			i++;
 		}
-		plugin.getTimeConfig().set(date, message);
+		timeConfig.set(date, message);
 	}
 }

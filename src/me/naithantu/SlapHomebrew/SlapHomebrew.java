@@ -35,6 +35,7 @@ import me.naithantu.SlapHomebrew.Listeners.PotionListener;
 import me.naithantu.SlapHomebrew.Listeners.QuitListener;
 import me.naithantu.SlapHomebrew.Listeners.TeleportListener;
 import me.naithantu.SlapHomebrew.Listeners.VehicleListener;
+import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 import net.milkbowl.vault.Vault;
 import net.milkbowl.vault.economy.Economy;
 
@@ -79,8 +80,7 @@ public class SlapHomebrew extends JavaPlugin {
 	private File dataConfigFile = null;
 	private FileConfiguration vipConfig = null;
 	private File vipConfigFile = null;
-	private FileConfiguration timeConfig = null;
-	private File timeConfigFile = null;
+	private YamlStorage timeConfig;
 
 	public static HashSet<String> message = new HashSet<String>();
 	public static HashSet<String> guides = new HashSet<String>();
@@ -120,7 +120,9 @@ public class SlapHomebrew extends JavaPlugin {
 		config = getConfig();
 		dataConfig = getDataConfig();
 		vipConfig = getVipConfig();
-		timeConfig = getTimeConfig();
+		//timeConfig = getTimeConfig(); //TODO
+		timeConfig = new YamlStorage(this, "time");
+	
 		loadItems();
 		tpBlocks = loadHashSet("tpblocks");
 		guides = loadHashSet("guides");
@@ -190,6 +192,10 @@ public class SlapHomebrew extends JavaPlugin {
 	        return null;
 	    }
 	    return (WorldGuardPlugin) plugin;
+	}
+	
+	public YamlStorage getTimeConfig(){
+		return timeConfig;
 	}
 
 	public List<Integer> getUnfinishedPlots() {
@@ -612,7 +618,7 @@ public class SlapHomebrew extends JavaPlugin {
 		return bump;
 	}
 	//TODO
-	public void reloadTimeConfig() {
+	/*public void reloadTimeConfig() {
 		if (timeConfigFile == null) {
 			timeConfigFile = new File(getDataFolder(), "time.yml");
 		}
@@ -642,7 +648,7 @@ public class SlapHomebrew extends JavaPlugin {
 		} catch (IOException ex) {
 			this.getLogger().log(Level.SEVERE, "Could not save config to " + timeConfigFile, ex);
 		}
-	}
+	}*/
 
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
 		return commandHandler.handle(sender, cmd, args);

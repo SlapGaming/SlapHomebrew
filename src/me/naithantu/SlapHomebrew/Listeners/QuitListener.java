@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
+import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -13,9 +14,11 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 public class QuitListener implements Listener {
 	SlapHomebrew plugin;
-
+	YamlStorage timeConfig;
+	
 	public QuitListener(SlapHomebrew plugin) {
 		this.plugin = plugin;
+		timeConfig = plugin.getTimeConfig();
 	}
 
 	@EventHandler
@@ -27,7 +30,7 @@ public class QuitListener implements Listener {
 			addToConfig(date, player.getName() + " logged off.");
 			if (!isOnlineStaff(player.getName()))
 				addToConfig(date, "There is no staff online!");
-			plugin.saveTimeConfig();
+			timeConfig.saveConfig();
 		}
 	}
 
@@ -49,6 +52,6 @@ public class QuitListener implements Listener {
 			date += " (" + i + ")";
 			i++;
 		}
-		plugin.getTimeConfig().set(date, message);
+		timeConfig.set(date, message);
 	}
 }
