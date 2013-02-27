@@ -21,44 +21,43 @@ public class PlotmarkCommand extends AbstractCommand {
 	}
 
 	public boolean handle() {
-		if(!(sender instanceof Player)){
+		if (!(sender instanceof Player)) {
 			this.badMsg(sender, "You need to be in-game to do that.");
 			return true;
 		}
-		
+
 		Player player = (Player) sender;
 		if (!testPermission(player, "plot.mod")) {
 			this.noPermission(sender);
 			return true;
 		}
 
-
-			String reason = " - ";
-			//Add reason.
-			if (args.length > 1) {
-				List<String> message = new ArrayList<String>();
-				for (int i = 1; i < args.length; i++) {
-					message.add(args[i]);
-				}
-				reason = Joiner.on(" ").join(message);
+		String reason = " - ";
+		//Add reason.
+		if (args.length > 1) {
+			List<String> message = new ArrayList<String>();
+			for (int i = 1; i < args.length; i++) {
+				message.add(args[i]);
 			}
+			reason = Joiner.on(" ").join(message);
+		}
 
-			HashMap<Integer, String> plots = plugin.getPlots();
-			int amount = plots.size() + 1;
+		HashMap<Integer, String> plots = plugin.getPlots();
+		int amount = plots.size() + 1;
 
-			//Add extra information to plotinfo.
-			String location = locationToString(player.getLocation());
-			String date = new SimpleDateFormat("MMM.d HH:mm z").format(new Date());
-			date = date.substring(0, 1).toUpperCase() + date.substring(1);
-			String playerName = player.getName();
-			plots.put(amount, location + "<:>" + date + "<:>" + playerName + "<:> " + reason);
-			List<Integer> unfinishedPlots = plugin.getUnfinishedPlots();
-			unfinishedPlots.add(amount);
-			player.sendMessage(ChatColor.GOLD + "A plot request has been made!");
+		//Add extra information to plotinfo.
+		String location = locationToString(player.getLocation());
+		String date = new SimpleDateFormat("MMM.d HH:mm z").format(new Date());
+		date = date.substring(0, 1).toUpperCase() + date.substring(1);
+		String playerName = player.getName();
+		plots.put(amount, location + "<:>" + date + "<:>" + playerName + "<:> " + reason);
+		List<Integer> unfinishedPlots = plugin.getUnfinishedPlots();
+		unfinishedPlots.add(amount);
+		player.sendMessage(ChatColor.GOLD + "A plot request has been made!");
 
 		return true;
 	}
-	
+
 	public String locationToString(Location location) {
 		String world = location.getWorld().getName();
 		Double x = location.getX();
