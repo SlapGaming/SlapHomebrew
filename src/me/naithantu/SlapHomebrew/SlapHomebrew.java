@@ -53,6 +53,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
@@ -142,7 +144,7 @@ public class SlapHomebrew extends JavaPlugin {
 		pm.registerEvents(new CreatureSpawnListener(), this);
 		pm.registerEvents(new DeathListener(), this);
 		pm.registerEvents(new DispenseListener(), this);
-		pm.registerEvents(new InteractListener(), this);
+		pm.registerEvents(new InteractListener(this), this);
 		pm.registerEvents(new LoginListener(this), this);
 		pm.registerEvents(new PotionListener(), this);
 		pm.registerEvents(new QuitListener(this), this);
@@ -178,6 +180,16 @@ public class SlapHomebrew extends JavaPlugin {
 		savePlots();
 		saveForumVip();
 		saveUnfinishedForumVip();
+	}
+	
+	public WorldGuardPlugin getWorldGuard() {
+	    Plugin plugin = getServer().getPluginManager().getPlugin("WorldGuard");
+	 
+	    // WorldGuard may not be loaded
+	    if (plugin == null || !(plugin instanceof WorldGuardPlugin)) {
+	        return null;
+	    }
+	    return (WorldGuardPlugin) plugin;
 	}
 
 	public List<Integer> getUnfinishedPlots() {
