@@ -69,9 +69,13 @@ public class VipCommand extends AbstractVipCommand {
 				|| arg.equalsIgnoreCase("makeconfig") || arg.equalsIgnoreCase("saveuses") || arg.equalsIgnoreCase("loaduses") || arg.equalsIgnoreCase("clearuses") || arg.equalsIgnoreCase("useslist")
 				|| arg.equalsIgnoreCase("saveconfig") || arg.equalsIgnoreCase("add") || arg.equalsIgnoreCase("remove") || arg.equalsIgnoreCase("set") || arg.equalsIgnoreCase("days")
 				|| arg.equalsIgnoreCase("vips") || arg.equalsIgnoreCase("message") || arg.equalsIgnoreCase("check") || arg.equalsIgnoreCase("mark") || arg.equalsIgnoreCase("done")
-				|| arg.equalsIgnoreCase("homes")) {
+				|| arg.equalsIgnoreCase("homes") || arg.equalsIgnoreCase("copybook")) {
 
 			if (arg.equalsIgnoreCase("grant")) {
+				if (!(sender instanceof Player)) {
+					this.badMsg(sender, "You need to be in-game to do that.");
+					return true;
+				}
 				int type;
 				Player player = (Player) sender;
 				if (player.hasPermission("slaphomebrew.grant")) {
@@ -133,8 +137,8 @@ public class VipCommand extends AbstractVipCommand {
 						}
 						return true;
 					}
-					System.out.println(SlapHomebrew.vipItems.get(type));
 
+					//TODO Make grant system less messy.
 					if (SlapHomebrew.vipItems.containsKey(type)) {
 						PlayerInventory inventory = player.getInventory();
 
@@ -166,6 +170,48 @@ public class VipCommand extends AbstractVipCommand {
 						}
 					} else {
 						player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "You are not allowed to spawn that!");
+					}
+				} else {
+					player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "You don't have permission for that! Go to slap-gaming.com/vip!");
+				}
+			}
+
+			if (arg.equalsIgnoreCase("copybook")) {
+				if (!(sender instanceof Player)) {
+					this.badMsg(sender, "You need to be in-game to do that.");
+					return true;
+				}
+				Player player = (Player) sender;
+				if (player.hasPermission("slaphomebrew.grant")) {
+					ItemStack bookToCopy = player.getItemInHand();
+					if (!(bookToCopy.getType() == Material.WRITTEN_BOOK)) {
+						this.badMsg(sender, "You're not holding a book!");
+						return true;
+					}
+
+					String playerName = player.getName();
+					if (SlapHomebrew.usedGrant.containsKey(playerName)) {
+						try {
+							used = ((Integer) SlapHomebrew.usedGrant.get(playerName).intValue());
+						} catch (NullPointerException e) {
+						}
+						if (used < 3) {
+							used += 1;
+							player.getInventory().addItem(bookToCopy);
+							player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "Book copied.");
+							int timesleft = 3 - used;
+							player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + timesleft + " times left today.");
+							SlapHomebrew.usedGrant.put(playerName, used);
+						} else {
+							player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "You have already used this 3 times today!");
+						}
+					} else {
+						used = 1;
+						SlapHomebrew.usedGrant.put(playerName, used);
+						int timesleft = 3 - used;
+						player.getInventory().addItem(bookToCopy);
+						player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "Book copied.");
+						player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + timesleft + " times left today.");
 					}
 				} else {
 					player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "You don't have permission for that! Go to slap-gaming.com/vip!");
