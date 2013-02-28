@@ -111,9 +111,7 @@ public class SlapHomebrew extends JavaPlugin {
 		loadItems();
 		tpBlocks = loadHashSet("tpblocks");
 		BlockfaqCommand.chatBotBlocks = loadHashSet("chatbotblocks");
-		this.getDescription();
 		setupEconomy();
-		setupCommands();
 		loadUses();
 		setupChatBot();
 		loadworldGuard();
@@ -219,14 +217,6 @@ public class SlapHomebrew extends JavaPlugin {
 		}
 		econ = rsp.getProvider();
 		return econ != null;
-	}
-
-	public void setupCommands() {
-		getCommand("plot").setExecutor(new PlotCommands(this));
-		getCommand("pmark").setExecutor(new PlotCommands(this));
-		getCommand("pcheck").setExecutor(new PlotCommands(this));
-		getCommand("ptp").setExecutor(new PlotCommands(this));
-		getCommand("pdone").setExecutor(new PlotCommands(this));
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
