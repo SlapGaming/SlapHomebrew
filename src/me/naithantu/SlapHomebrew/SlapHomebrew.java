@@ -69,26 +69,19 @@ public class SlapHomebrew extends JavaPlugin {
 	HashMap<Integer, String> forumVip = new HashMap<Integer, String>();
 	List<Integer> unfinishedForumVip = new ArrayList<Integer>();
 
-	public HashMap<String, Boolean> safetyTp = new HashMap<String, Boolean>();
-	public HashMap<String, Boolean> safetyTpUsed = new HashMap<String, Boolean>();
-
 	private YamlStorage dataConfig;
 	private YamlStorage vipConfig;
 	private YamlStorage timeConfig;
 
 	public static HashSet<String> message = new HashSet<String>();
-	public static HashSet<String> guides = new HashSet<String>();
 	public static HashSet<String> tpBlocks = new HashSet<String>();
 	public static HashSet<UUID> mCarts = new HashSet<UUID>();
 	Bump bump = new Bump(this);
 
 	public static boolean allowCakeTp;
 
-	boolean safetyTpDebug = false;
-
 	Configuration config;
 
-	String tempString = "";
 	ArrayList<String> tempArrayList = new ArrayList<String>();
 
 	boolean reloadChatBot = false;
@@ -117,7 +110,6 @@ public class SlapHomebrew extends JavaPlugin {
 
 		loadItems();
 		tpBlocks = loadHashSet("tpblocks");
-		guides = loadHashSet("guides");
 		BlockfaqCommand.chatBotBlocks = loadHashSet("chatbotblocks");
 		this.getDescription();
 		setupEconomy();
@@ -168,7 +160,6 @@ public class SlapHomebrew extends JavaPlugin {
 		saveUses();
 		saveworldGuard();
 		saveHashSet(tpBlocks, "tpblocks");
-		saveHashSet(guides, "guides");
 		saveHashSet(BlockfaqCommand.chatBotBlocks, "chatbotblocks");
 		saveUnfinishedPlots();
 		savePlots();
