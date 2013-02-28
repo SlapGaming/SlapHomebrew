@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import me.naithantu.SlapHomebrew.Commands.BlockfaqCommand;
@@ -44,8 +42,6 @@ import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.Configuration;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
@@ -76,10 +72,8 @@ public class SlapHomebrew extends JavaPlugin {
 	public HashMap<String, Boolean> safetyTp = new HashMap<String, Boolean>();
 	public HashMap<String, Boolean> safetyTpUsed = new HashMap<String, Boolean>();
 
-	private FileConfiguration dataConfig = null;
-	private File dataConfigFile = null;
-	private FileConfiguration vipConfig = null;
-	private File vipConfigFile = null;
+	private YamlStorage dataConfig;
+	private YamlStorage vipConfig;
 	private YamlStorage timeConfig;
 
 	public static HashSet<String> message = new HashSet<String>();
@@ -89,7 +83,6 @@ public class SlapHomebrew extends JavaPlugin {
 	Bump bump = new Bump(this);
 
 	public static boolean allowCakeTp;
-	
 
 	boolean safetyTpDebug = false;
 
@@ -118,11 +111,10 @@ public class SlapHomebrew extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		config = getConfig();
-		dataConfig = getDataConfig();
-		vipConfig = getVipConfig();
-		//timeConfig = getTimeConfig(); //TODO
+		dataConfig = new YamlStorage(this, "data");
+		vipConfig = new YamlStorage(this, "vip");
 		timeConfig = new YamlStorage(this, "time");
-	
+
 		loadItems();
 		tpBlocks = loadHashSet("tpblocks");
 		guides = loadHashSet("guides");
@@ -163,8 +155,8 @@ public class SlapHomebrew extends JavaPlugin {
 			return;
 		}
 		//Create configurationsection if it isn't there yet:
-		if (getVipConfig().getConfigurationSection("vipdays") == null) {
-			getVipConfig().createSection("vipdays");
+		if (vipConfig.getConfigurationSection("vipdays") == null) {
+			vipConfig.createSection("vipdays");
 		}
 		saveConfig();
 		removeInvisibility();
@@ -183,19 +175,27 @@ public class SlapHomebrew extends JavaPlugin {
 		saveForumVip();
 		saveUnfinishedForumVip();
 	}
-	
+
 	public WorldGuardPlugin getWorldGuard() {
-	    Plugin plugin = getServer().getPluginManager().getPlugin("WorldGuard");
-	 
-	    // WorldGuard may not be loaded
-	    if (plugin == null || !(plugin instanceof WorldGuardPlugin)) {
-	        return null;
-	    }
-	    return (WorldGuardPlugin) plugin;
+		Plugin plugin = getServer().getPluginManager().getPlugin("WorldGuard");
+
+		// WorldGuard may not be loaded
+		if (plugin == null || !(plugin instanceof WorldGuardPlugin)) {
+			return null;
+		}
+		return (WorldGuardPlugin) plugin;
+	}
+
+	public YamlStorage getTimeConfig() {
+		return timeConfig;
 	}
 	
-	public YamlStorage getTimeConfig(){
-		return timeConfig;
+	public YamlStorage getVipConfig(){
+		return vipConfig;
+	}
+	
+	public YamlStorage getDataConfig(){
+		return dataConfig;
 	}
 
 	public List<Integer> getUnfinishedPlots() {
@@ -216,71 +216,6 @@ public class SlapHomebrew extends JavaPlugin {
 
 	public VipForumMarkCommands getVipForumMarkCommands() {
 		return vipForumMarkCommands;
-	}
-
-	public void reloadDataConfig() {
-		if (dataConfigFile == null) {
-			dataConfigFile = new File(getDataFolder(), "data.yml");
-		}
-		dataConfig = YamlConfiguration.loadConfiguration(dataConfigFile);
-
-		// Look for defaults in the jar
-		InputStream defConfigStream = getResource("data.yml");
-		if (defConfigStream != null) {
-			YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
-			dataConfig.setDefaults(defConfig);
-		}
-	}
-
-	public FileConfiguration getDataConfig() {
-		if (dataConfig == null) {
-			this.reloadDataConfig();
-		}
-		return dataConfig;
-	}
-
-	public void saveDataConfig() {
-		if (dataConfig == null || dataConfigFile == null) {
-			return;
-		}
-		try {
-			getDataConfig().save(dataConfigFile);
-		} catch (IOException ex) {
-			this.getLogger().log(Level.SEVERE, "Could not save config to " + dataConfigFile, ex);
-		}
-	}
-
-	public void reloadVipConfig() {
-		if (vipConfigFile == null) {
-			vipConfigFile = new File(getDataFolder(), "vip.yml");
-		}
-		vipConfig = YamlConfiguration.loadConfiguration(vipConfigFile);
-		saveVipConfig();
-
-		// Look for defaults in the jar
-		InputStream defConfigStream = this.getResource("vip.yml");
-		if (defConfigStream != null) {
-			YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
-			vipConfig.setDefaults(defConfig);
-		}
-	}
-
-	public FileConfiguration getVipConfig() {
-		if (vipConfig == null) {
-			this.reloadVipConfig();
-		}
-		return vipConfig;
-	}
-
-	public void saveVipConfig() {
-		if (vipConfig == null || vipConfigFile == null) {
-			return;
-		}
-		try {
-			getVipConfig().save(vipConfigFile);
-		} catch (IOException ex) {
-			this.getLogger().log(Level.SEVERE, "Could not save config to " + vipConfigFile, ex);
-		}
 	}
 
 	private boolean setupEconomy() {
@@ -308,7 +243,7 @@ public class SlapHomebrew extends JavaPlugin {
 		List<String> tempList = new ArrayList<String>(hashSet);
 		dataConfig.set(configString, null);
 		dataConfig.set(configString, tempList);
-		saveDataConfig();
+		dataConfig.saveConfig();
 	}
 
 	public HashSet<String> loadHashSet(String configString) {
@@ -360,7 +295,7 @@ public class SlapHomebrew extends JavaPlugin {
 		for (Map.Entry<String, Integer> entry : usedGrant.entrySet()) {
 			dataConfig.set("vipuses." + entry.getKey(), entry.getValue());
 		}
-		saveDataConfig();
+		dataConfig.saveConfig();
 	}
 
 	public void loadUses() {
@@ -376,7 +311,7 @@ public class SlapHomebrew extends JavaPlugin {
 		for (Map.Entry<Integer, Integer> entry : vipItems.entrySet()) {
 			dataConfig.set("vipitems." + Integer.toString(entry.getKey()), entry.getValue());
 		}
-		saveDataConfig();
+		dataConfig.saveConfig();
 	}
 
 	public void loadItems() {
@@ -392,7 +327,7 @@ public class SlapHomebrew extends JavaPlugin {
 		for (Map.Entry<Integer, String> entry : plots.entrySet()) {
 			dataConfig.set("plots." + entry.getKey(), entry.getValue());
 		}
-		saveDataConfig();
+		dataConfig.saveConfig();
 	}
 
 	public void loadPlots() {
@@ -514,7 +449,7 @@ public class SlapHomebrew extends JavaPlugin {
 
 	public void saveUnfinishedPlots() {
 		dataConfig.set("unfinishedplots", unfinishedPlots);
-		saveDataConfig();
+		dataConfig.saveConfig();
 	}
 
 	public void loadUnfinishedPlots() {
@@ -541,12 +476,12 @@ public class SlapHomebrew extends JavaPlugin {
 		String date = new SimpleDateFormat("MMM.d HH:mm z").format(new Date());
 		date = date.substring(0, 1).toUpperCase() + date.substring(1);
 		dataConfig.set("bumps." + date, name);
-		saveDataConfig();
+		dataConfig.saveConfig();
 	}
 
 	public void saveUnfinishedForumVip() {
 		dataConfig.set("unfinishedforumvip", unfinishedForumVip);
-		saveDataConfig();
+		dataConfig.saveConfig();
 	}
 
 	public void loadUnfinishedForumVip() {
@@ -558,7 +493,7 @@ public class SlapHomebrew extends JavaPlugin {
 		for (Map.Entry<Integer, String> entry : forumVip.entrySet()) {
 			dataConfig.set("forumvip." + entry.getKey(), entry.getValue());
 		}
-		saveDataConfig();
+		dataConfig.saveConfig();
 	}
 
 	public void loadForumVip() {
@@ -584,7 +519,7 @@ public class SlapHomebrew extends JavaPlugin {
 			//Otherwise, just set it to 1.
 			vipConfig.getConfigurationSection("homes").set(playerName, 1);
 		}
-		saveVipConfig();
+		vipConfig.saveConfig();
 		String permission = "essentials.sethome.multiple." + Integer.toString(getHomes(playerName));
 		user.addPermission(permission);
 	}
@@ -613,43 +548,11 @@ public class SlapHomebrew extends JavaPlugin {
 		}
 		return homes;
 	}
-	
-	public Bump getBump(){
+
+	public Bump getBump() {
 		return bump;
 	}
-	//TODO
-	/*public void reloadTimeConfig() {
-		if (timeConfigFile == null) {
-			timeConfigFile = new File(getDataFolder(), "time.yml");
-		}
-		timeConfig = YamlConfiguration.loadConfiguration(timeConfigFile);
-
-		// Look for defaults in the jar
-		InputStream defConfigStream = getResource("time.yml");
-		if (defConfigStream != null) {
-			YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
-			timeConfig.setDefaults(defConfig);
-		}
-	}
-
-	public FileConfiguration getTimeConfig() {
-		if (timeConfig == null) {
-			this.reloadTimeConfig();
-		}
-		return timeConfig;
-	}
-
-	public void saveTimeConfig() {
-		if (timeConfig == null || timeConfigFile == null) {
-			return;
-		}
-		try {
-			getTimeConfig().save(timeConfigFile);
-		} catch (IOException ex) {
-			this.getLogger().log(Level.SEVERE, "Could not save config to " + timeConfigFile, ex);
-		}
-	}*/
-
+	
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
 		return commandHandler.handle(sender, cmd, args);
 	}

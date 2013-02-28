@@ -21,10 +21,14 @@ import ru.tehkode.permissions.bukkit.PermissionsEx;
 public class LoginListener implements Listener {
 	SlapHomebrew plugin;
 	YamlStorage timeConfig;
+	YamlStorage dataConfig;
+	YamlStorage vipConfig;
 	
 	public LoginListener(SlapHomebrew plugin){
 		this.plugin = plugin;
 		timeConfig = plugin.getTimeConfig();
+		dataConfig = plugin.getDataConfig();
+		vipConfig = plugin.getVipConfig();
 	}
 	
 
@@ -62,18 +66,18 @@ public class LoginListener implements Listener {
 		int vipDay = Integer.valueOf(checkDay.format(date));
 		int vipMonth = Integer.valueOf(checkMonth.format(date));
 		int vipYear = Integer.valueOf(checkYear.format(date));
-		if (vipDay > plugin.getDataConfig().getInt("vipdate.day") || vipMonth > plugin.getDataConfig().getInt("vipdate.month") || vipYear > plugin.getDataConfig().getInt("vipdate.year")) {
+		if (vipDay > dataConfig.getInt("vipdate.day") || vipMonth > dataConfig.getInt("vipdate.month") || vipYear > dataConfig.getInt("vipdate.year")) {
 			SlapHomebrew.usedGrant.clear();
 			updateVipDays();
 		}
-		plugin.getDataConfig().set("vipdate.day", vipDay);
-		plugin.getDataConfig().set("vipdate.month", vipMonth);
-		plugin.getDataConfig().set("vipdate.year", vipYear);
-		plugin.saveDataConfig();
+		dataConfig.set("vipdate.day", vipDay);
+		dataConfig.set("vipdate.month", vipMonth);
+		dataConfig.set("vipdate.year", vipYear);
+		dataConfig.saveConfig();
 
 		//Check homes.
-		if (plugin.getVipConfig().getConfigurationSection("homes") != null) {
-			if (plugin.getVipConfig().getConfigurationSection("homes").contains(player.getName())) {
+		if (vipConfig.getConfigurationSection("homes") != null) {
+			if (vipConfig.getConfigurationSection("homes").contains(player.getName())) {
 				if (!player.hasPermission("essentials.sethome.multiple." + Integer.toString(plugin.getHomes(player.getName())))) {
 					PermissionUser user = PermissionsEx.getUser(player.getName());
 					String permission = "essentials.sethome.multiple." + Integer.toString(plugin.getHomes(player.getName()));
@@ -85,15 +89,15 @@ public class LoginListener implements Listener {
 	
 	private void updateVipDays() {
 		HashMap<String, Integer> tempMap = new HashMap<String, Integer>();
-		if (plugin.getVipConfig().getConfigurationSection("vipdays") == null)
+		if (vipConfig.getConfigurationSection("vipdays") == null)
 			return;
-		for (String key : plugin.getVipConfig().getConfigurationSection("vipdays").getKeys(false)) {
-			tempMap.put(key, plugin.getVipConfig().getInt("vipdays." + key));
+		for (String key : vipConfig.getConfigurationSection("vipdays").getKeys(false)) {
+			tempMap.put(key, vipConfig.getInt("vipdays." + key));
 		}
-		plugin.getVipConfig().set("vipdays", null);
+		vipConfig.set("vipdays", null);
 		//Create configurationsection if it isn't there yet:
-		if (plugin.getVipConfig().getConfigurationSection("vipdays") == null) {
-			plugin.getVipConfig().createSection("vipdays");
+		if (vipConfig.getConfigurationSection("vipdays") == null) {
+			vipConfig.createSection("vipdays");
 		}
 		for (Map.Entry<String, Integer> entry : tempMap.entrySet()) {
 			PermissionUser user = PermissionsEx.getUser(entry.getKey());
@@ -103,15 +107,15 @@ public class LoginListener implements Listener {
 			if (entry.getValue() == 0) {
 				plugin.demoteVip(entry.getKey());
 			} else {
-				plugin.getVipConfig().getConfigurationSection("vipdays").set(entry.getKey(), entry.getValue());
+				vipConfig.getConfigurationSection("vipdays").set(entry.getKey(), entry.getValue());
 			}
 		}
-		plugin.saveVipConfig();
+		vipConfig.saveConfig();
 	}
 	
 	void addToConfig(String date, String message){
 		int i = 1;
-		while(plugin.getTimeConfig().contains(date)){
+		while(timeConfig.contains(date)){
 			date += "(" + i + ")";
 			i++;
 		}

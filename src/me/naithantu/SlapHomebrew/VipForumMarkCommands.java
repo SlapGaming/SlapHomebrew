@@ -17,6 +17,8 @@ public class VipForumMarkCommands {
 		plugin = instance;
 	}
 
+	//TODO
+	
 	private String sendVipInfo(int vipNumber) {
 		String[] messageSplit = plugin.getForumVip().get(vipNumber).split("<:>");
 		if(messageSplit[2].equals("demote")){

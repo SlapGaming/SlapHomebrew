@@ -13,6 +13,7 @@ import java.util.Set;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.VipForumMarkCommands;
+import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -32,9 +33,11 @@ public class VipCommand extends AbstractVipCommand {
 
 	Integer used = 0;
 	HashSet<String> vipItemsList = new HashSet<String>();
+	YamlStorage vipConfig;
 
 	public VipCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
 		super(sender, args, plugin);
+		vipConfig = plugin.getVipConfig();
 	}
 
 	public boolean handle() {
@@ -44,12 +47,12 @@ public class VipCommand extends AbstractVipCommand {
 			arg = args[0];
 		} catch (ArrayIndexOutOfBoundsException e) {
 			Player player = (Player) sender;
-			if (plugin.getVipConfig().getConfigurationSection("vipdays").getInt(player.getName().toLowerCase()) == 0) {
+			if (vipConfig.getConfigurationSection("vipdays").getInt(player.getName().toLowerCase()) == 0) {
 				player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "You are not a VIP! Go to www.slap-gaming.com/vip for more info about VIP!");
-			} else if (plugin.getVipConfig().getConfigurationSection("vipdays").getInt(player.getName().toLowerCase()) == -1) {
+			} else if (vipConfig.getConfigurationSection("vipdays").getInt(player.getName().toLowerCase()) == -1) {
 				player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "You have lifetime VIP! :D");
 			} else {
-				player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "You have " + plugin.getVipConfig().getConfigurationSection("vipdays").getInt(player.getName().toLowerCase())
+				player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "You have " + vipConfig.getConfigurationSection("vipdays").getInt(player.getName().toLowerCase())
 						+ " VIP days remaining!");
 			}
 			return true;
@@ -391,23 +394,23 @@ public class VipCommand extends AbstractVipCommand {
 				}
 				//If arg3 == -1, set to -1 (infinite)
 				if (arg3 == -1) {
-					plugin.getVipConfig().getConfigurationSection("vipdays").set(arg2, -1);
+					vipConfig.getConfigurationSection("vipdays").set(arg2, -1);
 					plugin.promoteVip(arg2);
 					sender.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "Player " + args[1] + " now has lifetime VIP!");
 					return true;
 				}
 
 				int daysLeft = 0;
-				if (plugin.getVipConfig().getConfigurationSection("vipdays").contains(arg2)) {
-					daysLeft = plugin.getVipConfig().getConfigurationSection("vipdays").getInt(arg2);
+				if (vipConfig.getConfigurationSection("vipdays").contains(arg2)) {
+					daysLeft = vipConfig.getConfigurationSection("vipdays").getInt(arg2);
 				}
-				plugin.getVipConfig().getConfigurationSection("vipdays").set(arg2, arg3 + daysLeft);
+				vipConfig.getConfigurationSection("vipdays").set(arg2, arg3 + daysLeft);
 				PermissionUser user = PermissionsEx.getUser(args[1]);
 				String[] groupNames = user.getGroupsNames();
 				if (!groupNames[0].contains("VIP")) {
 					plugin.promoteVip(arg2);
 				}
-				plugin.saveVipConfig();
+				vipConfig.saveConfig();
 				if (daysLeft > 0) {
 					sender.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "Added " + arg3 + " days to player " + args[1] + ", this player now has " + (arg3 + daysLeft)
 							+ " VIP days remaining!");
@@ -436,18 +439,18 @@ public class VipCommand extends AbstractVipCommand {
 				}
 				if (arg3 == 0) {
 					sender.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "Player " + args[1] + " is no longer a VIP!");
-					plugin.getVipConfig().getConfigurationSection("vipdays").set(arg2, null);
+					vipConfig.getConfigurationSection("vipdays").set(arg2, null);
 					plugin.demoteVip(arg2);
 				} else {
 					sender.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "Player " + args[1] + " now has " + arg3 + " days remaining!");
-					plugin.getVipConfig().getConfigurationSection("vipdays").set(arg2, arg3);
+					vipConfig.getConfigurationSection("vipdays").set(arg2, arg3);
 					PermissionUser user = PermissionsEx.getUser(args[1]);
 					String[] groupNames = user.getGroupsNames();
 					if (!groupNames[0].contains("VIP")) {
 						plugin.promoteVip(arg2);
 					}
 				}
-				plugin.saveVipConfig();
+				vipConfig.saveConfig();
 				return true;
 			}
 
@@ -469,8 +472,8 @@ public class VipCommand extends AbstractVipCommand {
 					return false;
 				}
 				int daysLeft = 0;
-				if (plugin.getVipConfig().getConfigurationSection("vipdays").contains(arg2)) {
-					daysLeft = plugin.getVipConfig().getConfigurationSection("vipdays").getInt(arg2);
+				if (vipConfig.getConfigurationSection("vipdays").contains(arg2)) {
+					daysLeft = vipConfig.getConfigurationSection("vipdays").getInt(arg2);
 				} else {
 					sender.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "Error: That player is not a VIP!");
 					return true;
@@ -487,7 +490,7 @@ public class VipCommand extends AbstractVipCommand {
 				if (daysLeft > 0) {
 					sender.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "Removed " + arg3 + " days from player " + args[1] + ", this player now has " + daysLeft
 							+ " VIP days remaining!");
-					plugin.getVipConfig().getConfigurationSection("vipdays").set(arg2, daysLeft);
+					vipConfig.getConfigurationSection("vipdays").set(arg2, daysLeft);
 					PermissionUser user = PermissionsEx.getUser(args[1]);
 					String[] groupNames = user.getGroupsNames();
 					if (!groupNames[0].contains("VIP")) {
@@ -495,10 +498,10 @@ public class VipCommand extends AbstractVipCommand {
 					}
 				} else {
 					sender.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "Removed " + arg3 + " days from player " + args[1] + ", this player is no longer a VIP!");
-					plugin.getVipConfig().getConfigurationSection("vipdays").set(arg2, null);
+					vipConfig.getConfigurationSection("vipdays").set(arg2, null);
 					plugin.demoteVip(arg2);
 				}
-				plugin.saveVipConfig();
+				vipConfig.saveConfig();
 				return true;
 			}
 
@@ -511,12 +514,12 @@ public class VipCommand extends AbstractVipCommand {
 				if (args.length < 2)
 					return false;
 				String arg2 = args[1].toLowerCase();
-				if (plugin.getVipConfig().getConfigurationSection("vipdays").getInt(arg2) == 0) {
+				if (vipConfig.getConfigurationSection("vipdays").getInt(arg2) == 0) {
 					player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + args[1] + " is not a VIP!");
-				} else if (plugin.getVipConfig().getConfigurationSection("vipdays").getInt(arg2) == -1) {
+				} else if (vipConfig.getConfigurationSection("vipdays").getInt(arg2) == -1) {
 					player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + args[1] + " has lifetime VIP!");
 				} else {
-					player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + args[1] + " has " + plugin.getVipConfig().getConfigurationSection("vipdays").getInt(arg2)
+					player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + args[1] + " has " + vipConfig.getConfigurationSection("vipdays").getInt(arg2)
 							+ " VIP days remaining!");
 				}
 				return true;
@@ -529,8 +532,8 @@ public class VipCommand extends AbstractVipCommand {
 					return true;
 				}
 				HashMap<String, Integer> tempMap = new HashMap<String, Integer>();
-				for (String key : plugin.getVipConfig().getConfigurationSection("vipdays").getKeys(false)) {
-					tempMap.put(key, plugin.getVipConfig().getInt("vipdays." + key));
+				for (String key : vipConfig.getConfigurationSection("vipdays").getKeys(false)) {
+					tempMap.put(key, vipConfig.getInt("vipdays." + key));
 				}
 				player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "The current vips are: " + tempMap);
 			}
