@@ -2,7 +2,7 @@ name: SlapHomebrew
 main: me.naithantu.SlapHomebrew.SlapHomebrew
 depend: [Vault, PermissionsEx]
 author: naithantu
-version: 2.3
+version: 2.4
 description: SlapHomebrew homemade plugin.
 commands:
   vip:
@@ -10,6 +10,8 @@ commands:
     usage: /vip
   minecart:
     description: Spawns you inside a moving minecart.
+  boat:
+    description: Spawns you inside a boat.
   te:
     description: Tps you to the specified player.
   tpblock:

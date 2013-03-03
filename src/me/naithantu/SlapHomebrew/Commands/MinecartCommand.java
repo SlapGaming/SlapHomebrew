@@ -25,14 +25,19 @@ public class MinecartCommand extends AbstractCommand {
 			this.noPermission(sender);
 			return true;
 		}
+		
+		if(player.isInsideVehicle()){
+			this.badMsg(sender, "You are already in a vehicle.");
+			return true;
+		}
 
 		World w = player.getWorld();
 		int railBlock = w.getBlockTypeIdAt(player.getLocation());
 		if (railBlock == 66 || railBlock == 27 || railBlock == 28) {
-			Minecart m = w.spawn(player.getLocation(), Minecart.class);
-			m.setPassenger(player);
-			SlapHomebrew.mCarts.add(m.getUniqueId());
-			Vector v = m.getVelocity();
+			Minecart minecart = w.spawn(player.getLocation(), Minecart.class);
+			minecart.setPassenger(player);
+			plugin.getVehicles().addMinecart(minecart);
+			Vector v = minecart.getVelocity();
 			double degreeRotation = (player.getLocation().getYaw() - 90.0F) % 360.0F;
 			if (degreeRotation < 0.0D) {
 				degreeRotation += 360.0D;
@@ -49,7 +54,7 @@ public class MinecartCommand extends AbstractCommand {
 			if (degreeRotation > 225.0D && degreeRotation <= 315.0D) {
 				v.setZ(7);
 			}
-			m.setVelocity(v);
+			minecart.setVelocity(v);
 		}
 		return true;
 	}

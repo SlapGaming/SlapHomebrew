@@ -16,7 +16,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 import java.util.logging.Logger;
 
 import me.naithantu.SlapHomebrew.Commands.BlockfaqCommand;
@@ -42,6 +41,7 @@ import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.Configuration;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
@@ -51,9 +51,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-
-import ru.tehkode.permissions.PermissionUser;
-import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 public class SlapHomebrew extends JavaPlugin {
 
@@ -69,13 +66,19 @@ public class SlapHomebrew extends JavaPlugin {
 	HashMap<Integer, String> forumVip = new HashMap<Integer, String>();
 	List<Integer> unfinishedForumVip = new ArrayList<Integer>();
 
-	private YamlStorage dataConfig;
-	private YamlStorage vipConfig;
-	private YamlStorage timeConfig;
+	private YamlStorage dataStorage;
+	private YamlStorage vipStorage;
+	private YamlStorage timeStorage;
+	
+	private FileConfiguration dataConfig;
+	private FileConfiguration vipConfig;
+	
+	Vip vip;
 
 	public static HashSet<String> message = new HashSet<String>();
 	public static HashSet<String> tpBlocks = new HashSet<String>();
-	public static HashSet<UUID> mCarts = new HashSet<UUID>();
+	
+	Vehicles vehicles = new Vehicles();
 	Bump bump = new Bump(this);
 
 	public static boolean allowCakeTp;
@@ -104,10 +107,12 @@ public class SlapHomebrew extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		config = getConfig();
-		dataConfig = new YamlStorage(this, "data");
-		vipConfig = new YamlStorage(this, "vip");
-		timeConfig = new YamlStorage(this, "time");
-
+		dataStorage = new YamlStorage(this, "data");
+		vipStorage = new YamlStorage(this, "vip");
+		timeStorage = new YamlStorage(this, "time");
+		dataConfig = dataStorage.getConfig();
+		vipConfig = vipStorage.getConfig();
+		vip = new Vip(vipStorage);
 		loadItems();
 		tpBlocks = loadHashSet("tpblocks");
 		BlockfaqCommand.chatBotBlocks = loadHashSet("chatbotblocks");
@@ -129,11 +134,11 @@ public class SlapHomebrew extends JavaPlugin {
 		pm.registerEvents(new DeathListener(), this);
 		pm.registerEvents(new DispenseListener(), this);
 		pm.registerEvents(new InteractListener(this), this);
-		pm.registerEvents(new LoginListener(this), this);
+		pm.registerEvents(new LoginListener(this, timeStorage, dataStorage, vipStorage), this);
 		pm.registerEvents(new PotionListener(), this);
-		pm.registerEvents(new QuitListener(this), this);
-		pm.registerEvents(new TeleportListener(), this);
-		pm.registerEvents(new VehicleListener(), this);
+		pm.registerEvents(new QuitListener(this, timeStorage), this);
+		pm.registerEvents(new TeleportListener(vehicles), this);
+		pm.registerEvents(new VehicleListener(vehicles), this);
 		pm.registerEvents(new PlayerInteractEntityListener(), this);
 
 		Plugin x = this.getServer().getPluginManager().getPlugin("Vault");
@@ -174,17 +179,25 @@ public class SlapHomebrew extends JavaPlugin {
 		}
 		return (WorldGuardPlugin) plugin;
 	}
+	
+	public Vehicles getVehicles(){
+		return vehicles;
+	}
+	
+	public Vip getVip(){
+		return vip;
+	}
 
-	public YamlStorage getTimeConfig() {
-		return timeConfig;
+	public YamlStorage getTimeStorage() {
+		return timeStorage;
 	}
 	
-	public YamlStorage getVipConfig(){
-		return vipConfig;
+	public YamlStorage getVipStorage(){
+		return vipStorage;
 	}
 	
-	public YamlStorage getDataConfig(){
-		return dataConfig;
+	public YamlStorage getDataStorage(){
+		return dataStorage;
 	}
 
 	public List<Integer> getUnfinishedPlots() {
@@ -224,7 +237,7 @@ public class SlapHomebrew extends JavaPlugin {
 		List<String> tempList = new ArrayList<String>(hashSet);
 		dataConfig.set(configString, null);
 		dataConfig.set(configString, tempList);
-		dataConfig.saveConfig();
+		dataStorage.saveConfig();
 	}
 
 	public HashSet<String> loadHashSet(String configString) {
@@ -276,7 +289,7 @@ public class SlapHomebrew extends JavaPlugin {
 		for (Map.Entry<String, Integer> entry : usedGrant.entrySet()) {
 			dataConfig.set("vipuses." + entry.getKey(), entry.getValue());
 		}
-		dataConfig.saveConfig();
+		dataStorage.saveConfig();
 	}
 
 	public void loadUses() {
@@ -292,7 +305,7 @@ public class SlapHomebrew extends JavaPlugin {
 		for (Map.Entry<Integer, Integer> entry : vipItems.entrySet()) {
 			dataConfig.set("vipitems." + Integer.toString(entry.getKey()), entry.getValue());
 		}
-		dataConfig.saveConfig();
+		dataStorage.saveConfig();
 	}
 
 	public void loadItems() {
@@ -308,7 +321,7 @@ public class SlapHomebrew extends JavaPlugin {
 		for (Map.Entry<Integer, String> entry : plots.entrySet()) {
 			dataConfig.set("plots." + entry.getKey(), entry.getValue());
 		}
-		dataConfig.saveConfig();
+		dataStorage.saveConfig();
 	}
 
 	public void loadPlots() {
@@ -373,64 +386,9 @@ public class SlapHomebrew extends JavaPlugin {
 
 	}
 
-	public void promoteVip(String playerName) {
-		String[] vipGroup = { "VIP" };
-		String[] vipGuideGroup = { "VIPGuide" };
-		PermissionUser user = PermissionsEx.getUser(playerName);
-		//Remove old homes permission (if required)
-		if (vipConfig.getConfigurationSection("homes").contains(playerName)) {
-			String permission = "essentials.sethome.multiple." + Integer.toString(getHomes(playerName));
-			user.removePermission(permission);
-		}
-		String[] groupNames = user.getGroupsNames();
-		if (groupNames[0].contains("Guide")) {
-			user.setGroups(vipGuideGroup);
-		} else {
-			user.setGroups(vipGroup);
-		}
-		//Add new homes.
-		if (vipConfig.getConfigurationSection("homes").contains(playerName)) {
-			String permission = "essentials.sethome.multiple." + Integer.toString(getHomes(playerName));
-			user.addPermission(permission);
-		}
-		getServer().dispatchCommand(getServer().getConsoleSender(), "vip mark " + playerName + " promote");
-		getServer().dispatchCommand(getServer().getConsoleSender(), "mail send " + playerName + " " + ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE
-				+ "You have been promoted to VIP! For a full list of your new permissions, go to slapgaming.com/vip!");
-	}
-
-	public void demoteVip(String playerName) {
-		String[] memberGroup = { "member" };
-		String[] guideGroup = { "Guide" };
-		PermissionUser user = PermissionsEx.getUser(playerName);
-		String[] groupNames = user.getGroupsNames();
-
-		//Remove old homes permission (if required)
-		if (vipConfig.getConfigurationSection("homes").contains(playerName)) {
-			String permission = "essentials.sethome.multiple." + Integer.toString(getHomes(playerName));
-			user.removePermission(permission);
-		}
-
-		if (groupNames[0].contains("Guide")) {
-			user.setGroups(guideGroup);
-			getServer().dispatchCommand(getServer().getConsoleSender(), "mail send " + playerName + " " + ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE
-					+ "You have been demoted to guide! Please visit slapgaming.com/vip to renew your VIP!");
-		} else {
-			user.setGroups(memberGroup);
-			getServer().dispatchCommand(getServer().getConsoleSender(), "mail send " + playerName + " " + ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE
-					+ "You have been demoted to member! Please visit slapgaming.com/vip to renew your VIP!");
-		}
-		getServer().dispatchCommand(getServer().getConsoleSender(), "vip mark " + playerName + " demote");
-
-		//Add new homes.
-		if (vipConfig.getConfigurationSection("homes").contains(playerName)) {
-			String permission = "essentials.sethome.multiple." + Integer.toString(getHomes(playerName));
-			user.addPermission(permission);
-		}
-	}
-
 	public void saveUnfinishedPlots() {
 		dataConfig.set("unfinishedplots", unfinishedPlots);
-		dataConfig.saveConfig();
+		dataStorage.saveConfig();
 	}
 
 	public void loadUnfinishedPlots() {
@@ -457,12 +415,12 @@ public class SlapHomebrew extends JavaPlugin {
 		String date = new SimpleDateFormat("MMM.d HH:mm z").format(new Date());
 		date = date.substring(0, 1).toUpperCase() + date.substring(1);
 		dataConfig.set("bumps." + date, name);
-		dataConfig.saveConfig();
+		dataStorage.saveConfig();
 	}
 
 	public void saveUnfinishedForumVip() {
 		dataConfig.set("unfinishedforumvip", unfinishedForumVip);
-		dataConfig.saveConfig();
+		dataStorage.saveConfig();
 	}
 
 	public void loadUnfinishedForumVip() {
@@ -474,7 +432,7 @@ public class SlapHomebrew extends JavaPlugin {
 		for (Map.Entry<Integer, String> entry : forumVip.entrySet()) {
 			dataConfig.set("forumvip." + entry.getKey(), entry.getValue());
 		}
-		dataConfig.saveConfig();
+		dataStorage.saveConfig();
 	}
 
 	public void loadForumVip() {
@@ -483,51 +441,6 @@ public class SlapHomebrew extends JavaPlugin {
 		for (String key : dataConfig.getConfigurationSection("forumvip").getKeys(false)) {
 			forumVip.put(Integer.valueOf(key), dataConfig.getString("forumvip." + key));
 		}
-	}
-
-	public void addHomes(String playerName) {
-		if (vipConfig.getConfigurationSection("homes") == null) {
-			vipConfig.createSection("homes");
-		}
-		PermissionUser user = PermissionsEx.getUser(playerName);
-		//Remove old homes permission (if required)
-		if (vipConfig.getConfigurationSection("homes").contains(playerName)) {
-			String permission = "essentials.sethome.multiple." + Integer.toString(getHomes(playerName));
-			user.removePermission(permission);
-			//If player has already bought homes in the past, add them.
-			vipConfig.getConfigurationSection("homes").set(playerName, vipConfig.getConfigurationSection("homes").getInt(playerName) + 1);
-		} else {
-			//Otherwise, just set it to 1.
-			vipConfig.getConfigurationSection("homes").set(playerName, 1);
-		}
-		vipConfig.saveConfig();
-		String permission = "essentials.sethome.multiple." + Integer.toString(getHomes(playerName));
-		user.addPermission(permission);
-	}
-
-	public int getHomes(String playerName) {
-		int homes = 0;
-		PermissionUser user = PermissionsEx.getUser(playerName);
-		String[] group = user.getGroupsNames();
-		//Get group homes.
-		if (group[0].equalsIgnoreCase("builder")) {
-			homes = 1;
-		} else if (group[0].equalsIgnoreCase("member") || group[0].equalsIgnoreCase("guide") || group[0].equalsIgnoreCase("vipguide")) {
-			homes = 4;
-		} else if (group[0].equalsIgnoreCase("slap")) {
-			homes = 6;
-		} else if (group[0].equalsIgnoreCase("vip")) {
-			homes = 8;
-		} else if (group[0].equalsIgnoreCase("mod")) {
-			homes = 15;
-		} else if (group[0].equalsIgnoreCase("admin")) {
-			homes = 25;
-		}
-		//Add bought homes.
-		if (vipConfig.getConfigurationSection("homes").contains(playerName)) {
-			homes += 20 * vipConfig.getConfigurationSection("homes").getInt(playerName);
-		}
-		return homes;
 	}
 
 	public Bump getBump() {

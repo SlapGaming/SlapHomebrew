@@ -19,6 +19,8 @@ public class CommandHandler {
 			commandObj = new BackdeathCommand(sender, args, plugin);
 		} else if (command.equals("blockfaq")) {
 			commandObj = new BlockfaqCommand(sender, args, plugin);
+		} else if (command.equals("boat")) {
+			commandObj = new BoatCommand(sender, args, plugin);
 		} else if (command.equals("bumpdone")) {
 			commandObj = new BumpdoneCommand(sender, args, plugin);
 		} else if (command.equals("cakedefence")) {
@@ -52,50 +54,37 @@ public class CommandHandler {
 		} else if (command.equals("tpblock")) {
 			commandObj = new TpBlockCommand(sender, args, plugin);
 		} else if (command.equals("vip")) {
-			commandObj = new VipCommand(sender, args, plugin);
+			//TODO
+			//Remove the plugin.get stuff, just pass it through the constructor.
+			commandObj = new VipCommand(sender, args, plugin, plugin.getVipStorage(), plugin.getVip());
 		} else if (command.equals("warpcakedefence")) {
 			commandObj = new WarpcakedefenceCommand(sender, args, plugin);
 		} else if (command.equals("warppvp")) {
 			commandObj = new WarppvpCommand(sender, args, plugin);
 		} else if (command.equals("slap")) {
 			commandObj = new SlapCommand(sender, args, plugin);
-		} else if (command.equals("plot")){
-			if(args.length == 0){
+		} else if (command.equals("plot")) {
+			if (args.length == 0) {
 				//TODO Remove pmark, ptp, pdone and pcheck
 			}
 		}
 
-		/*if (commandLabel.equalsIgnoreCase("plot")) {
-			if (args.length > 0) {
-				String arg = args[0];
-				if (arg.equalsIgnoreCase("mark")) {
-					markCommand(player, args);
-				}
-				if (arg.equalsIgnoreCase("check")) {
-					checkCommand(player, args);
-				}
-				if (arg.equalsIgnoreCase("tp") || arg.equalsIgnoreCase("tpid")) {
-					tpCommand(player, args);
-				}
-				if (arg.equalsIgnoreCase("done")) {
-					doneCommand(player, args);
-				}
-			}
-		}
+		/*
+		 * if (commandLabel.equalsIgnoreCase("plot")) { if (args.length > 0) {
+		 * String arg = args[0]; if (arg.equalsIgnoreCase("mark")) {
+		 * markCommand(player, args); } if (arg.equalsIgnoreCase("check")) {
+		 * checkCommand(player, args); } if (arg.equalsIgnoreCase("tp") ||
+		 * arg.equalsIgnoreCase("tpid")) { tpCommand(player, args); } if
+		 * (arg.equalsIgnoreCase("done")) { doneCommand(player, args); } } }
+		 * 
+		 * if (commandLabel.equalsIgnoreCase("pmark")) { markCommand(player,
+		 * args); } if (commandLabel.equalsIgnoreCase("pcheck")) {
+		 * checkCommand(player, args); } if
+		 * (commandLabel.equalsIgnoreCase("ptp")) { tpCommand(player, args); }
+		 * if (commandLabel.equalsIgnoreCase("pdone")) { doneCommand(player,
+		 * args); }
+		 */
 
-		if (commandLabel.equalsIgnoreCase("pmark")) {
-			markCommand(player, args);
-		}
-		if (commandLabel.equalsIgnoreCase("pcheck")) {
-			checkCommand(player, args);
-		}
-		if (commandLabel.equalsIgnoreCase("ptp")) {
-			tpCommand(player, args);
-		}
-		if (commandLabel.equalsIgnoreCase("pdone")) {
-			doneCommand(player, args);
-		}*/
-		
 		if (commandObj != null) {
 			boolean handled = commandObj.handle();
 			if (!handled) {

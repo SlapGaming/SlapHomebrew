@@ -7,9 +7,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
+import me.naithantu.SlapHomebrew.Util;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -20,15 +22,22 @@ import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 public class LoginListener implements Listener {
 	SlapHomebrew plugin;
-	YamlStorage timeConfig;
-	YamlStorage dataConfig;
-	YamlStorage vipConfig;
+	YamlStorage timeStorage;
+	YamlStorage dataStorage;
+	YamlStorage vipStorage;
 	
-	public LoginListener(SlapHomebrew plugin){
+	FileConfiguration timeConfig;
+	FileConfiguration dataConfig;
+	FileConfiguration vipConfig;
+	
+	public LoginListener(SlapHomebrew plugin, YamlStorage timeStorage, YamlStorage dataStorage, YamlStorage vipStorage){
 		this.plugin = plugin;
-		timeConfig = plugin.getTimeConfig();
-		dataConfig = plugin.getDataConfig();
-		vipConfig = plugin.getVipConfig();
+		this.timeStorage = timeStorage;
+		this.dataStorage = dataStorage;
+		this.vipStorage = vipStorage;
+		timeConfig = timeStorage.getConfig();
+		dataConfig = dataStorage.getConfig();
+		vipConfig = vipStorage.getConfig();
 	}
 	
 
@@ -38,8 +47,7 @@ public class LoginListener implements Listener {
 		if(player.hasPermission("slaphomebrew.staff")){
 			String date = new SimpleDateFormat("MMM-d HH:mm:ss z").format(new Date());
 			date = date.substring(0, 1).toUpperCase() + date.substring(1);
-			addToConfig(date, player.getName() + " logged in.");
-			timeConfig.saveConfig();
+			Util.dateIntoTimeConfig(date, player.getName() + " logged in", timeStorage);
 		}
 		
 		//Plot message
@@ -73,14 +81,14 @@ public class LoginListener implements Listener {
 		dataConfig.set("vipdate.day", vipDay);
 		dataConfig.set("vipdate.month", vipMonth);
 		dataConfig.set("vipdate.year", vipYear);
-		dataConfig.saveConfig();
+		dataStorage.saveConfig();
 
 		//Check homes.
 		if (vipConfig.getConfigurationSection("homes") != null) {
 			if (vipConfig.getConfigurationSection("homes").contains(player.getName())) {
-				if (!player.hasPermission("essentials.sethome.multiple." + Integer.toString(plugin.getHomes(player.getName())))) {
+				if (!player.hasPermission("essentials.sethome.multiple." + Integer.toString(plugin.getVip().getHomes(player.getName())))) {
 					PermissionUser user = PermissionsEx.getUser(player.getName());
-					String permission = "essentials.sethome.multiple." + Integer.toString(plugin.getHomes(player.getName()));
+					String permission = "essentials.sethome.multiple." + Integer.toString(plugin.getVip().getHomes(player.getName()));
 					user.addPermission(permission);
 				}
 			}
@@ -105,20 +113,11 @@ public class LoginListener implements Listener {
 				entry.setValue(entry.getValue() - 1);
 			}
 			if (entry.getValue() == 0) {
-				plugin.demoteVip(entry.getKey());
+				plugin.getVip().demoteVip(entry.getKey());
 			} else {
 				vipConfig.getConfigurationSection("vipdays").set(entry.getKey(), entry.getValue());
 			}
 		}
-		vipConfig.saveConfig();
-	}
-	
-	void addToConfig(String date, String message){
-		int i = 1;
-		while(timeConfig.contains(date)){
-			date += "(" + i + ")";
-			i++;
-		}
-		timeConfig.set(date, message);
+		vipStorage.saveConfig();
 	}
 }

@@ -12,12 +12,14 @@ import java.util.Map;
 import java.util.Set;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
+import me.naithantu.SlapHomebrew.Vip;
 import me.naithantu.SlapHomebrew.VipForumMarkCommands;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -33,11 +35,15 @@ public class VipCommand extends AbstractVipCommand {
 
 	Integer used = 0;
 	HashSet<String> vipItemsList = new HashSet<String>();
-	YamlStorage vipConfig;
+	YamlStorage vipStorage;
+	FileConfiguration vipConfig;
+	Vip vipUtil;
 
-	public VipCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
+	public VipCommand(CommandSender sender, String[] args, SlapHomebrew plugin, YamlStorage vipStorage, Vip vipUtil) {
 		super(sender, args, plugin);
-		vipConfig = plugin.getVipConfig();
+		this.vipStorage = vipStorage;
+		vipConfig = vipStorage.getConfig();
+		this.vipUtil = vipUtil;
 	}
 
 	public boolean handle() {
@@ -222,7 +228,7 @@ public class VipCommand extends AbstractVipCommand {
 			}
 
 			if (arg.equalsIgnoreCase("homes")) {
-				sender.sendMessage(header + "You are allowed to set " + plugin.getHomes(sender.getName()) + " homes!");
+				sender.sendMessage(header + "You are allowed to set " + vipUtil.getHomes(sender.getName()) + " homes!");
 			}
 
 			if (arg.equalsIgnoreCase("grantlistamount") || arg.equalsIgnoreCase("listamount")) {
@@ -395,7 +401,7 @@ public class VipCommand extends AbstractVipCommand {
 				//If arg3 == -1, set to -1 (infinite)
 				if (arg3 == -1) {
 					vipConfig.getConfigurationSection("vipdays").set(arg2, -1);
-					plugin.promoteVip(arg2);
+					vipUtil.promoteVip(arg2);
 					sender.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "Player " + args[1] + " now has lifetime VIP!");
 					return true;
 				}
@@ -408,9 +414,9 @@ public class VipCommand extends AbstractVipCommand {
 				PermissionUser user = PermissionsEx.getUser(args[1]);
 				String[] groupNames = user.getGroupsNames();
 				if (!groupNames[0].contains("VIP")) {
-					plugin.promoteVip(arg2);
+					vipUtil.promoteVip(arg2);
 				}
-				vipConfig.saveConfig();
+				vipStorage.saveConfig();
 				if (daysLeft > 0) {
 					sender.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "Added " + arg3 + " days to player " + args[1] + ", this player now has " + (arg3 + daysLeft)
 							+ " VIP days remaining!");
@@ -440,17 +446,17 @@ public class VipCommand extends AbstractVipCommand {
 				if (arg3 == 0) {
 					sender.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "Player " + args[1] + " is no longer a VIP!");
 					vipConfig.getConfigurationSection("vipdays").set(arg2, null);
-					plugin.demoteVip(arg2);
+					vipUtil.demoteVip(arg2);
 				} else {
 					sender.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "Player " + args[1] + " now has " + arg3 + " days remaining!");
 					vipConfig.getConfigurationSection("vipdays").set(arg2, arg3);
 					PermissionUser user = PermissionsEx.getUser(args[1]);
 					String[] groupNames = user.getGroupsNames();
 					if (!groupNames[0].contains("VIP")) {
-						plugin.promoteVip(arg2);
+						vipUtil.promoteVip(arg2);
 					}
 				}
-				vipConfig.saveConfig();
+				vipStorage.saveConfig();
 				return true;
 			}
 
@@ -494,14 +500,14 @@ public class VipCommand extends AbstractVipCommand {
 					PermissionUser user = PermissionsEx.getUser(args[1]);
 					String[] groupNames = user.getGroupsNames();
 					if (!groupNames[0].contains("VIP")) {
-						plugin.promoteVip(arg2);
+						vipUtil.promoteVip(arg2);
 					}
 				} else {
 					sender.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "Removed " + arg3 + " days from player " + args[1] + ", this player is no longer a VIP!");
 					vipConfig.getConfigurationSection("vipdays").set(arg2, null);
-					plugin.demoteVip(arg2);
+					vipUtil.demoteVip(arg2);
 				}
-				vipConfig.saveConfig();
+				vipStorage.saveConfig();
 				return true;
 			}
 
@@ -552,7 +558,7 @@ public class VipCommand extends AbstractVipCommand {
 				} else {
 					return false;
 				}
-				plugin.addHomes(playerName);
+				vipUtil.addHomes(playerName);
 				sender.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "20 homes added to player " + playerName);
 				return true;
 			}

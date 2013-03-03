@@ -10,7 +10,7 @@ import me.naithantu.SlapHomebrew.SlapHomebrew;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-public class YamlStorage extends YamlConfiguration{
+public class YamlStorage {
 	SlapHomebrew plugin;
 	String fileName;
 	File file;
@@ -19,6 +19,7 @@ public class YamlStorage extends YamlConfiguration{
 	public YamlStorage(SlapHomebrew plugin, String fileName) {
 		this.plugin = plugin;
 		this.fileName = fileName + ".yml";
+		getConfig();
 	}
 
 	public void reloadConfig() {
