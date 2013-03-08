@@ -23,14 +23,6 @@ public class Vip {
 		String[] vipGuideGroup = { "VIPGuide" };
 		PermissionUser user = PermissionsEx.getUser(playerName);
 		//Remove old homes permission (if required)
-		if (vipConfig == null) {
-			System.out.println("CONFIG IS NULL");
-		}
-		if(vipConfig.getConfigurationSection("homes") == null){
-			System.out.println("CONFIG SECTION \'HOMES\' is null!");
-		}
-		vipConfig.set("testyfacystring", "this is liek a string to test yo dawg");
-		vipStorage.saveConfig();
 		if (vipConfig.getConfigurationSection("homes").contains(playerName)) {
 			String permission = "essentials.sethome.multiple." + Integer.toString(getHomes(playerName));
 			user.removePermission(permission);

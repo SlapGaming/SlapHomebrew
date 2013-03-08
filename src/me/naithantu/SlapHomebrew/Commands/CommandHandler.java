@@ -54,8 +54,7 @@ public class CommandHandler {
 		} else if (command.equals("tpblock")) {
 			commandObj = new TpBlockCommand(sender, args, plugin);
 		} else if (command.equals("vip")) {
-			//TODO
-			//Remove the plugin.get stuff, just pass it through the constructor.
+			//TODO Remove the plugin.get stuff, just pass it through the constructor.
 			commandObj = new VipCommand(sender, args, plugin, plugin.getVipStorage(), plugin.getVip());
 		} else if (command.equals("warpcakedefence")) {
 			commandObj = new WarpcakedefenceCommand(sender, args, plugin);

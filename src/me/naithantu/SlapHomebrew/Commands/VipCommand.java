@@ -1,16 +1,13 @@
 package me.naithantu.SlapHomebrew.Commands;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import me.naithantu.SlapHomebrew.IconMenu;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Vip;
 import me.naithantu.SlapHomebrew.VipForumMarkCommands;
@@ -24,8 +21,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-import com.google.common.base.Joiner;
-
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
@@ -38,6 +33,8 @@ public class VipCommand extends AbstractVipCommand {
 	YamlStorage vipStorage;
 	FileConfiguration vipConfig;
 	Vip vipUtil;
+
+	List<String> vipCommands = Arrays.asList("grant", "copybook", "homes", "list", "grantlist", "resetgrant", "add", "set", "remove", "days", "addhomes", "givemoney", "mark", "check", "done");
 
 	public VipCommand(CommandSender sender, String[] args, SlapHomebrew plugin, YamlStorage vipStorage, Vip vipUtil) {
 		super(sender, args, plugin);
@@ -71,15 +68,7 @@ public class VipCommand extends AbstractVipCommand {
 			player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "Not a VIP? Go to slap-gaming.com/vip!");
 		}
 
-		if (arg.equalsIgnoreCase("givemoney") || arg.equalsIgnoreCase("addhomes") || arg.equalsIgnoreCase("resetvip") || arg.equalsIgnoreCase("grantlist") || arg.equalsIgnoreCase("list")
-				|| arg.equalsIgnoreCase("grant") || arg.equalsIgnoreCase("grantlistamount") || arg.equalsIgnoreCase("listamount") || arg.equalsIgnoreCase("resetvipgrantpermissions")
-				|| arg.equalsIgnoreCase("resetgrant") || arg.equalsIgnoreCase("changevipspawnpermissions") || arg.equalsIgnoreCase("changegrant") || arg.equalsIgnoreCase("removevipspawnpermissions")
-				|| arg.equalsIgnoreCase("removegrant") || arg.equalsIgnoreCase("help") || arg.equalsIgnoreCase("resetconfig") || arg.equalsIgnoreCase("testconfig")
-				|| arg.equalsIgnoreCase("makeconfig") || arg.equalsIgnoreCase("saveuses") || arg.equalsIgnoreCase("loaduses") || arg.equalsIgnoreCase("clearuses") || arg.equalsIgnoreCase("useslist")
-				|| arg.equalsIgnoreCase("saveconfig") || arg.equalsIgnoreCase("add") || arg.equalsIgnoreCase("remove") || arg.equalsIgnoreCase("set") || arg.equalsIgnoreCase("days")
-				|| arg.equalsIgnoreCase("vips") || arg.equalsIgnoreCase("message") || arg.equalsIgnoreCase("check") || arg.equalsIgnoreCase("mark") || arg.equalsIgnoreCase("done")
-				|| arg.equalsIgnoreCase("homes") || arg.equalsIgnoreCase("copybook")) {
-
+		if (vipCommands.contains(arg)) {
 			if (arg.equalsIgnoreCase("grant")) {
 				if (!(sender instanceof Player)) {
 					this.badMsg(sender, "You need to be in-game to do that.");
@@ -88,16 +77,18 @@ public class VipCommand extends AbstractVipCommand {
 				int type;
 				Player player = (Player) sender;
 				if (player.hasPermission("slaphomebrew.grant")) {
+					if (player.getInventory().firstEmpty() == -1) {
+						player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "Your inventory is already full!");
+						return true;
+					}
 
+					setupIconMenu(player);
+
+					//TODO Add iconmenu to choose items!
 					try {
 						arg = args[1];
 					} catch (ArrayIndexOutOfBoundsException e) {
 						player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "You haven't chosen an item to be given!");
-						return true;
-					}
-
-					if (player.getInventory().firstEmpty() == -1) {
-						player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "Your inventory is already full!");
 						return true;
 					}
 
@@ -258,17 +249,7 @@ public class VipCommand extends AbstractVipCommand {
 				}
 			}
 
-			if (arg.equalsIgnoreCase("resetvip")) {
-				Player player = (Player) sender;
-				if (player.hasPermission("slaphomebrew.managevip")) {
-					player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "All uses have been reset!");
-					SlapHomebrew.usedGrant.clear();
-				} else {
-					player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "You don't have permission for that!");
-				}
-			}
-
-			if (arg.equalsIgnoreCase("resetvipspawnpermissions") || arg.equalsIgnoreCase("resetgrant")) {
+			if (arg.equalsIgnoreCase("resetgrant")) {
 				Player player = (Player) sender;
 				if (player.hasPermission("slaphomebrew.managevip")) {
 					SlapHomebrew.vipItems.clear();
@@ -305,72 +286,6 @@ public class VipCommand extends AbstractVipCommand {
 					player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "The vip items list has been reset to default!");
 				} else {
 					player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "You don't have permission for that!");
-				}
-			}
-			if (arg.equalsIgnoreCase("changevipspawnpermissions") || arg.equalsIgnoreCase("changegrant")) {
-				Player player = (Player) sender;
-				if (player.hasPermission("slaphomebrew.managevip")) {
-					try {
-						arg = args[1];
-					} catch (ArrayIndexOutOfBoundsException e) {
-						player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "Usage: /changevipspawnpermissions itemcode amount!");
-						return true;
-					}
-					try {
-						arg1 = args[2];
-					} catch (ArrayIndexOutOfBoundsException e) {
-						player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "Usage: /changevipspawnpermissions itemcode amount!");
-						return true;
-					}
-					Integer itemcode = 0;
-					Integer itemamount = 0;
-					itemcode = Integer.valueOf(arg);
-					itemamount = Integer.valueOf(arg1);
-					if (SlapHomebrew.vipItems.containsKey(itemcode))
-						SlapHomebrew.vipItems.remove(itemcode);
-					if (itemcode > 0 && itemcode < 122)
-						SlapHomebrew.vipItems.put(itemcode, itemamount);
-					player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "The vip item list has been edited!");
-				} else {
-					player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "You don't have permission for that!");
-				}
-			}
-			if (arg.equalsIgnoreCase("removevipspawnpermissions") || arg.equalsIgnoreCase("removegrant")) {
-				Player player = (Player) sender;
-				if (player.hasPermission("slaphomebrew.managevip")) {
-					try {
-						arg = args[1];
-					} catch (ArrayIndexOutOfBoundsException e) {
-						player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "Usage: /removevipspawnpermissions itemcode!");
-						return true;
-					}
-					Integer itemcode = 0;
-					itemcode = Integer.valueOf(arg);
-					if (SlapHomebrew.vipItems.containsKey(itemcode))
-						SlapHomebrew.vipItems.remove(itemcode);
-					player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "The vip item list has been edited!");
-				} else {
-					player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "You don't have permission for that!");
-				}
-			}
-			if (arg.equalsIgnoreCase("gettime")) {
-				Player player = (Player) sender;
-				if (player.hasPermission("slaphomebrew.managevip")) {
-					DateFormat checkDay = new SimpleDateFormat("dd");
-					DateFormat checkMonth = new SimpleDateFormat("MM");
-					DateFormat checkYear = new SimpleDateFormat("yyyy");
-					Date date = new Date();
-					int vipDay = Integer.valueOf(checkDay.format(date));
-					int vipMonth = Integer.valueOf(checkMonth.format(date));
-					int vipYear = Integer.valueOf(checkYear.format(date));
-					if (vipDay > plugin.getConfig().getInt("vipdate.day") || vipYear > plugin.getConfig().getInt("vipdate.month") || vipYear > plugin.getConfig().getInt("vipdate.year")) {
-						SlapHomebrew.usedGrant.clear();
-					}
-					plugin.getConfig().set("vipdate.day", vipDay);
-					plugin.getConfig().set("vipdate.month", vipMonth);
-					plugin.getConfig().set("vipdate.year", vipYear);
-					plugin.saveConfig();
-					player.sendMessage(ChatColor.RED + "This command is deprecated, do not use it!");
 				}
 			}
 
@@ -525,23 +440,9 @@ public class VipCommand extends AbstractVipCommand {
 				} else if (vipConfig.getConfigurationSection("vipdays").getInt(arg2) == -1) {
 					player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + args[1] + " has lifetime VIP!");
 				} else {
-					player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + args[1] + " has " + vipConfig.getConfigurationSection("vipdays").getInt(arg2)
-							+ " VIP days remaining!");
+					player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + args[1] + " has " + vipConfig.getConfigurationSection("vipdays").getInt(arg2) + " VIP days remaining!");
 				}
 				return true;
-			}
-
-			if (arg.equalsIgnoreCase("vips")) {
-				Player player = (Player) sender;
-				if (!player.hasPermission("slaphomebrew.vip.vips")) {
-					player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "You don't have permission for that!");
-					return true;
-				}
-				HashMap<String, Integer> tempMap = new HashMap<String, Integer>();
-				for (String key : vipConfig.getConfigurationSection("vipdays").getKeys(false)) {
-					tempMap.put(key, vipConfig.getInt("vipdays." + key));
-				}
-				player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "The current vips are: " + tempMap);
 			}
 
 			if (arg.equalsIgnoreCase("addhomes")) {
@@ -598,22 +499,6 @@ public class VipCommand extends AbstractVipCommand {
 				return true;
 			}
 
-			if (arg.equalsIgnoreCase("message")) {
-				if (sender instanceof Player) {
-					Player player = (Player) sender;
-					if (!player.hasPermission("slaphomebrew.vip.message")) {
-						player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "You don't have permission for that!");
-						return true;
-					}
-				}
-				List<String> message = new ArrayList<String>();
-				for (int i = 1; i < args.length; i++) {
-					message.add(args[i]);
-				}
-				String fullMessage = Joiner.on(" ").join(message);
-				plugin.getServer().broadcastMessage(ChatColor.translateAlternateColorCodes('&', fullMessage));
-			}
-
 			/*
 			 * Vip Forum Promotion Commands
 			 */
@@ -641,4 +526,17 @@ public class VipCommand extends AbstractVipCommand {
 		return true;
 	}
 
+	public void setupIconMenu(Player player) {
+		//TODO Remove iconMenu stuff here, just testing.
+		IconMenu iconMenu = new IconMenu("vipMenu", 9, new IconMenu.OptionClickEventHandler() {
+			@Override
+			public void onOptionClick(IconMenu.OptionClickEvent event) {
+				event.getPlayer().sendMessage("You have chosen " + event.getName());
+				event.setWillClose(true);
+				event.setWillDestroy(true);
+			}
+		}, plugin).setOption(3, new ItemStack(Material.APPLE, 1), "Food", "The food is delicious").setOption(4, new ItemStack(Material.IRON_SWORD, 1), "Weapon", "Weapons are for awesome people")
+				.setOption(5, new ItemStack(Material.EMERALD, 1), "Money", "Money brings happiness");
+		iconMenu.open(player);
+	}
 }
