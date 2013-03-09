@@ -82,7 +82,7 @@ public class VipCommand extends AbstractVipCommand {
 						return true;
 					}
 
-					setupIconMenu(player);
+					//setupIconMenu(player);
 
 					//TODO Add iconmenu to choose items!
 					try {
