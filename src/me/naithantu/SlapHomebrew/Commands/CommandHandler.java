@@ -63,26 +63,19 @@ public class CommandHandler {
 		} else if (command.equals("slap")) {
 			commandObj = new SlapCommand(sender, args, plugin);
 		} else if (command.equals("plot")) {
-			if (args.length == 0) {
-				//TODO Remove pmark, ptp, pdone and pcheck
+			if (args.length == 0)
+				return false;
+			String arg = args[0].toLowerCase();
+			if (arg.equals("check")) {
+				commandObj = new PlotcheckCommand(sender, args, plugin);
+			} else if (arg.equals("done")) {
+				commandObj = new PlotdoneCommand(sender, args, plugin);
+			} else if (arg.equals("mark")) {
+				commandObj = new PlotmarkCommand(sender, args, plugin);
+			} else if (arg.equals("tp")) {
+				commandObj = new PlottpCommand(sender, args, plugin);
 			}
 		}
-
-		/*
-		 * if (commandLabel.equalsIgnoreCase("plot")) { if (args.length > 0) {
-		 * String arg = args[0]; if (arg.equalsIgnoreCase("mark")) {
-		 * markCommand(player, args); } if (arg.equalsIgnoreCase("check")) {
-		 * checkCommand(player, args); } if (arg.equalsIgnoreCase("tp") ||
-		 * arg.equalsIgnoreCase("tpid")) { tpCommand(player, args); } if
-		 * (arg.equalsIgnoreCase("done")) { doneCommand(player, args); } } }
-		 * 
-		 * if (commandLabel.equalsIgnoreCase("pmark")) { markCommand(player,
-		 * args); } if (commandLabel.equalsIgnoreCase("pcheck")) {
-		 * checkCommand(player, args); } if
-		 * (commandLabel.equalsIgnoreCase("ptp")) { tpCommand(player, args); }
-		 * if (commandLabel.equalsIgnoreCase("pdone")) { doneCommand(player,
-		 * args); }
-		 */
 
 		if (commandObj != null) {
 			boolean handled = commandObj.handle();

@@ -2,7 +2,6 @@ package me.naithantu.SlapHomebrew.Listeners;
 
 import me.naithantu.SlapHomebrew.Vehicles;
 
-import org.bukkit.Location;
 import org.bukkit.entity.Boat;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Vehicle;
@@ -10,7 +9,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
-import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 
 public class VehicleListener implements Listener {

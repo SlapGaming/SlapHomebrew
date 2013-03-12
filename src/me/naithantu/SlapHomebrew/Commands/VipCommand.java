@@ -45,7 +45,6 @@ public class VipCommand extends AbstractVipCommand {
 
 	public boolean handle() {
 		String arg = null;
-		String arg1 = null;
 		try {
 			arg = args[0];
 		} catch (ArrayIndexOutOfBoundsException e) {
