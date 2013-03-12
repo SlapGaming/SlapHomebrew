@@ -1,6 +1,7 @@
 package me.naithantu.SlapHomebrew.Listeners;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
+import me.naithantu.SlapHomebrew.Util;
 
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -25,17 +26,7 @@ public class DeathListener implements Listener {
 			Player player = event.getEntity();
 			World world = player.getWorld();
 			if (player.hasPermission("slaphomebrew.backdeath")) {
-				Boolean allowBackDeath = true;
-				RegionManager regionManager = plugin.getWorldGuard().getRegionManager(world);
-				ApplicableRegionSet noBackDeathRegions = regionManager.getApplicableRegions(player.getLocation());
-				for(ProtectedRegion region: noBackDeathRegions){
-					if(region.getMembers().contains("nobackdeath")){
-						allowBackDeath = false;
-						break;
-					}
-				}
-				
-				if (!world.getName().equalsIgnoreCase("world_pvp") && !world.getName().equalsIgnoreCase("world_the_end") && allowBackDeath) {
+				if (!world.getName().equalsIgnoreCase("world_pvp") && !world.getName().equalsIgnoreCase("world_the_end") && !Util.hasFlag(plugin, player.getLocation(), "nobackdeath")) {
 					SlapHomebrew.backDeath.put(player.getName(), player.getLocation());
 					player.sendMessage(ChatColor.GRAY + "Use the /backdeath command to return to your death point.");
 				}
