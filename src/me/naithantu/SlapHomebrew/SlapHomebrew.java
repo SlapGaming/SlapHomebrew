@@ -201,7 +201,7 @@ public class SlapHomebrew extends JavaPlugin {
 		return unfinishedForumVip;
 	}
 
-	HashMap<Integer, String> getForumVip() {
+	public HashMap<Integer, String> getForumVip() {
 		return forumVip;
 	}
 

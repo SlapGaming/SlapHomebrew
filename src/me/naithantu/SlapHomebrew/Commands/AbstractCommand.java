@@ -10,17 +10,17 @@ public abstract class AbstractCommand {
 
 	abstract public boolean handle();
 
-	CommandSender sender;
-	String[] args;
-	SlapHomebrew plugin;
+	protected CommandSender sender;
+	protected String[] args;
+	protected SlapHomebrew plugin;
 
-	public AbstractCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
+	protected AbstractCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
 		this.sender = sender;
 		this.args = args;
 		this.plugin = plugin;
 	}
 
-	public void msg(CommandSender sender, String msg) {
+	protected void msg(CommandSender sender, String msg) {
 		if (sender instanceof Player) {
 			sender.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + msg);
 		} else {
@@ -28,7 +28,7 @@ public abstract class AbstractCommand {
 		}
 	}
 
-	public void badMsg(CommandSender sender, String msg) {
+	protected void badMsg(CommandSender sender, String msg) {
 		if (sender instanceof Player) {
 			sender.sendMessage(ChatColor.RED + msg);
 		} else {
@@ -36,11 +36,11 @@ public abstract class AbstractCommand {
 		}
 	}
 
-	public void noPermission(CommandSender sender) {
+	protected void noPermission(CommandSender sender) {
 		sender.sendMessage(ChatColor.RED + "You do not have access to that command.");
 	}
 
-	public boolean testPermission(CommandSender sender, String perm) {
+	protected boolean testPermission(CommandSender sender, String perm) {
 		String permission = "slaphomebrew." + perm;
 		if (!(sender instanceof Player) || sender.hasPermission(permission))
 			return true;

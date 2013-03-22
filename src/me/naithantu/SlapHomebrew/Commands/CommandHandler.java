@@ -75,6 +75,17 @@ public class CommandHandler {
 			} else if (arg.equals("tp")) {
 				commandObj = new PlottpCommand(sender, args, plugin);
 			}
+		} else if (command.equals("vip")) {
+			if (args.length == 0)
+				return false;
+			String arg = args[0].toLowerCase();
+			if (arg.equals("check")) {
+				commandObj = new VipForumCheckCommand(sender, args, plugin);
+			} else if (arg.equals("done")) {
+				commandObj = new VipForumDoneCommand(sender, args, plugin);
+			} else if (arg.equals("mark")) {
+				commandObj = new VipForumMarkCommand(sender, args, plugin);
+			}
 		}
 
 		if (commandObj != null) {
