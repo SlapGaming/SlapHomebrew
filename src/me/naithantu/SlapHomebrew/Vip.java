@@ -12,7 +12,7 @@ import ru.tehkode.permissions.bukkit.PermissionsEx;
 public class Vip {
 	YamlStorage vipStorage;
 	FileConfiguration vipConfig;
-	
+
 	public Vip(YamlStorage vipStorage) {
 		this.vipStorage = vipStorage;
 		vipConfig = vipStorage.getConfig();
@@ -55,16 +55,18 @@ public class Vip {
 			user.removePermission(permission);
 		}
 
-		if (groupNames[0].contains("Guide")) {
+		if (groupNames[0].contains("VIPGuide")) {
+			//If they were a VIPGuide, demote to guide. Nothing else needs to be changed so no need to vip mark.
 			user.setGroups(guideGroup);
 			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "mail send " + playerName + " " + ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE
 					+ "You have been demoted to guide! Please visit slapgaming.com/vip to renew your VIP!");
-		} else {
+		} else if (groupNames[0].contains("VIP")) {
+			//If they were a VIP, demote to member and mark to remove forum & ventrilo VIP.
 			user.setGroups(memberGroup);
 			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "mail send " + playerName + " " + ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE
 					+ "You have been demoted to member! Please visit slapgaming.com/vip to renew your VIP!");
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "vip mark " + playerName + " demote");
 		}
-		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "vip mark " + playerName + " demote");
 
 		//Add new homes.
 		if (vipConfig.getConfigurationSection("homes").contains(playerName)) {
