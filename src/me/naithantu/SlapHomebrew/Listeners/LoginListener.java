@@ -93,6 +93,11 @@ public class LoginListener implements Listener {
 				}
 			}
 		}
+		
+		//Change wirelessPillows name to have a capital letter.
+		if(player.getName().equals("wirelessPillow")){
+			player.setDisplayName("WirelessPillow");
+		}
 	}
 	
 	private void updateVipDays() {
