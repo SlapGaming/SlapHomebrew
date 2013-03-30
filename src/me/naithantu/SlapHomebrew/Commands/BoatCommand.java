@@ -8,6 +8,7 @@ import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Boat;
 import org.bukkit.entity.Player;
+import org.bukkit.metadata.FixedMetadataValue;
 
 public class BoatCommand extends AbstractCommand {
 
@@ -37,7 +38,7 @@ public class BoatCommand extends AbstractCommand {
 		if (depth > 0 && depth <= 5) {
 			final Boat boat = w.spawn(player.getLocation().add(0, 1, 0), Boat.class);
 			boat.setPassenger(player);			
-			plugin.getVehicles().addBoat(boat);
+			boat.setMetadata("slapVehicle", new FixedMetadataValue(plugin, true));
 		} else {
 			this.badMsg(sender, "You can not use that here!");
 		}

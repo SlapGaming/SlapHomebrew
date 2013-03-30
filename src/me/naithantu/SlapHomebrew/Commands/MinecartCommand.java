@@ -6,6 +6,7 @@ import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
 
 public class MinecartCommand extends AbstractCommand {
@@ -36,7 +37,7 @@ public class MinecartCommand extends AbstractCommand {
 		if (railBlock == 66 || railBlock == 27 || railBlock == 28) {
 			Minecart minecart = w.spawn(player.getLocation(), Minecart.class);
 			minecart.setPassenger(player);
-			plugin.getVehicles().addMinecart(minecart);
+			minecart.setMetadata("slapVehicle", new FixedMetadataValue(plugin, true));
 			Vector v = minecart.getVelocity();
 			double degreeRotation = (player.getLocation().getYaw() - 90.0F) % 360.0F;
 			if (degreeRotation < 0.0D) {

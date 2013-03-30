@@ -67,7 +67,6 @@ public class SlapHomebrew extends JavaPlugin {
 	public static HashSet<String> message = new HashSet<String>();
 	public static HashSet<String> tpBlocks = new HashSet<String>();
 	
-	Vehicles vehicles = new Vehicles();
 	Bump bump = new Bump(this);
 
 	public static boolean allowCakeTp;
@@ -126,8 +125,8 @@ public class SlapHomebrew extends JavaPlugin {
 		pm.registerEvents(new LoginListener(this, timeStorage, dataStorage, vipStorage), this);
 		pm.registerEvents(new PotionListener(), this);
 		pm.registerEvents(new QuitListener(this, timeStorage), this);
-		pm.registerEvents(new TeleportListener(vehicles), this);
-		pm.registerEvents(new VehicleListener(vehicles), this);
+		pm.registerEvents(new TeleportListener(), this);
+		pm.registerEvents(new VehicleListener(), this);
 		pm.registerEvents(new PlayerInteractEntityListener(), this);
 
 		Plugin x = this.getServer().getPluginManager().getPlugin("Vault");
@@ -167,10 +166,6 @@ public class SlapHomebrew extends JavaPlugin {
 			return null;
 		}
 		return (WorldGuardPlugin) plugin;
-	}
-	
-	public Vehicles getVehicles(){
-		return vehicles;
 	}
 	
 	public Vip getVip(){
