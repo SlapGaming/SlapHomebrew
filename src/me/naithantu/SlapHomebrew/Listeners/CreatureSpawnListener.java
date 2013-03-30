@@ -3,11 +3,14 @@ package me.naithantu.SlapHomebrew.Listeners;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Util;
 
+import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Wither;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+import org.bukkit.metadata.FixedMetadataValue;
 
 public class CreatureSpawnListener implements Listener {
 	SlapHomebrew plugin;
@@ -20,6 +23,14 @@ public class CreatureSpawnListener implements Listener {
 		if (event.getEntity() instanceof Wither) {
 			//Always allow if the allowwitherspawn flag is used.
 			if (Util.hasFlag(plugin, event.getLocation(), "allowwitherspawn")) {
+				Location location = event.getEntity().getLocation();
+				//Add 2 to y to get the location of the center wither skull.
+				location.add(0, 2, 0);
+				Block block = location.getBlock();
+				System.out.println(block.getLocation());
+				if (block.hasMetadata("slapWitherSkull")) {
+					event.getEntity().setMetadata("slapWither", new FixedMetadataValue(plugin, block.getMetadata("slapWitherSkull")));
+				}
 				return;
 			}
 			//If flag isn't used, only allow creation in the nether world.

@@ -116,9 +116,11 @@ public class SlapHomebrew extends JavaPlugin {
 		Lottery lottery = new Lottery(this);
 		lottery.lotteryTimer();
 		pm = getServer().getPluginManager();
+		pm.registerEvents(new BlockPlaceListener(this), this);
 		pm.registerEvents(new ChatListener(this), this);
 		pm.registerEvents(new CommandListener(), this);
 		pm.registerEvents(new CreatureSpawnListener(this), this);
+		pm.registerEvents(new CreatureDeathListener(this), this);
 		pm.registerEvents(new DeathListener(this), this);
 		pm.registerEvents(new DispenseListener(), this);
 		pm.registerEvents(new InteractListener(this), this);
