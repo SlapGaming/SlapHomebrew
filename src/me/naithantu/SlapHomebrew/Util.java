@@ -59,18 +59,4 @@ public class Util {
 		}
 		return emptyInv;
 	}
-	
-	public static boolean hasFullInventory(Player player){
-		Boolean fullInv = true;
-		PlayerInventory inv = player.getInventory();
-		for (ItemStack stack : inv.getContents()) {
-			try {
-				if (stack.getType() == (Material.AIR)) {
-					fullInv = false;
-				}
-			} catch (NullPointerException e) {
-			}
-		}
-		return fullInv;
-	}
 }

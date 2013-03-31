@@ -27,9 +27,10 @@ public class CreatureSpawnListener implements Listener {
 				//Add 2 to y to get the location of the center wither skull.
 				location.add(0, 2, 0);
 				Block block = location.getBlock();
-				System.out.println(block.getLocation());
 				if (block.hasMetadata("slapWitherSkull")) {
-					event.getEntity().setMetadata("slapWither", new FixedMetadataValue(plugin, block.getMetadata("slapWitherSkull")));
+					String witherCreator = block.getMetadata("slapWitherSkull").get(0).asString();
+					event.getEntity().setMetadata("slapWither", new FixedMetadataValue(plugin, witherCreator));
+					System.out.println("[SLAP] Created slap wither, creator: " + witherCreator);
 				}
 				return;
 			}

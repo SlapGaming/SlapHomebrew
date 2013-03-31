@@ -1,8 +1,6 @@
 package me.naithantu.SlapHomebrew.Listeners;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
-import me.naithantu.SlapHomebrew.Util;
-
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -25,11 +23,12 @@ public class CreatureDeathListener implements Listener {
 		if (entity instanceof Wither) {
 			//If wither has slap metadata.
 			if (entity.hasMetadata("slapWither")) {
-				Player player = plugin.getServer().getPlayer(entity.getMetadata("slapWither").get(0).toString());
+				Player player = plugin.getServer().getPlayer(entity.getMetadata("slapWither").get(0).asString());
 				//Drop item naturally if player logged off, is dead or has a full inventory.
-				if (player == null || player.isDead() || Util.hasFullInventory(player))
+				if (player == null || player.isDead() || player.getInventory().firstEmpty() == -1)
 					return;
 				event.getDrops().clear();
+				System.out.println("[SLAP] Wither star has been given to: " + player.getName());
 				player.getInventory().addItem(new ItemStack(Material.NETHER_STAR, 1));
 			}
 		}
