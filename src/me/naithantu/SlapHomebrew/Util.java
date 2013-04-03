@@ -26,11 +26,11 @@ public class Util {
 		timeStorage.saveConfig();
 	}
 	
-	public static boolean hasFlag(SlapHomebrew plugin, Location location, String flag){
+	public static boolean hasFlag(SlapHomebrew plugin, Location location, Flag flag){
 		RegionManager regionManager = plugin.getWorldGuard().getRegionManager(location.getWorld());
 		ApplicableRegionSet noBackDeathRegions = regionManager.getApplicableRegions(location);
 		for(ProtectedRegion region: noBackDeathRegions){
-			if(region.getMembers().contains("flag:" + flag)){
+			if(region.getMembers().contains("flag:" + flag.toString())){
 				return true;
 			}
 		}

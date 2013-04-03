@@ -1,5 +1,6 @@
 package me.naithantu.SlapHomebrew.Listeners;
 
+import me.naithantu.SlapHomebrew.Flag;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Util;
 
@@ -22,7 +23,7 @@ public class CreatureSpawnListener implements Listener {
 	public void onWitherSpawn(CreatureSpawnEvent event) {
 		if (event.getEntity() instanceof Wither) {
 			//Always allow if the allowwitherspawn flag is used.
-			if (Util.hasFlag(plugin, event.getLocation(), "allowwitherspawn")) {
+			if (Util.hasFlag(plugin, event.getLocation(), Flag.ALLOWWITHERSPAWN)) {
 				Location location = event.getEntity().getLocation();
 				//Add 2 to y to get the location of the center wither skull.
 				location.add(0, 2, 0);

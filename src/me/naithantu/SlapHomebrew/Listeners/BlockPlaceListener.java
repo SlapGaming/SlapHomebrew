@@ -1,5 +1,6 @@
 package me.naithantu.SlapHomebrew.Listeners;
 
+import me.naithantu.SlapHomebrew.Flag;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Util;
 
@@ -22,7 +23,7 @@ public class BlockPlaceListener implements Listener {
 		//Add metadata to skulls placed in the wither arena to find out who made a wither.
 		Block block = event.getBlock();
 		if (block.getType() == Material.SKULL) {
-			if (Util.hasFlag(plugin, block.getLocation(), "allowwitherspawn")) {
+			if (Util.hasFlag(plugin, block.getLocation(), Flag.ALLOWWITHERSPAWN)) {
 				block.setMetadata("slapWitherSkull", new FixedMetadataValue(plugin, event.getPlayer().getName()));
 			}
 		}
