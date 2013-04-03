@@ -1,6 +1,8 @@
 package me.naithantu.SlapHomebrew.Listeners;
 
+import me.naithantu.SlapHomebrew.Flag;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
+import me.naithantu.SlapHomebrew.Util;
 import me.naithantu.SlapHomebrew.Commands.BlockfaqCommand;
 import me.naithantu.SlapHomebrew.Commands.MessageCommand;
 
@@ -20,6 +22,14 @@ public class ChatListener implements Listener {
 	public void onPlayerChat(AsyncPlayerChatEvent event) {
 		String serverMessage;
 		Player player = event.getPlayer();
+		//Block chat while in jail.
+		if(Util.hasFlag(plugin, player.getLocation(), Flag.JAIL)){
+			if(!player.hasPermission("slaphomebrew.staff")){
+				player.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + "You may not speak while in jail.");
+				event.setCancelled(true);
+			}
+		}
+		
 		if (!BlockfaqCommand.chatBotBlocks.contains(player.getName())) { //TODO
 			String message = event.getMessage().toLowerCase();
 			if (message.contains("i") && message.contains("can") && message.contains("member") || message.contains("how") && message.contains("get") && message.contains("member")
