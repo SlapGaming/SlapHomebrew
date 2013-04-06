@@ -50,7 +50,7 @@ public class VipCommand extends AbstractVipCommand {
 		} catch (ArrayIndexOutOfBoundsException e) {
 			Player player = (Player) sender;
 			if (vipConfig.getConfigurationSection("vipdays").getInt(player.getName().toLowerCase()) == 0) {
-				player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "You are not a VIP! Go to www.slap-gaming.com/vip for more info about VIP!");
+				player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "You are not a VIP! Go to www.www.slapgaming.com/vip for more info about VIP!");
 			} else if (vipConfig.getConfigurationSection("vipdays").getInt(player.getName().toLowerCase()) == -1) {
 				player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "You have lifetime VIP! :D");
 			} else {
@@ -64,7 +64,7 @@ public class VipCommand extends AbstractVipCommand {
 			Player player = (Player) sender;
 			player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "As a VIP you are allowed to spawn 3 stacks of items every day!");
 			player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "Use /vip list for a list of all the items and /vip grant [itemname] to spawn the item!");
-			player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "Not a VIP? Go to slap-gaming.com/vip!");
+			player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "Not a VIP? Go to www.slapgaming.com/vip!");
 		}
 
 		if (vipCommands.contains(arg)) {
@@ -171,7 +171,7 @@ public class VipCommand extends AbstractVipCommand {
 						player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "You are not allowed to spawn that!");
 					}
 				} else {
-					player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "You don't have permission for that! Go to slap-gaming.com/vip!");
+					player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "You don't have permission for that! Go to www.slapgaming.com/vip!");
 				}
 			}
 
@@ -213,7 +213,7 @@ public class VipCommand extends AbstractVipCommand {
 						player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + timesleft + " times left today.");
 					}
 				} else {
-					player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "You don't have permission for that! Go to slap-gaming.com/vip!");
+					player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "You don't have permission for that! Go to www.slapgaming.com/vip!");
 				}
 			}
 
@@ -227,7 +227,7 @@ public class VipCommand extends AbstractVipCommand {
 					//vipItemsList.clear();
 					player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "VIPs can spawn the item codes: " + SlapHomebrew.vipItems.toString());
 				} else {
-					player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "You don't have permission for that! Go to slap-gaming.com/vip!");
+					player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "You don't have permission for that! Go to www.slapgaming.com/vip!");
 				}
 			}
 
@@ -244,7 +244,7 @@ public class VipCommand extends AbstractVipCommand {
 					}
 					player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "VIPs can spawn the items: " + vipItemsList.toString());
 				} else {
-					player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "You don't have permission for that! Go to slap-gaming.com/vip!");
+					player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "You don't have permission for that! Go to www.slapgaming.com/vip!");
 				}
 			}
 
