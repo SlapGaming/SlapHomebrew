@@ -28,13 +28,26 @@ public class Util {
 	
 	public static boolean hasFlag(SlapHomebrew plugin, Location location, Flag flag){
 		RegionManager regionManager = plugin.getWorldGuard().getRegionManager(location.getWorld());
-		ApplicableRegionSet noBackDeathRegions = regionManager.getApplicableRegions(location);
-		for(ProtectedRegion region: noBackDeathRegions){
-			if(region.getMembers().contains("flag:" + flag.toString())){
-				return true;
+		ApplicableRegionSet regions = regionManager.getApplicableRegions(location);
+		for(ProtectedRegion region: regions){
+			for(String string: region.getMembers().getPlayers()){
+				if(string.startsWith("flag:" + flag.toString().toLowerCase()))
+					return true;
 			}
 		}
 		return false;
+	}
+	
+	public static String getFlag(SlapHomebrew plugin, Location location, Flag flag){
+		RegionManager regionManager = plugin.getWorldGuard().getRegionManager(location.getWorld());
+		ApplicableRegionSet regions = regionManager.getApplicableRegions(location);
+		for(ProtectedRegion region: regions){
+			for(String string: region.getMembers().getPlayers()){
+				if(string.startsWith("flag:" + flag.toString().toLowerCase()))
+					return string;
+			}
+		}
+		return null;
 	}
 	
 	public static boolean hasEmptyInventory(Player player){

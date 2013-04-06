@@ -1,0 +1,50 @@
+package me.naithantu.SlapHomebrew.Listeners;
+
+import java.util.logging.Level;
+
+import me.naithantu.SlapHomebrew.Flag;
+import me.naithantu.SlapHomebrew.SlapHomebrew;
+import me.naithantu.SlapHomebrew.Util;
+
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerMoveEvent;
+
+public class MoveListener implements Listener {
+	SlapHomebrew plugin;
+
+	public MoveListener(SlapHomebrew plugin) {
+		this.plugin = plugin;
+	}
+
+	@EventHandler
+	public void onPlayerMove(PlayerMoveEvent event) {
+		Player player = event.getPlayer();
+		Location location = player.getLocation();
+		//Teleport players to location defined in the member flag upon entering a region.
+		if (Util.hasFlag(plugin, location, Flag.TELEPORT)) {
+			String flag = Util.getFlag(plugin, location, Flag.TELEPORT);
+			String flagCoordinates = flag.replace("flag:teleport(", "").replace(")", "");
+			String[] flagLocation = flagCoordinates.split(":");
+			if(flagLocation.length < 3){
+				plugin.logger.log(Level.SEVERE, "Improperly defined teleport flag! " + location.getX() + ":" + location.getY() + ":" + location.getZ());
+				return;
+			}
+			try{
+				Location teleportLocation = new Location(location.getWorld(), Double.parseDouble(flagLocation[0]), Double.parseDouble(flagLocation[1]), Double.parseDouble(flagLocation[2]));
+				if(flagLocation.length > 3){
+					teleportLocation.setYaw(Float.parseFloat(flagLocation[3]));
+					if(flagLocation.length > 4){
+						teleportLocation.setPitch(Float.parseFloat(flagLocation[4]));
+					}
+				}
+				player.teleport(teleportLocation);
+			}catch(NumberFormatException e){
+				plugin.logger.log(Level.SEVERE, "Improperly defined teleport flag! " + location.getX() + ":" + location.getY() + ":" + location.getZ());
+				return;
+			}
+		}
+	}
+}
