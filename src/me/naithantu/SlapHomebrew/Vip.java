@@ -38,6 +38,9 @@ public class Vip {
 			String permission = "essentials.sethome.multiple." + Integer.toString(getHomes(playerName));
 			user.addPermission(permission);
 		}
+		
+		//Add money, mark to promote on forum and send a mail.
+		SlapHomebrew.econ.depositPlayer(playerName, 2500);
 		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "vip mark " + playerName + " promote");
 		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "mail send " + playerName + " " + ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE
 				+ "You have been promoted to VIP! For a full list of your new permissions, go to slapgaming.com/vip!");
