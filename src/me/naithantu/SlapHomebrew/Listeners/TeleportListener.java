@@ -12,6 +12,10 @@ public class TeleportListener implements Listener {
 	@EventHandler
 	public void onPlayerTeleport(PlayerTeleportEvent event) {
 		Player player = event.getPlayer();
+		if (player.getWorld().getName().equals("world_nether") && event.getTo().getBlockY() >= 127){ 
+			player.sendMessage(ChatColor.RED + "You may not go above the nether!");
+			event.setCancelled(true);
+		}
 		if (player.getWorld().getName().equals("world_pvp") && event.getCause().equals(TeleportCause.ENDER_PEARL)) {
 			player.sendMessage(ChatColor.GOLD + "[SLAP]" + ChatColor.WHITE + " Using ender pearls to teleport is not allowed in pvp!");
 			event.setCancelled(true);
