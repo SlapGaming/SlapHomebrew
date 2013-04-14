@@ -37,6 +37,8 @@ public class CommandHandler {
 			commandObj = new MobcheckCommand(sender, args, plugin);
 		} else if (command.equals("note")) {
 			commandObj = new NoteCommand(sender, args, plugin);
+		} else if (command.equals("pay")){
+			commandObj = new PayCommand(sender, args, plugin);
 		} else if (command.equals("potion")) {
 			commandObj = new PotionCommand(sender, args, plugin);
 		} else if (command.equals("ride")) {
@@ -47,6 +49,8 @@ public class CommandHandler {
 			commandObj = new SearchregionCommand(sender, args, plugin);
 		} else if (command.equals("sgm")) {
 			commandObj = new SgmCommand(sender, args, plugin);
+		} else if (command.equals("sparta")) {
+			commandObj = new SpartaCommand(sender, args, plugin);
 		} else if (command.equals("te")) {
 			commandObj = new TeCommand(sender, args, plugin);
 		} else if (command.equals("tpallow")) {

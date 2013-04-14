@@ -2,7 +2,7 @@ name: SlapHomebrew
 main: me.naithantu.SlapHomebrew.SlapHomebrew
 depend: [Vault, PermissionsEx]
 author: naithantu
-version: 2.5.3
+version: 2.5.4
 description: SlapHomebrew homemade plugin.
 commands:
   vip:
@@ -72,3 +72,9 @@ commands:
   ptp:
   pdone:
   bumpdone:
+  pay:
+    description: Pays another player from your balance
+    usage: "Usage: /pay [player] [amount]"
+  sparta:
+    description: Knock a player back. This is sparta.
+    usages: "Usage: /sparta [player]"
