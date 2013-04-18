@@ -29,7 +29,7 @@ public class PayCommand extends AbstractCommand {
 			return false;
 		}
 		
-		if (amount <= 0 || Double.isNaN(amount) || Double.isInfinite(amount))
+		if (amount <= 0 || Double.isInfinite(amount))
 			return false;
 				
 		//Round the amount to 2 decimals.
@@ -38,8 +38,10 @@ public class PayCommand extends AbstractCommand {
 
 		String receiver = args[0];
 		double senderBalance = SlapHomebrew.econ.getBalance(sender.getName());
-		if(!SlapHomebrew.econ.hasAccount(receiver))
-			this.badMsg(sender, "Player not found.");
+		if(!SlapHomebrew.econ.hasAccount(receiver)){
+			this.badMsg(sender, "Player not found (use exact player name).");
+			return true;
+		}
 		
 		if(senderBalance < amount){
 			this.badMsg(sender, "You do not have sufficient funds.");
