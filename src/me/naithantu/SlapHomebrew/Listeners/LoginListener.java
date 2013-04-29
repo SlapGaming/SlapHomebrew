@@ -4,8 +4,10 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import me.naithantu.SlapHomebrew.Book;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Util;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
@@ -25,12 +27,12 @@ public class LoginListener implements Listener {
 	YamlStorage timeStorage;
 	YamlStorage dataStorage;
 	YamlStorage vipStorage;
-	
+
 	FileConfiguration timeConfig;
 	FileConfiguration dataConfig;
 	FileConfiguration vipConfig;
-	
-	public LoginListener(SlapHomebrew plugin, YamlStorage timeStorage, YamlStorage dataStorage, YamlStorage vipStorage){
+
+	public LoginListener(SlapHomebrew plugin, YamlStorage timeStorage, YamlStorage dataStorage, YamlStorage vipStorage) {
 		this.plugin = plugin;
 		this.timeStorage = timeStorage;
 		this.dataStorage = dataStorage;
@@ -39,17 +41,16 @@ public class LoginListener implements Listener {
 		dataConfig = dataStorage.getConfig();
 		vipConfig = vipStorage.getConfig();
 	}
-	
 
 	@EventHandler
 	public void onPlayerLogin(PlayerLoginEvent event) {
 		final Player player = event.getPlayer();
-		if(player.hasPermission("slaphomebrew.staff")){
+		if (player.hasPermission("slaphomebrew.staff")) {
 			String date = new SimpleDateFormat("MMM-d HH:mm:ss z").format(new Date());
 			date = date.substring(0, 1).toUpperCase() + date.substring(1);
 			Util.dateIntoTimeConfig(date, player.getName() + " logged in", timeStorage);
 		}
-		
+
 		//Plot message
 		if (player.hasPermission("slaphomebrew.plot.admin") && plugin.getUnfinishedPlots().size() > 0) {
 			plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
@@ -93,13 +94,29 @@ public class LoginListener implements Listener {
 				}
 			}
 		}
-		
+
+		//Check vip book
+		if (vipConfig.getStringList("book") != null) {
+			List<String> playerList = vipConfig.getStringList("book");
+			if (playerList.contains(player.getName())) {
+				System.out.println("Giving book!");
+				plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+					public void run() {
+						player.getInventory().addItem(Book.getBook(new YamlStorage(plugin, "bookStorage")));
+					}
+				}, 1);
+				playerList.remove(player.getName());
+				vipConfig.set("book", playerList);
+				vipStorage.saveConfig();
+			}
+		}
+
 		//Change wirelessPillows name to have a capital letter.
-		if(player.getName().equals("wirelessPillow")){
+		if (player.getName().equals("wirelessPillow")) {
 			player.setDisplayName("WirelessPillow");
 		}
 	}
-	
+
 	private void updateVipDays() {
 		HashMap<String, Integer> tempMap = new HashMap<String, Integer>();
 		if (vipConfig.getConfigurationSection("vipdays") == null)

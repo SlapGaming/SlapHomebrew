@@ -1,5 +1,9 @@
 package me.naithantu.SlapHomebrew;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 
 import org.bukkit.Bukkit;
@@ -38,14 +42,22 @@ public class Vip {
 			String permission = "essentials.sethome.multiple." + Integer.toString(getHomes(playerName));
 			user.addPermission(permission);
 		}
-		
+
 		//Add money, mark to promote on forum and send a mail.
 		SlapHomebrew.econ.depositPlayer(playerName, 2500);
 		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "vip mark " + playerName + " promote");
 		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "mail send " + playerName + " " + ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE
 				+ "You have been promoted to VIP! For a full list of your new permissions, go to slapgaming.com/vip!");
-	}
 
+		//Add to list so they get a book when they log on.
+		List<String> playerList = new ArrayList<String>();
+		if (vipConfig.contains("book")) 
+			playerList = vipConfig.getStringList("book");
+
+		playerList.add(playerName);
+		vipConfig.set("book", playerList);
+		vipStorage.saveConfig();
+	}
 	public void demoteVip(String playerName) {
 		String[] memberGroup = { "member" };
 		String[] guideGroup = { "Guide" };

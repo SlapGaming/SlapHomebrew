@@ -2,12 +2,15 @@ package me.naithantu.SlapHomebrew.Commands;
 
 import java.util.HashSet;
 
+import me.naithantu.SlapHomebrew.Book;
 import me.naithantu.SlapHomebrew.Lottery;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
+import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -17,6 +20,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Wolf;
 import org.bukkit.entity.Ocelot.Type;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.BookMeta;
 
 public class SlapCommand extends AbstractVipCommand {
 
@@ -193,7 +199,7 @@ public class SlapCommand extends AbstractVipCommand {
 			}
 		}
 
-		if (arg.equals("notify")) {
+		if (arg.equalsIgnoreCase("notify")) {
 			if (!testPermission(player, "notify")) {
 				this.noPermission(sender);
 				return true;
@@ -214,6 +220,34 @@ public class SlapCommand extends AbstractVipCommand {
 					}, 5);
 				}
 			}, 5);
+		}
+		
+		if(arg.equalsIgnoreCase("savebook")){
+			if (!testPermission(sender, "savebook")) {
+				this.noPermission(sender);
+				return true;
+			}
+			
+			PlayerInventory inventory = player.getInventory();
+			if(!inventory.contains(Material.WRITTEN_BOOK)){
+				this.badMsg(sender, "You do not have a book in your inventory.");
+				return true;
+			}
+			for(ItemStack itemStack: inventory.getContents()){
+				if(itemStack != null && itemStack.getType() == Material.WRITTEN_BOOK){
+					Book.saveBook((BookMeta) itemStack.getItemMeta(), new YamlStorage(plugin, "book"));
+				}
+			}
+			this.msg(sender, "Saved book.");
+		}
+		
+		//TODO remove this, just a test command.
+		if(arg.equalsIgnoreCase("getbook")){
+			if (!testPermission(sender, "getbook")) {
+				this.noPermission(sender);
+				return true;
+			}
+			player.getInventory().addItem(Book.getBook(new YamlStorage(plugin, "book")));
 		}
 		return true;
 	}
