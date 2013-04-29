@@ -6,6 +6,7 @@ import me.naithantu.SlapHomebrew.Flag;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Util;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -45,6 +46,16 @@ public class MoveListener implements Listener {
 				plugin.logger.log(Level.SEVERE, "Improperly defined teleport flag! " + location.getX() + ":" + location.getY() + ":" + location.getZ());
 				return;
 			}
+		}
+		
+		if(Util.hasFlag(plugin, event.getTo(), Flag.COMMAND) && !Util.hasFlag(plugin, event.getFrom(), Flag.COMMAND)) {
+			String flag = Util.getFlag(plugin, event.getTo(), Flag.COMMAND);
+			String flagCommand = flag.replace("flag:command(", "").replace(")", "");
+			String command = flagCommand.replaceAll("_", " ");
+			//Add proper player names to command.
+			command = command.replaceAll("<player>", player.getName());
+			System.out.println(command);
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
 		}
 	}
 }
