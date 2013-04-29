@@ -21,7 +21,7 @@ public class BlockfaqCommand extends AbstractCommand {
 			return true;
 		}
 
-		if (!testPermission(sender, "tp")) {
+		if (!testPermission(sender, "blockfaq")) {
 			this.noPermission(sender);
 			return true;
 		}
