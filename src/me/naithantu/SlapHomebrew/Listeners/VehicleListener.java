@@ -1,11 +1,9 @@
 package me.naithantu.SlapHomebrew.Listeners;
 
-import org.bukkit.entity.Vehicle;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
-import org.bukkit.event.vehicle.VehicleExitEvent;
 
 public class VehicleListener implements Listener {
 	@EventHandler
@@ -22,11 +20,12 @@ public class VehicleListener implements Listener {
 		}
 	}
 
+	/* VehicleExitEvent removed until it is fixed. This is now handled via the playerinteractentityevent
 	@EventHandler
 	public void onVehicleExit(VehicleExitEvent event) {
 		Vehicle vehicle = event.getVehicle();
 		if (vehicle.hasMetadata("slapVehicle")) {
 			vehicle.remove();
 		}
-	}
+	}*/
 }
