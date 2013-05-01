@@ -1,7 +1,6 @@
 package me.naithantu.SlapHomebrew;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;

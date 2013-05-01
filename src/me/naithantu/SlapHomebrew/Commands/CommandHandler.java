@@ -59,7 +59,20 @@ public class CommandHandler {
 			commandObj = new TpBlockCommand(sender, args, plugin);
 		} else if (command.equals("vip")) {
 			//TODO Remove the plugin.get stuff, just pass it through the constructor.
-			commandObj = new VipCommand(sender, args, plugin, plugin.getVipStorage(), plugin.getVip());
+			if (args.length == 0){
+				commandObj = new VipCommand(sender, args, plugin, plugin.getVipStorage(), plugin.getVip());
+			} else{
+				String arg = args[0].toLowerCase();
+				if (arg.equals("check")) {
+					commandObj = new VipForumCheckCommand(sender, args, plugin);
+				} else if (arg.equals("done")) {
+					commandObj = new VipForumDoneCommand(sender, args, plugin);
+				} else if (arg.equals("mark")) {
+					commandObj = new VipForumMarkCommand(sender, args, plugin);
+				} else { 
+					commandObj = new VipCommand(sender, args, plugin, plugin.getVipStorage(), plugin.getVip());
+				}
+			}
 		} else if (command.equals("warpcakedefence")) {
 			commandObj = new WarpcakedefenceCommand(sender, args, plugin);
 		} else if (command.equals("warppvp")) {
@@ -78,17 +91,6 @@ public class CommandHandler {
 				commandObj = new PlotmarkCommand(sender, args, plugin);
 			} else if (arg.equals("tp")) {
 				commandObj = new PlottpCommand(sender, args, plugin);
-			}
-		} else if (command.equals("vip")) {
-			if (args.length == 0)
-				return false;
-			String arg = args[0].toLowerCase();
-			if (arg.equals("check")) {
-				commandObj = new VipForumCheckCommand(sender, args, plugin);
-			} else if (arg.equals("done")) {
-				commandObj = new VipForumDoneCommand(sender, args, plugin);
-			} else if (arg.equals("mark")) {
-				commandObj = new VipForumMarkCommand(sender, args, plugin);
 			}
 		}
 

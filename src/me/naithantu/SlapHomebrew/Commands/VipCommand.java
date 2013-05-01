@@ -10,7 +10,6 @@ import java.util.Set;
 import me.naithantu.SlapHomebrew.IconMenu;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Vip;
-import me.naithantu.SlapHomebrew.VipForumMarkCommands;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 
 import org.bukkit.ChatColor;
@@ -65,6 +64,7 @@ public class VipCommand extends AbstractVipCommand {
 			player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "As a VIP you are allowed to spawn 3 stacks of items every day!");
 			player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "Use /vip list for a list of all the items and /vip grant [itemname] to spawn the item!");
 			player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "Not a VIP? Go to www.slapgaming.com/vip!");
+			return true;
 		}
 
 		if (vipCommands.contains(arg)) {
@@ -235,13 +235,12 @@ public class VipCommand extends AbstractVipCommand {
 				Player player = (Player) sender;
 				if (player.hasPermission("slaphomebrew.grantlist")) {
 					vipItemsList.clear();
-					Set<?> set = SlapHomebrew.vipItems.entrySet();
-					Iterator<?> i = set.iterator();
-					while (i.hasNext()) {
-						Map.Entry me = (Map.Entry) i.next(); //TODO
-						Material vipItemsMaterial = Material.getMaterial((Integer) me.getKey());
-						vipItemsList.add(vipItemsMaterial.toString().toLowerCase());
+					for (Integer id: SlapHomebrew.vipItems.keySet()){
+						System.out.println("Item id: " + id);
+						Material vipItemsMaterial = Material.getMaterial(id);
+						vipItemsList.add(vipItemsMaterial.toString().toLowerCase());	
 					}
+
 					player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "VIPs can spawn the items: " + vipItemsList.toString());
 				} else {
 					player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "You don't have permission for that! Go to www.slapgaming.com/vip!");
@@ -495,26 +494,6 @@ public class VipCommand extends AbstractVipCommand {
 				}
 				SlapHomebrew.econ.depositPlayer(playerName, amount);
 				sender.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "Gave player " + playerName + " " + amount + " dollars!");
-				return true;
-			}
-
-			/*
-			 * Vip Forum Promotion Commands
-			 */
-			VipForumMarkCommands vipForumMarkCommands = plugin.getVipForumMarkCommands();
-			if (arg.equalsIgnoreCase("mark")) {
-				vipForumMarkCommands.markCommand(sender, args);
-				return true;
-			}
-
-			if (arg.equalsIgnoreCase("check")) {
-				if (sender instanceof Player)
-					vipForumMarkCommands.checkCommand((Player) sender, args);
-				return true;
-			}
-			if (arg.equalsIgnoreCase("done")) {
-				if (sender instanceof Player)
-					vipForumMarkCommands.doneCommand((Player) sender, args);
 				return true;
 			}
 		} else {
