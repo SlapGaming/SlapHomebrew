@@ -39,6 +39,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import com.mewin.WGCustomFlags.WGCustomFlagsPlugin;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 
 public class SlapHomebrew extends JavaPlugin {
@@ -58,38 +59,27 @@ public class SlapHomebrew extends JavaPlugin {
 	private YamlStorage dataStorage;
 	private YamlStorage vipStorage;
 	private YamlStorage timeStorage;
-	
+
 	private FileConfiguration dataConfig;
 	private FileConfiguration vipConfig;
-	
+
 	Vip vip;
 
 	public static HashSet<String> message = new HashSet<String>();
 	public static HashSet<String> tpBlocks = new HashSet<String>();
-	
+
 	Bump bump = new Bump(this);
 
 	public static boolean allowCakeTp;
 
 	Configuration config;
 
-	ArrayList<String> tempArrayList = new ArrayList<String>();
 
-	boolean reloadChatBot = false;
-
-	public void setReloadChatBot(boolean reloadChatBot) {
-		this.reloadChatBot = reloadChatBot;
-	}
-
-	public int timerTime = 144000;
 	PluginManager pm;
-	public Boolean debug = false;
 
 	public static Economy econ = null;
-
 	public static Vault vault = null;
 
-	VipForumMarkCommands vipForumMarkCommands = new VipForumMarkCommands(this);
 	CommandHandler commandHandler = new CommandHandler(this);
 
 	@Override
@@ -127,6 +117,7 @@ public class SlapHomebrew extends JavaPlugin {
 		pm.registerEvents(new LoginListener(this, timeStorage, dataStorage, vipStorage), this);
 		pm.registerEvents(new MoveListener(this), this);
 		pm.registerEvents(new PotionListener(), this);
+		pm.registerEvents(new ProjectileHitListener(), this);
 		pm.registerEvents(new QuitListener(this, timeStorage), this);
 		pm.registerEvents(new TeleportListener(), this);
 		pm.registerEvents(new VehicleListener(), this);
@@ -170,20 +161,30 @@ public class SlapHomebrew extends JavaPlugin {
 		}
 		return (WorldGuardPlugin) plugin;
 	}
-	
-	public Vip getVip(){
+
+	private WGCustomFlagsPlugin getWGCustomFlags() {
+		Plugin plugin = getServer().getPluginManager().getPlugin("WGCustomFlags");
+
+		if (plugin == null || !(plugin instanceof WGCustomFlagsPlugin)) {
+			return null;
+		}
+
+		return (WGCustomFlagsPlugin) plugin;
+	}
+
+	public Vip getVip() {
 		return vip;
 	}
 
 	public YamlStorage getTimeStorage() {
 		return timeStorage;
 	}
-	
-	public YamlStorage getVipStorage(){
+
+	public YamlStorage getVipStorage() {
 		return vipStorage;
 	}
-	
-	public YamlStorage getDataStorage(){
+
+	public YamlStorage getDataStorage() {
 		return dataStorage;
 	}
 
@@ -201,10 +202,6 @@ public class SlapHomebrew extends JavaPlugin {
 
 	public HashMap<Integer, String> getForumVip() {
 		return forumVip;
-	}
-
-	public VipForumMarkCommands getVipForumMarkCommands() {
-		return vipForumMarkCommands;
 	}
 
 	private boolean setupEconomy() {
@@ -239,35 +236,33 @@ public class SlapHomebrew extends JavaPlugin {
 	}
 
 	public void setupChatBot() {
-		if (!config.contains("chatmessages.member") || reloadChatBot == true) {
+		if (!config.contains("chatmessages.member")) {
 			config.set("chatmessages.member", "&c[FAQ] &3Go to &bwww.slap-gaming.com/apply &3to apply for member!");
 		}
-		if (!config.contains("chatmessages.vip") || reloadChatBot == true) {
+		if (!config.contains("chatmessages.vip")) {
 			config.set("chatmessages.vip", "&c[FAQ] &3Go to www.slap-gaming.com/vip for more information about VIP!");
 		}
-		if (!config.contains("chatmessages.build") || reloadChatBot == true) {
+		if (!config.contains("chatmessages.build")) {
 			config.set("chatmessages.build", "&c[FAQ] &3Find an empty plot, then ask a mod/admin for a worldguard! Take the teleport pad at spawn or use the online dynamap (slap-gaming.com/map) to go to empty plots!");
 		}
-		if (!config.contains("chatmessages.worldguard") || reloadChatBot == true) {
+		if (!config.contains("chatmessages.worldguard")) {
 			config.set("chatmessages.worldguard", "&c[FAQ] &3Ask a mod/admin for a worldguard! This also protects chests!");
 		}
-		if (!config.contains("chatmessages.lockette") || reloadChatBot == true) {
+		if (!config.contains("chatmessages.lockette")) {
 			config.set("chatmessages.lockette", "&c[FAQ] &3We don't use lockette, worldguard also protects your chests!");
 		}
-		if (!config.contains("chatmessages.shop") || reloadChatBot == true) {
+		if (!config.contains("chatmessages.shop")) {
 			config.set("chatmessages.shop", "&c[FAQ] &3You need to be a member to use the shop! Right click for an item, shift + right click for a stack of items!");
 		}
-		if (!config.contains("chatmessages.money") || reloadChatBot == true) {
+		if (!config.contains("chatmessages.money")) {
 			config.set("chatmessages.money", "&c[FAQ] &3Type /sell hand with an item you want to sell in your hand, or go to www.slap-gaming.com/money to get money!");
 		}
-		if (!config.contains("chatmessages.checkwg") || reloadChatBot == true) {
+		if (!config.contains("chatmessages.checkwg")) {
 			config.set("chatmessages.checkwg", "&c[FAQ] &3Right click the ground with string to see zones!");
 		}
-		if (!config.contains("chatmessages.pay") || reloadChatBot == true) {
+		if (!config.contains("chatmessages.pay")) {
 			config.set("chatmessages.pay", "&c[FAQ] &3Type /money pay [name] [amount]!");
 		}
-
-		reloadChatBot = false;
 		this.saveConfig();
 	}
 
@@ -343,7 +338,6 @@ public class SlapHomebrew extends JavaPlugin {
 			BufferedWriter oIn = new BufferedWriter(fIn);
 			Set<?> set = worldGuard.entrySet();
 			Iterator<?> i = set.iterator();
-			tempArrayList.clear();
 			while (i.hasNext()) {
 				Map.Entry me = (Map.Entry) i.next();
 				oIn.write(me.getKey().toString() + ":" + me.getValue().toString());
@@ -433,7 +427,7 @@ public class SlapHomebrew extends JavaPlugin {
 	public Bump getBump() {
 		return bump;
 	}
-	
+
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
 		return commandHandler.handle(sender, cmd, args);
 	}

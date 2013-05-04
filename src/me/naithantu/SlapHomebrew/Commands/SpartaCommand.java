@@ -37,7 +37,7 @@ public class SpartaCommand extends AbstractCommand {
 			}
 		}
 
-		this.msg(sender, "Sparta'd 	" + player.getName());
+		this.msg(sender, "Sparta'd " + player.getName());
 		
 		final int finalMultiplier = multiplier;
 		
