@@ -221,28 +221,30 @@ public class SlapCommand extends AbstractVipCommand {
 				}
 			}, 5);
 		}
-		
-		if(arg.equalsIgnoreCase("savebook")){
+
+		if (arg.equalsIgnoreCase("savebook")) {
 			if (!testPermission(sender, "savebook")) {
 				this.noPermission(sender);
 				return true;
 			}
-			
+
 			PlayerInventory inventory = player.getInventory();
-			if(!inventory.contains(Material.WRITTEN_BOOK)){
+			if (!inventory.contains(Material.WRITTEN_BOOK)) {
 				this.badMsg(sender, "You do not have a book in your inventory.");
 				return true;
 			}
-			for(ItemStack itemStack: inventory.getContents()){
-				if(itemStack != null && itemStack.getType() == Material.WRITTEN_BOOK){
-					Book.saveBook((BookMeta) itemStack.getItemMeta(), new YamlStorage(plugin, "book"));
-				}
+
+			ItemStack itemStack = player.getItemInHand();
+			if (itemStack == null || itemStack.getType() != Material.WRITTEN_BOOK) {
+				this.badMsg(sender, "You are not holding a written book!");
+				return true;
 			}
+			Book.saveBook((BookMeta) itemStack.getItemMeta(), new YamlStorage(plugin, "book"));
 			this.msg(sender, "Saved book.");
 		}
-		
+
 		//TODO remove this, just a test command.
-		if(arg.equalsIgnoreCase("getbook")){
+		if (arg.equalsIgnoreCase("getbook")) {
 			if (!testPermission(sender, "getbook")) {
 				this.noPermission(sender);
 				return true;
