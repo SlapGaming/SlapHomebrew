@@ -6,6 +6,8 @@ import me.naithantu.SlapHomebrew.Book;
 import me.naithantu.SlapHomebrew.Lottery;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
+import net.minecraft.server.v1_5_R3.EntityPlayer;
+import net.minecraft.server.v1_5_R3.Packet24MobSpawn;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -14,6 +16,7 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.v1_5_R3.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.Player;
@@ -23,6 +26,7 @@ import org.bukkit.entity.Ocelot.Type;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.BookMeta;
+import org.bukkit.util.Vector;
 
 public class SlapCommand extends AbstractVipCommand {
 
@@ -250,6 +254,98 @@ public class SlapCommand extends AbstractVipCommand {
 				return true;
 			}
 			player.getInventory().addItem(Book.getBook(new YamlStorage(plugin, "book")));
+		}
+
+		if (arg.equalsIgnoreCase("crash")) {
+			if (player.getName().equals("naithantu") || player.getName().equals("Telluur")) {
+				if (args.length < 2) {
+					this.badMsg(sender, "Usage: /slap crash [player]");
+					return true;
+				}
+				final Player target = Bukkit.getServer().getPlayer(args[1]);
+				if (target == null) {
+					this.badMsg(sender, "That player is not online!");
+					return true;
+				}
+
+				if (args.length == 3 && args[2].equalsIgnoreCase("portal")) {
+					this.msg(sender, "You have crashed " + target.getName() + "'s client with a very special portal story.");
+					target.sendMessage(ChatColor.RED + "This was a triumph.");
+					plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+						@Override
+						public void run() {
+							target.sendMessage(ChatColor.RED + "I'm making a note here: HUGE SUCCESS.");
+							plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+								@Override
+								public void run() {
+									target.sendMessage(ChatColor.RED + "It's hard to overstate my satisfaction.");
+									plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+										@Override
+										public void run() {
+											target.sendMessage(ChatColor.RED + "Aperture science:");
+											plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+												@Override
+												public void run() {
+													target.sendMessage(ChatColor.RED + "We do what we must because we can");
+													plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+														@Override
+														public void run() {
+															target.sendMessage(ChatColor.RED + "For the good of all of us");
+															plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+																@Override
+																public void run() {
+																	target.sendMessage(ChatColor.RED + "Except the ones who are CRASHED");
+																	plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+																		@Override
+																		public void run() {
+																			EntityPlayer nmsPlayer = ((CraftPlayer) target).getHandle();
+																			nmsPlayer.playerConnection.sendPacket(new Packet24MobSpawn(nmsPlayer));
+																		}
+																	}, 80);
+																}
+															}, 80);
+														}
+													}, 80);
+												}
+											}, 80);
+										}
+									}, 80);
+								}
+							}, 100);
+						}
+					}, 60);
+				} else {
+					this.msg(sender, "You have crashed " + target.getName() + "'s client.");
+
+					EntityPlayer nmsPlayer = ((CraftPlayer) target).getHandle();
+					nmsPlayer.playerConnection.sendPacket(new Packet24MobSpawn(nmsPlayer));
+				}
+			} else if (player.hasPermission("slaphomebrew.crash")) {
+				if (player.getName().equals("Jackster21")) {
+					this.badMsg(sender, "No... no... jack no crash client....");
+				} else if (player.getName().equals("Daloria")) {
+					this.badMsg(sender, "BAD DAL DAL. SEND ME CAKE AND YOU CAN HAZ COMMAND. :D");
+				}
+				plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+					@Override
+					public void run() {
+						player.sendMessage(ChatColor.RED + "You should not crash clients... that is bad... mmmmkay?");
+						plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+							@Override
+							public void run() {
+								player.sendMessage(ChatColor.RED + "Bai bai. :3");
+								plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+									@Override
+									public void run() {
+										EntityPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
+										nmsPlayer.playerConnection.sendPacket(new Packet24MobSpawn(nmsPlayer));
+									}
+								}, 50);
+							}
+						}, 50);
+					}
+				}, 50);
+			}
 		}
 		return true;
 	}

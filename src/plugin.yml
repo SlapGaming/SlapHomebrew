@@ -77,4 +77,4 @@ commands:
     usage: "Usage: /pay [player] [amount]"
   sparta:
     description: Knock a player back. This is sparta.
-    usages: "Usage: /sparta [player]"
+    usage: "Usage: /sparta [player]"
