@@ -12,7 +12,7 @@ public class TeleportListener implements Listener {
 	@EventHandler
 	public void onPlayerTeleport(PlayerTeleportEvent event) {
 		Player player = event.getPlayer();
-		if (player.getWorld().getName().equals("world_nether") && event.getTo().getBlockY() >= 127){ 
+		if (event.getTo().getWorld().getName().equals("world_nether") && event.getTo().getBlockY() >= 127){ 
 			player.sendMessage(ChatColor.RED + "You may not go above the nether!");
 			event.setCancelled(true);
 		}
