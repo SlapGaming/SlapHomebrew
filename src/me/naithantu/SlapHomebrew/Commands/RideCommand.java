@@ -26,6 +26,11 @@ public class RideCommand extends AbstractCommand {
 		}
 		
 		Player player = (Player) sender;
+		
+		if(player.isInsideVehicle()){
+			player.getVehicle().eject();
+		}
+		
 		if (args.length == 1) {
 			String targetName = args[0];
 			Player target = Bukkit.getServer().getPlayer(targetName);
