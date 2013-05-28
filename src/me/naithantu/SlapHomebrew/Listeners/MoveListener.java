@@ -56,6 +56,14 @@ public class MoveListener implements Listener {
 			command = command.replaceAll("<player>", player.getName());
 			System.out.println(command);
 			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+		} else if (Util.hasFlag(plugin, event.getFrom(), Flag.COMMAND_LEAVE) && !Util.hasFlag(plugin, event.getTo(), Flag.COMMAND_LEAVE)) {
+			String flag = Util.getFlag(plugin, event.getFrom(), Flag.COMMAND_LEAVE);
+			String flagCommand = flag.replace("flag:command_leave(", "").replace(")", "");
+			String command = flagCommand.replaceAll("_", " ");
+			//Add proper player names to command.
+			command = command.replaceAll("<player>", player.getName());
+			System.out.println(command);
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
 		}
 	}
 }
