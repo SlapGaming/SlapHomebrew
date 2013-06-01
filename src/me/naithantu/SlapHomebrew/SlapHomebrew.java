@@ -69,6 +69,7 @@ public class SlapHomebrew extends JavaPlugin {
 	public static HashSet<String> tpBlocks = new HashSet<String>();
 
 	Bump bump = new Bump(this);
+	Sonic sonic = new Sonic();
 
 	public static boolean allowCakeTp;
 
@@ -427,6 +428,10 @@ public class SlapHomebrew extends JavaPlugin {
 
 	public Bump getBump() {
 		return bump;
+	}
+	
+	public Sonic getSonic(){
+		return sonic;
 	}
 
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {

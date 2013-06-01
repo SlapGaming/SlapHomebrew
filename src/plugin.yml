@@ -2,7 +2,7 @@ name: SlapHomebrew
 main: me.naithantu.SlapHomebrew.SlapHomebrew
 depend: [Vault, PermissionsEx]
 author: naithantu
-version: 2.6.4
+version: 2.6.6
 description: SlapHomebrew homemade plugin.
 commands:
   vip:
@@ -30,6 +30,8 @@ commands:
   warpcakedefence:
     description: Warps you to cake defence if your inventory is empty.  
     aliases: [warpcake]
+  warpsonic:
+     description: Warps you to the sonic world to race.
   blockfaq:
     description: Blocks FAQ messages for you.
   cakedefence:
@@ -78,3 +80,6 @@ commands:
   sparta:
     description: Knock a player back. This is sparta.
     usage: "Usage: /sparta [player]"
+  addcheckpoint:
+    description: Used to add a sonic checkpoint for a player.
+    usage: "Usage: /addcheckpoint [player] [checkpoint]"

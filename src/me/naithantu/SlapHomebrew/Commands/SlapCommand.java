@@ -17,6 +17,7 @@ import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_5_R3.entity.CraftPlayer;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.Player;
@@ -26,11 +27,9 @@ import org.bukkit.entity.Ocelot.Type;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.BookMeta;
-import org.bukkit.util.Vector;
+import org.bukkit.metadata.FixedMetadataValue;
 
-public class SlapCommand extends AbstractVipCommand {
-
-	String header = ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE;
+public class SlapCommand extends AbstractCommand {
 
 	Integer used = 0;
 	HashSet<String> vipItemsList = new HashSet<String>();
@@ -320,7 +319,7 @@ public class SlapCommand extends AbstractVipCommand {
 					EntityPlayer nmsPlayer = ((CraftPlayer) target).getHandle();
 					nmsPlayer.playerConnection.sendPacket(new Packet24MobSpawn(nmsPlayer));
 				}
-			} else if (player.hasPermission("slaphomebrew.crash")) {
+			} else if (testPermission(sender, "crash")) {
 				if (player.getName().equals("Jackster21")) {
 					this.badMsg(sender, "No... no... jack no crash client....");
 				} else if (player.getName().equals("Daloria")) {
@@ -345,6 +344,49 @@ public class SlapCommand extends AbstractVipCommand {
 						}, 50);
 					}
 				}, 50);
+			}
+		}
+		
+		if(arg.equalsIgnoreCase("firemob")){
+			if (!testPermission(sender, "firemob")) {
+				this.noPermission(sender);
+				return true;
+			}		
+			
+			if(args.length < 2){
+				this.badMsg(sender, "/slap firemob [mob] [amount]");
+				return true;
+			}
+			
+			int mobs = 1;
+			if(args.length == 3){
+				try{
+					mobs = Integer.parseInt(args[2]);
+				}catch(NumberFormatException e){
+					this.badMsg(sender, "Invalid amount!");
+					return true;
+				}
+			}
+			
+			String mob = args[1];
+			EntityType mobType;
+			try{
+				mobType = EntityType.valueOf(mob.toUpperCase());
+			}catch(IllegalArgumentException e){
+				this.badMsg(sender, "That's not a mob!");
+				return true;
+			}
+			System.out.println("Mob: " + mobType);
+			
+			
+			Location location = player.getTargetBlock(null, 20).getLocation().add(0,1,0);
+			World world = player.getWorld();
+			int i = 0;
+			while(i < mobs){
+				Entity burningMob = world.spawnEntity(location, mobType);
+				burningMob.setFireTicks(9999999);
+				burningMob.setMetadata("slapBurningMob", new FixedMetadataValue(plugin, true));
+				i++;
 			}
 		}
 		return true;

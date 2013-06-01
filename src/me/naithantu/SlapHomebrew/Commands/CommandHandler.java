@@ -15,7 +15,9 @@ public class CommandHandler {
 	public boolean handle(CommandSender sender, Command cmd, String[] args) {
 		String command = cmd.getName().toLowerCase();
 		AbstractCommand commandObj = null;
-		if (command.equals("backdeath")) {
+		if (command.equals("addcheckpoint")) {
+			commandObj = new AddcheckpointCommand(sender, args, plugin);
+		} else if (command.equals("backdeath")) {
 			commandObj = new BackdeathCommand(sender, args, plugin);
 		} else if (command.equals("blockfaq")) {
 			commandObj = new BlockfaqCommand(sender, args, plugin);
@@ -37,7 +39,7 @@ public class CommandHandler {
 			commandObj = new MobcheckCommand(sender, args, plugin);
 		} else if (command.equals("note")) {
 			commandObj = new NoteCommand(sender, args, plugin);
-		} else if (command.equals("pay")){
+		} else if (command.equals("pay")) {
 			commandObj = new PayCommand(sender, args, plugin);
 		} else if (command.equals("potion")) {
 			commandObj = new PotionCommand(sender, args, plugin);
@@ -59,9 +61,9 @@ public class CommandHandler {
 			commandObj = new TpBlockCommand(sender, args, plugin);
 		} else if (command.equals("vip")) {
 			//TODO Remove the plugin.get stuff, just pass it through the constructor.
-			if (args.length == 0){
+			if (args.length == 0) {
 				commandObj = new VipCommand(sender, args, plugin, plugin.getVipStorage(), plugin.getVip());
-			} else{
+			} else {
 				String arg = args[0].toLowerCase();
 				if (arg.equals("check")) {
 					commandObj = new VipForumCheckCommand(sender, args, plugin);
@@ -69,7 +71,7 @@ public class CommandHandler {
 					commandObj = new VipForumDoneCommand(sender, args, plugin);
 				} else if (arg.equals("mark")) {
 					commandObj = new VipForumMarkCommand(sender, args, plugin);
-				} else { 
+				} else {
 					commandObj = new VipCommand(sender, args, plugin, plugin.getVipStorage(), plugin.getVip());
 				}
 			}
@@ -77,6 +79,8 @@ public class CommandHandler {
 			commandObj = new WarpcakedefenceCommand(sender, args, plugin);
 		} else if (command.equals("warppvp")) {
 			commandObj = new WarppvpCommand(sender, args, plugin);
+		} else if (command.equals("warpsonic")) {
+			commandObj = new WarpsonicCommand(sender, args, plugin);
 		} else if (command.equals("slap")) {
 			commandObj = new SlapCommand(sender, args, plugin);
 		} else if (command.equals("plot")) {
