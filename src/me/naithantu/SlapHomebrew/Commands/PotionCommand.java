@@ -1,12 +1,12 @@
 package me.naithantu.SlapHomebrew.Commands;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
+import me.naithantu.SlapHomebrew.Util;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 public class PotionCommand extends AbstractCommand {
 	public PotionCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
@@ -47,59 +47,13 @@ public class PotionCommand extends AbstractCommand {
 				return false;
 			}
 		}
-		if (getPotionEffect(name, time, power) != null) {
-			potionPlayer.addPotionEffect(getPotionEffect(name, time, power), true);
+		if (Util.getPotionEffect(name, time, power) != null) {
+			potionPlayer.addPotionEffect(Util.getPotionEffect(name, time, power), true);
 			this.msg(sender, "Potion effect added for player " + potionPlayer.getName() + "!");
 		} else {
 			this.badMsg(sender, "That potion effect does not exist!");
 		}
 		return true;
-	}
-
-	private PotionEffect getPotionEffect(String name, int time, int power) {
-		name = name.toLowerCase();
-		time = time * 20;
-		PotionEffect effect = null;
-		if (name.equals("nightvision")) {
-			effect = new PotionEffect(PotionEffectType.NIGHT_VISION, time, power);
-		} else if (name.equals("blindness")) {
-			effect = new PotionEffect(PotionEffectType.BLINDNESS, time, power);
-		} else if (name.equals("confusion")) {
-			effect = new PotionEffect(PotionEffectType.CONFUSION, time, power);
-		} else if (name.equals("jump")) {
-			effect = new PotionEffect(PotionEffectType.JUMP, time, power);
-		} else if (name.equals("slowdig")) {
-			effect = new PotionEffect(PotionEffectType.SLOW_DIGGING, time, power);
-		} else if (name.equals("damageresist")) {
-			effect = new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, time, power);
-		} else if (name.equals("fastdig")) {
-			effect = new PotionEffect(PotionEffectType.FAST_DIGGING, time, power);
-		} else if (name.equals("fireresist")) {
-			effect = new PotionEffect(PotionEffectType.FIRE_RESISTANCE, time, power);
-		} else if (name.equals("harm")) {
-			effect = new PotionEffect(PotionEffectType.HARM, time, power);
-		} else if (name.equals("heal")) {
-			effect = new PotionEffect(PotionEffectType.HEAL, time, power);
-		} else if (name.equals("hunger")) {
-			effect = new PotionEffect(PotionEffectType.HUNGER, time, power);
-		} else if (name.equals("strength")) {
-			effect = new PotionEffect(PotionEffectType.INCREASE_DAMAGE, time, power);
-		} else if (name.equals("invisibility")) {
-			effect = new PotionEffect(PotionEffectType.INVISIBILITY, time, power);
-		} else if (name.equals("poison")) {
-			effect = new PotionEffect(PotionEffectType.POISON, time, power);
-		} else if (name.equals("regeneration")) {
-			effect = new PotionEffect(PotionEffectType.REGENERATION, time, power);
-		} else if (name.equals("slow")) {
-			effect = new PotionEffect(PotionEffectType.SLOW, time, power);
-		} else if (name.equals("speed")) {
-			effect = new PotionEffect(PotionEffectType.SPEED, time, power);
-		} else if (name.equals("waterbreathing")) {
-			effect = new PotionEffect(PotionEffectType.WATER_BREATHING, time, power);
-		} else if (name.equals("weakness")) {
-			effect = new PotionEffect(PotionEffectType.WEAKNESS, time, power);
-		}
-		return effect;
 	}
 
 	private Player getTarget(String target) {

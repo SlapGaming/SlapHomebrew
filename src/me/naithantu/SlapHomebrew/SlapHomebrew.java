@@ -8,7 +8,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -25,20 +24,15 @@ import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 import net.milkbowl.vault.Vault;
 import net.milkbowl.vault.economy.Economy;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
-
 import com.mewin.WGCustomFlags.WGCustomFlagsPlugin;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 
@@ -106,6 +100,7 @@ public class SlapHomebrew extends JavaPlugin {
 		bump.bumpTimer();
 		Lottery lottery = new Lottery(this);
 		lottery.lotteryTimer();
+		new Schedulers(this);
 		pm = getServer().getPluginManager();
 		pm.registerEvents(new BlockPlaceListener(this), this);
 		pm.registerEvents(new ChatListener(this), this);
@@ -138,7 +133,6 @@ public class SlapHomebrew extends JavaPlugin {
 			vipConfig.createSection("vipdays");
 		}
 		saveConfig();
-		removeInvisibility();
 	}
 
 	@Override
@@ -376,22 +370,6 @@ public class SlapHomebrew extends JavaPlugin {
 
 	public void loadUnfinishedPlots() {
 		unfinishedPlots = dataConfig.getIntegerList("unfinishedplots");
-	}
-
-	public void removeInvisibility() {
-		getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
-			public void run() {
-				for (Player player : getServer().getOnlinePlayers()) {
-					Collection<PotionEffect> potionEffects = player.getActivePotionEffects();
-					for (PotionEffect effect : potionEffects) {
-						if (effect.getType().equals(PotionEffectType.INVISIBILITY)) {
-							player.sendMessage(ChatColor.GOLD + "[SLAP]" + ChatColor.WHITE + " Invisibility potions are not allowed, potion effect removed!");
-							player.removePotionEffect(PotionEffectType.INVISIBILITY);
-						}
-					}
-				}
-			}
-		}, 0, 20);
 	}
 
 	public void addBumpDone(String name) {
