@@ -13,7 +13,7 @@ import org.bukkit.entity.Player;
 
 public class TeCommand extends AbstractCommand {
 	static HashSet<String> chatBotBlocks = new HashSet<String>();
-	
+
 	public TeCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
 		super(sender, args, plugin);
 	}
@@ -47,10 +47,17 @@ public class TeCommand extends AbstractCommand {
 					return true;
 				}
 			}
-			if (!Bukkit.getPlayer(arg).getWorld().getName().equalsIgnoreCase("world_pvp") && !Bukkit.getPlayer(arg).getWorld().getName().equalsIgnoreCase("world_the_end")) {
+
+			Player targetPlayer = Bukkit.getPlayer(arg);
+			String targetWorld = targetPlayer.getWorld().getName();
+			if (targetWorld.equalsIgnoreCase("world_pvp")) {
+				this.badMsg(sender, "You may not tp to that player at the moment, he/she is in a pvp world!");
+			} else if (targetWorld.equalsIgnoreCase("world_sonic")) {
+				this.badMsg(sender, "You may not tp to that player at the moment, he/she is in the sonic world!");
+			} else {
 				double yLocation = 0;
 				Location tpLocation = null;
-				for (yLocation = 0; yLocation > -300 && Bukkit.getPlayer(arg).getLocation().add(0, yLocation, 0).getBlock().getType() == Material.AIR; yLocation--) {
+				for (yLocation = 0; yLocation > -300 && targetPlayer.getLocation().add(0, yLocation, 0).getBlock().getType() == Material.AIR; yLocation--) {
 				}
 				if (yLocation < -299) {
 					this.badMsg(sender, "There is no floor below the target player!");
@@ -59,8 +66,6 @@ public class TeCommand extends AbstractCommand {
 					player.teleport(tpLocation);
 				}
 				player.sendMessage(ChatColor.GRAY + "Teleporting...");
-			} else {
-				this.badMsg(sender, "You may not tp to that player at the moment, he/she is in a pvp world!");
 			}
 
 		} else {

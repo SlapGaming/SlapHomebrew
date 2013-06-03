@@ -66,6 +66,8 @@ commands:
     usage: "Usage: /potion [name] <target(or me/self for self-targeting> <time in s> <power>."
   ride:
     description: Ride other players or entities!
+  sonic:
+    description: Main command for the sonic racetrack.
   plot:
     description: Multifunctional command for plot-clearing.
   pmark:
@@ -80,6 +82,3 @@ commands:
   sparta:
     description: Knock a player back. This is sparta.
     usage: "Usage: /sparta [player]"
-  addcheckpoint:
-    description: Used to add a sonic checkpoint for a player.
-    usage: "Usage: /addcheckpoint [player] [checkpoint]"

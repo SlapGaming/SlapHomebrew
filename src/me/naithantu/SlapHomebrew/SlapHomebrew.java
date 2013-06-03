@@ -53,6 +53,7 @@ public class SlapHomebrew extends JavaPlugin {
 	private YamlStorage dataStorage;
 	private YamlStorage vipStorage;
 	private YamlStorage timeStorage;
+	private YamlStorage sonicStorage;
 
 	private FileConfiguration dataConfig;
 	private FileConfiguration vipConfig;
@@ -62,8 +63,8 @@ public class SlapHomebrew extends JavaPlugin {
 	public static HashSet<String> message = new HashSet<String>();
 	public static HashSet<String> tpBlocks = new HashSet<String>();
 
-	Bump bump = new Bump(this);
-	Sonic sonic = new Sonic();
+	Bump bump;
+	Sonic sonic;
 
 	public static boolean allowCakeTp;
 
@@ -83,9 +84,12 @@ public class SlapHomebrew extends JavaPlugin {
 		dataStorage = new YamlStorage(this, "data");
 		vipStorage = new YamlStorage(this, "vip");
 		timeStorage = new YamlStorage(this, "time");
+		sonicStorage = new YamlStorage(this, "sonic");
 		dataConfig = dataStorage.getConfig();
 		vipConfig = vipStorage.getConfig();
 		vip = new Vip(vipStorage);
+		sonic = new Sonic(this);
+		bump = new Bump(this);
 		loadItems();
 		tpBlocks = loadHashSet("tpblocks");
 		BlockfaqCommand.chatBotBlocks = loadHashSet("chatbotblocks");
@@ -107,8 +111,10 @@ public class SlapHomebrew extends JavaPlugin {
 		pm.registerEvents(new CommandListener(), this);
 		pm.registerEvents(new CreatureSpawnListener(this), this);
 		pm.registerEvents(new CreatureDeathListener(this), this);
+		pm.registerEvents(new DamageListener(), this);
 		pm.registerEvents(new DeathListener(this), this);
 		pm.registerEvents(new DispenseListener(), this);
+		pm.registerEvents(new FoodLevelChangeListener(), this);
 		pm.registerEvents(new InteractListener(this), this);
 		pm.registerEvents(new LoginListener(this, timeStorage, dataStorage, vipStorage), this);
 		pm.registerEvents(new MoveListener(this), this);
@@ -182,6 +188,10 @@ public class SlapHomebrew extends JavaPlugin {
 
 	public YamlStorage getDataStorage() {
 		return dataStorage;
+	}
+	
+	public YamlStorage getSonicStorage() {
+		return sonicStorage;
 	}
 
 	public List<Integer> getUnfinishedPlots() {

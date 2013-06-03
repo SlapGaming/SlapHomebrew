@@ -15,9 +15,7 @@ public class CommandHandler {
 	public boolean handle(CommandSender sender, Command cmd, String[] args) {
 		String command = cmd.getName().toLowerCase();
 		AbstractCommand commandObj = null;
-		if (command.equals("addcheckpoint")) {
-			commandObj = new AddcheckpointCommand(sender, args, plugin);
-		} else if (command.equals("backdeath")) {
+		if (command.equals("backdeath")) {
 			commandObj = new BackdeathCommand(sender, args, plugin);
 		} else if (command.equals("blockfaq")) {
 			commandObj = new BlockfaqCommand(sender, args, plugin);
@@ -51,6 +49,8 @@ public class CommandHandler {
 			commandObj = new SearchregionCommand(sender, args, plugin);
 		} else if (command.equals("sgm")) {
 			commandObj = new SgmCommand(sender, args, plugin);
+		} else if (command.equals("sonic")) {
+			commandObj = new SonicCommand(sender, args, plugin);
 		} else if (command.equals("sparta")) {
 			commandObj = new SpartaCommand(sender, args, plugin);
 		} else if (command.equals("te")) {
