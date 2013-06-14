@@ -32,7 +32,8 @@ public class SonicCommand extends AbstractCommand {
 			this.msg(sender, "=======================================");
 		} else {
 			if (args[0].equalsIgnoreCase("addcheckpoint")) {
-				sonic.addCheckpoint(args[1], Integer.parseInt(args[2]));
+				if (testPermission(sender, "addcheckpoint"))
+					sonic.addCheckpoint(args[1], Integer.parseInt(args[2]));
 			} else if (args[0].equalsIgnoreCase("leaderboard") || args[0].equalsIgnoreCase("leaderboards")) {
 				int page = 0;
 				if (args.length > 1) {
@@ -58,7 +59,7 @@ public class SonicCommand extends AbstractCommand {
 
 				for (int i = page * 10; i < leaderboard.size(); i++) {
 					String name = leaderboard.get(i);
-					sender.sendMessage(ChatColor.GOLD + "" + (i + 1) + ". " + ChatColor.WHITE + name + " - " + Util.changeTimeFormat(plugin.getSonicStorage().getConfig().getLong("players." + name)));
+					sender.sendMessage(ChatColor.GOLD + "" + (i + 1) + ". " + ChatColor.WHITE + name + " - " + Util.changeTimeFormat(sonic.getTotalTime(name)));
 					if (i == (page * 10) + 9)
 						break;
 				}
@@ -69,7 +70,14 @@ public class SonicCommand extends AbstractCommand {
 					List<String> leaderboard = sonic.getLeaderboard();
 					for (int i = 0; i < leaderboard.size(); i++) {
 						if (leaderboard.get(i).equalsIgnoreCase(name)) {
-							this.msg(sender, name + " has a highscore of " + Util.changeTimeFormat(plugin.getSonicStorage().getConfig().getLong("players." + name)));
+							this.msg(sender, name + " has a highscore of " + Util.changeTimeFormat(sonic.getTotalTime(name)));
+							this.msg(sender, name + "'s times at each checkpoint were:");
+							String playerTimes = plugin.getSonicStorage().getConfig().getString("players." + name);
+							String[] playerTimesSplit = playerTimes.split(":");
+							for (int checkpoint = 0; checkpoint < playerTimesSplit.length - 1; checkpoint++) {
+								long time = Long.parseLong(playerTimesSplit[checkpoint]);
+								this.msg(sender, "Checkpoint " + (checkpoint + 1) + ": " + Util.changeTimeFormat(time));
+							}
 							this.msg(sender, name + " is ranked #" + (i + 1));
 							return true;
 						}
@@ -79,7 +87,14 @@ public class SonicCommand extends AbstractCommand {
 					List<String> leaderboard = sonic.getLeaderboard();
 					for (int i = 0; i < leaderboard.size(); i++) {
 						if (leaderboard.get(i).equalsIgnoreCase(name)) {
-							this.msg(sender, "You have a highscore of " + Util.changeTimeFormat(plugin.getSonicStorage().getConfig().getLong("players." + name)) + ".");
+							this.msg(sender, "You have a highscore of " + Util.changeTimeFormat(sonic.getTotalTime(name)));
+							this.msg(sender, "Your times at each checkpoint were:");
+							String playerTimes = plugin.getSonicStorage().getConfig().getString("players." + name);
+							String[] playerTimesSplit = playerTimes.split(":");
+							for (int checkpoint = 0; checkpoint < playerTimesSplit.length - 1; checkpoint++) {
+								long time = Long.parseLong(playerTimesSplit[checkpoint]);
+								this.msg(sender, "Checkpoint " + (checkpoint + 1) + ": " + Util.changeTimeFormat(time));
+							}
 							this.msg(sender, "You are ranked #" + (i + 1));
 							return true;
 						}

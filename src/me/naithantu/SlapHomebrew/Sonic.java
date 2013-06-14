@@ -16,7 +16,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -40,7 +39,7 @@ public class Sonic {
 	public void teleportSonic(String playerName) {
 		Player player = Bukkit.getServer().getPlayer(playerName);
 		final World world = Bukkit.getServer().getWorld("world_sonic");
-		player.teleport(new Location(world, 1355.5, 68, -416.5, 180, 0));
+		player.teleport(new Location(world, 1399, 68, -424.5, 180, 0));
 		player.getInventory().clear();
 		player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 999999, 1));
 		player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 999999, 1));
@@ -71,10 +70,15 @@ public class Sonic {
 		Bukkit.getServer().getPlayer(playerName).sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + " You weren't racing, you've been teleported to the start!");
 	}
 
-	public boolean addHighscore(String playerName, long time) {
+	public boolean addHighscore(String playerName, long[] checkpointTimes) {
 		String configKey = "players." + playerName;
-		if (!sonicConfig.contains(configKey) || sonicConfig.getLong(configKey) > time) {
-			sonicConfig.set(configKey, time);
+		String configTimes = sonicConfig.getString(configKey);
+		if (!sonicConfig.contains(configKey) || Long.parseLong(configTimes.split(":")[5]) > checkpointTimes[5]) {
+			String configString = "";
+			for(long checkpointTime: checkpointTimes){
+				configString = configString + checkpointTime + ":";
+			}
+			sonicConfig.set(configKey, configString);
 			sonicStorage.saveConfig();
 			generateLeaderboard();
 			return true;
@@ -92,13 +96,13 @@ public class Sonic {
 			ConfigurationSection players = sonicConfig.getConfigurationSection("players");
 			Set<String> names = players.getKeys(false);
 			for (String name : names) {
-				Long playerTime = sonicConfig.getLong("players." + name);
+				Long playerTime = getTotalTime(name);
 				if (leaderboard.isEmpty()) {
 					leaderboard.add(name);
 				} else {
 					for (int i = 0; i < leaderboard.size(); i++) {
 						String sortedName = leaderboard.get(i);
-						if (sonicConfig.getLong("players." + sortedName) > playerTime) {
+						if (getTotalTime(sortedName) > playerTime) {
 							leaderboard.add(i, name);
 							break;
 						} else if (i == leaderboard.size() - 1) {
@@ -109,6 +113,10 @@ public class Sonic {
 				}
 			}
 		}
-		System.out.println(leaderboard);
+	}
+	
+	public long getTotalTime(String playerName){
+		String playerTimes = sonicConfig.getString("players." + playerName);
+		return Long.parseLong(playerTimes.split(":")[5]);
 	}
 }
