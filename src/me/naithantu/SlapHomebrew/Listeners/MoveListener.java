@@ -1,13 +1,16 @@
 package me.naithantu.SlapHomebrew.Listeners;
 
+import java.util.List;
 import java.util.logging.Level;
 
+import me.naithantu.SlapHomebrew.Extras;
 import me.naithantu.SlapHomebrew.Flag;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Util;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -15,15 +18,28 @@ import org.bukkit.event.player.PlayerMoveEvent;
 
 public class MoveListener implements Listener {
 	SlapHomebrew plugin;
+	Extras extras;
 
-	public MoveListener(SlapHomebrew plugin) {
+	public MoveListener(SlapHomebrew plugin, Extras extras) {
 		this.plugin = plugin;
+		this.extras = extras;
 	}
 
 	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent event) {
 		Player player = event.getPlayer();
 		Location location = player.getLocation();
+		if(player.getWorld().getName().equals("world_start")){
+			if(extras.getHasJumped().contains(player.getName())){
+				Entity playerEntity = (Entity) player;
+				if(playerEntity.isOnGround()){
+					List<String> hasJumped = extras.getHasJumped();
+					hasJumped.remove(player.getName());
+					player.setAllowFlight(true);
+				}
+			}
+		}
+		
 		//Teleport players to location defined in the member flag upon entering a region.
 		if (Util.hasFlag(plugin, location, Flag.TELEPORT)) {
 			String flag = Util.getFlag(plugin, location, Flag.TELEPORT);
