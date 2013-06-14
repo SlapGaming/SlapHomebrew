@@ -1,13 +1,15 @@
 package me.naithantu.SlapHomebrew.Commands;
 
+import java.util.HashMap;
 import java.util.HashSet;
-
 import me.naithantu.SlapHomebrew.Book;
 import me.naithantu.SlapHomebrew.Lottery;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
+import me.naithantu.SlapHomebrew.Runnables.RainbowTask;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 import net.minecraft.server.v1_5_R3.EntityPlayer;
 import net.minecraft.server.v1_5_R3.Packet24MobSpawn;
+import net.minecraft.server.v1_5_R3.Packet70Bed;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -346,49 +348,122 @@ public class SlapCommand extends AbstractCommand {
 				}, 50);
 			}
 		}
-		
-		if(arg.equalsIgnoreCase("firemob")){
+
+		if (arg.equalsIgnoreCase("firemob")) {
 			if (!testPermission(sender, "firemob")) {
 				this.noPermission(sender);
 				return true;
-			}		
-			
-			if(args.length < 2){
+			}
+
+			if (args.length < 2) {
 				this.badMsg(sender, "/slap firemob [mob] [amount]");
 				return true;
 			}
-			
+
 			int mobs = 1;
-			if(args.length == 3){
-				try{
+			if (args.length == 3) {
+				try {
 					mobs = Integer.parseInt(args[2]);
-				}catch(NumberFormatException e){
+				} catch (NumberFormatException e) {
 					this.badMsg(sender, "Invalid amount!");
 					return true;
 				}
 			}
-			
+
 			String mob = args[1];
 			EntityType mobType;
-			try{
+			try {
 				mobType = EntityType.valueOf(mob.toUpperCase());
-			}catch(IllegalArgumentException e){
+			} catch (IllegalArgumentException e) {
 				this.badMsg(sender, "That's not a mob!");
 				return true;
 			}
 			System.out.println("Mob: " + mobType);
-			
-			
-			Location location = player.getTargetBlock(null, 20).getLocation().add(0,1,0);
+
+			Location location = player.getTargetBlock(null, 20).getLocation().add(0, 1, 0);
 			World world = player.getWorld();
 			int i = 0;
-			while(i < mobs){
+			while (i < mobs) {
 				Entity burningMob = world.spawnEntity(location, mobType);
 				burningMob.setFireTicks(9999999);
 				burningMob.setMetadata("slapBurningMob", new FixedMetadataValue(plugin, true));
 				i++;
 			}
 		}
+
+		if (arg.equalsIgnoreCase("rainbow")) {
+			if (!testPermission(sender, "rainbow")) {
+				this.noPermission(sender);
+				return true;
+			}
+
+			if (!(sender instanceof Player)) {
+				this.badMsg(sender, "You need to be in-game to do that!");
+				return true;
+			}
+
+			if (!checkLeatherArmor(player.getInventory())) {
+				this.badMsg(sender, "You must be wearing leather armour!");
+			}
+
+			HashMap<String, Integer> rainbow = plugin.getExtras().getRainbow();
+
+			if (rainbow.containsKey(sender.getName())) {
+				Bukkit.getServer().getScheduler().cancelTask(rainbow.get(sender.getName()));
+				rainbow.remove(sender.getName());
+				this.msg(sender, "Your armour will no longer change colour!");
+			} else {
+				boolean fast = false;
+				if (args.length > 1) {
+					String speed = args[1];
+					if (speed.equalsIgnoreCase("fast")) {
+						fast = true;
+					}
+				}
+				RainbowTask rainbowTask = new RainbowTask(plugin, player, fast);
+				rainbowTask.runTaskTimer(plugin, 0, 1);
+				rainbow.put(sender.getName(), rainbowTask.getTaskId());
+				if (fast)
+					this.msg(sender, "Your armour will change rainbow colours at a high speed!");
+				else
+					this.msg(sender, "Your armour will now have rainbow colours!");
+			}
+			plugin.getExtras().setRainbow(rainbow);
+		}
+		
+		if (arg.equalsIgnoreCase("end")) {
+			if (!testPermission(sender, "end")) {
+				this.noPermission(sender);
+				return true;
+			}
+
+			if (!(sender instanceof Player)) {
+				this.badMsg(sender, "You need to be in-game to do that!");
+				return true;
+			}
+			
+			if (args.length < 2) {
+				this.badMsg(sender, "Usage: /slap end [player]");
+				return true;
+			}
+			final Player target = Bukkit.getServer().getPlayer(args[1]);
+			if (target == null) {
+				this.badMsg(sender, "That player is not online!");
+				return true;
+			}
+			
+			EntityPlayer nmsPlayer = ((CraftPlayer) target).getHandle();
+			nmsPlayer.viewingCredits = true;
+			nmsPlayer.playerConnection.sendPacket(new Packet70Bed(4, 0));
+			
+		}
 		return true;
+	}
+
+	public boolean checkLeatherArmor(PlayerInventory inventory) {
+		if (inventory.getBoots() == null || inventory.getLeggings() == null || inventory.getChestplate() == null || inventory.getHelmet() == null)
+			return false;
+		return inventory.getBoots().getType() == Material.LEATHER_BOOTS && inventory.getLeggings().getType() == Material.LEATHER_LEGGINGS
+				&& inventory.getChestplate().getType() == Material.LEATHER_CHESTPLATE && inventory.getHelmet().getType() == Material.LEATHER_HELMET;
 	}
 }
