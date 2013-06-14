@@ -63,21 +63,30 @@ public class IconMenu implements Listener {
 		if (event.getInventory().getTitle().equals(name)) {
 			event.setCancelled(true);
 			int slot = event.getRawSlot();
+			boolean inIconMenu;
+			String clickedName;
 			if (slot >= 0 && slot < size && optionNames[slot] != null) {
-				Plugin plugin = this.plugin;
-				OptionClickEvent e = new OptionClickEvent((Player) event.getWhoClicked(), slot, optionNames[slot]);
-				handler.onOptionClick(e);
-				if (e.willClose()) {
-					final Player p = (Player) event.getWhoClicked();
-					Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-						public void run() {
-							p.closeInventory();
-						}
-					}, 1);
-				}
-				if (e.willDestroy()) {
-					destroy();
-				}
+				inIconMenu = true;
+				clickedName = optionNames[slot];
+			} else if (slot >= 36 && slot <= 71) {
+				inIconMenu = false;
+				clickedName = event.getCurrentItem().getType().name();
+			} else {
+				return;
+			}
+			Plugin plugin = this.plugin;
+			OptionClickEvent e = new OptionClickEvent((Player) event.getWhoClicked(), slot, clickedName, event.getCurrentItem(), inIconMenu);
+			handler.onOptionClick(e);
+			if (e.willClose()) {
+				final Player p = (Player) event.getWhoClicked();
+				Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+					public void run() {
+						p.closeInventory();
+					}
+				}, 1);
+			}
+			if (e.willDestroy()) {
+				destroy();
 			}
 		}
 	}
@@ -92,11 +101,15 @@ public class IconMenu implements Listener {
 		private String name;
 		private boolean close;
 		private boolean destroy;
+		ItemStack itemClicked;
+		boolean inIconMenu;
 
-		public OptionClickEvent(Player player, int position, String name) {
+		public OptionClickEvent(Player player, int position, String name, ItemStack itemClicked, boolean inIconMenu) {
 			this.player = player;
 			this.position = position;
 			this.name = name;
+			this.itemClicked = itemClicked;
+			this.inIconMenu = inIconMenu;
 			this.close = true;
 			this.destroy = false;
 		}
@@ -111,6 +124,14 @@ public class IconMenu implements Listener {
 
 		public String getName() {
 			return name;
+		}
+
+		public ItemStack getItemClicked() {
+			return itemClicked;
+		}
+		
+		public boolean getInIconMenu(){
+			return inIconMenu;
 		}
 
 		public boolean willClose() {
@@ -133,7 +154,9 @@ public class IconMenu implements Listener {
 	private ItemStack setItemNameAndLore(ItemStack item, String name, String[] lore) {
 		ItemMeta im = item.getItemMeta();
 		im.setDisplayName(name);
-		im.setLore(Arrays.asList(lore));
+		if (lore != null) {
+			im.setLore(Arrays.asList(lore));
+		}
 		item.setItemMeta(im);
 		return item;
 	}

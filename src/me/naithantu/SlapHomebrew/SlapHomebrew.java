@@ -33,16 +33,13 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-import com.mewin.WGCustomFlags.WGCustomFlagsPlugin;
+
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 
 public class SlapHomebrew extends JavaPlugin {
 
-	public SlapHomebrew plugin;
 	public final Logger logger = Logger.getLogger("Minecraft");
 
-	public static HashMap<String, Integer> usedGrant = new HashMap<String, Integer>();
-	public static HashMap<Integer, Integer> vipItems = new HashMap<Integer, Integer>();
 	public static HashMap<String, Location> backDeath = new HashMap<String, Location>();
 	public static HashMap<String, String> worldGuard = new HashMap<String, String>();
 	HashMap<Integer, String> plots = new HashMap<Integer, String>();
@@ -54,6 +51,7 @@ public class SlapHomebrew extends JavaPlugin {
 	private YamlStorage vipStorage;
 	private YamlStorage timeStorage;
 	private YamlStorage sonicStorage;
+	private YamlStorage vipGrantStorage;
 
 	private FileConfiguration dataConfig;
 	private FileConfiguration vipConfig;
@@ -65,7 +63,8 @@ public class SlapHomebrew extends JavaPlugin {
 
 	Bump bump;
 	Sonic sonic;
-
+	Extras extras;
+	
 	public static boolean allowCakeTp;
 
 	Configuration config;
@@ -85,16 +84,16 @@ public class SlapHomebrew extends JavaPlugin {
 		vipStorage = new YamlStorage(this, "vip");
 		timeStorage = new YamlStorage(this, "time");
 		sonicStorage = new YamlStorage(this, "sonic");
+		vipGrantStorage = new YamlStorage(this, "vipgrant");
 		dataConfig = dataStorage.getConfig();
 		vipConfig = vipStorage.getConfig();
 		vip = new Vip(vipStorage);
 		sonic = new Sonic(this);
 		bump = new Bump(this);
-		loadItems();
+		extras = new Extras(this);
 		tpBlocks = loadHashSet("tpblocks");
 		BlockfaqCommand.chatBotBlocks = loadHashSet("chatbotblocks");
 		setupEconomy();
-		loadUses();
 		setupChatBot();
 		loadworldGuard();
 		loadPlots();
@@ -117,12 +116,13 @@ public class SlapHomebrew extends JavaPlugin {
 		pm.registerEvents(new FoodLevelChangeListener(), this);
 		pm.registerEvents(new InteractListener(this), this);
 		pm.registerEvents(new LoginListener(this, timeStorage, dataStorage, vipStorage), this);
-		pm.registerEvents(new MoveListener(this), this);
+		pm.registerEvents(new MoveListener(this, extras), this);
 		pm.registerEvents(new PortalListener(), this);
 		pm.registerEvents(new PotionListener(), this);
 		pm.registerEvents(new ProjectileHitListener(), this);
 		pm.registerEvents(new QuitListener(this, timeStorage), this);
 		pm.registerEvents(new TeleportListener(), this);
+		pm.registerEvents(new ToggleFlightListener(extras), this);
 		pm.registerEvents(new VehicleListener(), this);
 		pm.registerEvents(new PlayerInteractEntityListener(), this);
 
@@ -143,8 +143,6 @@ public class SlapHomebrew extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
-		saveItems();
-		saveUses();
 		saveworldGuard();
 		saveHashSet(tpBlocks, "tpblocks");
 		saveHashSet(BlockfaqCommand.chatBotBlocks, "chatbotblocks");
@@ -164,7 +162,9 @@ public class SlapHomebrew extends JavaPlugin {
 		return (WorldGuardPlugin) plugin;
 	}
 
-	private WGCustomFlagsPlugin getWGCustomFlags() {
+	//TODO Use WGCustomFlags instead of crappy member flags.
+	
+/*	private WGCustomFlagsPlugin getWGCustomFlags() {
 		Plugin plugin = getServer().getPluginManager().getPlugin("WGCustomFlags");
 
 		if (plugin == null || !(plugin instanceof WGCustomFlagsPlugin)) {
@@ -172,7 +172,7 @@ public class SlapHomebrew extends JavaPlugin {
 		}
 
 		return (WGCustomFlagsPlugin) plugin;
-	}
+	}*/
 
 	public Vip getVip() {
 		return vip;
@@ -192,6 +192,10 @@ public class SlapHomebrew extends JavaPlugin {
 	
 	public YamlStorage getSonicStorage() {
 		return sonicStorage;
+	}
+	
+	public YamlStorage getVipGrantStorage() {
+		return vipGrantStorage;
 	}
 
 	public List<Integer> getUnfinishedPlots() {
@@ -270,38 +274,6 @@ public class SlapHomebrew extends JavaPlugin {
 			config.set("chatmessages.pay", "&c[FAQ] &3Type /money pay [name] [amount]!");
 		}
 		this.saveConfig();
-	}
-
-	public void saveUses() {
-		dataConfig.set("vipuses", null);
-		for (Map.Entry<String, Integer> entry : usedGrant.entrySet()) {
-			dataConfig.set("vipuses." + entry.getKey(), entry.getValue());
-		}
-		dataStorage.saveConfig();
-	}
-
-	public void loadUses() {
-		if (dataConfig.getConfigurationSection("vipuses") == null)
-			return;
-		for (String key : dataConfig.getConfigurationSection("vipuses").getKeys(false)) {
-			usedGrant.put(key, dataConfig.getInt("vipuses." + key));
-		}
-	}
-
-	public void saveItems() {
-		dataConfig.set("vipitems", null);
-		for (Map.Entry<Integer, Integer> entry : vipItems.entrySet()) {
-			dataConfig.set("vipitems." + Integer.toString(entry.getKey()), entry.getValue());
-		}
-		dataStorage.saveConfig();
-	}
-
-	public void loadItems() {
-		if (dataConfig.getConfigurationSection("vipitems") == null)
-			return;
-		for (String key : dataConfig.getConfigurationSection("vipitems").getKeys(false)) {
-			vipItems.put(Integer.valueOf(key), dataConfig.getInt("vipitems." + key));
-		}
 	}
 
 	public void savePlots() {
@@ -420,6 +392,10 @@ public class SlapHomebrew extends JavaPlugin {
 	
 	public Sonic getSonic(){
 		return sonic;
+	}
+	
+	public Extras getExtras(){
+		return extras;
 	}
 
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {

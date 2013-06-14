@@ -45,6 +45,7 @@ public class LoginListener implements Listener {
 	@EventHandler
 	public void onPlayerLogin(PlayerLoginEvent event) {
 		final Player player = event.getPlayer();
+		
 		if (player.hasPermission("slaphomebrew.staff")) {
 			String date = new SimpleDateFormat("MMM-d HH:mm:ss z").format(new Date());
 			date = date.substring(0, 1).toUpperCase() + date.substring(1);
@@ -76,7 +77,9 @@ public class LoginListener implements Listener {
 		int vipMonth = Integer.valueOf(checkMonth.format(date));
 		int vipYear = Integer.valueOf(checkYear.format(date));
 		if (vipDay > dataConfig.getInt("vipdate.day") || vipMonth > dataConfig.getInt("vipdate.month") || vipYear > dataConfig.getInt("vipdate.year")) {
-			SlapHomebrew.usedGrant.clear();
+			YamlStorage dataStorage = plugin.getDataStorage();
+			dataStorage.getConfig().set("usedgrant", null);
+			dataStorage.saveConfig();
 			updateVipDays();
 		}
 		dataConfig.set("vipdate.day", vipDay);

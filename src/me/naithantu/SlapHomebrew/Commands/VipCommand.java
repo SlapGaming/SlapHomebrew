@@ -3,19 +3,16 @@ package me.naithantu.SlapHomebrew.Commands;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import me.naithantu.SlapHomebrew.IconMenu;
+
+import me.naithantu.SlapHomebrew.Extras;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Vip;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
-
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
@@ -23,7 +20,6 @@ public class VipCommand extends AbstractVipCommand {
 
 	String header = ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE;
 
-	Integer used = 0;
 	HashSet<String> vipItemsList = new HashSet<String>();
 	YamlStorage vipStorage;
 	FileConfiguration vipConfig;
@@ -69,218 +65,29 @@ public class VipCommand extends AbstractVipCommand {
 					this.badMsg(sender, "You need to be in-game to do that.");
 					return true;
 				}
-				int type;
+				Extras extras = plugin.getExtras();
 				Player player = (Player) sender;
-				if (player.hasPermission("slaphomebrew.grant")) {
-					if (player.getInventory().firstEmpty() == -1) {
-						player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "Your inventory is already full!");
-						return true;
-					}
+				String playerName = player.getName();
+				YamlStorage dataStorage = plugin.getDataStorage();
+				FileConfiguration dataConfig = dataStorage.getConfig();
 
-					//setupIconMenu(player);
-
-					//TODO Add iconmenu to choose items!
-					try {
-						arg = args[1];
-					} catch (ArrayIndexOutOfBoundsException e) {
-						player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "You haven't chosen an item to be given!");
-						return true;
-					}
-
-					try {
-						type = Integer.valueOf(arg);
-					} catch (NumberFormatException e) {
-						PlayerInventory inventory = player.getInventory();
-
-						String name = player.getName();
-						String typeName = arg;
-						typeName = typeName.toUpperCase();
-						Material typeMaterial = Material.getMaterial(typeName);
-						ItemStack stackData;
-						try {
-							stackData = new ItemStack(typeMaterial, SlapHomebrew.vipItems.get(typeMaterial.getId()));
-						} catch (NullPointerException e2) {
-							player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "Unknown item name!");
-							return true;
-						}
-						if (SlapHomebrew.vipItems.containsKey(typeMaterial.getId())) {
-							if (SlapHomebrew.usedGrant.containsKey(name)) {
-								try {
-									used = ((Integer) SlapHomebrew.usedGrant.get(name).intValue());
-								} catch (NullPointerException e1) {
-								}
-								if (used < 3) {
-									used += 1;
-									player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "Stack of items given.");
-									int timesleft = 3 - used;
-									player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + timesleft + " times left today.");
-									SlapHomebrew.usedGrant.put(name, used);
-									inventory.addItem(stackData);
-								} else {
-									player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "You have already used this 3 times today!");
-								}
-							} else {
-								used = 1;
-								SlapHomebrew.usedGrant.put(name, used);
-								inventory.addItem(stackData);
-								int timesleft = 3 - used;
-								player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "Stack of items given.");
-								player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + timesleft + " times left today.");
-							}
-						} else {
-							player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "You are not allowed to spawn that!");
-						}
-						return true;
-					}
-
-					//TODO Make grant system less messy.
-					if (SlapHomebrew.vipItems.containsKey(type)) {
-						PlayerInventory inventory = player.getInventory();
-
-						int material = type;
-						ItemStack stackData = new ItemStack(material, SlapHomebrew.vipItems.get(material));
-						String name = player.getName();
-						if (SlapHomebrew.usedGrant.containsKey(name)) {
-							try {
-								used = ((Integer) SlapHomebrew.usedGrant.get(name).intValue());
-							} catch (NullPointerException e) {
-							}
-							if (used < 3) {
-								used += 1;
-								player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "Stack of items given.");
-								int timesleft = 3 - used;
-								player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + timesleft + " times left today.");
-								SlapHomebrew.usedGrant.put(name, used);
-								inventory.addItem(stackData);
-							} else {
-								player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "You have already used this 3 times today!");
-							}
-						} else {
-							used = 1;
-							SlapHomebrew.usedGrant.put(name, used);
-							inventory.addItem(stackData);
-							int timesleft = 3 - used;
-							player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "Stack of items given.");
-							player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + timesleft + " times left today.");
-						}
-					} else {
-						player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "You are not allowed to spawn that!");
-					}
-				} else {
-					player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "You don't have permission for that! Go to www.slapgaming.com/vip!");
+				if (!dataConfig.contains("usedgrant." + playerName)) {
+					dataConfig.set("usedgrant." + playerName, 0);
 				}
-			}
-
-			if (arg.equalsIgnoreCase("copybook")) {
-				if (!(sender instanceof Player)) {
-					this.badMsg(sender, "You need to be in-game to do that.");
+				
+				int timesUsed = dataConfig.getInt("usedgrant." + playerName);
+				
+				if(timesUsed >= 3){
+					player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "You have already used this 3 times today!");
 					return true;
 				}
-				Player player = (Player) sender;
-				if (player.hasPermission("slaphomebrew.grant")) {
-					ItemStack bookToCopy = player.getItemInHand();
-					if (!(bookToCopy.getType() == Material.WRITTEN_BOOK)) {
-						this.badMsg(sender, "You're not holding a book!");
-						return true;
-					}
 
-					String playerName = player.getName();
-					if (SlapHomebrew.usedGrant.containsKey(playerName)) {
-						try {
-							used = ((Integer) SlapHomebrew.usedGrant.get(playerName).intValue());
-						} catch (NullPointerException e) {
-						}
-						if (used < 3) {
-							used += 1;
-							player.getInventory().addItem(bookToCopy);
-							player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "Book copied.");
-							int timesleft = 3 - used;
-							player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + timesleft + " times left today.");
-							SlapHomebrew.usedGrant.put(playerName, used);
-						} else {
-							player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "You have already used this 3 times today!");
-						}
-					} else {
-						used = 1;
-						SlapHomebrew.usedGrant.put(playerName, used);
-						int timesleft = 3 - used;
-						player.getInventory().addItem(bookToCopy);
-						player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "Book copied.");
-						player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + timesleft + " times left today.");
-					}
-				} else {
-					player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "You don't have permission for that! Go to www.slapgaming.com/vip!");
-				}
+				extras.getMenus().getVipMenu().open((Player) sender);
+				return true;
 			}
 
 			if (arg.equalsIgnoreCase("homes")) {
 				sender.sendMessage(header + "You are allowed to set " + vipUtil.getHomes(sender.getName()) + " homes!");
-			}
-
-			if (arg.equalsIgnoreCase("grantlistamount") || arg.equalsIgnoreCase("listamount")) {
-				Player player = (Player) sender;
-				if (player.hasPermission("slaphomebrew.grantlist")) {
-					//vipItemsList.clear();
-					player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "VIPs can spawn the item codes: " + SlapHomebrew.vipItems.toString());
-				} else {
-					player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "You don't have permission for that! Go to www.slapgaming.com/vip!");
-				}
-			}
-
-			if (arg.equalsIgnoreCase("grantlist") || arg.equalsIgnoreCase("list")) {
-				Player player = (Player) sender;
-				if (player.hasPermission("slaphomebrew.grantlist")) {
-					vipItemsList.clear();
-					for (Integer id: SlapHomebrew.vipItems.keySet()){
-						System.out.println("Item id: " + id);
-						Material vipItemsMaterial = Material.getMaterial(id);
-						vipItemsList.add(vipItemsMaterial.toString().toLowerCase());	
-					}
-
-					player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "VIPs can spawn the items: " + vipItemsList.toString());
-				} else {
-					player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "You don't have permission for that! Go to www.slapgaming.com/vip!");
-				}
-			}
-
-			if (arg.equalsIgnoreCase("resetgrant")) {
-				Player player = (Player) sender;
-				if (player.hasPermission("slaphomebrew.managevip")) {
-					SlapHomebrew.vipItems.clear();
-					SlapHomebrew.vipItems.put(1, 64);
-					SlapHomebrew.vipItems.put(2, 64);
-					SlapHomebrew.vipItems.put(3, 64);
-					SlapHomebrew.vipItems.put(4, 64);
-					SlapHomebrew.vipItems.put(5, 64);
-					SlapHomebrew.vipItems.put(12, 64);
-					SlapHomebrew.vipItems.put(13, 64);
-					SlapHomebrew.vipItems.put(17, 64);
-					SlapHomebrew.vipItems.put(18, 64);
-					SlapHomebrew.vipItems.put(20, 64);
-					SlapHomebrew.vipItems.put(24, 64);
-					SlapHomebrew.vipItems.put(35, 64);
-					SlapHomebrew.vipItems.put(37, 64);
-					SlapHomebrew.vipItems.put(38, 64);
-					SlapHomebrew.vipItems.put(43, 64);
-					SlapHomebrew.vipItems.put(44, 64);
-					SlapHomebrew.vipItems.put(53, 64);
-					SlapHomebrew.vipItems.put(65, 64);
-					SlapHomebrew.vipItems.put(67, 64);
-					SlapHomebrew.vipItems.put(81, 64);
-					SlapHomebrew.vipItems.put(86, 64);
-					SlapHomebrew.vipItems.put(87, 64);
-					SlapHomebrew.vipItems.put(89, 64);
-					SlapHomebrew.vipItems.put(91, 64);
-					SlapHomebrew.vipItems.put(98, 64);
-					SlapHomebrew.vipItems.put(109, 64);
-					SlapHomebrew.vipItems.put(110, 64);// 32
-					SlapHomebrew.vipItems.put(112, 64);// 32
-					SlapHomebrew.vipItems.put(337, 64);
-					plugin.saveItems();
-					player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "The vip items list has been reset to default!");
-				} else {
-					player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "You don't have permission for that!");
-				}
 			}
 
 			//VIP expiry date commands:
@@ -486,7 +293,7 @@ public class VipCommand extends AbstractVipCommand {
 							+ amount + " dollar credited (Including 20% extra VIP bonus)!");
 				} else {
 					plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), "mail send " + playerName + " " + ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "Your account had "
-							+ amount + " dollar credited (Including 20% extra VIP bonus)!");
+							+ amount + " dollar credited!");
 				}
 				SlapHomebrew.econ.depositPlayer(playerName, amount);
 				sender.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "Gave player " + playerName + " " + amount + " dollars!");
@@ -499,18 +306,5 @@ public class VipCommand extends AbstractVipCommand {
 
 		return true;
 	}
-
-	public void setupIconMenu(Player player) {
-		//TODO Remove iconMenu stuff here, just testing.
-		IconMenu iconMenu = new IconMenu("vipMenu", 9, new IconMenu.OptionClickEventHandler() {
-			@Override
-			public void onOptionClick(IconMenu.OptionClickEvent event) {
-				event.getPlayer().sendMessage("You have chosen " + event.getName());
-				event.setWillClose(true);
-				event.setWillDestroy(true);
-			}
-		}, plugin).setOption(3, new ItemStack(Material.APPLE, 1), "Food", "The food is delicious").setOption(4, new ItemStack(Material.IRON_SWORD, 1), "Weapon", "Weapons are for awesome people")
-				.setOption(5, new ItemStack(Material.EMERALD, 1), "Money", "Money brings happiness");
-		iconMenu.open(player);
-	}
 }
+
