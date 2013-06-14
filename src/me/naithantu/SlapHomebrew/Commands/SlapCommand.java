@@ -430,7 +430,7 @@ public class SlapCommand extends AbstractCommand {
 			}
 			plugin.getExtras().setRainbow(rainbow);
 		}
-		
+
 		if (arg.equalsIgnoreCase("end")) {
 			if (!testPermission(sender, "end")) {
 				this.noPermission(sender);
@@ -441,7 +441,7 @@ public class SlapCommand extends AbstractCommand {
 				this.badMsg(sender, "You need to be in-game to do that!");
 				return true;
 			}
-			
+
 			if (args.length < 2) {
 				this.badMsg(sender, "Usage: /slap end [player]");
 				return true;
@@ -451,11 +451,40 @@ public class SlapCommand extends AbstractCommand {
 				this.badMsg(sender, "That player is not online!");
 				return true;
 			}
-			
+
 			EntityPlayer nmsPlayer = ((CraftPlayer) target).getHandle();
 			nmsPlayer.viewingCredits = true;
 			nmsPlayer.playerConnection.sendPacket(new Packet70Bed(4, 0));
+
+		}
+
+		if (arg.equalsIgnoreCase("showmessage") || arg.equalsIgnoreCase("showmsg")) {
+			if (!testPermission(sender, "showmsg")) {
+				this.noPermission(sender);
+				return true;
+			}
+
+			if (args.length < 3) {
+				this.badMsg(sender, "Usage: /slap showmessage [player] [message]");
+				return true;
+			}
+
+			Player targetPlayer = Bukkit.getServer().getPlayer(args[1]);
 			
+			if (targetPlayer == null) {
+				this.badMsg(sender, "That player is not online!");
+				return true;
+			}
+
+			final StringBuilder message = new StringBuilder();
+			for (int i = 2; i < args.length; i++) {
+				if (i != 2) {
+					message.append(" ");
+				}
+				message.append(args[i]);
+			}
+			
+			targetPlayer.sendMessage(ChatColor.translateAlternateColorCodes('&', message.toString()));
 		}
 		return true;
 	}

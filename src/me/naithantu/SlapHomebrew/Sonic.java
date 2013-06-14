@@ -8,6 +8,7 @@ import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -55,6 +56,7 @@ public class Sonic {
 		itemMeta.setDisplayName(ChatColor.AQUA + "" + ChatColor.ITALIC + "Sonic Shoes");
 		boots.setItemMeta(itemMeta);
 		player.getInventory().setBoots(boots);
+		player.setGameMode(GameMode.SURVIVAL);
 		players.put(playerName, new SonicPlayer(this, playerName));
 	}
 

@@ -63,7 +63,7 @@ public class SonicCommand extends AbstractCommand {
 					if (i == (page * 10) + 9)
 						break;
 				}
-			} else if (args[0].equalsIgnoreCase("time") || args[0].equalsIgnoreCase("highscore")) {
+			} else if (args[0].equalsIgnoreCase("time") || args[0].equalsIgnoreCase("highscore") || args[0].equalsIgnoreCase("score")) {
 				String name = sender.getName();
 				if (args.length > 1) {
 					name = args[1];

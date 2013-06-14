@@ -7,6 +7,7 @@ import java.util.Date;
 import me.naithantu.SlapHomebrew.Jail;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -21,6 +22,7 @@ public class CommandListener implements Listener {
 		String message = event.getMessage().toLowerCase().trim();
 		String[] commandMessage = message.split(" ");
 		if (commandMessage[0].equalsIgnoreCase("/tjail") || commandMessage[0].equalsIgnoreCase("/jail") || commandMessage[0].equalsIgnoreCase("/togglejail")) {
+			boolean hasBeenJailed = true;
 			if (!player.hasPermission("slaphomebrew.longjail") && player.hasPermission("essentials.togglejail")) {
 				//Check the number of args, to not block usage messages.
 				if (commandMessage.length > 3) {
@@ -34,10 +36,13 @@ public class CommandListener implements Listener {
 					Jail jail = new Jail();
 					if (!jail.testJail(time)) {
 						player.sendMessage(ChatColor.RED + "You may not jail someone for that long!");
+						hasBeenJailed = false;
 						event.setCancelled(true);
 					}
 				}
 			}
+			if(hasBeenJailed && Bukkit.getServer().getPlayer(commandMessage[1]) != null && commandMessage.length > 3)
+				Bukkit.getServer().broadcastMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + Bukkit.getServer().getPlayer(commandMessage[1]).getName() + " has been jailed.");
 		}
 		
 		if (commandMessage[0].equalsIgnoreCase("/jails")) {
