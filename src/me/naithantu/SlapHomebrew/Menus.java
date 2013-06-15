@@ -2,7 +2,6 @@ package me.naithantu.SlapHomebrew;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 
@@ -12,7 +11,7 @@ import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.MaterialData;
+import org.bukkit.inventory.meta.BookMeta;
 
 public class Menus {
 	SlapHomebrew plugin;
@@ -20,7 +19,9 @@ public class Menus {
 
 	IconMenu woodMenu;
 	IconMenu stoneMenu;
-	IconMenu sandMenu;
+	IconMenu netherMenu;
+	IconMenu miscellaneousMenu;
+	IconMenu bookMenu;
 
 	YamlStorage vipStorage;
 	FileConfiguration vipConfig;
@@ -32,143 +33,118 @@ public class Menus {
 		vipMenu();
 		woodMenu();
 		stoneMenu();
-		sandMenu();
+		netherMenu();
+		miscellaneousMenu();
+		bookMenu();
 	}
 
 	public IconMenu getVipMenu() {
 		return vipMenu;
 	}
 
-	public IconMenu getWoodMenu() {
-		return woodMenu;
-	}
-
-	public IconMenu StoneMenu() {
-		return stoneMenu;
-	}
-
-	public IconMenu getSandMenu() {
-		return sandMenu;
-	}
-
 	public void vipMenu() {
-		//Get vip items from config.
-		YamlStorage vipStorage = plugin.getVipGrantStorage();
-		FileConfiguration vipConfig = vipStorage.getConfig();
-		List<String> vipItems = new ArrayList<String>();
-
-		if (vipConfig.getConfigurationSection("vipitems.normal") == null) {
-			System.out.println("No vip items found, putting new values into config!");
-			generateVipItems();
-		}
-
-		Set<String> keys = vipConfig.getConfigurationSection("vipitems.normal").getKeys(false);
-		for (String string : keys) 
-			vipItems.add(string);
-
-		//Create iconmenu with correct amount of rows.
-		vipMenu = new IconMenu("Vip grant menu", (int) (Math.ceil((vipItems.size()) / 9.0) + 1) * 9, new IconMenu.OptionClickEventHandler() {
+		vipMenu = new IconMenu("Vip grant menu", 9, new IconMenu.OptionClickEventHandler() {
 			@Override
 			public void onOptionClick(IconMenu.OptionClickEvent event) {
-				event.setWillClose(false);
-				final Player player = event.getPlayer();
-				if (event.getPosition() == 2) {
-					player.closeInventory();
-					Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-						public void run() {
-							woodMenu.open(player);
-						}
-					}, 1);
-					return;
-				}
-				if (event.getPosition() == 4) {
-					player.closeInventory();
-					Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-						public void run() {
-							sandMenu.open(player);
-						}
-					}, 1);
-					return;
-				}
-				if (event.getPosition() == 6) {
-					player.closeInventory();
-					Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-						public void run() {
-							stoneMenu.open(player);
-						}
-					}, 1);
-					return;
-				}
-				handleSubMenu(event);
+				handleMenu(event);
 			}
 		}, plugin);
 
-		//Fill iconmenu with items.
-		vipMenu.setOption(2, new ItemStack(Material.LOG, 0), "Wood sub menu.", "Click for more wood and leaves types.");
-		vipMenu.setOption(4, new ItemStack(Material.SANDSTONE, 0), "Sandstone sub menu", "Click for more sandstone types.");
-		vipMenu.setOption(6, new ItemStack(Material.SMOOTH_BRICK, 0), "Stone sub menu", "Click for more stone types.");
-		fillIconMenu(vipMenu, vipItems, "vipitems.normal", 1);
-
+		addMenuBar(vipMenu);
 	}
-	
+
 	public void woodMenu() {
-		List<String> vipItems = new ArrayList<String>();
-		Set<String> keys = vipConfig.getConfigurationSection("vipitems.wood").getKeys(false);
-		for (String string : keys) {
-			vipItems.add(string);
-		}
-		woodMenu = new IconMenu("Vip grant wood menu", (int) Math.ceil(vipItems.size() / 9.0) * 9, new IconMenu.OptionClickEventHandler() {
+		int size = vipConfig.getConfigurationSection("vipitems.wood").getKeys(false).size();
+		woodMenu = new IconMenu("Vip grant wood menu", (int) Math.ceil(size / 9.0 + 1) * 9, new IconMenu.OptionClickEventHandler() {
 			@Override
 			public void onOptionClick(IconMenu.OptionClickEvent event) {
-				handleSubMenu(event);
+				handleMenu(event);
 			}
 		}, plugin);
 
-		fillIconMenu(woodMenu, vipItems, "vipitems.wood", 0);
+		fillIconMenu(woodMenu, "vipitems.wood", 1);
 	}
 
 	public void stoneMenu() {
-		List<String> vipItems = new ArrayList<String>();
-		Set<String> keys = vipConfig.getConfigurationSection("vipitems.stone").getKeys(false);
-		for (String string : keys) {
-			vipItems.add(string);
-		}
-		stoneMenu = new IconMenu("Vip grant stone", (int) Math.ceil(vipItems.size() / 9.0) * 9, new IconMenu.OptionClickEventHandler() {
+		int size = vipConfig.getConfigurationSection("vipitems.stone").getKeys(false).size();
+		stoneMenu = new IconMenu("Vip grant stone menu", (int) Math.ceil(size / 9.0 + 1) * 9, new IconMenu.OptionClickEventHandler() {
 			@Override
 			public void onOptionClick(IconMenu.OptionClickEvent event) {
-				handleSubMenu(event);
+				handleMenu(event);
 			}
 		}, plugin);
 
-		fillIconMenu(stoneMenu, vipItems, "vipitems.stone",  0);
+		fillIconMenu(stoneMenu, "vipitems.stone", 1);
 	}
 
-	public void sandMenu() {
-		List<String> vipItems = new ArrayList<String>();
-		Set<String> keys = vipConfig.getConfigurationSection("vipitems.sand").getKeys(false);
-		for (String string : keys) {
-			vipItems.add(string);
-		}
-		sandMenu = new IconMenu("Vip grant sand menu", (int) Math.ceil(vipItems.size() / 9.0) * 9, new IconMenu.OptionClickEventHandler() {
+	public void netherMenu() {
+		int size = vipConfig.getConfigurationSection("vipitems.nether").getKeys(false).size();
+		netherMenu = new IconMenu("Vip grant nether menu", (int) Math.ceil(size / 9.0 + 1) * 9, new IconMenu.OptionClickEventHandler() {
 			@Override
 			public void onOptionClick(IconMenu.OptionClickEvent event) {
-				handleSubMenu(event);
+				handleMenu(event);
 			}
 		}, plugin);
 
-		fillIconMenu(sandMenu, vipItems, "vipitems.sand", 0);
+		fillIconMenu(netherMenu, "vipitems.nether", 1);
 	}
 
-	private void fillIconMenu(IconMenu iconMenu, List<String> vipItems, String configKey, int extraRows) {
+	public void miscellaneousMenu() {
+		int size = vipConfig.getConfigurationSection("vipitems.miscellaneous").getKeys(false).size();
+		miscellaneousMenu = new IconMenu("Vip grant miscellaneous menu", (int) Math.ceil(size / 9.0 + 1) * 9, new IconMenu.OptionClickEventHandler() {
+			@Override
+			public void onOptionClick(IconMenu.OptionClickEvent event) {
+				handleMenu(event);
+			}
+		}, plugin);
+
+		fillIconMenu(miscellaneousMenu, "vipitems.miscellaneous", 1);
+	}
+
+	public void bookMenu() {
+		bookMenu = new IconMenu("Vip grant book menu", (int) 4 * 9, new IconMenu.OptionClickEventHandler() {
+			@Override
+			public void onOptionClick(IconMenu.OptionClickEvent event) {
+				handleMenu(event);
+			}
+		}, plugin);
+	}
+
+	public void openBookMenu(final Player player) {
+		//Get all books out of inventory.
+		List<ItemStack> books = new ArrayList<ItemStack>();
+		for (ItemStack item : player.getInventory()) {
+			if (item != null && item.getType() == Material.WRITTEN_BOOK) {
+				books.add(item.clone());
+			}
+		}
+
+		bookMenu.emptyMenu();
+		addMenuBar(bookMenu);
+
 		int i = 0;
-		for (String item : vipItems) {
+		for (ItemStack itemStack : books) {
+			BookMeta bookMeta = (BookMeta) itemStack.getItemMeta();
+			String title = bookMeta.getTitle();
+			bookMenu.setOption(i + 9, itemStack, ChatColor.RESET + title, (String[]) null);
+			i++;
+		}
+		bookMenu.open(player);
+	}
+
+	private void fillIconMenu(IconMenu iconMenu, String configKey, int extraRows) {
+		addMenuBar(iconMenu);
+
+		int i = 0;
+		for (String item : vipConfig.getConfigurationSection(configKey).getKeys(false)) {
 			//Create itemStack with data value.
 			String[] itemSplit = item.split(":");
 			int id = Integer.parseInt(itemSplit[0]);
-			MaterialData materialData = new MaterialData(Material.getMaterial(id));
+			ItemStack itemStack;
 			if (itemSplit.length > 1)
-				materialData.setData((byte) Integer.parseInt(itemSplit[1]));
-			ItemStack itemStack = materialData.toItemStack(vipConfig.getInt(configKey + "." + item));
+				itemStack = new ItemStack(Material.getMaterial(id), vipConfig.getInt(configKey + "." + item), (short) Integer.parseInt(itemSplit[1]));
+			else
+				itemStack = new ItemStack(Material.getMaterial(id), vipConfig.getInt(configKey + "." + item));
 			//Change material name to nice readable name.
 			String materialName = Material.getMaterial(id).toString();
 			String[] materialSplit = materialName.split("_");
@@ -177,25 +153,75 @@ public class Menus {
 				capitalizedMaterialName = capitalizedMaterialName + string.substring(0, 1) + string.substring(1).toLowerCase() + " ";
 			}
 			capitalizedMaterialName.trim();
-			iconMenu.setOption(i + 9 * extraRows, itemStack, ChatColor.RESET + capitalizedMaterialName, (String[]) null);
+			if (itemStack.getTypeId() != 0)
+				iconMenu.setOption(i + 9 * extraRows, itemStack, ChatColor.RESET + capitalizedMaterialName, (String[]) null);
 			i++;
 		}
 	}
 
-	private void handleSubMenu(IconMenu.OptionClickEvent event) {
-		event.setWillClose(false);
-		YamlStorage dataStorage = plugin.getDataStorage();
-		FileConfiguration dataConfig = dataStorage.getConfig();
+	private void addMenuBar(IconMenu iconMenu) {
+		iconMenu.setOption(0, new ItemStack(Material.NETHER_BRICK, 0), "Nether menu", "Click for more nether items.");
+		iconMenu.setOption(2, new ItemStack(Material.LOG, 0), "Wood menu.", "Click for more wood and leaves items.");
+		iconMenu.setOption(4, new ItemStack(Material.SMOOTH_BRICK, 0), "Stone & sand menu", "Click for more stone & sandstone items.");
+		iconMenu.setOption(6, new ItemStack(Material.GLASS), "Miscellaneous menu", "Click for all other items.");
+		iconMenu.setOption(8, new ItemStack(Material.WRITTEN_BOOK, 0), "Book menu", "Click to copy books.");
+	}
+
+	private void handleMenu(IconMenu.OptionClickEvent event) {
 		final Player player = event.getPlayer();
 		String playerName = player.getName();
-		if (player.getInventory().firstEmpty() == -1) {
-			player.sendMessage(ChatColor.RED + "Your inventory is full!");
+		if (event.getPosition() == 0) {
+			player.closeInventory();
+			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+				public void run() {
+					netherMenu.open(player);
+				}
+			}, 2);
+			return;
+		}
+		if (event.getPosition() == 2) {
+			player.closeInventory();
+			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+				public void run() {
+					woodMenu.open(player);
+				}
+			}, 2);
+			return;
+		}
+		if (event.getPosition() == 4) {
+			player.closeInventory();
+			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+				public void run() {
+					stoneMenu.open(player);
+				}
+			}, 2);
+			return;
+		}
+		if (event.getPosition() == 6) {
+			player.closeInventory();
+			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+				public void run() {
+					miscellaneousMenu.open(player);
+				}
+			}, 2);
 			return;
 		}
 
-		if (event.getInIconMenu() == false) {
-			if (event.getItemClicked().getType() != Material.WRITTEN_BOOK)
-				return;
+		if (event.getPosition() == 8) {
+			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+				public void run() {
+					openBookMenu(player);
+				}
+			}, 2);
+			return;
+		}
+		event.setWillClose(false);
+		YamlStorage dataStorage = plugin.getDataStorage();
+		FileConfiguration dataConfig = dataStorage.getConfig();
+
+		if (player.getInventory().firstEmpty() == -1) {
+			player.sendMessage(ChatColor.RED + "Your inventory is full!");
+			return;
 		}
 
 		int timesUsed = dataConfig.getInt("usedgrant." + playerName);
@@ -207,62 +233,4 @@ public class Menus {
 			event.setWillClose(true);
 		}
 	}
-
-	private void generateVipItems() {
-		YamlStorage vipStorage = plugin.getVipGrantStorage();
-		FileConfiguration vipConfig = vipStorage.getConfig();
-		vipConfig.set("vipitems.normal.2", 64);
-		vipConfig.set("vipitems.normal.3", 64);
-		vipConfig.set("vipitems.normal.13", 64);
-		vipConfig.set("vipitems.normal.20", 64);
-		vipConfig.set("vipitems.normal.35", 64);
-		vipConfig.set("vipitems.normal.37", 64);
-		vipConfig.set("vipitems.normal.38", 64);
-		vipConfig.set("vipitems.normal.65", 64);
-		vipConfig.set("vipitems.normal.67", 64);
-		vipConfig.set("vipitems.normal.81", 64);
-		vipConfig.set("vipitems.normal.86", 64);
-		vipConfig.set("vipitems.normal.87", 64);
-		vipConfig.set("vipitems.normal.89", 64);
-		vipConfig.set("vipitems.normal.91", 64);
-		vipConfig.set("vipitems.normal.110", 64);
-		vipConfig.set("vipitems.normal.112", 64);
-		vipConfig.set("vipitems.normal.337", 64);
-
-		vipConfig.set("vipitems.wood.5:0", 64);
-		vipConfig.set("vipitems.wood.5:1", 64);
-		vipConfig.set("vipitems.wood.5:2", 64);
-		vipConfig.set("vipitems.wood.5:3", 64);
-		vipConfig.set("vipitems.wood.17:0", 16);
-		vipConfig.set("vipitems.wood.17:1", 16);
-		vipConfig.set("vipitems.wood.17:2", 16);
-		vipConfig.set("vipitems.wood.17:3", 16);
-		vipConfig.set("vipitems.wood.18:0", 64);
-		vipConfig.set("vipitems.wood.18:1", 64);
-		vipConfig.set("vipitems.wood.18:2", 64);
-		vipConfig.set("vipitems.wood.18:3", 64);
-		vipConfig.set("vipitems.wood.53", 64);
-		vipConfig.set("vipitems.wood.134", 64);
-		vipConfig.set("vipitems.wood.135", 64);
-		vipConfig.set("vipitems.wood.136", 64);
-
-		vipConfig.set("vipitems.stone.1", 64);
-		vipConfig.set("vipitems.stone.4", 64);
-		vipConfig.set("vipitems.stone.44:0", 64);
-		vipConfig.set("vipitems.stone.44:3", 64);
-		vipConfig.set("vipitems.stone.44:5", 64);
-		vipConfig.set("vipitems.stone.98:0", 64);
-		vipConfig.set("vipitems.stone.98:1", 8);
-		vipConfig.set("vipitems.stone.98:2", 8);
-		vipConfig.set("vipitems.stone.98:3", 8);
-		vipConfig.set("vipitems.stone.67", 64);
-		vipConfig.set("vipitems.stone.109", 64);
-
-		vipConfig.set("vipitems.sand.12", 64);
-		vipConfig.set("vipitems.sand.24:0", 16);
-		vipConfig.set("vipitems.sand.24:1", 16);
-		vipConfig.set("vipitems.sand.24:2", 16);
-		vipStorage.saveConfig();
-	}
-
 }

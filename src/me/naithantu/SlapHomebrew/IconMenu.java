@@ -57,6 +57,11 @@ public class IconMenu implements Listener {
 		optionNames = null;
 		optionIcons = null;
 	}
+	
+	public void emptyMenu(){
+		optionNames = new String[size];
+		optionIcons = new ItemStack[size];
+	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	void onInventoryClick(InventoryClickEvent event) {
