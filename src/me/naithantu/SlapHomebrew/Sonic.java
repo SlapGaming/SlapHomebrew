@@ -73,7 +73,7 @@ public class Sonic {
 	}
 
 	public boolean addHighscore(String playerName, long[] checkpointTimes) {
-		String configKey = "players." + playerName;
+		String configKey = "players." + playerName.toLowerCase();
 		String configTimes = sonicConfig.getString(configKey);
 		if (!sonicConfig.contains(configKey) || Long.parseLong(configTimes.split(":")[5]) > checkpointTimes[5]) {
 			String configString = "";

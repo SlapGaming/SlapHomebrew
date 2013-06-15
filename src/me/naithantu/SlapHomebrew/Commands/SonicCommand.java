@@ -6,6 +6,7 @@ import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Sonic;
 import me.naithantu.SlapHomebrew.Util;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
@@ -66,19 +67,20 @@ public class SonicCommand extends AbstractCommand {
 			} else if (args[0].equalsIgnoreCase("time") || args[0].equalsIgnoreCase("highscore") || args[0].equalsIgnoreCase("score")) {
 				String name = sender.getName();
 				if (args.length > 1) {
-					name = args[1];
+					name = args[1].toLowerCase();
 					List<String> leaderboard = sonic.getLeaderboard();
 					for (int i = 0; i < leaderboard.size(); i++) {
 						if (leaderboard.get(i).equalsIgnoreCase(name)) {
-							this.msg(sender, name + " has a highscore of " + Util.changeTimeFormat(sonic.getTotalTime(name)));
-							this.msg(sender, name + "'s times at each checkpoint were:");
+							String showName = Bukkit.getServer().getOfflinePlayer(name).getName();
+							this.msg(sender, showName + " has a highscore of " + Util.changeTimeFormat(sonic.getTotalTime(name)));
+							this.msg(sender, showName + "'s times at each checkpoint were:");
 							String playerTimes = plugin.getSonicStorage().getConfig().getString("players." + name);
 							String[] playerTimesSplit = playerTimes.split(":");
 							for (int checkpoint = 0; checkpoint < playerTimesSplit.length - 1; checkpoint++) {
 								long time = Long.parseLong(playerTimesSplit[checkpoint]);
 								this.msg(sender, "Checkpoint " + (checkpoint + 1) + ": " + Util.changeTimeFormat(time));
 							}
-							this.msg(sender, name + " is ranked #" + (i + 1));
+							this.msg(sender, showName + " is ranked #" + (i + 1));
 							return true;
 						}
 					}
