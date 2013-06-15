@@ -66,7 +66,7 @@ public class SonicCommand extends AbstractCommand {
 			} else if (args[0].equalsIgnoreCase("time") || args[0].equalsIgnoreCase("highscore") || args[0].equalsIgnoreCase("score")) {
 				String name = sender.getName();
 				if (args.length > 1) {
-					name = args[1];
+					name = args[1].toLowerCase();
 					List<String> leaderboard = sonic.getLeaderboard();
 					for (int i = 0; i < leaderboard.size(); i++) {
 						if (leaderboard.get(i).equalsIgnoreCase(name)) {
