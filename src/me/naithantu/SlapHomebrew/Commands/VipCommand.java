@@ -65,8 +65,19 @@ public class VipCommand extends AbstractVipCommand {
 					this.badMsg(sender, "You need to be in-game to do that.");
 					return true;
 				}
+				
+				if(!testPermission(sender, "grant")){
+					this.badMsg(sender, "You need to be a vip to do that. Go to www.slapgaming.com/donate!");
+					return true;
+				}
+		
 				Extras extras = plugin.getExtras();
 				Player player = (Player) sender;
+				
+				if(player.getWorld().getName().equals("world_sonic")||player.getWorld().getName().equals("world_creative")){
+					this.badMsg(sender, "You may not grant items in this world!");
+					return true;
+				}
 				String playerName = player.getName();
 				YamlStorage dataStorage = plugin.getDataStorage();
 				FileConfiguration dataConfig = dataStorage.getConfig();

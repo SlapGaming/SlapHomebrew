@@ -12,7 +12,7 @@ public class TeleportListener implements Listener {
 
 	@EventHandler
 	public void onPlayerTeleport(PlayerTeleportEvent event) {
-		Player player = event.getPlayer();
+		Player player = event.getPlayer();		
 		if (event.getTo().getWorld().getName().equals("world_nether") && event.getTo().getBlockY() >= 127){ 
 			player.sendMessage(ChatColor.RED + "You may not go above the nether!");
 			event.setCancelled(true);
@@ -27,6 +27,12 @@ public class TeleportListener implements Listener {
 			player.setAllowFlight(true);
 		} else if (event.getFrom().getWorld().getName().equals("world_start") && player.getGameMode() != GameMode.CREATIVE){
 			player.setAllowFlight(false);
+		}
+		
+		if(event.getFrom().getWorld().getName().equals("world_sonic") && !event.getTo().getWorld().getName().equals("world_sonic")){
+			player.getInventory().clear();
+			player.getInventory().setBoots(null);
+			player.getActivePotionEffects().clear();
 		}
 	}
 }
