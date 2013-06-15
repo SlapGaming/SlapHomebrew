@@ -143,6 +143,7 @@ public class SlapHomebrew extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
+		getServer().getScheduler().cancelTasks(this);
 		saveworldGuard();
 		saveHashSet(tpBlocks, "tpblocks");
 		saveHashSet(BlockfaqCommand.chatBotBlocks, "chatbotblocks");
