@@ -27,7 +27,7 @@ public class ToggleFlightListener implements Listener {
 			if (event.isFlying() && event.getPlayer().getGameMode() != GameMode.CREATIVE) {
 				if(!extras.getHasJumped().contains(player.getName())){
 					player.setFlying(false);
-					player.playSound(player.getLocation(), Sound.SHOOT_ARROW , 5, -5);
+					player.playSound(player.getLocation(), Sound.SHOOT_ARROW , 5, -500);
 					Vector jump = player.getLocation().getDirection().multiply(0.4).setY(1.2);
 					player.setVelocity(player.getVelocity().add(jump));
 					List<String> hasJumped = extras.getHasJumped();

@@ -23,8 +23,10 @@ public class SonicPlayer {
 			if (checkpoint == 0) {
 				float yaw = Bukkit.getServer().getPlayer(playerName).getLocation().getYaw();
 				//Start round only if they walk over the start line in the correct direction.
-				if (yaw < 90 || yaw > 270)
+				if (yaw < 90 || yaw > 270){
+					System.out.println("[SLAP] Sonic: Yaw is wrong - not passing start line!");
 					return;
+				}
 
 				Util.broadcastToWorld("world_sonic", ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + playerName + " started racing.");
 				startTime = new Date().getTime();
