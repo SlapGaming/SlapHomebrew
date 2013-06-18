@@ -24,8 +24,7 @@ public class BumpdoneCommand extends AbstractCommand {
 		}
 
 		if (!bump.getBumpIsDone()) {
-			bump.bump();
-			plugin.addBumpDone(sender.getName());
+			bump.bump(sender.getName());
 			this.msg(sender, "Thanks for bumping! :)");
 			for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
 				if (!onlinePlayer.getName().equals(sender.getName()) && onlinePlayer.hasPermission("slaphomebrew.bump")) {

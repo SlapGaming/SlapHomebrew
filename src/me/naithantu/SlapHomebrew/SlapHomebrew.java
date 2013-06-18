@@ -6,9 +6,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -89,9 +87,10 @@ public class SlapHomebrew extends JavaPlugin {
 		vipConfig = vipStorage.getConfig();
 		vip = new Vip(vipStorage);
 		sonic = new Sonic(this);
-		bump = new Bump(this);
+		bump = new Bump(this, dataStorage, dataConfig);
 		extras = new Extras(this);
 		tpBlocks = loadHashSet("tpblocks");
+		new Lottery(this);
 		BlockfaqCommand.chatBotBlocks = loadHashSet("chatbotblocks");
 		setupEconomy();
 		setupChatBot();
@@ -100,9 +99,6 @@ public class SlapHomebrew extends JavaPlugin {
 		loadUnfinishedForumVip();
 		loadForumVip();
 		loadUnfinishedPlots();
-		bump.bumpTimer();
-		Lottery lottery = new Lottery(this);
-		lottery.lotteryTimer();
 		new Schedulers(this);
 		pm = getServer().getPluginManager();
 		pm.registerEvents(new BlockPlaceListener(this), this);
@@ -353,13 +349,6 @@ public class SlapHomebrew extends JavaPlugin {
 
 	public void loadUnfinishedPlots() {
 		unfinishedPlots = dataConfig.getIntegerList("unfinishedplots");
-	}
-
-	public void addBumpDone(String name) {
-		String date = new SimpleDateFormat("MMM.d HH:mm z").format(new Date());
-		date = date.substring(0, 1).toUpperCase() + date.substring(1);
-		dataConfig.set("bumps." + date, name);
-		dataStorage.saveConfig();
 	}
 
 	public void saveUnfinishedForumVip() {

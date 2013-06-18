@@ -1,6 +1,12 @@
 package me.naithantu.SlapHomebrew;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import me.naithantu.SlapHomebrew.Storage.YamlStorage;
+
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 public class Bump {
@@ -8,12 +14,16 @@ public class Bump {
 	int amsgId;
 	int shortBumpTimer;
 	boolean bumpIsDone = true;
+	YamlStorage dataStorage;
+	FileConfiguration dataConfig;
 
-	
-	public Bump(SlapHomebrew plugin){
+	public Bump(SlapHomebrew plugin, YamlStorage dataStorage, FileConfiguration dataConfig) {
 		this.plugin = plugin;
+		this.dataStorage = dataStorage;
+		this.dataConfig = dataConfig;
+		bumpTimer();
 	}
-	
+
 	public void bumpTimer() {
 		amsgId = Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
 			public void run() {
@@ -51,19 +61,21 @@ public class Bump {
 		}
 		return onlineStaff;
 	}
-	
-	public void cancelTimer(){
-		Bukkit.getScheduler().cancelTask(amsgId);
-		Bukkit.getScheduler().cancelTask(shortBumpTimer);
-	}
-	
-	public boolean getBumpIsDone(){
+
+	public boolean getBumpIsDone() {
 		return bumpIsDone;
 	}
-	
-	public void bump(){
+
+	public void bump(String playerName) {
 		Bukkit.getScheduler().cancelTask(shortBumpTimer);
 		bumpIsDone = true;
 		bumpTimer();
+		
+		//Add message to config.
+		String date = new SimpleDateFormat("MMM.d HH:mm z").format(new Date());
+		date = date.substring(0, 1).toUpperCase() + date.substring(1);
+		dataConfig.set("bumps." + date, playerName);
+		dataStorage.saveConfig();
+
 	}
 }

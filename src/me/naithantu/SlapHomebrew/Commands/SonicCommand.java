@@ -30,6 +30,8 @@ public class SonicCommand extends AbstractCommand {
 			this.msg(sender, "www.ocddisco.com/2012/11/minecraft-sonic-the-hedgehog/");
 			this.msg(sender, "Made available for multiplayer by naithantu.");
 			this.msg(sender, "Type /warpsonic to go to the racetrack. Enjoy! :)");
+			this.msg(sender, "Type /sonic leaderboard for the leaderboards.");
+			this.msg(sender, "Type /sonic time [player] to see a certain players times & ranking.");
 			this.msg(sender, "=======================================");
 		} else {
 			if (args[0].equalsIgnoreCase("addcheckpoint")) {
@@ -60,7 +62,7 @@ public class SonicCommand extends AbstractCommand {
 
 				for (int i = page * 10; i < leaderboard.size(); i++) {
 					String name = leaderboard.get(i);
-					sender.sendMessage(ChatColor.GOLD + "" + (i + 1) + ". " + ChatColor.WHITE + name + " - " + Util.changeTimeFormat(sonic.getTotalTime(name)));
+					sender.sendMessage(ChatColor.GOLD + "" + (i + 1) + ". " + ChatColor.WHITE + Bukkit.getServer().getOfflinePlayer(name) + " - " + Util.changeTimeFormat(sonic.getTotalTime(name)));
 					if (i == (page * 10) + 9)
 						break;
 				}

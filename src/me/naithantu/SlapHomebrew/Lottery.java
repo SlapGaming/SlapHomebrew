@@ -20,6 +20,7 @@ public class Lottery {
 
 	public Lottery(SlapHomebrew plugin) {
 		this.plugin = plugin;
+		lotteryTimer();
 	}
 
 	public void lotteryTimer() {
