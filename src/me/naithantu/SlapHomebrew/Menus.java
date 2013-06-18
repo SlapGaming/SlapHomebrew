@@ -145,6 +145,7 @@ public class Menus {
 				itemStack = new ItemStack(Material.getMaterial(id), vipConfig.getInt(configKey + "." + item), (short) Integer.parseInt(itemSplit[1]));
 			else
 				itemStack = new ItemStack(Material.getMaterial(id), vipConfig.getInt(configKey + "." + item));
+			
 			//Change material name to nice readable name.
 			String materialName = Material.getMaterial(id).toString();
 			String[] materialSplit = materialName.split("_");
