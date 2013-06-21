@@ -62,6 +62,7 @@ public class SlapHomebrew extends JavaPlugin {
 	Bump bump;
 	Sonic sonic;
 	Extras extras;
+	Lottery lottery;
 	
 	public static boolean allowCakeTp;
 
@@ -73,7 +74,7 @@ public class SlapHomebrew extends JavaPlugin {
 	public static Economy econ = null;
 	public static Vault vault = null;
 
-	CommandHandler commandHandler = new CommandHandler(this);
+	CommandHandler commandHandler;
 
 	@Override
 	public void onEnable() {
@@ -90,7 +91,7 @@ public class SlapHomebrew extends JavaPlugin {
 		bump = new Bump(this, dataStorage, dataConfig);
 		extras = new Extras(this);
 		tpBlocks = loadHashSet("tpblocks");
-		new Lottery(this);
+		lottery = new Lottery(this);
 		BlockfaqCommand.chatBotBlocks = loadHashSet("chatbotblocks");
 		setupEconomy();
 		setupChatBot();
@@ -100,6 +101,7 @@ public class SlapHomebrew extends JavaPlugin {
 		loadForumVip();
 		loadUnfinishedPlots();
 		new Schedulers(this);
+		commandHandler = new CommandHandler(this, lottery);
 		pm = getServer().getPluginManager();
 		pm.registerEvents(new BlockPlaceListener(this), this);
 		pm.registerEvents(new ChatListener(this), this);
@@ -121,6 +123,7 @@ public class SlapHomebrew extends JavaPlugin {
 		pm.registerEvents(new ToggleFlightListener(extras), this);
 		pm.registerEvents(new VehicleListener(), this);
 		pm.registerEvents(new PlayerInteractEntityListener(), this);
+		pm.registerEvents(new PlayerRespawnListener(), this);
 
 		Plugin x = this.getServer().getPluginManager().getPlugin("Vault");
 		if (x != null & x instanceof Vault) {

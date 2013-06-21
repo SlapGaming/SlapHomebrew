@@ -10,9 +10,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class Lottery {
-	public static boolean lotteryPlaying = false;
-	public static boolean lotteryEnabled = true;
-	public static HashMap<String, Integer> lottery = new HashMap<String, Integer>();
+	public boolean lotteryPlaying = false;
+	public boolean lotteryEnabled = true;
+	public HashMap<String, Integer> lottery = new HashMap<String, Integer>();
 
 	SlapHomebrew plugin;
 	
@@ -23,7 +23,7 @@ public class Lottery {
 		lotteryTimer();
 	}
 
-	public void lotteryTimer() {
+	private void lotteryTimer() {
 		lotteryTimer = Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
 			public void run() {
 				if (lotteryEnabled == true) {
@@ -36,7 +36,7 @@ public class Lottery {
 		}, 72000);
 	}
 
-	public void shortLotteryTimer() {
+	private void shortLotteryTimer() {
 		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
 			public void run() {
 				if (!lottery.isEmpty()) {

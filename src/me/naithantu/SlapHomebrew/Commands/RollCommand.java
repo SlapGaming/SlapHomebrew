@@ -10,10 +10,11 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 public class RollCommand extends AbstractCommand {
-	Lottery lottery = new Lottery(plugin);
-
-	public RollCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
+	Lottery lottery;
+	
+	public RollCommand(CommandSender sender, String[] args, SlapHomebrew plugin, Lottery lottery) {
 		super(sender, args, plugin);
+		this.lottery = lottery;
 	}
 
 	public boolean handle() {
