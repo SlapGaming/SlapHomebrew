@@ -25,7 +25,7 @@ public class TeleportListener implements Listener {
 		//Allow flight for double jumping in start world.
 		if(event.getTo().getWorld().getName().equals("world_start") && !event.getFrom().getWorld().getName().equals("world_start")){
 			player.setAllowFlight(true);
-		} else if (event.getFrom().getWorld().getName().equals("world_start") && player.getGameMode() != GameMode.CREATIVE){
+		} else if (event.getFrom().getWorld().getName().equals("world_start") && !event.getTo().getWorld().getName().equals("world_start") && player.getGameMode() != GameMode.CREATIVE){
 			player.setAllowFlight(false);
 		}
 		
