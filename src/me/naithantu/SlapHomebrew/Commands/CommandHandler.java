@@ -1,5 +1,6 @@
 package me.naithantu.SlapHomebrew.Commands;
 
+import me.naithantu.SlapHomebrew.Lottery;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 
 import org.bukkit.command.Command;
@@ -7,9 +8,11 @@ import org.bukkit.command.CommandSender;
 
 public class CommandHandler {
 	SlapHomebrew plugin;
+	Lottery lottery;
 
-	public CommandHandler(SlapHomebrew plugin) {
+	public CommandHandler(SlapHomebrew plugin, Lottery lottery) {
 		this.plugin = plugin;
+		this.lottery = lottery;
 	}
 
 	public boolean handle(CommandSender sender, Command cmd, String[] args) {
@@ -44,7 +47,7 @@ public class CommandHandler {
 		} else if (command.equals("ride")) {
 			commandObj = new RideCommand(sender, args, plugin);
 		} else if (command.equals("roll")) {
-			commandObj = new RollCommand(sender, args, plugin);
+			commandObj = new RollCommand(sender, args, plugin, lottery);
 		} else if (command.equals("searchregion")) {
 			commandObj = new SearchregionCommand(sender, args, plugin);
 		} else if (command.equals("sgm")) {
@@ -81,6 +84,8 @@ public class CommandHandler {
 			commandObj = new WarppvpCommand(sender, args, plugin);
 		} else if (command.equals("warpsonic")) {
 			commandObj = new WarpsonicCommand(sender, args, plugin);
+		} else if (command.equals("world")) {
+			commandObj = new WorldCommand(sender, args, plugin);
 		} else if (command.equals("slap")) {
 			commandObj = new SlapCommand(sender, args, plugin);
 		} else if (command.equals("plot")) {
