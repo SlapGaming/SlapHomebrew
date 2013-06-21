@@ -62,7 +62,7 @@ public class SonicCommand extends AbstractCommand {
 
 				for (int i = page * 10; i < leaderboard.size(); i++) {
 					String name = leaderboard.get(i);
-					sender.sendMessage(ChatColor.GOLD + "" + (i + 1) + ". " + ChatColor.WHITE + Bukkit.getServer().getOfflinePlayer(name) + " - " + Util.changeTimeFormat(sonic.getTotalTime(name)));
+					sender.sendMessage(ChatColor.GOLD + "" + (i + 1) + ". " + ChatColor.WHITE + Bukkit.getServer().getOfflinePlayer(name).getName() + " - " + Util.changeTimeFormat(sonic.getTotalTime(name)));
 					if (i == (page * 10) + 9)
 						break;
 				}
