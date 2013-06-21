@@ -1,6 +1,7 @@
 package me.naithantu.SlapHomebrew;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -70,6 +71,35 @@ public class Sonic {
 		//Otherwise, teleport them to the start.
 		teleportSonic(playerName);
 		Bukkit.getServer().getPlayer(playerName).sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + " You weren't racing, you've been teleported to the start!");
+	}
+	
+	public void addJump(String playerName, int jump) {
+		//If player is racing, add jump.
+		if (!players.containsKey(playerName)) {
+			Bukkit.getServer().getPlayer(playerName).sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + " Do not get in the way of players!");
+			teleportSonic(playerName);
+			return;
+		}
+		
+		for(String name: players.keySet()){
+			SonicPlayer sonicPlayer = players.get(name);
+			if(!sonicPlayer.getPlayerName().equals(playerName)){
+				int lastJump = sonicPlayer.getLastJump();
+				if(jump == lastJump){
+					long lastJumpTime = sonicPlayer.getLastJumpTime();
+					long currentJumpTime = new Date().getTime();
+					System.out.println("Time between jumps: " + (currentJumpTime - lastJumpTime));
+					if(currentJumpTime - lastJumpTime < 2000){
+						teleportSonic(playerName);
+						Bukkit.getServer().getPlayer(playerName).sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + " You may not jump that quick after a previous player, you have been teleported to the start!");
+						return;
+					}
+				}
+			}	
+		}
+		
+		players.get(playerName).addJump(jump);
+
 	}
 
 	public boolean addHighscore(String playerName, long[] checkpointTimes) {

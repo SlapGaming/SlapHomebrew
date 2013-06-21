@@ -8,8 +8,13 @@ import org.bukkit.ChatColor;
 public class SonicPlayer {
 
 	String playerName;
+	
 	int lastCheckpoint = -1;
 	long startTime;
+	
+	int lastJump = -1;
+	long lastJumpTime;
+	
 	Sonic sonic;
 	long[] checkpointTimes = new long[6];
 
@@ -45,5 +50,22 @@ public class SonicPlayer {
 			return;
 		}
 		return;
+	}
+	
+	public void addJump(int jump) {
+		lastJump = jump;
+		lastJumpTime = new Date().getTime();
+	}
+	
+	public int getLastJump(){
+		return lastJump;
+	}
+	
+	public long getLastJumpTime(){
+		return lastJumpTime;
+	}
+	
+	public String getPlayerName(){
+		return playerName;
 	}
 }

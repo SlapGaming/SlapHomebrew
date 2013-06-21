@@ -37,6 +37,10 @@ public class SonicCommand extends AbstractCommand {
 			if (args[0].equalsIgnoreCase("addcheckpoint")) {
 				if (testPermission(sender, "addcheckpoint"))
 					sonic.addCheckpoint(args[1], Integer.parseInt(args[2]));
+			} else if (args[0].equalsIgnoreCase("addjump")) {
+				if (testPermission(sender, "addjump"))
+					sonic.addJump(args[1], Integer.parseInt(args[2]));
+
 			} else if (args[0].equalsIgnoreCase("leaderboard") || args[0].equalsIgnoreCase("leaderboards")) {
 				int page = 0;
 				if (args.length > 1) {
@@ -62,7 +66,8 @@ public class SonicCommand extends AbstractCommand {
 
 				for (int i = page * 10; i < leaderboard.size(); i++) {
 					String name = leaderboard.get(i);
-					sender.sendMessage(ChatColor.GOLD + "" + (i + 1) + ". " + ChatColor.WHITE + Bukkit.getServer().getOfflinePlayer(name).getName() + " - " + Util.changeTimeFormat(sonic.getTotalTime(name)));
+					sender.sendMessage(ChatColor.GOLD + "" + (i + 1) + ". " + ChatColor.WHITE + Bukkit.getServer().getOfflinePlayer(name).getName() + " - "
+							+ Util.changeTimeFormat(sonic.getTotalTime(name)));
 					if (i == (page * 10) + 9)
 						break;
 				}
