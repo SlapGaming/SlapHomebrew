@@ -23,6 +23,8 @@ public class Menus {
 	IconMenu miscellaneousMenu;
 	IconMenu bookMenu;
 
+	IconMenu creativeMenu;
+
 	YamlStorage vipStorage;
 	FileConfiguration vipConfig;
 
@@ -36,6 +38,12 @@ public class Menus {
 		netherMenu();
 		miscellaneousMenu();
 		bookMenu();
+
+		creativeMenu();
+	}
+
+	public IconMenu getCreativeMenu() {
+		return creativeMenu;
 	}
 
 	public IconMenu getVipMenu() {
@@ -46,7 +54,7 @@ public class Menus {
 		vipMenu = new IconMenu("Vip grant menu", 9, new IconMenu.OptionClickEventHandler() {
 			@Override
 			public void onOptionClick(IconMenu.OptionClickEvent event) {
-				handleMenu(event);
+				handleVipMenu(event);
 			}
 		}, plugin);
 
@@ -58,23 +66,23 @@ public class Menus {
 		woodMenu = new IconMenu("Vip grant wood menu", (int) Math.ceil(size / 9.0 + 1) * 9, new IconMenu.OptionClickEventHandler() {
 			@Override
 			public void onOptionClick(IconMenu.OptionClickEvent event) {
-				handleMenu(event);
+				handleVipMenu(event);
 			}
 		}, plugin);
 
-		fillIconMenu(woodMenu, "vipitems.wood", 1);
+		fillIconMenu(woodMenu, "vipitems.wood", true);
 	}
 
 	public void stoneMenu() {
 		int size = vipConfig.getConfigurationSection("vipitems.stone").getKeys(false).size();
-		stoneMenu = new IconMenu("Vip grant stone menu", (int) Math.ceil(size / 9.0 + 1) * 9, new IconMenu.OptionClickEventHandler() {
+		stoneMenu = new IconMenu("Vip grant stone & sand menu", (int) Math.ceil(size / 9.0 + 1) * 9, new IconMenu.OptionClickEventHandler() {
 			@Override
 			public void onOptionClick(IconMenu.OptionClickEvent event) {
-				handleMenu(event);
+				handleVipMenu(event);
 			}
 		}, plugin);
 
-		fillIconMenu(stoneMenu, "vipitems.stone", 1);
+		fillIconMenu(stoneMenu, "vipitems.stone", true);
 	}
 
 	public void netherMenu() {
@@ -82,11 +90,11 @@ public class Menus {
 		netherMenu = new IconMenu("Vip grant nether menu", (int) Math.ceil(size / 9.0 + 1) * 9, new IconMenu.OptionClickEventHandler() {
 			@Override
 			public void onOptionClick(IconMenu.OptionClickEvent event) {
-				handleMenu(event);
+				handleVipMenu(event);
 			}
 		}, plugin);
 
-		fillIconMenu(netherMenu, "vipitems.nether", 1);
+		fillIconMenu(netherMenu, "vipitems.nether", true);
 	}
 
 	public void miscellaneousMenu() {
@@ -94,20 +102,43 @@ public class Menus {
 		miscellaneousMenu = new IconMenu("Vip grant miscellaneous menu", (int) Math.ceil(size / 9.0 + 1) * 9, new IconMenu.OptionClickEventHandler() {
 			@Override
 			public void onOptionClick(IconMenu.OptionClickEvent event) {
-				handleMenu(event);
+				handleVipMenu(event);
 			}
 		}, plugin);
 
-		fillIconMenu(miscellaneousMenu, "vipitems.miscellaneous", 1);
+		fillIconMenu(miscellaneousMenu, "vipitems.miscellaneous", true);
 	}
 
 	public void bookMenu() {
 		bookMenu = new IconMenu("Vip grant book menu", (int) 4 * 9, new IconMenu.OptionClickEventHandler() {
 			@Override
 			public void onOptionClick(IconMenu.OptionClickEvent event) {
-				handleMenu(event);
+				handleVipMenu(event);
 			}
 		}, plugin);
+	}
+
+	public void creativeMenu() {
+		if (vipConfig.getConfigurationSection("creative.extraitems") == null) {
+			vipConfig.set("creative.extraitems.1", 1);
+			vipStorage.saveConfig();
+		}
+		int size = vipConfig.getConfigurationSection("creative.extraitems").getKeys(false).size();
+		creativeMenu = new IconMenu("Extra creative items menu", (int) Math.ceil(size / 9.0) * 9, new IconMenu.OptionClickEventHandler() {
+			@Override
+			public void onOptionClick(IconMenu.OptionClickEvent event) {
+				Player player = event.getPlayer();
+				if (player.getInventory().firstEmpty() == -1) {
+					player.sendMessage(ChatColor.RED + "Your inventory is full!");
+					return;
+				}
+				
+				event.setWillClose(false);
+				player.getInventory().addItem(event.getItemClicked());
+			}
+		}, plugin);
+
+		fillIconMenu(creativeMenu, "creative.extraitems", false);
 	}
 
 	public void openBookMenu(final Player player) {
@@ -132,8 +163,12 @@ public class Menus {
 		bookMenu.open(player);
 	}
 
-	private void fillIconMenu(IconMenu iconMenu, String configKey, int extraRows) {
-		addMenuBar(iconMenu);
+	private void fillIconMenu(IconMenu iconMenu, String configKey, boolean addMenuBar) {
+		int extraRow = 0;
+		if (addMenuBar) {
+			addMenuBar(iconMenu);
+			extraRow = 9;
+		}
 
 		int i = 0;
 		for (String item : vipConfig.getConfigurationSection(configKey).getKeys(false)) {
@@ -145,7 +180,7 @@ public class Menus {
 				itemStack = new ItemStack(Material.getMaterial(id), vipConfig.getInt(configKey + "." + item), (short) Integer.parseInt(itemSplit[1]));
 			else
 				itemStack = new ItemStack(Material.getMaterial(id), vipConfig.getInt(configKey + "." + item));
-			
+
 			//Change material name to nice readable name.
 			String materialName = Material.getMaterial(id).toString();
 			String[] materialSplit = materialName.split("_");
@@ -155,7 +190,7 @@ public class Menus {
 			}
 			capitalizedMaterialName.trim();
 			if (itemStack.getTypeId() != 0)
-				iconMenu.setOption(i + 9 * extraRows, itemStack, ChatColor.RESET + capitalizedMaterialName, (String[]) null);
+				iconMenu.setOption(i + extraRow, itemStack, ChatColor.RESET + capitalizedMaterialName, (String[]) null);
 			i++;
 		}
 	}
@@ -168,7 +203,7 @@ public class Menus {
 		iconMenu.setOption(8, new ItemStack(Material.WRITTEN_BOOK, 0), "Book menu", "Click to copy books.");
 	}
 
-	private void handleMenu(IconMenu.OptionClickEvent event) {
+	private void handleVipMenu(IconMenu.OptionClickEvent event) {
 		final Player player = event.getPlayer();
 		String playerName = player.getName();
 		if (event.getPosition() == 0) {

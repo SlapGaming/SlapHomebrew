@@ -2,7 +2,7 @@ name: SlapHomebrew
 main: me.naithantu.SlapHomebrew.SlapHomebrew
 depend: [Vault, PermissionsEx]
 author: naithantu
-version: 2.7.6
+version: 2.7.7
 description: SlapHomebrew homemade plugin.
 commands:
   vip:
@@ -25,6 +25,9 @@ commands:
     aliases: [slaphomebrew]
   backdeath:
     description: Returns you to your death point.
+  creativeextra:
+    description: Opens an inventory with extra items that are not available in the creative inventory.
+    aliases: [cextra]
   warppvp:
     description: Warps you to the pvp arena.
   warpcakedefence:

@@ -28,6 +28,8 @@ public class CommandHandler {
 			commandObj = new BumpdoneCommand(sender, args, plugin);
 		} else if (command.equals("cakedefence")) {
 			commandObj = new CakedefenceCommand(sender, args, plugin);
+		} else if (command.equals("creativeextra")) {
+			commandObj = new CreativeextraCommand(sender, args, plugin);
 		} else if (command.equals("group")) {
 			commandObj = new GroupCommand(sender, args, plugin);
 		} else if (command.equals("leavecake")) {
