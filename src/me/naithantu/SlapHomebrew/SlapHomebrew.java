@@ -50,6 +50,7 @@ public class SlapHomebrew extends JavaPlugin {
 	private YamlStorage timeStorage;
 	private YamlStorage sonicStorage;
 	private YamlStorage vipGrantStorage;
+	private YamlStorage applyThreadStorage;
 
 	private FileConfiguration dataConfig;
 	private FileConfiguration vipConfig;
@@ -63,6 +64,7 @@ public class SlapHomebrew extends JavaPlugin {
 	Sonic sonic;
 	Extras extras;
 	Lottery lottery;
+	ApplyChecker applyChecker;
 	
 	public static boolean allowCakeTp;
 
@@ -84,6 +86,7 @@ public class SlapHomebrew extends JavaPlugin {
 		timeStorage = new YamlStorage(this, "time");
 		sonicStorage = new YamlStorage(this, "sonic");
 		vipGrantStorage = new YamlStorage(this, "vipgrant");
+		applyThreadStorage = new YamlStorage(this, "ApplyThreads");
 		dataConfig = dataStorage.getConfig();
 		vipConfig = vipStorage.getConfig();
 		vip = new Vip(vipStorage);
@@ -92,6 +95,7 @@ public class SlapHomebrew extends JavaPlugin {
 		extras = new Extras(this);
 		tpBlocks = loadHashSet("tpblocks");
 		lottery = new Lottery(this);
+		applyChecker = new ApplyChecker(this);
 		BlockfaqCommand.chatBotBlocks = loadHashSet("chatbotblocks");
 		setupEconomy();
 		setupChatBot();
@@ -196,6 +200,10 @@ public class SlapHomebrew extends JavaPlugin {
 	
 	public YamlStorage getVipGrantStorage() {
 		return vipGrantStorage;
+	}
+	
+	public YamlStorage getApplyThreadStorage(){
+		return applyThreadStorage;
 	}
 
 	public List<Integer> getUnfinishedPlots() {
