@@ -29,7 +29,7 @@ public class InteractListener implements Listener{
 		
 		if(event.getAction().equals(Action.RIGHT_CLICK_BLOCK)){
 			Material clickedBlock = event.getClickedBlock().getType();
-			if(clickedBlock == Material.NOTE_BLOCK || clickedBlock == Material.DIODE_BLOCK_ON || clickedBlock == Material.DIODE_BLOCK_OFF){
+			if(clickedBlock == Material.NOTE_BLOCK || clickedBlock == Material.DIODE_BLOCK_ON || clickedBlock == Material.DIODE_BLOCK_OFF || clickedBlock == Material.CAKE_BLOCK){
 				if(!(plugin.getWorldGuard().canBuild(event.getPlayer(), event.getClickedBlock()))){
 					event.setCancelled(true);
 				}

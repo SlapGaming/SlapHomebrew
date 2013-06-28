@@ -46,6 +46,8 @@ public class CommandHandler {
 			commandObj = new PayCommand(sender, args, plugin);
 		} else if (command.equals("potion")) {
 			commandObj = new PotionCommand(sender, args, plugin);
+		} else if (command.equals("rainbow")) {
+			commandObj = new RainbowCommand(sender, args, plugin);
 		} else if (command.equals("ride")) {
 			commandObj = new RideCommand(sender, args, plugin);
 		} else if (command.equals("roll")) {

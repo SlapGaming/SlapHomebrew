@@ -1,7 +1,10 @@
 package me.naithantu.SlapHomebrew.Commands;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+
 import me.naithantu.SlapHomebrew.Book;
 import me.naithantu.SlapHomebrew.Lottery;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
@@ -15,12 +18,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_5_R3.entity.CraftPlayer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Tameable;
@@ -30,6 +35,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+
+import com.onarandombox.multiverseinventories.MultiverseInventories;
+import com.onarandombox.multiverseinventories.api.profile.WorldGroupProfile;
 
 public class SlapCommand extends AbstractCommand {
 
@@ -391,9 +401,94 @@ public class SlapCommand extends AbstractCommand {
 			}
 		}
 
-		if (arg.equalsIgnoreCase("rainbow")) {
-			if (!testPermission(sender, "rainbow")) {
+		if (arg.equalsIgnoreCase("fly")) {
+			if (!testPermission(sender, "fly")) {
 				this.noPermission(sender);
+				return true;
+			}
+
+			if (args.length < 2) {
+				this.badMsg(sender, "/slap fly [mob] [amount]");
+				return true;
+			}
+
+			EntityType mobType;
+			try {
+				mobType = EntityType.valueOf(args[1].toUpperCase());
+			} catch (IllegalArgumentException e) {
+				this.badMsg(sender, "That's not a mob!");
+				return true;
+			}
+
+			int mobs = 1;
+			if (args.length > 2) {
+				try {
+					mobs = Integer.parseInt(args[2]);
+				} catch (NumberFormatException e) {
+					this.badMsg(sender, "Invalid amount!");
+					return true;
+				}
+			}
+
+			Location location = player.getTargetBlock(null, 20).getLocation().add(0, 1, 0);
+			World world = player.getWorld();
+			int i = 0;
+			while (i < mobs) {
+				LivingEntity bat = (LivingEntity) world.spawnEntity(location, EntityType.BAT);
+				bat.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 9999999, 1));
+				Entity creeper = world.spawnEntity(location, mobType);
+				bat.setPassenger(creeper);
+				i++;
+			}
+		}
+
+		if (arg.equalsIgnoreCase("stackmob")) {
+			if (!testPermission(sender, "stackmob")) {
+				this.noPermission(sender);
+				return true;
+			}
+
+			if (args.length < 2) {
+				this.badMsg(sender, "/slap stackmob [mobs ...]");
+				return true;
+			}
+
+			List<EntityType> mobs = new ArrayList<EntityType>();
+
+			for (int i = 1; i < args.length; i++) {
+				String mob = args[i];
+				EntityType mobType;
+				try {
+					mobType = EntityType.valueOf(mob.toUpperCase());
+				} catch (IllegalArgumentException e) {
+					this.badMsg(sender, "That's not a mob!");
+					return true;
+				}
+				mobs.add(mobType);
+			}
+
+			Location location = player.getTargetBlock(null, 20).getLocation().add(0, 1, 0);
+			World world = player.getWorld();
+			int i = 0;
+			Entity previousEntity = null;
+			while (i < mobs.size()) {
+				Entity newEntity = world.spawnEntity(location, mobs.get(i));
+				if (newEntity.getType() == EntityType.BAT) {
+					((LivingEntity) newEntity).addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 9999999, 1));
+				}
+				if (previousEntity != null) {
+					newEntity.setPassenger(previousEntity);
+				}
+				previousEntity = newEntity;
+				i++;
+			}
+		}
+
+		if (arg.equalsIgnoreCase("rainbow")) {
+			if (!testPermission(sender, "rainbow.extra")) {
+				this.noPermission(sender);
+				//TODO Remove this next update.
+				this.msg(sender, "This command has moved, use /rainbow instead!");
 				return true;
 			}
 
@@ -403,7 +498,10 @@ public class SlapCommand extends AbstractCommand {
 			}
 
 			if (!checkLeatherArmor(player.getInventory())) {
-				this.badMsg(sender, "You must be wearing leather armour!");
+				player.getInventory().setBoots(new ItemStack(Material.LEATHER_BOOTS, 1));
+				player.getInventory().setBoots(new ItemStack(Material.LEATHER_LEGGINGS, 1));
+				player.getInventory().setBoots(new ItemStack(Material.LEATHER_CHESTPLATE, 1));
+				player.getInventory().setBoots(new ItemStack(Material.LEATHER_HELMET, 1));
 			}
 
 			HashMap<String, Integer> rainbow = plugin.getExtras().getRainbow();
@@ -470,7 +568,7 @@ public class SlapCommand extends AbstractCommand {
 			}
 
 			Player targetPlayer = Bukkit.getServer().getPlayer(args[1]);
-			
+
 			if (targetPlayer == null) {
 				this.badMsg(sender, "That player is not online!");
 				return true;
@@ -483,8 +581,18 @@ public class SlapCommand extends AbstractCommand {
 				}
 				message.append(args[i]);
 			}
-			
+
 			targetPlayer.sendMessage(ChatColor.translateAlternateColorCodes('&', message.toString()));
+		}
+		
+		if(arg.equalsIgnoreCase("mvinv")){
+			MultiverseInventories mvInv = (MultiverseInventories) Bukkit.getServer().getPluginManager().getPlugin("Multiverse-Inventories");
+			//Is goeed.
+			WorldGroupProfile wGroupFile = mvInv.getGroupManager().getGroup("Creative");
+			//Is goed
+			OfflinePlayer invPlayer = wGroupFile.getPlayerData(Bukkit.getOfflinePlayer("naithantu")).getPlayer();
+			Player onlineInvPlayer = Bukkit.getServer().getPlayer(invPlayer.getName());
+			onlineInvPlayer.getInventory();
 		}
 		return true;
 	}
