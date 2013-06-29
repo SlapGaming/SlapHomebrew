@@ -585,15 +585,6 @@ public class SlapCommand extends AbstractCommand {
 			targetPlayer.sendMessage(ChatColor.translateAlternateColorCodes('&', message.toString()));
 		}
 		
-		if(arg.equalsIgnoreCase("mvinv")){
-			MultiverseInventories mvInv = (MultiverseInventories) Bukkit.getServer().getPluginManager().getPlugin("Multiverse-Inventories");
-			//Is goeed.
-			WorldGroupProfile wGroupFile = mvInv.getGroupManager().getGroup("Creative");
-			//Is goed
-			OfflinePlayer invPlayer = wGroupFile.getPlayerData(Bukkit.getOfflinePlayer("naithantu")).getPlayer();
-			Player onlineInvPlayer = Bukkit.getServer().getPlayer(invPlayer.getName());
-			onlineInvPlayer.getInventory();
-		}
 		return true;
 	}
 

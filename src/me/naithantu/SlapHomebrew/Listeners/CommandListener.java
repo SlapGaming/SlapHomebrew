@@ -4,6 +4,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import me.naithantu.SlapHomebrew.AwayFromKeyboard;
 import me.naithantu.SlapHomebrew.Jail;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 
@@ -16,6 +17,12 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
 public class CommandListener implements Listener {
 
+	private AwayFromKeyboard afk;
+	
+	public CommandListener(AwayFromKeyboard afk){
+		this.afk = afk;
+	}
+	
 	@EventHandler
 	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
 		Player player = event.getPlayer();
@@ -52,6 +59,29 @@ public class CommandListener implements Listener {
 			}
 		}
 		
+		//Leave AFK on certain Commands
+		String playerName = player.getName();
+		String[] command = event.getMessage().toLowerCase().split(" ");
+		if (afk.isAfk(playerName)) {
+			switch(command[0]) {
+			case "/me": case "/pay": case "/modreq": case "/r": case "/msg": 
+				afk.leaveAfk(playerName);
+				break;
+			}
+		}
+		
+		
+		//AFK response /msg
+		if (commandMessage.length > 2) {
+			if (commandMessage[0].equals("/msg")) {
+				Player tempPlayer = Bukkit.getPlayer(commandMessage[1]);
+				if (tempPlayer != null) {
+					if (afk.isAfk(tempPlayer.getName())){
+						afk.sendAfkReason(event.getPlayer(), tempPlayer.getName());
+					}
+				}
+			}
+		}
 		
 		
 		//Worldguard logger.

@@ -105,6 +105,8 @@ public class CommandHandler {
 			} else if (arg.equals("tp")) {
 				commandObj = new PlottpCommand(sender, args, plugin);
 			}
+		} else if (command.equals("afk")){
+			commandObj = new AfkCommand(sender, args, plugin, plugin.getAwayFromKeyboard());
 		}
 
 		if (commandObj != null) {

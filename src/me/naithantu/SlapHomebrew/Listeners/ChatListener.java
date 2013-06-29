@@ -1,5 +1,6 @@
 package me.naithantu.SlapHomebrew.Listeners;
 
+import me.naithantu.SlapHomebrew.AwayFromKeyboard;
 import me.naithantu.SlapHomebrew.Flag;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Util;
@@ -14,9 +15,11 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 public class ChatListener implements Listener {
 	SlapHomebrew plugin;
+	AwayFromKeyboard afk;
 	
-	public ChatListener(SlapHomebrew plugin){
+	public ChatListener(SlapHomebrew plugin, AwayFromKeyboard afk){
 		this.plugin = plugin;
+		this.afk = afk;
 	}
 	@EventHandler
 	public void onPlayerChat(AsyncPlayerChatEvent event) {
@@ -103,6 +106,11 @@ public class ChatListener implements Listener {
 			plugin.getConfig().set("messages." + MessageCommand.messageName, message);
 			event.setCancelled(true);
 			plugin.saveConfig();
+		}
+		
+		String playerName = player.getName();
+		if (afk.isAfk(playerName)) {
+			afk.leaveAfk(playerName);
 		}
 	}
 }

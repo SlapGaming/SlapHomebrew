@@ -89,4 +89,7 @@ commands:
     description: Tells you what world you're in.
   rainbow:
     description: Turns your leather armor into a rainbow.
+  afk:
+    description: Toggle afk
+    usage: "Usage: /afk [reason]"
     

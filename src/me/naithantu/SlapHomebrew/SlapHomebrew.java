@@ -65,6 +65,8 @@ public class SlapHomebrew extends JavaPlugin {
 	Extras extras;
 	Lottery lottery;
 	ApplyChecker applyChecker;
+	AwayFromKeyboard afk;
+	
 	
 	public static boolean allowCakeTp;
 
@@ -96,6 +98,7 @@ public class SlapHomebrew extends JavaPlugin {
 		tpBlocks = loadHashSet("tpblocks");
 		lottery = new Lottery(this);
 		applyChecker = new ApplyChecker(this);
+		afk = new AwayFromKeyboard(this);
 		BlockfaqCommand.chatBotBlocks = loadHashSet("chatbotblocks");
 		setupEconomy();
 		setupChatBot();
@@ -108,8 +111,8 @@ public class SlapHomebrew extends JavaPlugin {
 		commandHandler = new CommandHandler(this, lottery);
 		pm = getServer().getPluginManager();
 		pm.registerEvents(new BlockPlaceListener(this), this);
-		pm.registerEvents(new ChatListener(this), this);
-		pm.registerEvents(new CommandListener(), this);
+		pm.registerEvents(new ChatListener(this, afk), this);
+		pm.registerEvents(new CommandListener(afk), this);
 		pm.registerEvents(new CreatureSpawnListener(this), this);
 		pm.registerEvents(new CreatureDeathListener(this), this);
 		pm.registerEvents(new DamageListener(), this);
@@ -118,7 +121,7 @@ public class SlapHomebrew extends JavaPlugin {
 		pm.registerEvents(new FoodLevelChangeListener(), this);
 		pm.registerEvents(new InteractListener(this), this);
 		pm.registerEvents(new LoginListener(this, timeStorage, dataStorage, vipStorage), this);
-		pm.registerEvents(new MoveListener(this, extras), this);
+		pm.registerEvents(new MoveListener(this, extras, afk), this);
 		pm.registerEvents(new PortalListener(), this);
 		pm.registerEvents(new PotionListener(), this);
 		pm.registerEvents(new ProjectileHitListener(), this);
@@ -397,6 +400,10 @@ public class SlapHomebrew extends JavaPlugin {
 	
 	public Extras getExtras(){
 		return extras;
+	}
+	
+	public AwayFromKeyboard getAwayFromKeyboard(){
+		return afk;
 	}
 
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {

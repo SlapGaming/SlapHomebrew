@@ -3,6 +3,7 @@ package me.naithantu.SlapHomebrew.Listeners;
 import java.util.List;
 import java.util.logging.Level;
 
+import me.naithantu.SlapHomebrew.AwayFromKeyboard;
 import me.naithantu.SlapHomebrew.Extras;
 import me.naithantu.SlapHomebrew.Flag;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
@@ -19,10 +20,12 @@ import org.bukkit.event.player.PlayerMoveEvent;
 public class MoveListener implements Listener {
 	SlapHomebrew plugin;
 	Extras extras;
+	AwayFromKeyboard afk;
 
-	public MoveListener(SlapHomebrew plugin, Extras extras) {
+	public MoveListener(SlapHomebrew plugin, Extras extras, AwayFromKeyboard afk) {
 		this.plugin = plugin;
 		this.extras = extras;
+		this.afk = afk;
 	}
 
 	@EventHandler
@@ -80,6 +83,12 @@ public class MoveListener implements Listener {
 			command = command.replaceAll("<player>", player.getName());
 			System.out.println(command);
 			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+		}
+		
+		if (afk.isAfk(player.getName())) {
+			if (event.getFrom().getBlockX() != event.getTo().getBlockX() || event.getFrom().getBlockZ() != event.getTo().getBlockZ() || event.getFrom().getBlockY() != event.getTo().getBlockY()) {
+				afk.leaveAfk(player.getName());
+			}
 		}
 	}
 }
