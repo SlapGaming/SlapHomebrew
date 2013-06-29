@@ -15,7 +15,7 @@ public class XMLParser {
 	private static DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 	
 	public static ArrayList<Integer> getThreads(){
-		ArrayList<Integer> threadnummers = new ArrayList<>();
+		ArrayList<Integer> threadnummers = new ArrayList<Integer>();
 		try {
 			DocumentBuilder db = dbf.newDocumentBuilder();
 			Document doc = db.parse(new URL("http://forums.slapgaming.com/external.php?type=xml&forumids=132").openStream());
