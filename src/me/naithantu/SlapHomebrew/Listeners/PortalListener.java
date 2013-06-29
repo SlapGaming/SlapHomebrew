@@ -12,7 +12,7 @@ public class PortalListener implements Listener{
 
 	@EventHandler
 	public void onPortalTeleport(PlayerPortalEvent event){
-		if(event.getCause() == TeleportCause.END_PORTAL){
+		if(event.getCause() == TeleportCause.END_PORTAL && event.getFrom().getWorld().getName().equals("world_the_end")){
 			Location spawn = Bukkit.getServer().getWorld("world_start").getSpawnLocation();
 			event.setTo(spawn);
 		}
