@@ -91,5 +91,8 @@ commands:
     description: Turns your leather armor into a rainbow.
   afk:
     description: Toggle afk
-    usage: "Usage: /afk [reason]"
-    
+    usage: "Usage: /afk <reason>"
+  afkreset:
+    description: Reset AFK reason of a player
+    usage: "Usage: /resetafk [player]"
+    aliases: [resetafk]

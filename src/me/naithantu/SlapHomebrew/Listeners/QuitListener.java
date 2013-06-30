@@ -3,6 +3,7 @@ package me.naithantu.SlapHomebrew.Listeners;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import me.naithantu.SlapHomebrew.AwayFromKeyboard;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Util;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
@@ -16,10 +17,14 @@ import org.bukkit.event.player.PlayerQuitEvent;
 public class QuitListener implements Listener {
 	SlapHomebrew plugin;
 	YamlStorage timeStorage;
+	private static AwayFromKeyboard afk = null;
 	
 	public QuitListener(SlapHomebrew plugin, YamlStorage timeStorage) {
 		this.plugin = plugin;
 		this.timeStorage = timeStorage;
+		if (afk == null) {
+			afk = plugin.getAwayFromKeyboard();
+		}
 	}
 
 	@EventHandler
@@ -32,6 +37,7 @@ public class QuitListener implements Listener {
 			if (!isOnlineStaff(player.getName()))
 				Util.dateIntoTimeConfig(date, "There is no staff online!", timeStorage);
 		}
+		afk.removeAfk(player.getName());
 	}
 
 	boolean isOnlineStaff(String leavingPlayer) {

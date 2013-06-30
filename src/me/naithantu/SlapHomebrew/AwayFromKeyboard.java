@@ -55,6 +55,19 @@ public class AwayFromKeyboard {
     		sender.sendMessage(ChatColor.RED + afkPerson + " might not respond. Reason: " + ChatColor.WHITE + reason);
     	}
     }
+    
+    public void resetAfkReason(String afkPerson) {
+    	if (afkReasons.containsKey(afkPerson)) {
+    		afkReasons.remove(afkPerson);
+    	}
+    	afkReasons.put(afkPerson, "AFK");
+    }
+    
+    public void removeAfk(String afkPerson){
+    	if (afkReasons.containsKey(afkPerson)) {
+    		afkReasons.remove(afkPerson);
+    	}
+    }
 	
 
 }

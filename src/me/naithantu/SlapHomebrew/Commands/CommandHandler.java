@@ -48,6 +48,7 @@ public class CommandHandler {
 		case "warpsonic":		commandObj = new WarpsonicCommand(sender, args, plugin);		break;
 		case "world":			commandObj = new WorldCommand(sender, args, plugin);			break;
 		case "afk":				commandObj = new AfkCommand(sender, args, plugin);				break;
+		case "afkreset":		commandObj = new AfkResetCommand(sender, args, plugin);			break;
 		case "plot":
 			if (args.length == 0) return false;
 			switch (args[0].toLowerCase()) {
