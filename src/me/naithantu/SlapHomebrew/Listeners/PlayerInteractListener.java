@@ -41,7 +41,7 @@ public class PlayerInteractListener implements Listener {
 
 			if(event.getPlayer().getWorld().getName().equals("world_creative")){
 				ItemStack itemInHand = event.getItem();
-				if (itemInHand.getType() == Material.MONSTER_EGG) {
+				if (itemInHand != null && itemInHand.getType() == Material.MONSTER_EGG) {
 					//Block all monster spawns.
 					if (itemInHand.getData().getData() < 90) {
 						event.setCancelled(true);
