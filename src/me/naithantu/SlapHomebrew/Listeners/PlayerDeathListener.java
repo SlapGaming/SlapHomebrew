@@ -13,10 +13,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
-public class DeathListener implements Listener {
+public class PlayerDeathListener implements Listener {
 	SlapHomebrew plugin;
 
-	public DeathListener(SlapHomebrew plugin) {
+	public PlayerDeathListener(SlapHomebrew plugin) {
 		this.plugin = plugin;
 	}
 

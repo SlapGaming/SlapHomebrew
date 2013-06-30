@@ -14,11 +14,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
-public class CommandListener implements Listener {
+public class PlayerCommandListener implements Listener {
 
 	private AwayFromKeyboard afk;
 	
-	public CommandListener(AwayFromKeyboard afk){
+	public PlayerCommandListener(AwayFromKeyboard afk){
 		this.afk = afk;
 	}
 	

@@ -13,11 +13,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
-public class ChatListener implements Listener {
+public class PlayerChatListener implements Listener {
 	SlapHomebrew plugin;
 	AwayFromKeyboard afk;
 	
-	public ChatListener(SlapHomebrew plugin, AwayFromKeyboard afk){
+	public PlayerChatListener(SlapHomebrew plugin, AwayFromKeyboard afk){
 		this.plugin = plugin;
 		this.afk = afk;
 	}

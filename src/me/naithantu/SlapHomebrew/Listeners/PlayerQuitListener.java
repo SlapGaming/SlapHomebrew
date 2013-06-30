@@ -14,17 +14,15 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-public class QuitListener implements Listener {
+public class PlayerQuitListener implements Listener {
 	SlapHomebrew plugin;
 	YamlStorage timeStorage;
-	private static AwayFromKeyboard afk = null;
-	
-	public QuitListener(SlapHomebrew plugin, YamlStorage timeStorage) {
+	AwayFromKeyboard afk;
+
+	public PlayerQuitListener(SlapHomebrew plugin, YamlStorage timeStorage, AwayFromKeyboard afk) {
 		this.plugin = plugin;
 		this.timeStorage = timeStorage;
-		if (afk == null) {
-			afk = plugin.getAwayFromKeyboard();
-		}
+		this.afk = afk;
 	}
 
 	@EventHandler

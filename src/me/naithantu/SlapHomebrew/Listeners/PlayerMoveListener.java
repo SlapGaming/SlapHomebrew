@@ -17,12 +17,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 
-public class MoveListener implements Listener {
+public class PlayerMoveListener implements Listener {
 	SlapHomebrew plugin;
 	Extras extras;
 	AwayFromKeyboard afk;
 
-	public MoveListener(SlapHomebrew plugin, Extras extras, AwayFromKeyboard afk) {
+	public PlayerMoveListener(SlapHomebrew plugin, Extras extras, AwayFromKeyboard afk) {
 		this.plugin = plugin;
 		this.extras = extras;
 		this.afk = afk;

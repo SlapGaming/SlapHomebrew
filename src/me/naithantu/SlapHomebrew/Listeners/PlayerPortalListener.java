@@ -8,7 +8,7 @@ import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.event.world.PortalCreateEvent;
 
-public class PortalListener implements Listener{
+public class PlayerPortalListener implements Listener{
 
 	@EventHandler
 	public void onPortalTeleport(PlayerPortalEvent event){

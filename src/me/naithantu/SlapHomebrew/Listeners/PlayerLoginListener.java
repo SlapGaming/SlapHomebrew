@@ -24,7 +24,7 @@ import org.bukkit.event.player.PlayerLoginEvent;
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
-public class LoginListener implements Listener {
+public class PlayerLoginListener implements Listener {
 	SlapHomebrew plugin;
 	YamlStorage timeStorage;
 	YamlStorage dataStorage;
@@ -34,7 +34,7 @@ public class LoginListener implements Listener {
 	FileConfiguration dataConfig;
 	FileConfiguration vipConfig;
 
-	public LoginListener(SlapHomebrew plugin, YamlStorage timeStorage, YamlStorage dataStorage, YamlStorage vipStorage) {
+	public PlayerLoginListener(SlapHomebrew plugin, YamlStorage timeStorage, YamlStorage dataStorage, YamlStorage vipStorage) {
 		this.plugin = plugin;
 		this.timeStorage = timeStorage;
 		this.dataStorage = dataStorage;

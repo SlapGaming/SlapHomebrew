@@ -12,10 +12,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.util.Vector;
 
-public class ToggleFlightListener implements Listener {
+public class PlayerToggleFlightListener implements Listener {
 	Extras extras;
 	
-	public ToggleFlightListener(Extras extras){
+	public PlayerToggleFlightListener(Extras extras){
 		this.extras = extras;
 	}
 	
