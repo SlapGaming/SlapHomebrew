@@ -1,6 +1,7 @@
 package me.naithantu.SlapHomebrew.Listeners;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
+import me.naithantu.SlapHomebrew.Util;
 import me.naithantu.SlapHomebrew.Commands.SlapCommand;
 
 import org.bukkit.Material;
@@ -38,31 +39,36 @@ public class PlayerInteractListener implements Listener {
 				}
 			}
 
-			ItemStack itemInHand = event.getItem();
-			if (itemInHand.getType() == Material.MONSTER_EGG) {
-				//Block all monster spawns.
-				if (itemInHand.getData().getData() < 90) {
-					event.setCancelled(true);
-					return;
-				}
-
-				//Block if player has no build rights.
-				if (!(plugin.getWorldGuard().canBuild(event.getPlayer(), event.getClickedBlock()))) {
-					event.setCancelled(true);
-					return;
-				}
-
-				//Check number of mobs around.
-				int totalEntities = 0;
-				for (Entity nearbyEntity : player.getNearbyEntities(50, 50, 50)) {
-					if (nearbyEntity instanceof Creature) {
-						totalEntities++;
+			if(event.getPlayer().getWorld().getName().equals("world_creative")){
+				ItemStack itemInHand = event.getItem();
+				if (itemInHand.getType() == Material.MONSTER_EGG) {
+					//Block all monster spawns.
+					if (itemInHand.getData().getData() < 90) {
+						event.setCancelled(true);
+						player.sendMessage(Util.getHeader() + "You may not spawn hostile mobs!");
+						return;
 					}
-				}
 
-				if (totalEntities > 50) {
-					event.setCancelled(true);
-					return;
+					//Block if player has no build rights.
+					if (!(plugin.getWorldGuard().canBuild(event.getPlayer(), event.getClickedBlock()))) {
+						event.setCancelled(true);
+						player.sendMessage(Util.getHeader() + "You may not spawn mobs in this area!");
+						return;
+					}
+
+					//Check number of mobs around.
+					int totalEntities = 0;
+					for (Entity nearbyEntity : player.getNearbyEntities(50, 50, 50)) {
+						if (nearbyEntity instanceof Creature) {
+							totalEntities++;
+						}
+					}
+
+					if (totalEntities > 50) {
+						event.setCancelled(true);
+						player.sendMessage(Util.getHeader() + "There are too many mobs in this area, you may not spawn more!");
+						return;
+					}
 				}
 			}
 		}
