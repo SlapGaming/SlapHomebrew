@@ -1,6 +1,7 @@
 package me.naithantu.SlapHomebrew.Commands;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
+import me.naithantu.SlapHomebrew.Util;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -22,7 +23,7 @@ public abstract class AbstractCommand {
 
 	protected void msg(CommandSender sender, String msg) {
 		if (sender instanceof Player) {
-			sender.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + msg);
+			sender.sendMessage(Util.getHeader() + msg);
 		} else {
 			sender.sendMessage("[SLAP] " + msg);
 		}

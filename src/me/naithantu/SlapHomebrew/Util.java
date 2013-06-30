@@ -5,6 +5,7 @@ import java.util.Calendar;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -19,6 +20,9 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 public class Util {
+	public static String getHeader() {
+		return ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE;
+	}
 
 	public static void dateIntoTimeConfig(String date, String message, YamlStorage timeStorage) {
 		FileConfiguration timeConfig = timeStorage.getConfig();
