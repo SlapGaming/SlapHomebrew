@@ -21,17 +21,19 @@ public class VipCommand extends AbstractVipCommand {
 	String header = ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE;
 
 	HashSet<String> vipItemsList = new HashSet<String>();
-	YamlStorage vipStorage;
-	FileConfiguration vipConfig;
-	Vip vipUtil;
+	private static YamlStorage vipStorage = null;
+	private static FileConfiguration vipConfig = null;
+	private static Vip vipUtil = null;
 
 	List<String> vipCommands = Arrays.asList("grant", "copybook", "homes", "list", "grantlist", "resetgrant", "add", "set", "remove", "days", "addhomes", "givemoney", "mark", "check", "done");
 
-	public VipCommand(CommandSender sender, String[] args, SlapHomebrew plugin, YamlStorage vipStorage, Vip vipUtil) {
+	public VipCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
 		super(sender, args, plugin);
-		this.vipStorage = vipStorage;
-		vipConfig = vipStorage.getConfig();
-		this.vipUtil = vipUtil;
+		if (vipStorage == null || vipUtil == null) {
+			vipStorage = plugin.getVipStorage();
+			vipConfig = vipStorage.getConfig();
+			vipUtil = plugin.getVip();
+		}
 	}
 
 	public boolean handle() {

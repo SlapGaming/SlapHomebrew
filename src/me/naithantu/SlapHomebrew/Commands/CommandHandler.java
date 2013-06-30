@@ -18,95 +18,57 @@ public class CommandHandler {
 	public boolean handle(CommandSender sender, Command cmd, String[] args) {
 		String command = cmd.getName().toLowerCase();
 		AbstractCommand commandObj = null;
-		if (command.equals("backdeath")) {
-			commandObj = new BackdeathCommand(sender, args, plugin);
-		} else if (command.equals("blockfaq")) {
-			commandObj = new BlockfaqCommand(sender, args, plugin);
-		} else if (command.equals("boat")) {
-			commandObj = new BoatCommand(sender, args, plugin);
-		} else if (command.equals("bumpdone")) {
-			commandObj = new BumpdoneCommand(sender, args, plugin);
-		} else if (command.equals("cakedefence")) {
-			commandObj = new CakedefenceCommand(sender, args, plugin);
-		} else if (command.equals("creativeextra")) {
-			commandObj = new CreativeextraCommand(sender, args, plugin);
-		} else if (command.equals("group")) {
-			commandObj = new GroupCommand(sender, args, plugin);
-		} else if (command.equals("leavecake")) {
-			commandObj = new LeavecakeCommand(sender, args, plugin);
-		} else if (command.equals("message")) {
-			commandObj = new MessageCommand(sender, args, plugin);
-		} else if (command.equals("minecart")) {
-			commandObj = new MinecartCommand(sender, args, plugin);
-		} else if (command.equals("mobcheck")) {
-			commandObj = new MobcheckCommand(sender, args, plugin);
-		} else if (command.equals("note")) {
-			commandObj = new NoteCommand(sender, args, plugin);
-		} else if (command.equals("pay")) {
-			commandObj = new PayCommand(sender, args, plugin);
-		} else if (command.equals("potion")) {
-			commandObj = new PotionCommand(sender, args, plugin);
-		} else if (command.equals("rainbow")) {
-			commandObj = new RainbowCommand(sender, args, plugin);
-		} else if (command.equals("ride")) {
-			commandObj = new RideCommand(sender, args, plugin);
-		} else if (command.equals("roll")) {
-			commandObj = new RollCommand(sender, args, plugin, lottery);
-		} else if (command.equals("searchregion")) {
-			commandObj = new SearchregionCommand(sender, args, plugin);
-		} else if (command.equals("sgm")) {
-			commandObj = new SgmCommand(sender, args, plugin);
-		} else if (command.equals("sonic")) {
-			commandObj = new SonicCommand(sender, args, plugin);
-		} else if (command.equals("sparta")) {
-			commandObj = new SpartaCommand(sender, args, plugin);
-		} else if (command.equals("te")) {
-			commandObj = new TeCommand(sender, args, plugin);
-		} else if (command.equals("tpallow")) {
-			commandObj = new TpallowCommand(sender, args, plugin);
-		} else if (command.equals("tpblock")) {
-			commandObj = new TpBlockCommand(sender, args, plugin);
-		} else if (command.equals("vip")) {
-			//TODO Remove the plugin.get stuff, just pass it through the constructor.
+		switch (command) {
+		case "backdeath": 		commandObj = new BackdeathCommand(sender, args, plugin); 		break;
+		case "blockfaq":		commandObj = new BlockfaqCommand(sender, args, plugin);			break;
+		case "boat":			commandObj = new BoatCommand(sender, args, plugin);				break;
+		case "bumpdone":		commandObj = new BumpdoneCommand(sender, args, plugin);			break;
+		case "cakedefence":		commandObj = new CakedefenceCommand(sender, args, plugin);		break;
+		case "creativeextra":	commandObj = new CreativeextraCommand(sender, args, plugin);	break;
+		case "group":			commandObj = new GroupCommand(sender, args, plugin);			break;
+		case "leavecake":		commandObj = new LeavecakeCommand(sender, args, plugin);		break;
+		case "message":			commandObj = new MessageCommand(sender, args, plugin);			break;
+		case "minecart":		commandObj = new MinecartCommand(sender, args, plugin);			break;
+		case "mobcheck":		commandObj = new MobcheckCommand(sender, args, plugin);			break;
+		case "note":			commandObj = new NoteCommand(sender, args, plugin);				break;
+		case "pay":				commandObj = new PayCommand(sender, args, plugin);				break;
+		case "potion":			commandObj = new PotionCommand(sender, args, plugin);			break;
+		case "rainbow":			commandObj = new RainbowCommand(sender, args, plugin);			break;
+		case "ride":			commandObj = new RideCommand(sender, args, plugin);				break;
+		case "roll":			commandObj = new RollCommand(sender, args, plugin, lottery);	break;
+		case "searchregion":	commandObj = new SearchregionCommand(sender, args, plugin);		break;
+		case "sgm":				commandObj = new SgmCommand(sender, args, plugin);				break;
+		case "sonic":			commandObj = new SonicCommand(sender, args, plugin);			break;
+		case "sparta":			commandObj = new SpartaCommand(sender, args, plugin);			break;
+		case "te":				commandObj = new TeCommand(sender, args, plugin);				break;
+		case "tpallow":			commandObj = new TpallowCommand(sender, args, plugin);			break;
+		case "tpblock":			commandObj = new TpBlockCommand(sender, args, plugin);			break;
+		case "warpcakedefence":	commandObj = new WarpcakedefenceCommand(sender, args, plugin);	break;
+		case "warppvp":			commandObj = new WarppvpCommand(sender, args, plugin);			break;
+		case "warpsonic":		commandObj = new WarpsonicCommand(sender, args, plugin);		break;
+		case "world":			commandObj = new WorldCommand(sender, args, plugin);			break;
+		case "afk":				commandObj = new AfkCommand(sender, args, plugin);				break;
+		case "plot":
+			if (args.length == 0) return false;
+			switch (args[0].toLowerCase()) {
+			case "check": 		commandObj = new PlotcheckCommand(sender, args, plugin); 		break;
+			case "done": 		commandObj = new PlotdoneCommand(sender, args, plugin); 		break;
+			case "mark": 		commandObj = new PlotmarkCommand(sender, args, plugin); 		break;
+			case "tp": 			commandObj = new PlottpCommand(sender, args, plugin); 			break;
+			}
+			break;
+		case "vip":			
 			if (args.length == 0) {
-				commandObj = new VipCommand(sender, args, plugin, plugin.getVipStorage(), plugin.getVip());
+				commandObj = new VipCommand(sender, args, plugin);
 			} else {
-				String arg = args[0].toLowerCase();
-				if (arg.equals("check")) {
-					commandObj = new VipForumCheckCommand(sender, args, plugin);
-				} else if (arg.equals("done")) {
-					commandObj = new VipForumDoneCommand(sender, args, plugin);
-				} else if (arg.equals("mark")) {
-					commandObj = new VipForumMarkCommand(sender, args, plugin);
-				} else {
-					commandObj = new VipCommand(sender, args, plugin, plugin.getVipStorage(), plugin.getVip());
+				switch (args[0].toLowerCase()) {
+				case "check": 	commandObj = new VipForumCheckCommand(sender, args, plugin); 	break;
+				case "done": 	commandObj = new VipForumDoneCommand(sender, args, plugin); 	break;
+				case "mark": 	commandObj = new VipForumMarkCommand(sender, args, plugin); 	break;
+				default: 		commandObj = new VipCommand(sender, args, plugin);
 				}
 			}
-		} else if (command.equals("warpcakedefence")) {
-			commandObj = new WarpcakedefenceCommand(sender, args, plugin);
-		} else if (command.equals("warppvp")) {
-			commandObj = new WarppvpCommand(sender, args, plugin);
-		} else if (command.equals("warpsonic")) {
-			commandObj = new WarpsonicCommand(sender, args, plugin);
-		} else if (command.equals("world")) {
-			commandObj = new WorldCommand(sender, args, plugin);
-		} else if (command.equals("slap")) {
-			commandObj = new SlapCommand(sender, args, plugin);
-		} else if (command.equals("plot")) {
-			if (args.length == 0)
-				return false;
-			String arg = args[0].toLowerCase();
-			if (arg.equals("check")) {
-				commandObj = new PlotcheckCommand(sender, args, plugin);
-			} else if (arg.equals("done")) {
-				commandObj = new PlotdoneCommand(sender, args, plugin);
-			} else if (arg.equals("mark")) {
-				commandObj = new PlotmarkCommand(sender, args, plugin);
-			} else if (arg.equals("tp")) {
-				commandObj = new PlottpCommand(sender, args, plugin);
-			}
-		} else if (command.equals("afk")){
-			commandObj = new AfkCommand(sender, args, plugin, plugin.getAwayFromKeyboard());
+			break;
 		}
 
 		if (commandObj != null) {

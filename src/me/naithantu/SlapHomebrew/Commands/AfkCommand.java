@@ -7,11 +7,13 @@ import org.bukkit.command.CommandSender;
 
 public class AfkCommand extends AbstractCommand {
 	
-	private AwayFromKeyboard afk;
+	private static AwayFromKeyboard afk = null;
 	
-	public AfkCommand(CommandSender sender, String[] args, SlapHomebrew plugin, AwayFromKeyboard afk) {
+	public AfkCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
 		super(sender, args, plugin);
-		this.afk = afk;
+		if (afk == null) {
+			afk = plugin.getAwayFromKeyboard();
+		}
 	}
 
 	public boolean handle() {

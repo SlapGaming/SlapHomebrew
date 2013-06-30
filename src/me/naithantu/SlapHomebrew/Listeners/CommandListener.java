@@ -1,6 +1,5 @@
 package me.naithantu.SlapHomebrew.Listeners;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -71,8 +70,8 @@ public class CommandListener implements Listener {
 		}
 		
 		
-		//AFK response /msg
 		if (commandMessage.length > 2) {
+			//AFK response /msg
 			if (commandMessage[0].equals("/msg")) {
 				Player tempPlayer = Bukkit.getPlayer(commandMessage[1]);
 				if (tempPlayer != null) {
@@ -81,93 +80,52 @@ public class CommandListener implements Listener {
 					}
 				}
 			}
-		}
-		
-		
-		//Worldguard logger.
-		//TODO Make worldguard logger less messy.
-		if (commandMessage.length < 3)
-			return;
-		if (commandMessage[0].equals("/rg") || commandMessage[0].equals("/region")) {
-			DateFormat cmdDate = new SimpleDateFormat("MM-dd HH:mm:ss");
-			Date date = new Date();
-			if (commandMessage[1].equals("define")) {
-				if (!SlapHomebrew.worldGuard.containsKey(commandMessage[2])) {
-					if (commandMessage[0].equals("/rg"))
-						SlapHomebrew.worldGuard.put(commandMessage[2], cmdDate.format(date) + " " + player.getName() + " made region " + message.replace("/rg define ", ""));
-					else
-						SlapHomebrew.worldGuard.put(commandMessage[2], cmdDate.format(date) + " " + player.getName() + " made region " + message.replace("/region define ", ""));
-				} else {
-					if (commandMessage[0].equals("/rg"))
-						SlapHomebrew.worldGuard.put(commandMessage[2], SlapHomebrew.worldGuard.get(commandMessage[2]) + "<==>" + cmdDate.format(date) + " " + player.getName() + " made region "
-								+ message.replace("/rg define ", ""));
-					else
-						SlapHomebrew.worldGuard.put(commandMessage[2], SlapHomebrew.worldGuard.get(commandMessage[2]) + "<==>" + cmdDate.format(date) + " " + player.getName() + " made region "
-								+ message.replace("/region define ", ""));
+			
+			//WorldGaurd Logger
+			if (commandMessage[0].equals("/rg") || commandMessage[0].equals("/region")) {
+				String date = new SimpleDateFormat("MM-dd HH:mm:ss").format(new Date());
+				String action = getActionString(commandMessage[1]);
+				if (action != null) {
+					if (commandMessage[1].equals("define") && !SlapHomebrew.worldGuard.containsKey(commandMessage[2])) {
+						SlapHomebrew.worldGuard.put(commandMessage[2], date + " " + player.getName() + " made region " + message.replace(getReplaceString(commandMessage[0], commandMessage[1]), ""));
+					} else if ( (commandMessage[1].equals("remove") && SlapHomebrew.worldGuard.containsKey(commandMessage[2])) || !commandMessage[1].equals("remove")) {
+						String replaceString = getReplaceString(commandMessage[0], commandMessage[1]);
+						logWorldGaurd(commandMessage[2], date, player.getName(), action, message, replaceString);
+					}
 				}
-			} else if (commandMessage[1].equals("remove")) {
-				if (SlapHomebrew.worldGuard.containsKey(commandMessage[2])) {
-					if (commandMessage[0].equals("/rg"))
-						SlapHomebrew.worldGuard.put(commandMessage[2], SlapHomebrew.worldGuard.get(commandMessage[2]) + "<==>" + cmdDate.format(date) + " " + player.getName() + " removed region "
-								+ message.replace("/rg remove ", ""));
-					else
-						SlapHomebrew.worldGuard.put(commandMessage[2], SlapHomebrew.worldGuard.get(commandMessage[2]) + "<==>" + cmdDate.format(date) + " " + player.getName() + " removed region "
-								+ message.replace("/region remove ", ""));
-				}
-			} else if (commandMessage[1].equals("addowner")) {
-				if (commandMessage[0].equals("/rg"))
-					SlapHomebrew.worldGuard.put(commandMessage[2], SlapHomebrew.worldGuard.get(commandMessage[2]) + "<==>" + cmdDate.format(date) + " " + player.getName() + " added owner(s)"
-							+ message.replace("/rg addowner " + commandMessage[2], ""));
-				else
-					SlapHomebrew.worldGuard.put(commandMessage[2], SlapHomebrew.worldGuard.get(commandMessage[2]) + "<==>" + cmdDate.format(date) + " " + player.getName() + " added owner(s)"
-							+ message.replace("/region addowner " + commandMessage[2], ""));
-			} else if (commandMessage[1].equals("removeowner")) {
-				if (commandMessage[0].equals("/rg"))
-					SlapHomebrew.worldGuard.put(commandMessage[2], SlapHomebrew.worldGuard.get(commandMessage[2]) + "<==>" + cmdDate.format(date) + " " + player.getName() + " removed owner(s)"
-							+ message.replace("/rg removeowner " + commandMessage[2], ""));
-				else
-					SlapHomebrew.worldGuard.put(commandMessage[2], SlapHomebrew.worldGuard.get(commandMessage[2]) + "<==>" + cmdDate.format(date) + " " + player.getName() + " removed owner(s)"
-							+ message.replace("/region removeowner " + commandMessage[2], ""));
-
-			} else if (commandMessage[1].equals("addmember")) {
-				if (commandMessage[0].equals("/rg"))
-					SlapHomebrew.worldGuard.put(commandMessage[2], SlapHomebrew.worldGuard.get(commandMessage[2]) + "<==>" + cmdDate.format(date) + " " + player.getName() + " added member(s)"
-							+ message.replace("/rg addmember " + commandMessage[2], ""));
-				else
-					SlapHomebrew.worldGuard.put(commandMessage[2], SlapHomebrew.worldGuard.get(commandMessage[2]) + "<==>" + cmdDate.format(date) + " " + player.getName() + " added member(s)"
-							+ message.replace("/region addmember " + commandMessage[2], ""));
-
-			} else if (commandMessage[1].equals("removemember")) {
-				if (commandMessage[0].equals("/rg"))
-					SlapHomebrew.worldGuard.put(commandMessage[2], SlapHomebrew.worldGuard.get(commandMessage[2]) + "<==>" + cmdDate.format(date) + " " + player.getName() + " removed member(s)"
-							+ message.replace("/rg removemember " + commandMessage[2], ""));
-				else
-					SlapHomebrew.worldGuard.put(commandMessage[2], SlapHomebrew.worldGuard.get(commandMessage[2]) + "<==>" + cmdDate.format(date) + " " + player.getName() + " removed member(s)"
-							+ message.replace("/region removemember " + commandMessage[2], ""));
-
-			} else if (commandMessage[1].equals("flag")) {
-				if (commandMessage[0].equals("/rg"))
-					SlapHomebrew.worldGuard.put(commandMessage[2], SlapHomebrew.worldGuard.get(commandMessage[2]) + "<==>" + cmdDate.format(date) + " " + player.getName() + " flagged region"
-							+ message.replace("/rg flag " + commandMessage[2], ""));
-				else
-					SlapHomebrew.worldGuard.put(commandMessage[2], SlapHomebrew.worldGuard.get(commandMessage[2]) + "<==>" + cmdDate.format(date) + " " + player.getName() + " flagged region"
-							+ message.replace("/region flag " + commandMessage[2], ""));
-
-			} else if (commandMessage[1].equals("setpriority")) {
-				if (commandMessage[0].equals("/rg"))
-					SlapHomebrew.worldGuard.put(commandMessage[2], SlapHomebrew.worldGuard.get(commandMessage[2]) + "<==>" + cmdDate.format(date) + " " + player.getName() + " set the priority to"
-							+ message.replace("/rg setpriority " + commandMessage[2], ""));
-				else
-					SlapHomebrew.worldGuard.put(commandMessage[2], SlapHomebrew.worldGuard.get(commandMessage[2]) + "<==>" + cmdDate.format(date) + " " + player.getName() + " set the priority to"
-							+ message.replace("/region setpriority " + commandMessage[2], ""));
-			} else if (commandMessage[1].equals("redefine")) {
-				if (commandMessage[0].equals("/rg"))
-					SlapHomebrew.worldGuard.put(commandMessage[2], SlapHomebrew.worldGuard.get(commandMessage[2]) + "<==>" + cmdDate.format(date) + " " + player.getName() + " redefined region"
-							+ message.replace("/rg redefine " + commandMessage[2], ""));
-				else
-					SlapHomebrew.worldGuard.put(commandMessage[2], SlapHomebrew.worldGuard.get(commandMessage[2]) + "<==>" + cmdDate.format(date) + " " + player.getName() + " redefined region"
-							+ message.replace("/region redefine " + commandMessage[2], ""));
 			}
 		}
 	}
+	
+	private void logWorldGaurd(String commandMessage, String date, String playerName, String action, String completeMessage, String replaceCommand){
+		SlapHomebrew.worldGuard.put(commandMessage, SlapHomebrew.worldGuard.get(commandMessage) + "<==>" + date + " " + playerName + " " + action + " " + completeMessage.replace(replaceCommand + commandMessage, ""));
+	}
+	
+	private String getReplaceString(String command, String arg){
+		String returnString;
+		if (command.equals("/rg")) {
+			returnString = "/rg " + arg + " ";
+		} else {
+			returnString = "/region " + arg + " ";
+		}
+		return returnString;
+	}
+	
+	private String getActionString(String arg){
+		String returnString = null;
+		switch (arg) {
+		case "define": returnString = "made region"; break;
+		case "remove": returnString = "removed region";	break;
+		case "addowner": returnString = "added owner(s)"; break;
+		case "removeowner":	returnString = "removed owner(s)"; break;
+		case "addmember": returnString = "added member(s)";	break;
+		case "removemember": returnString = "removed member(s)"; break;
+		case "flag": returnString = "flagged region"; break;
+		case "setpriority":	returnString = "set the priority to"; break; 
+		case "redefine": returnString = "redefined region";	break;
+		}
+		return returnString;
+	}
+	
+	
 }
