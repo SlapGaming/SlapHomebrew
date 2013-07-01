@@ -354,6 +354,28 @@ public class SlapCommand extends AbstractCommand {
 				}, 50);
 			}
 		}
+		
+		if (arg.equalsIgnoreCase("moo")) {
+			if (!testPermission(player, "fun")) {
+				this.noPermission(sender);
+				return true;
+			}
+			if (args.length < 2) {
+				this.badMsg(sender, "Usage: /slap moo [player]");
+				return true;
+			}
+			final Player target = Bukkit.getServer().getPlayer(args[1]);
+			if (target == null) {
+				this.badMsg(sender, "That player is not online!");
+				return true;
+			}
+			target.sendMessage(new String[]
+					{
+						"            (__)", "            (oo)", "   /------\\/", "  /  |      | |", " *  /\\---/\\", "    ~~    ~~", "....\"Have you mooed today?\"..."
+					});
+			target.playSound(player.getLocation(), Sound.COW_HURT, 1, 1.0f);
+			this.msg(player, "You Moo'd " + target.getName());
+		}
 
 		if (arg.equalsIgnoreCase("firemob")) {
 			if (!testPermission(sender, "firemob")) {
