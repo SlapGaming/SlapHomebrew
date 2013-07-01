@@ -32,6 +32,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.earth2me.essentials.Essentials;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 
 public class SlapHomebrew extends JavaPlugin {
@@ -67,6 +68,7 @@ public class SlapHomebrew extends JavaPlugin {
 	ApplyChecker applyChecker;
 	AwayFromKeyboard afk;
 	
+	Essentials essentials;
 	
 	public static boolean allowCakeTp;
 
@@ -145,6 +147,8 @@ public class SlapHomebrew extends JavaPlugin {
 		if (vipConfig.getConfigurationSection("vipdays") == null) {
 			vipConfig.createSection("vipdays");
 		}
+		
+		essentials = (Essentials) this.getServer().getPluginManager().getPlugin("Essentials");
 		saveConfig();
 	}
 
@@ -168,6 +172,10 @@ public class SlapHomebrew extends JavaPlugin {
 			return null;
 		}
 		return (WorldGuardPlugin) plugin;
+	}
+	
+	public Essentials getEssentials(){
+		return essentials;
 	}
 
 	//TODO Use WGCustomFlags instead of crappy member flags.

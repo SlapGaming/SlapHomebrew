@@ -26,6 +26,7 @@ public class CommandHandler {
 		case "cakedefence":		commandObj = new CakedefenceCommand(sender, args, plugin);		break;
 		case "creativeextra":	commandObj = new CreativeextraCommand(sender, args, plugin);	break;
 		case "group":			commandObj = new GroupCommand(sender, args, plugin);			break;
+		case "home":			commandObj = new HomeCommand(sender, args, plugin);				break;
 		case "leavecake":		commandObj = new LeavecakeCommand(sender, args, plugin);		break;
 		case "message":			commandObj = new MessageCommand(sender, args, plugin);			break;
 		case "minecart":		commandObj = new MinecartCommand(sender, args, plugin);			break;
