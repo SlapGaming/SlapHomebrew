@@ -25,12 +25,17 @@ public class CreatureDeathListener implements Listener {
 			if (entity.hasMetadata("slapWither")) {
 				Player player = plugin.getServer().getPlayer(entity.getMetadata("slapWither").get(0).asString());
 				//Drop item naturally if player logged off, is dead or has a full inventory.
-				if (player == null || player.isDead() || player.getInventory().firstEmpty() == -1)
-					return;
-				event.getDrops().clear();
-				System.out.println("[SLAP] Wither star has been given to: " + player.getName());
-				player.getInventory().addItem(new ItemStack(Material.NETHER_STAR, 1));
+				if (player != null && !player.isDead() && player.getInventory().firstEmpty() != -1) {
+					event.getDrops().clear();
+					System.out.println("[SLAP] Wither star has been given to: " + player.getName());
+					player.getInventory().addItem(new ItemStack(Material.NETHER_STAR, 1));
+				}
 			}
+		}
+
+		if (entity.hasMetadata("slapFireMob")) {
+			event.setDroppedExp(0);
+			event.getDrops().clear();
 		}
 	}
 }

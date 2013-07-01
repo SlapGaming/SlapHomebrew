@@ -414,7 +414,7 @@ public class SlapCommand extends AbstractCommand {
 			while (i < mobs) {
 				Entity burningMob = world.spawnEntity(location, mobType);
 				burningMob.setFireTicks(9999999);
-				burningMob.setMetadata("slapBurningMob", new FixedMetadataValue(plugin, true));
+				burningMob.setMetadata("slapFireMob", new FixedMetadataValue(plugin, true));
 				i++;
 			}
 		}
