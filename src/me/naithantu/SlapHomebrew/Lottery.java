@@ -1,5 +1,6 @@
 package me.naithantu.SlapHomebrew;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -12,8 +13,9 @@ import org.bukkit.inventory.ItemStack;
 public class Lottery {
 	public boolean lotteryPlaying = false;
 	public boolean lotteryEnabled = true;
-	public HashMap<String, Integer> lottery = new HashMap<String, Integer>();
-
+	public HashMap<String, Integer> lottery = new HashMap<>();
+	public HashMap<String, ItemStack> storedPrices = new HashMap<>();
+	
 	SlapHomebrew plugin;
 	
 	int lotteryTimer;
@@ -33,7 +35,7 @@ public class Lottery {
 					lotteryTimer();
 				}
 			}
-		}, 72000);
+		}, 2400);
 	}
 
 	private void shortLotteryTimer() {
@@ -41,38 +43,69 @@ public class Lottery {
 			public void run() {
 				if (!lottery.isEmpty()) {
 					int highestNumber = -1;
-					Player winningPlayer = null;
+					
+					ArrayList<String> winningPlayers = new ArrayList<>();
+										
 					//Loop through the hashmap from top to bottom (keep original order!)
 					for (String playerName : lottery.keySet()) {
 						//Get number that the player rolled.
 						int rolledNumber = lottery.get(playerName);
-						// If number is higher than currently highestNumber and player is online, 
-						//make it the new highestNumber and change the winningPlayer.	
-						if (rolledNumber > highestNumber && Bukkit.getServer().getPlayer(playerName) != null) {
+						if (rolledNumber == highestNumber) {
+							//Even high as the current winner
+							winningPlayers.add(playerName);
+						} else if (rolledNumber > highestNumber) {
+							//Number is higher than currently highestNumber
 							highestNumber = rolledNumber;
-							winningPlayer = Bukkit.getServer().getPlayer(playerName);
+							winningPlayers.clear();
+							winningPlayers.add(playerName);
 						}
 					}
-
-					//If winningPlayer is null, no one played, return.
-					if (winningPlayer == null) {
-						Bukkit.getServer().broadcastMessage(ChatColor.GOLD + "[SLAP]" + ChatColor.WHITE + " The lottery is over! But no one played...");
+					
+					if (winningPlayers.size() == 0) {
+						//No winners
+						plugin.getServer().broadcastMessage(ChatColor.GOLD + "[SLAP]" + ChatColor.WHITE + " The lottery is over! But no one played...");
 						lottery.clear();
 						lotteryPlaying = false;
-						return;
-					}
-
-					//Give reward to winner.
-					Random random = new Random();
-					if (random.nextInt(101) == 0) {
-						winningPlayer.getInventory().addItem(new ItemStack(Material.DIAMOND, 5));
-						Bukkit.getServer().broadcastMessage(ChatColor.GOLD + "[SLAP]" + ChatColor.WHITE + " Jackpot! " + winningPlayer.getName() + " gets 5 diamonds!");
-					} else if (random.nextInt(101) < 5) {
-						winningPlayer.getInventory().addItem(new ItemStack(Material.COOKIE, 64));
-						Bukkit.getServer().broadcastMessage(ChatColor.GOLD + "[SLAP]" + ChatColor.WHITE + " Cookies! " + winningPlayer.getName() + " gets a stack of cookies!");
+						return;					
 					} else {
-						winningPlayer.getInventory().addItem(new ItemStack(Material.CAKE, 1));
-						Bukkit.getServer().broadcastMessage(ChatColor.GOLD + "[SLAP]" + ChatColor.WHITE + " The lottery is over! The winner is " + winningPlayer.getName() + "!");
+						//Someone won!
+						int randomNumber = new Random().nextInt(101);
+						ItemStack price; String priceName;
+						
+						if (randomNumber == 0) {
+							//Jackpot = 5 Diamonds
+							price = new ItemStack(Material.DIAMOND, 5); priceName = "the jackpot! 5 diamonds!";
+						} else if (randomNumber < 6) {
+							//Cookies!
+							price = new ItemStack(Material.COOKIE, 64); priceName = "a stack of cookies!";
+						} else {
+							//A Cake
+							price = new ItemStack(Material.CAKE, 1); priceName = "a cake!";
+						}
+						
+						if (winningPlayers.size() == 1) {
+							//1 Winner
+							plugin.getServer().broadcastMessage(ChatColor.GOLD + "[SLAP]" + ChatColor.WHITE + " The lottery is over! " + winningPlayers.get(0) + " has won " + priceName);
+							givePrice(winningPlayers.get(0), price);
+						} else if (winningPlayers.size() > 1) {
+							//Multiple winners
+							String winningPlayerNames = ""; int xCount = 0; boolean first = true;
+							while (xCount < winningPlayers.size()) {
+								if (first) {
+									winningPlayerNames = winningPlayers.get(xCount);
+									first = false;
+								} else {
+									String nextPlayerString;
+									if ((xCount + 1) == winningPlayers.size()) nextPlayerString = " & "; else nextPlayerString = ", ";
+									winningPlayerNames = winningPlayerNames + nextPlayerString + winningPlayers.get(xCount);
+								}
+								xCount++;
+							}
+							plugin.getServer().broadcastMessage(ChatColor.GOLD + "[SLAP]" + ChatColor.WHITE + " The lottery is over! " + winningPlayerNames + " have won " + priceName);
+							for (String winningPlayer : winningPlayers) {
+								givePrice(winningPlayer, price);
+							}
+						}	
 					}
 
 					lottery.clear();
@@ -109,4 +142,41 @@ public class Lottery {
 			shortLotteryTimer();
 		}
 	}
+	
+	public boolean inStoredPrices(String playerName){
+		boolean returnBool = false;
+		if (storedPrices.get(playerName) != null) {
+			returnBool = true;
+		}
+		return returnBool;
+	}
+	
+	public ItemStack getStoredPrice(String playerName) {
+		ItemStack returnStack = storedPrices.get(playerName);
+		return returnStack;
+	}
+	
+	public void removeStoredPrice(String playerName) {
+		storedPrices.remove(playerName);
+	}
+	
+	public void givePrice(String playerName, ItemStack price) {
+		Player targetPlayer = plugin.getServer().getPlayer(playerName);
+		String worldName = targetPlayer.getWorld().getName();
+		if (!worldName.equals("world_sonic") && !worldName.equals("world_creative")) {
+			if (targetPlayer.getInventory().firstEmpty() != -1) {
+				targetPlayer.getInventory().addItem(price);
+			} else {
+				//Player's inventory is full
+				storedPrices.put(playerName, price);
+				targetPlayer.sendMessage(ChatColor.RED + "You will get your prize when you make space in your inventory.");
+			}
+		} else {
+			//Player is in Creative/Sonic world -> Store price
+			storedPrices.put(playerName, price);
+			targetPlayer.sendMessage(ChatColor.RED + "You will get your prize when you return to a survival world.");
+		}
+	}
+	
+	
 }
