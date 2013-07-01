@@ -132,6 +132,8 @@ public class SlapHomebrew extends JavaPlugin {
 		pm.registerEvents(new VehicleListener(), this);
 		pm.registerEvents(new PlayerInteractEntityListener(), this);
 		pm.registerEvents(new PlayerRespawnListener(), this);
+		pm.registerEvents(new PlayerChangedWorldListener(lottery), this);
+		pm.registerEvents(new PlayerInventoryEvent(lottery), this);
 
 		Plugin x = this.getServer().getPluginManager().getPlugin("Vault");
 		if (x != null & x instanceof Vault) {
