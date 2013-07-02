@@ -2,7 +2,6 @@ package me.naithantu.SlapHomebrew.Listeners;
 
 import me.naithantu.SlapHomebrew.Lottery;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -20,7 +19,6 @@ public class PlayerInventoryEvent implements Listener {
 	public void playerChangedInventory(InventoryClickEvent event) {
 		HumanEntity targetPlayer = event.getWhoClicked();
 		String playerName = targetPlayer.getName();
-		Bukkit.getLogger().info(targetPlayer.getName() + "World change");
 		if (lottery.inStoredPrices(playerName)) {
 			String worldName = targetPlayer.getWorld().getName();
 			if (!worldName.equals("world_sonic") && !worldName.equals("world_creative")) {

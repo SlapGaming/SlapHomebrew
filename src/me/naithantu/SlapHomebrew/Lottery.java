@@ -35,7 +35,7 @@ public class Lottery {
 					lotteryTimer();
 				}
 			}
-		}, 2400);
+		}, 72000);
 	}
 
 	private void shortLotteryTimer() {
