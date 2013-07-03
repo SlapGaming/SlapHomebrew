@@ -1,7 +1,6 @@
 package me.naithantu.SlapHomebrew.Listeners;
 
 import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -20,13 +19,6 @@ public class PlayerTeleportListener implements Listener {
 		if (player.getWorld().getName().equals("world_pvp") && event.getCause().equals(TeleportCause.ENDER_PEARL)) {
 			player.sendMessage(ChatColor.GOLD + "[SLAP]" + ChatColor.WHITE + " Using ender pearls to teleport is not allowed in pvp!");
 			event.setCancelled(true);
-		}
-		
-		//Allow flight for double jumping in start world.
-		if(event.getTo().getWorld().getName().equals("world_start") && !event.getFrom().getWorld().getName().equals("world_start")){
-			player.setAllowFlight(true);
-		} else if (event.getFrom().getWorld().getName().equals("world_start") && !event.getTo().getWorld().getName().equals("world_start") && player.getGameMode() != GameMode.CREATIVE){
-			player.setAllowFlight(false);
 		}
 	}
 }
