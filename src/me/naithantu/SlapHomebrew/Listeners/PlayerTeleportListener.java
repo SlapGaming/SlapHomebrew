@@ -28,11 +28,5 @@ public class PlayerTeleportListener implements Listener {
 		} else if (event.getFrom().getWorld().getName().equals("world_start") && !event.getTo().getWorld().getName().equals("world_start") && player.getGameMode() != GameMode.CREATIVE){
 			player.setAllowFlight(false);
 		}
-		
-		if(event.getFrom().getWorld().getName().equals("world_sonic") && !event.getTo().getWorld().getName().equals("world_sonic")){
-			player.getInventory().clear();
-			player.getInventory().setBoots(null);
-			player.getActivePotionEffects().clear();
-		}
 	}
 }

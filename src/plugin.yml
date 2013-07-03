@@ -96,5 +96,3 @@ commands:
     description: Reset AFK reason of a player
     usage: "Usage: /resetafk [player]"
     aliases: [resetafk]
-  home:
-    description: Teleport to your home.
