@@ -37,9 +37,7 @@ public class ApplyChecker {
 	}
 	
 	public void forumsDown(){
-		gathererThread.cancel();
-		getLogger().info("[ApplyThread] Forums Down? - Retrying in 10 minutes");
-		gathererThread.runTaskTimerAsynchronously(plugin, 12000, 1200);
+		getLogger().info("[ApplyThread] Forums Down? - Retrying in a minute..");
 	}
 	
 	public boolean findUser(String username){
