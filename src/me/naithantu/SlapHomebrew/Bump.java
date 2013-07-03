@@ -27,7 +27,7 @@ public class Bump {
 	public void bumpTimer() {
 		amsgId = Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
 			public void run() {
-				//Aggresive bumping thing here. Start 5 minute timer.
+				//Aggressive bumping thing here. Start 5 minute timer.
 				bumpIsDone = false;
 				Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), "mod-broadcast Post On Yogscast/Minecraftforums, Use /Bumpdone When You Are Going Bump!");
 				if (getOnlineStaff() > 0) {

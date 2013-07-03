@@ -28,7 +28,7 @@ public class BumpdoneCommand extends AbstractCommand {
 			this.msg(sender, "Thanks for bumping! :)");
 			for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
 				if (!onlinePlayer.getName().equals(sender.getName()) && onlinePlayer.hasPermission("slaphomebrew.bump")) {
-					this.msg(sender, sender.getName() + " has bumped!");
+					this.msg(onlinePlayer, sender.getName() + " has bumped!");
 				}
 			}
 		} else {
