@@ -6,6 +6,7 @@ import me.naithantu.SlapHomebrew.ApplyChecker;
 import me.naithantu.SlapHomebrew.Storage.XMLParser;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -34,10 +35,18 @@ public class ApplyGathererTask extends BukkitRunnable {
 			applyChecker.forumsDown();
 			return;
 		}
+		Bukkit.getLogger().info("ApplyChecker Run. " + threadNrs.size() + " threads found.");
 		boolean changed = false;
 		for (int threadNr : threadNrs) {
-			Boolean storedThread = applyThreadConfig.getBoolean(String.valueOf(threadNr)); //Find the thread in YAML file
-			if (storedThread == null || (firstRun && !storedThread)) { //If not found create a new one
+			boolean newThread = false;
+			if (applyThreadConfig.contains(String.valueOf(threadNr))) {
+				if (!applyThreadConfig.getBoolean(String.valueOf(threadNr)) && firstRun) {
+					newThread = true;
+				}
+			} else {
+				newThread = true;
+			}
+			if (newThread) { //If not found create a new one
 				Object[] applyThread = XMLParser.createApplyThread(threadNr);
 				if (applyThread != null) { //If new thread is not null
 					boolean done = false;
