@@ -96,3 +96,10 @@ commands:
     description: Reset AFK reason of a player
     usage: "Usage: /resetafk [player]"
     aliases: [resetafk]
+  homemenu:
+    description: Show the homes icon menu
+    usage: "Usage: /homemenu"
+  spawn:
+    description: Teleport to the spawn (of a world)
+    usage: "Usage: /spawn <world>"
+  
