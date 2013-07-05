@@ -30,7 +30,7 @@ public class SpawnCommand extends AbstractCommand {
 		Player targetPlayer = (Player)sender;
 		
 		if (args.length == 0) {
-			targetPlayer.teleport(plugin.getServer().getWorld("world_start").getSpawnLocation());
+			teleportToSpawn(targetPlayer, "world_start", "the lobby world");
 		} else {
 			switch (args[0].toLowerCase()) {
 			case "old": case "oldsurvival":

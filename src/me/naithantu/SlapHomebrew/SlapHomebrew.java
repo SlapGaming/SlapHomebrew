@@ -114,7 +114,7 @@ public class SlapHomebrew extends JavaPlugin {
 		pm = getServer().getPluginManager();
 		pm.registerEvents(new BlockPlaceListener(this), this);
 		pm.registerEvents(new PlayerChatListener(this, afk), this);
-		pm.registerEvents(new PlayerCommandListener(afk), this);
+		pm.registerEvents(new PlayerCommandListener(this, afk), this);
 		pm.registerEvents(new CreatureSpawnListener(this), this);
 		pm.registerEvents(new CreatureDeathListener(this), this);
 		pm.registerEvents(new EntityDamageByEntityListener(this), this);

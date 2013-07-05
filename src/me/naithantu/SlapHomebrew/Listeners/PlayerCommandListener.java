@@ -14,12 +14,16 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
+import com.earth2me.essentials.User;
+
 public class PlayerCommandListener implements Listener {
 
 	private AwayFromKeyboard afk;
+	private SlapHomebrew plugin;
 	
-	public PlayerCommandListener(AwayFromKeyboard afk){
+	public PlayerCommandListener(SlapHomebrew plugin, AwayFromKeyboard afk){
 		this.afk = afk;
+		this.plugin = plugin;
 	}
 	
 	@EventHandler
@@ -55,6 +59,15 @@ public class PlayerCommandListener implements Listener {
 			if (player.hasPermission("slaphomebrew.jails") && player.hasPermission("essentials.togglejail")) {
 				player.sendMessage(ChatColor.GRAY + "one two three");
 				event.setCancelled(true);
+			}
+		}
+		
+		//Cancel commands in Jail
+		User targetUser = plugin.getEssentials().getUserMap().getUser(player.getName());
+		if (targetUser.isJailed()) {
+			if (!commandMessage[0].equalsIgnoreCase("/modreq")) {
+				event.setCancelled(true);
+				targetUser.sendMessage(ChatColor.RED + "You are still in jail for: " + targetUser.getJailTimeout());
 			}
 		}
 		
