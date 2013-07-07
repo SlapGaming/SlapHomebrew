@@ -1,6 +1,7 @@
 package me.naithantu.SlapHomebrew;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
@@ -11,7 +12,6 @@ import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.BookMeta;
 
 public class Menus {
 	SlapHomebrew plugin;
@@ -21,12 +21,13 @@ public class Menus {
 	IconMenu stoneMenu;
 	IconMenu netherMenu;
 	IconMenu miscellaneousMenu;
-	IconMenu bookMenu;
 
 	IconMenu creativeMenu;
 
 	YamlStorage vipStorage;
 	FileConfiguration vipConfig;
+
+	HashMap<String, IconMenu> bookMenus = new HashMap<String, IconMenu>();
 
 	public Menus(SlapHomebrew plugin) {
 		this.plugin = plugin;
@@ -37,7 +38,6 @@ public class Menus {
 		stoneMenu();
 		netherMenu();
 		miscellaneousMenu();
-		bookMenu();
 
 		creativeMenu();
 	}
@@ -108,16 +108,7 @@ public class Menus {
 
 		fillIconMenu(miscellaneousMenu, "vipitems.miscellaneous", true);
 	}
-
-	public void bookMenu() {
-		bookMenu = new IconMenu("Vip grant book menu", (int) 4 * 9, new IconMenu.OptionClickEventHandler() {
-			@Override
-			public void onOptionClick(IconMenu.OptionClickEvent event) {
-				handleVipMenu(event);
-			}
-		}, plugin);
-	}
-
+	
 	public void creativeMenu() {
 		if (vipConfig.getConfigurationSection("creative.extraitems") == null) {
 			vipConfig.set("creative.extraitems.1", 1);
@@ -128,13 +119,14 @@ public class Menus {
 			@Override
 			public void onOptionClick(IconMenu.OptionClickEvent event) {
 				Player player = event.getPlayer();
+
 				if (player.getInventory().firstEmpty() == -1) {
 					player.sendMessage(ChatColor.RED + "Your inventory is full!");
 					return;
 				}
-				
-				event.setWillClose(false);
+
 				player.getInventory().addItem(event.getItemClicked());
+				event.setWillClose(false);
 			}
 		}, plugin);
 
@@ -142,6 +134,12 @@ public class Menus {
 	}
 
 	public void openBookMenu(final Player player) {
+		if (bookMenus.containsKey(player.getName())){
+			bookMenus.get(player.getName()).destroy();
+			bookMenus.remove(player.getName());
+		}
+
+		IconMenu bookMenu;
 		//Get all books out of inventory.
 		List<ItemStack> books = new ArrayList<ItemStack>();
 		for (ItemStack item : player.getInventory()) {
@@ -150,17 +148,36 @@ public class Menus {
 			}
 		}
 
-		bookMenu.emptyMenu();
+		int iconMenuSize = books.size();
+
+		if (books.isEmpty())
+			iconMenuSize++;
+
+		bookMenu = new IconMenu("Vip grant book menu", (int) Math.ceil(iconMenuSize / 9.0 + 1) * 9, new IconMenu.OptionClickEventHandler() {
+			@Override
+			public void onOptionClick(IconMenu.OptionClickEvent event) {
+				event.setWillClose(false);
+				if (event.getPosition() > 8 && event.getItemClicked().getType() != Material.WRITTEN_BOOK)
+					return;
+
+				handleVipMenu(event);
+			}
+		}, plugin);
+
 		addMenuBar(bookMenu);
 
-		int i = 0;
-		for (ItemStack itemStack : books) {
-			BookMeta bookMeta = (BookMeta) itemStack.getItemMeta();
-			String title = bookMeta.getTitle();
-			bookMenu.setOption(i + 9, itemStack, ChatColor.RESET + title, (String[]) null);
-			i++;
+		if (books.isEmpty()) {
+			bookMenu.setOption(13, new ItemStack(Material.SIGN_POST), "There are no books to copy in your inventory", "Add a written book to your inventory, then you can copy it here.");
+		} else {
+			int i = 0;
+			for (ItemStack itemStack : books) {
+				bookMenu.setOption(i + 9, itemStack, itemStack.getItemMeta().getDisplayName(), (String[]) null);
+				i++;
+			}
 		}
+
 		bookMenu.open(player);
+		bookMenus.put(player.getName(), bookMenu);
 	}
 
 	private void fillIconMenu(IconMenu iconMenu, String configKey, boolean addMenuBar) {
@@ -181,16 +198,9 @@ public class Menus {
 			else
 				itemStack = new ItemStack(Material.getMaterial(id), vipConfig.getInt(configKey + "." + item));
 
-			//Change material name to nice readable name.
-			String materialName = Material.getMaterial(id).toString();
-			String[] materialSplit = materialName.split("_");
-			String capitalizedMaterialName = "";
-			for (String string : materialSplit) {
-				capitalizedMaterialName = capitalizedMaterialName + string.substring(0, 1) + string.substring(1).toLowerCase() + " ";
-			}
-			capitalizedMaterialName.trim();
 			if (itemStack.getTypeId() != 0)
-				iconMenu.setOption(i + extraRow, itemStack, ChatColor.RESET + capitalizedMaterialName, (String[]) null);
+				iconMenu.setOption(i + extraRow, itemStack, itemStack.getItemMeta().getDisplayName(), (String[]) null);
+
 			i++;
 		}
 	}
