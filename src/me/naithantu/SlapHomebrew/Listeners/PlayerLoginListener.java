@@ -18,6 +18,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
+
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
@@ -40,17 +41,11 @@ public class PlayerLoginListener implements Listener {
 		dataConfig = dataStorage.getConfig();
 		vipConfig = vipStorage.getConfig();
 	}
-	
-	//TODO Fix this, didn't work before.
-	/*@EventHandler
-	public void onPlayerJoin(PlayerJoinEvent event){
-		((CraftPlayer) event.getPlayer()).getHandle().playerConnection.checkMovement = false;
-	}*/
 
 	@EventHandler
 	public void onPlayerLogin(PlayerLoginEvent event) {
 		final Player player = event.getPlayer();
-		
+				
 		plugin.getExtras().getGhostTeam().addPlayer(player);
 		
 		if (player.hasPermission("slaphomebrew.staff")) {
