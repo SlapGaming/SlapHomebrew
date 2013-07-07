@@ -17,7 +17,6 @@ public class PlayerTeleportListener implements Listener {
 		//Check for boats/minecarts to remove.
 		Location from = event.getFrom();
 		for(Entity entity: from.getWorld().getEntities()){
-			System.out.println(entity.toString());
 			if(entity.hasMetadata("slapVehicle")){ 
 				if(entity.getMetadata("slapVehicle").get(0).asString().equals(player.getName())){
 					entity.remove();

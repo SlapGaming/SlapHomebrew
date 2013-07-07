@@ -30,10 +30,13 @@ public class PlayerInteractListener implements Listener {
 			Arrow arrow = player.launchProjectile(Arrow.class);
 			arrow.setMetadata("retrobow", new FixedMetadataValue(plugin, true));
 		}
+		
+		System.out.println("Interact");
 
 		if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
 			Material clickedBlock = event.getClickedBlock().getType();
-			if (clickedBlock == Material.NOTE_BLOCK || clickedBlock == Material.DIODE_BLOCK_ON || clickedBlock == Material.DIODE_BLOCK_OFF || clickedBlock == Material.CAKE_BLOCK) {
+			System.out.println("interact event: " + clickedBlock);
+			if (clickedBlock == Material.NOTE_BLOCK || clickedBlock == Material.DIODE_BLOCK_ON || clickedBlock == Material.DIODE_BLOCK_OFF || clickedBlock == Material.CAKE_BLOCK || clickedBlock == Material.LEASH) {
 				if (!(plugin.getWorldGuard().canBuild(event.getPlayer(), event.getClickedBlock()))) {
 					event.setCancelled(true);
 				}

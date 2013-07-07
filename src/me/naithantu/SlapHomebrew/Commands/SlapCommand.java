@@ -603,6 +603,26 @@ public class SlapCommand extends AbstractCommand {
 			targetPlayer.sendMessage(ChatColor.translateAlternateColorCodes('&', message.toString()));
 		}
 		
+		if (arg.equalsIgnoreCase("ghost")) {
+			if (!testPermission(sender, "ghost")) {
+				this.noPermission(sender);
+				return true;
+			}
+			
+			List<String> ghosts = plugin.getExtras().getGhosts();
+			
+			if(args.length == 1){
+				if(!ghosts.contains(player.getName())){
+					this.msg(sender, "You are now a ghost!");
+					ghosts.add(player.getName());
+					player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 99999999, 1));
+				} else {
+					this.msg(sender, "You are no longer a ghost!");
+					ghosts.remove(player.getName());
+					player.removePotionEffect(PotionEffectType.INVISIBILITY);
+				}
+			}
+		}
 		return true;
 	}
 
