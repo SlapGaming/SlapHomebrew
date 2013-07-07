@@ -64,6 +64,9 @@ public class TeCommand extends AbstractCommand {
 				} else {
 					tpLocation = Bukkit.getPlayer(tpPlayer).getLocation().add(0, yLocation + 1, 0);
 					player.teleport(tpLocation);
+					if (!player.hasPermission("slaphomebrew.staff")) {
+						Bukkit.getPlayer(tpPlayer).sendMessage(ChatColor.GRAY + player.getName() + " has teleported to you!");
+					}
 				}
 				player.sendMessage(ChatColor.GRAY + "Teleporting...");
 			}

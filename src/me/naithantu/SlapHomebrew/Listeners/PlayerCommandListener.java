@@ -82,20 +82,34 @@ public class PlayerCommandListener implements Listener {
 			}
 		}
 		
-		
-		if (commandMessage.length > 2) {
-			//AFK response /msg
-			if (commandMessage[0].equals("/msg")) {
+		if (commandMessage.length > 1) {
+			switch (commandMessage[0]) {
+			//AFK response
+			case "/tpa": case "/tpahere":
 				Player tempPlayer = Bukkit.getPlayer(commandMessage[1]);
 				if (tempPlayer != null) {
 					if (afk.isAfk(tempPlayer.getName())){
 						afk.sendAfkReason(event.getPlayer(), tempPlayer.getName());
 					}
 				}
+				break;
 			}
-			
-			//WorldGaurd Logger
-			if (commandMessage[0].equals("/rg") || commandMessage[0].equals("/region")) {
+		}
+		
+		if (commandMessage.length > 2) {
+			switch (commandMessage[0]) {
+			//AFK response
+			case "/msg":
+				Player tempPlayer = Bukkit.getPlayer(commandMessage[1]);
+				if (tempPlayer != null) {
+					if (afk.isAfk(tempPlayer.getName())){
+						afk.sendAfkReason(event.getPlayer(), tempPlayer.getName());
+					}
+				}
+				break;
+				
+			//WorldGaurd logger	
+			case "/rg": case "/region":
 				String date = new SimpleDateFormat("MM-dd HH:mm:ss").format(new Date());
 				String action = getActionString(commandMessage[1]);
 				if (action != null) {
@@ -106,6 +120,7 @@ public class PlayerCommandListener implements Listener {
 						logWorldGaurd(commandMessage[2], date, player.getName(), action, message, replaceString);
 					}
 				}
+				break;
 			}
 		}
 	}

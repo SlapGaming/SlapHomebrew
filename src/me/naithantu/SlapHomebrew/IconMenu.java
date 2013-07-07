@@ -23,6 +23,7 @@ public class IconMenu implements Listener {
 
 	private String[] optionNames;
 	private ItemStack[] optionIcons;
+	private String[] optionCommands;
 	private String playerName;
 
 	public IconMenu(String name, int size, OptionClickEventHandler handler, Plugin plugin) {
@@ -33,6 +34,7 @@ public class IconMenu implements Listener {
 		this.playerName = null;
 		this.optionNames = new String[size];
 		this.optionIcons = new ItemStack[size];
+		this.optionCommands = new String[size];
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 	}
 	
@@ -44,11 +46,19 @@ public class IconMenu implements Listener {
 		this.playerName = playerName;
 		this.optionNames = new String[size];
 		this.optionIcons = new ItemStack[size];
+		this.optionCommands = new String[size];
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 	}
 	
 	public IconMenu setOption(int position, ItemStack icon, String name, String... info) {
 		optionNames[position] = name;
+		optionIcons[position] = setItemNameAndLore(icon, name, info);
+		return this;
+	}
+	
+	public IconMenu setOption(String command, int position, ItemStack icon, String name, String... info) {
+		optionNames[position] = name;
+		optionCommands[position] = command;
 		optionIcons[position] = setItemNameAndLore(icon, name, info);
 		return this;
 	}
@@ -78,10 +88,12 @@ public class IconMenu implements Listener {
 				event.setCancelled(true);
 				int slot = event.getRawSlot();
 				String clickedName;
+				String command;
 				if (slot >= 0 && slot < size && optionIcons[slot] != null) {
 					clickedName = optionNames[slot];
+					command = optionCommands[slot];
 					Plugin plugin = this.plugin;
-					OptionClickEvent e = new OptionClickEvent((Player) event.getWhoClicked(), slot, clickedName, event.getCurrentItem());
+					OptionClickEvent e = new OptionClickEvent((Player) event.getWhoClicked(), slot, clickedName, event.getCurrentItem(), command);
 					handler.onOptionClick(e);
 					if (e.willClose()) {
 						final Player p = (Player) event.getWhoClicked();
@@ -107,15 +119,17 @@ public class IconMenu implements Listener {
 		private Player player;
 		private int position;
 		private String name;
+		private String command;
 		private boolean close;
 		private boolean destroy;
 		ItemStack itemClicked;
 
-		public OptionClickEvent(Player player, int position, String name, ItemStack itemClicked) {
+		public OptionClickEvent(Player player, int position, String name, ItemStack itemClicked, String command) {
 			this.player = player;
 			this.position = position;
 			this.name = name;
 			this.itemClicked = itemClicked;
+			this.command = command;
 			this.close = true;
 			this.destroy = false;
 		}
@@ -130,6 +144,10 @@ public class IconMenu implements Listener {
 
 		public String getName() {
 			return name;
+		}
+		
+		public String getCommand() {
+			return command;
 		}
 
 		public ItemStack getItemClicked() {
