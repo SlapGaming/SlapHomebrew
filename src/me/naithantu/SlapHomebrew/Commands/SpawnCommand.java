@@ -27,7 +27,13 @@ public class SpawnCommand extends AbstractCommand {
 			super.badMsg(sender, "You need to be in-game to do that.");
 			return true;
 		}
-		Player targetPlayer = (Player)sender;
+		
+		if (!testPermission(sender, "spawn")) {
+			this.noPermission(sender);
+			return true;
+		}
+		
+		Player targetPlayer = (Player) sender;
 		
 		if (args.length == 0) {
 			teleportToSpawn(targetPlayer, "world_start", "the lobby world");
