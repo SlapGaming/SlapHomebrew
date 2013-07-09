@@ -2,7 +2,7 @@ name: SlapHomebrew
 main: me.naithantu.SlapHomebrew.SlapHomebrew
 depend: [Vault, PermissionsEx]
 author: naithantu
-version: 2.8.3
+version: 2.9.2
 description: SlapHomebrew homemade plugin.
 commands:
   vip:
@@ -102,4 +102,6 @@ commands:
   spawn:
     description: Teleport to the spawn (of a world)
     usage: "Usage: /spawn <world>"
+  home:
+    description: Teleports you home.
   
