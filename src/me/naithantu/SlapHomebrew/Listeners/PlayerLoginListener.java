@@ -45,9 +45,12 @@ public class PlayerLoginListener implements Listener {
 	@EventHandler
 	public void onPlayerLogin(PlayerLoginEvent event) {
 		final Player player = event.getPlayer();
-				
+
 		plugin.getExtras().getGhostTeam().addPlayer(player);
-		
+
+		if (player.getWorld().getName().equals("world_start"))
+			player.setAllowFlight(true);
+
 		if (player.hasPermission("slaphomebrew.staff")) {
 			String date = new SimpleDateFormat("MMM-d HH:mm:ss z").format(new Date());
 			date = date.substring(0, 1).toUpperCase() + date.substring(1);
@@ -114,11 +117,6 @@ public class PlayerLoginListener implements Listener {
 				vipConfig.set("book", playerList);
 				vipStorage.saveConfig();
 			}
-		}
-
-		//Change wirelessPillows name to have a capital letter.
-		if (player.getName().equals("wirelessPillow")) {
-			player.setDisplayName("WirelessPillow");
 		}
 	}
 
