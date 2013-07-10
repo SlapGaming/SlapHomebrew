@@ -6,6 +6,7 @@ import me.naithantu.SlapHomebrew.IconMenu.OptionClickEvent;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.inventory.ItemStack;
 
 import com.earth2me.essentials.User;
@@ -49,8 +50,9 @@ public class HomeMenu {
 		oldSurvivalHomes = newSurvivalHomes = creativeHomes = netherHomes = resourceHomes = 0;
 		for (String home : homes) {
 			try {
-				if (essentialsUser.getHome(home).getWorld() != null) {
-					String worldName = essentialsUser.getHome(home).getWorld().getName();
+				World world = essentialsUser.getHome(home).getWorld();
+				if (world != null) {
+					String worldName = world.getName();
 					switch (worldName.toLowerCase()) {
 					case "world":
 						oldSurvivalHomes++;
