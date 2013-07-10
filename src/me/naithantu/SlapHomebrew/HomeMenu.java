@@ -6,7 +6,6 @@ import me.naithantu.SlapHomebrew.IconMenu.OptionClickEvent;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.inventory.ItemStack;
 
 import com.earth2me.essentials.User;
@@ -48,33 +47,28 @@ public class HomeMenu {
 
 		homes = essentialsUser.getHomes();
 		oldSurvivalHomes = newSurvivalHomes = creativeHomes = netherHomes = resourceHomes = 0;
+
 		for (String home : homes) {
 			try {
-				World world = essentialsUser.getHome(home).getWorld();
-				if (world != null) {
-					String worldName = world.getName();
-					switch (worldName.toLowerCase()) {
-					case "world":
-						oldSurvivalHomes++;
-						break;
-					case "world_survival2":
-						newSurvivalHomes++;
-						break;
-					case "world_creative":
-						creativeHomes++;
-						break;
-					case "world_nether":
-						netherHomes++;
-						break;
-					case "world_resource10":
-						resourceHomes++;
-						break;
-					}
-				} else {
-					homes.remove(home);
+				String worldName = essentialsUser.getHome(home).getWorld().getName();
+				switch (worldName.toLowerCase()) {
+				case "world":
+					oldSurvivalHomes++;
+					break;
+				case "world_survival2":
+					newSurvivalHomes++;
+					break;
+				case "world_creative":
+					creativeHomes++;
+					break;
+				case "world_nether":
+					netherHomes++;
+					break;
+				case "world_resource10":
+					resourceHomes++;
+					break;
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
 			}
 		}
 
@@ -202,7 +196,7 @@ public class HomeMenu {
 		if (page == 1) {
 			for (String home : homes) {
 				String worldName = getWorldName(home);
-				if (worldName.equals(world)) {
+				if (world.equals(worldName)) {
 					if (xCount < 45) {
 						homeMenu.setOption(home, xCount, new ItemStack(menuMaterial, 0), home, "Teleport to " + home);
 						xCount++;
@@ -213,7 +207,7 @@ public class HomeMenu {
 			int currentHome = 0;
 			for (String home : homes) {
 				String worldName = getWorldName(home);
-				if (worldName.equals(world)) {
+				if (world.equals(worldName)) {
 					currentHome++;
 					if (firstHome < currentHome && currentHome < (lastHome + 1)) {
 						homeMenu.setOption(home, xCount, new ItemStack(menuMaterial, 0), home, "Teleport to " + home);
