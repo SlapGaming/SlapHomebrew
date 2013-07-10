@@ -36,7 +36,7 @@ public class HomeMenuCommand extends AbstractCommand {
 		if (homes.size() == 0) {
 			badMsg(sender, "You currently have no homes set.");
 		} else if (homes.size() == 1) {
-			teleportPlayer(targetPlayer, homes.get(0));
+			HomeCommand.teleportToHome(targetPlayer, homes.get(0));
 		} else {
 			showHomeMenu(targetPlayer);
 		}
@@ -49,14 +49,6 @@ public class HomeMenuCommand extends AbstractCommand {
 			homeMenuMap.get(player.getName()).reCreateHomeMainMenu(player);
 		} else {
 			homeMenuMap.put(player.getName(), new HomeMenu(player, plugin));
-		}
-	}
-	
-	private void teleportPlayer(User targetPlayer, String home){
-		try {
-			targetPlayer.teleport(targetPlayer.getHome(home));
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
 	}
 	

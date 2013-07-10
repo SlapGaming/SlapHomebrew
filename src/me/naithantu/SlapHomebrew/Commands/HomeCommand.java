@@ -28,12 +28,12 @@ public class HomeCommand extends AbstractCommand {
 		List<String> homes = targetPlayer.getHomes();
 		if (args.length > 0) {
 			if (homes.contains(args[0])) {
-				teleportPlayer(targetPlayer, args[0]);
+				teleportToHome(targetPlayer, args[0]);
 			} else {
 				sendHomes(homes);
 			}
 		} else if (homes.size() == 1) {
-			teleportPlayer(targetPlayer, homes.get(0));
+			teleportToHome(targetPlayer, homes.get(0));
 		} else {
 			sendHomes(homes);
 		}
@@ -54,9 +54,9 @@ public class HomeCommand extends AbstractCommand {
 		sender.sendMessage("Homes (" + (homes.size()) + "): " + homeBuilder.toString());
 	}
 		
-	private void teleportPlayer(User targetPlayer, String home){
+	public static void teleportToHome(User targetPlayer, String home){
 		try {
-			targetPlayer.teleport(targetPlayer.getHome(home));
+			targetPlayer.getTeleport().home(targetPlayer.getHome(home), null);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
