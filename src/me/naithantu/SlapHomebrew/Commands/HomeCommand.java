@@ -3,6 +3,8 @@ package me.naithantu.SlapHomebrew.Commands;
 import java.util.List;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
+
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -58,7 +60,7 @@ public class HomeCommand extends AbstractCommand {
 		try {
 			targetPlayer.getTeleport().home(targetPlayer.getHome(home), null);
 		} catch (Exception e) {
-			e.printStackTrace();
+			targetPlayer.sendMessage(ChatColor.RED + "Error: Invalid world.");
 		}
 	}
 	
