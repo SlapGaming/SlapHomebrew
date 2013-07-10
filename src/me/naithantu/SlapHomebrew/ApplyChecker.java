@@ -62,8 +62,8 @@ public class ApplyChecker {
 		if (groupNames[0].contains("builder")) {
 			String[] memberGroup = { "Member" };
 			user.setGroups(memberGroup);
-			plugin.getServer().broadcastMessage(ChatColor.YELLOW + "[SLAP] " + ChatColor.GREEN + name + ChatColor.WHITE + " is promoted to member, congratulations!");
-			plugin.getServer().broadcastMessage(ChatColor.YELLOW + "[SLAP] " + ChatColor.WHITE + "Not a member yet? Go to " + ChatColor.GREEN + "www.slapgaming.com/apply" + ChatColor.WHITE + " to apply!");
+			plugin.getServer().broadcastMessage(Util.getHeader() + ChatColor.GREEN + name + ChatColor.WHITE + " is promoted to member, congratulations!");
+			plugin.getServer().broadcastMessage(Util.getHeader() + "Not a member yet? Go to " + ChatColor.GREEN + "www.slapgaming.com/apply" + ChatColor.WHITE + " to apply!");
 		}
 	}
     
