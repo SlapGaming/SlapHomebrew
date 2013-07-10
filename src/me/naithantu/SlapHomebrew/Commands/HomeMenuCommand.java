@@ -12,9 +12,6 @@ import org.bukkit.entity.Player;
 import com.earth2me.essentials.User;
 
 public class HomeMenuCommand extends AbstractCommand {
-	
-	private static HashMap<String, HomeMenu> homeMenuMap = new HashMap<>();
-
 	public HomeMenuCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
 		super(sender, args, plugin);
 	}
@@ -45,10 +42,11 @@ public class HomeMenuCommand extends AbstractCommand {
 	
 	
 	private void showHomeMenu(User player){
-		if (homeMenuMap.containsKey(player.getName())) {
-			homeMenuMap.get(player.getName()).reCreateHomeMainMenu(player);
+		HashMap<String, HomeMenu> homeMenus = plugin.getExtras().getHomeMenus();
+		if (homeMenus.containsKey(player.getName())) {
+			homeMenus.get(player.getName()).reCreateHomeMainMenu(player);
 		} else {
-			homeMenuMap.put(player.getName(), new HomeMenu(player, plugin));
+			homeMenus.put(player.getName(), new HomeMenu(player, plugin));
 		}
 	}
 	

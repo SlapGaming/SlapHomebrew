@@ -18,23 +18,22 @@ public class HomeMenu {
 	private IconMenu mainMenu;
 	private IconMenu homeMenu;
 	private List<String> homes;
-	
+
 	int oldSurvivalHomes;
 	int newSurvivalHomes;
 	int creativeHomes;
 	int netherHomes;
 	int resourceHomes;
-	
+
 	public HomeMenu(User player, SlapHomebrew plugin) {
 		this.plugin = plugin;
 		essentialsUser = player;
 		playerName = player.getName();
 		createHomeMainMenu();
 	}
-	
-	
+
 	/* ---Creators--- */
-	
+
 	private void createHomeMainMenu() {
 		//Destroy if exists
 		if (mainMenu instanceof IconMenu) {
@@ -45,91 +44,103 @@ public class HomeMenu {
 			homeMenu.destroy();
 			homeMenu = null;
 		}
-		
+
 		homes = essentialsUser.getHomes();
 		oldSurvivalHomes = newSurvivalHomes = creativeHomes = netherHomes = resourceHomes = 0;
 		for (String home : homes) {
 			try {
-				String worldName = essentialsUser.getHome(home).getWorld().getName();
-				switch (worldName.toLowerCase()) {
-				case "world": oldSurvivalHomes++; break;
-				case "world_survival2": newSurvivalHomes++; break;
-				case "world_creative": creativeHomes++; break;
-				case "world_nether": netherHomes++; break;
-				case "world_resource10": resourceHomes++; break;
+				if (essentialsUser.getHome(home).getWorld() != null) {
+					String worldName = essentialsUser.getHome(home).getWorld().getName();
+					switch (worldName.toLowerCase()) {
+					case "world":
+						oldSurvivalHomes++;
+						break;
+					case "world_survival2":
+						newSurvivalHomes++;
+						break;
+					case "world_creative":
+						creativeHomes++;
+						break;
+					case "world_nether":
+						netherHomes++;
+						break;
+					case "world_resource10":
+						resourceHomes++;
+						break;
+					}
+				} else {
+					homes.remove(home);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
-		
+
 		mainMenu = new IconMenu("Home Main Menu", 9, new IconMenu.OptionClickEventHandler() {
-			
+
 			@Override
 			public void onOptionClick(OptionClickEvent event) {
 				handleMainMenuClick(event, event.getCommand().split("-"));
 			}
-			
+
 		}, plugin, playerName);
-		
+
 		mainMenu.setOption("world-" + oldSurvivalHomes, 0, new ItemStack(Material.DIRT, 0), "Old Survival World", oldSurvivalHomes + " home(s)");
 		mainMenu.setOption("world_survival2-" + newSurvivalHomes, 2, new ItemStack(Material.GRASS, 0), "New Survival World", newSurvivalHomes + " home(s)");
 		mainMenu.setOption("world_creative-" + creativeHomes, 4, new ItemStack(Material.DIAMOND_BLOCK, 0), "Creative World", creativeHomes + " home(s)");
 		mainMenu.setOption("world_nether-" + netherHomes, 6, new ItemStack(Material.NETHER_BRICK, 0), "The Nether", netherHomes + " home(s)");
 		mainMenu.setOption("world_resource10-" + resourceHomes, 8, new ItemStack(Material.COBBLESTONE, 0), "Resource World", resourceHomes + " home(s)");
-		
+
 		mainMenu.open(essentialsUser);
-		
+
 	}
-	
-	public void reCreateHomeMainMenu(User player){
+
+	public void reCreateHomeMainMenu(User player) {
 		essentialsUser = plugin.getEssentials().getUserMap().getUser(player.getName());
 		playerName = player.getName();
 		createHomeMainMenu();
 	}
-	
+
 	private void showHomeWorldMenu(String World, int page) {
 		//Destroy if exists
 		if (homeMenu instanceof IconMenu) {
 			homeMenu.destroy();
 		}
-		
+
 		final String world = World;
-		
-		
+
 		String menuName;
 		Material menuMaterial;
 		int nrOfHomes;
-		
-		
+
 		switch (world) {
-		case "world": 
-			menuName = "Old Survival World Menu"; 
-			menuMaterial = Material.DIRT; 
+		case "world":
+			menuName = "Old Survival World Menu";
+			menuMaterial = Material.DIRT;
 			nrOfHomes = oldSurvivalHomes;
 			break;
-		case "world_survival2": 
-			menuName = "New Survival World Menu"; 
+		case "world_survival2":
+			menuName = "New Survival World Menu";
 			menuMaterial = Material.GRASS;
 			nrOfHomes = newSurvivalHomes;
 			break;
-		case "world_creative": 
+		case "world_creative":
 			menuName = "Creative World Menu";
 			menuMaterial = Material.DIAMOND_BLOCK;
 			nrOfHomes = creativeHomes;
 			break;
-		case "world_nether": 
-			menuName = "The Nether Menu"; 
+		case "world_nether":
+			menuName = "The Nether Menu";
 			menuMaterial = Material.NETHER_BRICK;
 			nrOfHomes = netherHomes;
 			break;
-		case "world_resource10": 
-			menuName = "Resource World Menu"; 
+		case "world_resource10":
+			menuName = "Resource World Menu";
 			menuMaterial = Material.COBBLESTONE;
 			nrOfHomes = resourceHomes;
 			break;
-		default: 
-			menuName = "Unkown world"; 
+		default:
+			menuName = "Unkown world";
 			menuMaterial = Material.CAKE;
 			nrOfHomes = 0;
 			for (String home : homes) {
@@ -137,10 +148,12 @@ public class HomeMenu {
 					if (essentialsUser.getHome(home).getWorld().getName().equals(world)) {
 						nrOfHomes++;
 					}
-				} catch (Exception e) { e.printStackTrace(); }
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		}
-		
+
 		//Determine iconMenu size
 		int inventorySize;
 		int lastHome = 0;
@@ -156,7 +169,7 @@ public class HomeMenu {
 			lastHome = (page * 45) + 1;
 			if (nrOfHomes < (lastHome + 1)) {
 				firstHome = (page - 1) * 45;
-				inventorySize = ((int)Math.ceil((double)(nrOfHomes - firstHome) /  9) + 1) * 9;
+				inventorySize = ((int) Math.ceil((double) (nrOfHomes - firstHome) / 9) + 1) * 9;
 			} else {
 				inventorySize = 54;
 				nextPage = true;
@@ -165,14 +178,14 @@ public class HomeMenu {
 
 		//Create IconMenu
 		homeMenu = new IconMenu(menuName, inventorySize, new IconMenu.OptionClickEventHandler() {
-			
+
 			@Override
 			public void onOptionClick(OptionClickEvent event) {
 				handleHomeMenuClick(event, event.getCommand(), world);
 			}
-			
+
 		}, plugin, playerName);
-		
+
 		//Set menuBar
 		homeMenu.setOption("back_to_home_menu", inventorySize - 5, new ItemStack(Material.BOOK, 0), "Back to the main menu");
 		if (page > 1) {
@@ -181,11 +194,11 @@ public class HomeMenu {
 		if (nextPage) {
 			homeMenu.setOption("to_page-" + (page + 1), (inventorySize - 1), new ItemStack(Material.REDSTONE), "To the next page");
 		}
-		
+
 		//Fill with homes
 		int xCount = 0;
 		if (page == 1) {
-			for (String home: homes) {
+			for (String home : homes) {
 				String worldName = getWorldName(home);
 				if (worldName.equals(world)) {
 					if (xCount < 45) {
@@ -193,7 +206,7 @@ public class HomeMenu {
 						xCount++;
 					}
 				}
-			}		
+			}
 		} else {
 			int currentHome = 0;
 			for (String home : homes) {
@@ -207,43 +220,37 @@ public class HomeMenu {
 				}
 			}
 		}
-		
+
 		homeMenu.open(essentialsUser);
-		
+
 	}
-	
-	
-	
-	
+
 	/* ---Show--- */
-	private void showMainMenu(){
+	private void showMainMenu() {
 		plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-			
+
 			@Override
 			public void run() {
 				mainMenu.open(essentialsUser);
 			}
-			
+
 		}, 2);
 	}
-	
+
 	private void showNextHomeMenu(String World, int Page) {
 		final String world = World;
 		final int page = Page;
 		plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-			
+
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
 				showHomeWorldMenu(world, page);
 			}
-			
+
 		}, 2);
 	}
-	
-	
-	
-	
+
 	/* ---Handlers--- */
 	private void handleMainMenuClick(OptionClickEvent event, String[] worldInfo) {
 		int numberOfHomes = Integer.parseInt(worldInfo[1]);
@@ -254,9 +261,9 @@ public class HomeMenu {
 		} else {
 			showNextHomeMenu(worldInfo[0], 1);
 		}
-		
+
 	}
-	
+
 	private void handleHomeMenuClick(OptionClickEvent event, String EventName, String world) {
 		final String eventName = EventName;
 		if (eventName.equals("back_to_home_menu")) {
@@ -269,17 +276,16 @@ public class HomeMenu {
 		}
 		event.setWillDestroy(true);
 	}
-	
-	
-	/* ---Others---*/	
-	private void teleportPlayer(String home){
+
+	/* ---Others--- */
+	private void teleportPlayer(String home) {
 		try {
 			essentialsUser.teleport(essentialsUser.getHome(home));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private String getWorldName(String home) {
 		try {
 			return essentialsUser.getHome(home).getWorld().getName();
@@ -287,5 +293,5 @@ public class HomeMenu {
 			return null;
 		}
 	}
-	
+
 }

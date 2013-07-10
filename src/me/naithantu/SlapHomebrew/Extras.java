@@ -11,6 +11,7 @@ public class Extras {
 	SlapHomebrew plugin;
 
 	HashMap<String, Integer> rainbow = new HashMap<String, Integer>();
+	HashMap<String, HomeMenu> homeMenus = new HashMap<String, HomeMenu>();
 	List<String> hasJumped = new ArrayList<String>();
 	Menus menus;
 	List<String> ghosts = new ArrayList<String>();
@@ -53,5 +54,9 @@ public class Extras {
 	
 	public Team getGhostTeam(){
 		return ghostTeam;
+	}
+	
+	public HashMap<String, HomeMenu> getHomeMenus() {
+		return homeMenus;
 	}
 }
