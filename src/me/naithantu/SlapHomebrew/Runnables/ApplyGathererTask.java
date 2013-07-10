@@ -6,7 +6,6 @@ import me.naithantu.SlapHomebrew.ApplyChecker;
 import me.naithantu.SlapHomebrew.Storage.XMLParser;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -35,7 +34,6 @@ public class ApplyGathererTask extends BukkitRunnable {
 			applyChecker.forumsDown();
 			return;
 		}
-		Bukkit.getLogger().info("ApplyChecker Run. " + threadNrs.size() + " threads found.");
 		boolean changed = false;
 		for (int threadNr : threadNrs) {
 			boolean newThread = false;
