@@ -22,7 +22,7 @@ public class RollCommand extends AbstractCommand {
 			this.noPermission(sender);
 			return true;
 		}
-
+		
 		if (lottery.getPlaying()) {
 			if (!lottery.getLottery().containsKey(sender.getName())) {
 				Random random = new Random();
@@ -32,9 +32,22 @@ public class RollCommand extends AbstractCommand {
 			} else {
 				this.badMsg(sender, "You have already rolled in this lottery!");
 			}
+		} else if (lottery.isFakeLotteryPlaying()) {
+			if (!lottery.hasAlreadyFakeRolled(sender.getName())) {
+				if (sender.getName().equals(lottery.getFakeLotteryWinner())) {
+					Bukkit.getServer().broadcastMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + sender.getName() + " rolled 100!");
+					lottery.fakeRoll(sender.getName(), 100);
+				} else {
+					Bukkit.getServer().broadcastMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + sender.getName() + " rolled 0!");
+					lottery.fakeRoll(sender.getName(), 0);
+				}
+			} else {
+				this.badMsg(sender, "You have already rolled in this lottery!");
+			}
 		} else {
 			this.badMsg(sender, "There is currently no lottery playing!");
 		}
+		
 
 		return true;
 	}

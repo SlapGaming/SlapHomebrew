@@ -9,12 +9,18 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitTask;
 
 public class Lottery {
 	public boolean lotteryPlaying = false;
 	public boolean lotteryEnabled = true;
 	public HashMap<String, Integer> lottery = new HashMap<>();
 	public HashMap<String, ItemStack> storedPrices = new HashMap<>();
+	
+	private boolean fakeLotteryPlaying = false;
+	private String fakeLotteryWinner;
+	private HashMap<String, Integer> fakeLotteryPlayers = new HashMap<>();
+	private int taskID;
 	
 	SlapHomebrew plugin;
 	
@@ -28,6 +34,10 @@ public class Lottery {
 	private void lotteryTimer() {
 		lotteryTimer = Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
 			public void run() {
+				if (fakeLotteryPlaying == true) {
+					Bukkit.getScheduler().cancelTask(taskID);
+					fakeLotteryPlaying = false;
+				}
 				if (lotteryEnabled == true) {
 					lotteryPlaying = true;
 					Bukkit.getServer().broadcastMessage(ChatColor.GOLD + "[SLAP]" + ChatColor.WHITE + " The lottery has started! Type /roll to play!");
@@ -177,6 +187,56 @@ public class Lottery {
 			targetPlayer.sendMessage(ChatColor.RED + "You will get your prize when you return to a survival world.");
 		}
 	}
+	
+	/* ---Fake Lottery Stuff--- */	
+	public void startFakeLottery(String winner){
+		Bukkit.getServer().broadcastMessage(ChatColor.GOLD + "[SLAP]" + ChatColor.WHITE + " The lottery has started! Type /roll to play!");
+		fakeLotteryPlaying = true;
+		fakeLotteryWinner = winner;
+		fakeLotteryPlayers.clear();
+		BukkitTask task  = Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
+			
+			@Override
+			public void run() {
+				stopFakeLottery();
+			}
+		}, 1200);
+		taskID = task.getTaskId();
+	}
+	
+	public boolean isFakeLotteryPlaying(){
+		return fakeLotteryPlaying;
+	}
+	
+	public String getFakeLotteryWinner(){
+		return fakeLotteryWinner;
+	}
+	
+	public boolean hasAlreadyFakeRolled(String player){
+		if (fakeLotteryPlayers.containsKey(player)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public void fakeRoll(String playerName, int roll) {
+		fakeLotteryPlayers.put(playerName, roll);
+	}
+	
+	public void stopFakeLottery(){
+		if (fakeLotteryPlayers.containsKey(fakeLotteryWinner)) {
+			plugin.getServer().broadcastMessage(ChatColor.GOLD + "[SLAP]" + ChatColor.WHITE + " The lottery is over! " + fakeLotteryWinner + " has won a stack of diamond blocks!");
+		} else {
+			plugin.getServer().broadcastMessage(ChatColor.GOLD + "[SLAP]" + ChatColor.WHITE + " The lottery is over! " + fakeLotteryWinner + " didn't roll but wins anyways. Here's a stack of diamonds.");
+		}
+		fakeLotteryPlaying = false;
+		fakeLotteryWinner = null;
+	}
+	
+	
+	
+	
 	
 	
 }

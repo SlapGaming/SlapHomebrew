@@ -623,6 +623,17 @@ public class SlapCommand extends AbstractCommand {
 				}
 			}
 		}
+		
+		if (arg.equalsIgnoreCase("fakelottery")) {
+			if (testPermission(sender, "fakelottery")) {
+				if (!lottery.getPlaying() && !lottery.isFakeLotteryPlaying()) {
+					lottery.startFakeLottery(sender.getName());
+				}
+			}
+		}
+		
+		
+		
 		return true;
 	}
 
