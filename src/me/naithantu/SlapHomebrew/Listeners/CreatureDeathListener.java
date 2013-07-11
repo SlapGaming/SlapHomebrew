@@ -1,8 +1,10 @@
 package me.naithantu.SlapHomebrew.Listeners;
 
+import me.naithantu.SlapHomebrew.Horses;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Wither;
 import org.bukkit.event.EventHandler;
@@ -12,9 +14,11 @@ import org.bukkit.inventory.ItemStack;
 
 public class CreatureDeathListener implements Listener {
 	SlapHomebrew plugin;
+	Horses horses;
 
-	public CreatureDeathListener(SlapHomebrew plugin) {
+	public CreatureDeathListener(SlapHomebrew plugin, Horses horses) {
 		this.plugin = plugin;
+		this.horses = horses;
 	}
 
 	@EventHandler
@@ -36,6 +40,13 @@ public class CreatureDeathListener implements Listener {
 		if (entity.hasMetadata("slapFireMob")) {
 			event.setDroppedExp(0);
 			event.getDrops().clear();
+		}
+		
+		if (entity.getType() == EntityType.HORSE) {
+			String entityID = entity.getUniqueId().toString();
+			if (horses.hasOwner(entityID)) {
+				horses.removeHorse(entityID);
+			}
 		}
 	}
 }

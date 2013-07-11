@@ -2,7 +2,7 @@ name: SlapHomebrew
 main: me.naithantu.SlapHomebrew.SlapHomebrew
 depend: [Vault, PermissionsEx]
 author: naithantu
-version: 2.9.5
+version: 2.9.6
 description: SlapHomebrew homemade plugin.
 commands:
   vip:
@@ -106,3 +106,6 @@ commands:
     description: Teleports you home.
   ghostfix:
     description: Player out of sync workaround
+  horse:
+    description: Horse commands
+    usage: "Usage: /horse [claim | allow <Player> | deny <Player> | allowed]"

@@ -67,6 +67,7 @@ public class SlapHomebrew extends JavaPlugin {
 	Lottery lottery;
 	ApplyChecker applyChecker;
 	AwayFromKeyboard afk;
+	Horses horses;
 	
 	Essentials essentials;
 	
@@ -101,6 +102,7 @@ public class SlapHomebrew extends JavaPlugin {
 		lottery = new Lottery(this);
 		applyChecker = new ApplyChecker(this);
 		afk = new AwayFromKeyboard(this);
+		horses = new Horses(this);
 		BlockfaqCommand.chatBotBlocks = loadHashSet("chatbotblocks");
 		setupEconomy();
 		setupChatBot();
@@ -116,8 +118,8 @@ public class SlapHomebrew extends JavaPlugin {
 		pm.registerEvents(new PlayerChatListener(this, afk), this);
 		pm.registerEvents(new PlayerCommandListener(this, afk), this);
 		pm.registerEvents(new CreatureSpawnListener(this), this);
-		pm.registerEvents(new CreatureDeathListener(this), this);
-		pm.registerEvents(new EntityDamageByEntityListener(this), this);
+		pm.registerEvents(new CreatureDeathListener(this, horses), this);
+		pm.registerEvents(new EntityDamageByEntityListener(this, horses), this);
 		pm.registerEvents(new EntityDamageListener(), this);
 		pm.registerEvents(new PlayerDeathListener(this), this);
 		pm.registerEvents(new DispenseListener(), this);
@@ -131,11 +133,12 @@ public class SlapHomebrew extends JavaPlugin {
 		pm.registerEvents(new PlayerQuitListener(this, timeStorage, afk), this);
 		pm.registerEvents(new PlayerTeleportListener(), this);
 		pm.registerEvents(new PlayerToggleFlightListener(extras), this);
-		pm.registerEvents(new VehicleListener(), this);
-		pm.registerEvents(new PlayerInteractEntityListener(), this);
+		pm.registerEvents(new VehicleListener(horses), this);
+		pm.registerEvents(new PlayerInteractEntityListener(horses), this);
 		pm.registerEvents(new PlayerRespawnListener(), this);
 		pm.registerEvents(new PlayerChangedWorldListener(lottery), this);
 		pm.registerEvents(new PlayerInventoryEvent(lottery), this);
+		pm.registerEvents(new AnimalTameListener(horses), this);
 
 		Plugin x = this.getServer().getPluginManager().getPlugin("Vault");
 		if (x != null & x instanceof Vault) {
@@ -415,6 +418,10 @@ public class SlapHomebrew extends JavaPlugin {
 	
 	public AwayFromKeyboard getAwayFromKeyboard(){
 		return afk;
+	}
+	
+	public Horses getHorses(){
+		return horses;
 	}
 
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
