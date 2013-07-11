@@ -104,4 +104,5 @@ commands:
     usage: "Usage: /spawn <world>"
   home:
     description: Teleports you home.
-  
+  ghostfix:
+    description: Player out of sync workaround
