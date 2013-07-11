@@ -46,14 +46,10 @@ public class EntityDamageByEntityListener implements Listener {
 		if (event.getEntityType() == EntityType.HORSE && damager instanceof Player) {
 			Player player = (Player) damager;
 			Horse horse = (Horse) event.getEntity();
-			System.out.println("log1");
 			if (horses.hasOwner(horse.getUniqueId().toString())) {
-				System.out.println("log2");
 				String owner = horses.getOwner(horse.getUniqueId().toString());
 				if (!owner.equals(player.getName())) {
-					System.out.println("log3");
 					if (!player.hasPermission("slaphomebrew.staff")) {
-						System.out.println("log4");
 						event.setCancelled(true);
 						player.sendMessage(Util.getHeader() + "You are not allowed to attack " + owner + "'s horse.");
 					}

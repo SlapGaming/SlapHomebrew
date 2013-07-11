@@ -117,7 +117,6 @@ public class HorseCommand extends AbstractCommand {
 			} else {
 				int xCount = 1; int listSize = allowedPlayers.size();
 				String allowedPlayersString = "";
-				System.out.println(listSize);
 				for (String allowedPlayer : allowedPlayers) {
 					if (xCount == 1) {
 						allowedPlayersString = allowedPlayer;
