@@ -24,6 +24,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_6_R2.entity.CraftPlayer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Horse;
+import org.bukkit.entity.Horse.Variant;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.Player;
@@ -632,7 +634,30 @@ public class SlapCommand extends AbstractCommand {
 			}
 		}
 
-		
+		if (arg.equalsIgnoreCase("horse")) {
+			if (testPermission(sender, "horse")) {
+				if(args.length < 2)
+					return false;
+				
+				Variant variant;
+				try{
+					variant = Variant.valueOf(args[1].toUpperCase());
+				} catch (IllegalArgumentException e){
+					this.badMsg(sender, "Invalid horse variant!");
+					return true;
+				}
+				
+				Location location = player.getTargetBlock(null, 20).getLocation().add(0, 1, 0);
+				World world = player.getWorld();
+				Horse horse = (Horse) world.spawnEntity(location, EntityType.HORSE);
+				horse.setJumpStrength(2D);
+				horse.setVariant(variant);
+				horse.setTamed(true);
+				horse.setPassenger(player);
+				horse.getInventory().setSaddle(new ItemStack(Material.SADDLE));
+				this.msg(sender, "Spawned a " + variant.toString() + " horse!");
+			}
+		}
 		
 		
 		return true;
