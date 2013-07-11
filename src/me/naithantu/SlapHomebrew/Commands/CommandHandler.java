@@ -40,7 +40,7 @@ public class CommandHandler {
 		case "roll":			commandObj = new RollCommand(sender, args, plugin, lottery);	break;
 		case "searchregion":	commandObj = new SearchregionCommand(sender, args, plugin);		break;
 		case "sgm":				commandObj = new SgmCommand(sender, args, plugin);				break;
-		case "slap":			commandObj = new SlapCommand(sender, args, plugin);				break;
+		case "slap":			commandObj = new SlapCommand(sender, args, plugin, lottery);	break;
 		case "sonic":			commandObj = new SonicCommand(sender, args, plugin);			break;
 		case "sparta":			commandObj = new SpartaCommand(sender, args, plugin);			break;
 		case "te":				commandObj = new TeCommand(sender, args, plugin);				break;

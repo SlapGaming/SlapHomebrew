@@ -42,11 +42,11 @@ public class SlapCommand extends AbstractCommand {
 	Integer used = 0;
 	HashSet<String> vipItemsList = new HashSet<String>();
 	public static HashSet<String> retroBow = new HashSet<String>();
-
 	Lottery lottery;
-
-	public SlapCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
+	
+	public SlapCommand(CommandSender sender, String[] args, SlapHomebrew plugin, Lottery lottery) {
 		super(sender, args, plugin);
+		this.lottery = lottery;
 	}
 
 	public boolean handle() {
@@ -517,9 +517,9 @@ public class SlapCommand extends AbstractCommand {
 
 			if (!checkLeatherArmor(player.getInventory())) {
 				player.getInventory().setBoots(new ItemStack(Material.LEATHER_BOOTS, 1));
-				player.getInventory().setBoots(new ItemStack(Material.LEATHER_LEGGINGS, 1));
-				player.getInventory().setBoots(new ItemStack(Material.LEATHER_CHESTPLATE, 1));
-				player.getInventory().setBoots(new ItemStack(Material.LEATHER_HELMET, 1));
+				player.getInventory().setLeggings(new ItemStack(Material.LEATHER_LEGGINGS, 1));
+				player.getInventory().setChestplate(new ItemStack(Material.LEATHER_CHESTPLATE, 1));
+				player.getInventory().setHelmet(new ItemStack(Material.LEATHER_HELMET, 1));
 			}
 
 			HashMap<String, Integer> rainbow = plugin.getExtras().getRainbow();
@@ -631,6 +631,7 @@ public class SlapCommand extends AbstractCommand {
 				}
 			}
 		}
+
 		
 		
 		
