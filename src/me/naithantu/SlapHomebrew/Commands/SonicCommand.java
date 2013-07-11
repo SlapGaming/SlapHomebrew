@@ -51,6 +51,11 @@ public class SonicCommand extends AbstractCommand {
 						return true;
 					}
 				}
+				
+				if(page < 0){
+					this.badMsg(sender, "Page number can't be negative or zero! Viewing page 1 instead.");
+					page = 0;
+				}
 
 				List<String> leaderboard = sonic.getLeaderboard();
 
@@ -104,6 +109,7 @@ public class SonicCommand extends AbstractCommand {
 								long time = Long.parseLong(playerTimesSplit[checkpoint]);
 								this.msg(sender, "Checkpoint " + (checkpoint + 1) + ": " + Util.changeTimeFormat(time));
 							}
+							
 							this.msg(sender, "You are ranked #" + (i + 1));
 							return true;
 						}

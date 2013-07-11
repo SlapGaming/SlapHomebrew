@@ -88,10 +88,9 @@ public class Sonic {
 				if(jump == lastJump){
 					long lastJumpTime = sonicPlayer.getLastJumpTime();
 					long currentJumpTime = new Date().getTime();
-					System.out.println("Time between jumps: " + (currentJumpTime - lastJumpTime));
 					if(currentJumpTime - lastJumpTime < 2000){
 						teleportSonic(playerName);
-						Bukkit.getServer().getPlayer(playerName).sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + " You may not jump that quick after a previous player, you have been teleported to the start!");
+						Bukkit.getServer().getPlayer(playerName).sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + "You may not jump that quick after a previous player, you have been teleported to the start!");
 						return;
 					}
 				}
@@ -148,7 +147,7 @@ public class Sonic {
 	}
 	
 	public long getTotalTime(String playerName){
-		String playerTimes = sonicConfig.getString("players." + playerName);
+		String playerTimes = sonicConfig.getString("players." + playerName.toLowerCase());
 		return Long.parseLong(playerTimes.split(":")[5]);
 	}
 }
