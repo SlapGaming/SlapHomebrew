@@ -5,6 +5,7 @@ import java.util.List;
 import me.naithantu.SlapHomebrew.Horses;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 
+import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
@@ -37,6 +38,16 @@ public class HorseCommand extends AbstractCommand {
 		
 		if (args.length == 0) {
 			return false;
+		}
+		
+		if (args[0].equals("help")) {
+			sender.sendMessage(ChatColor.YELLOW + "==================== " + ChatColor.GOLD  + "Horse Help" + ChatColor.YELLOW  + " ====================");
+			sender.sendMessage(ChatColor.GOLD + "/horse allow <player> : " + ChatColor.WHITE + "allow another player to use your horse.");
+			sender.sendMessage(ChatColor.GOLD + "/horse deny <player> : " + ChatColor.WHITE + "deny an allowed player from futher using your horse.");
+			sender.sendMessage(ChatColor.GOLD + "/horse changeowner <player> : " + ChatColor.WHITE + "give all rights over the horse to the specified player. You will LOSE ALL rights!");
+			sender.sendMessage(ChatColor.GOLD + "/horse allowed : " + ChatColor.WHITE + "get a list of all the players who are allowed to use this horse.");
+			sender.sendMessage(ChatColor.GOLD + "/horse claim : " + ChatColor.WHITE + "ONLY NEEDED when the horse was spawned before the launch of this plugin. Claim a tamed horse that is not auto claimed.");
+			return true;
 		}
 		
 		Player rider = (Player) sender;

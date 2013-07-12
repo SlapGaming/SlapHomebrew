@@ -55,6 +55,7 @@ public class CommandHandler {
 		case "afkreset":		commandObj = new AfkResetCommand(sender, args, plugin);			break;
 		case "spawn":			commandObj = new SpawnCommand(sender, args, plugin);			break;
 		case "horse":			commandObj = new HorseCommand(sender, args, plugin);			break;
+		case "changelog":		commandObj = new ChangeLogCommand(sender, args, plugin);		break;
 		case "plot":
 			if (args.length == 0) return false;
 			switch (args[0].toLowerCase()) {

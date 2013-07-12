@@ -2,7 +2,7 @@ name: SlapHomebrew
 main: me.naithantu.SlapHomebrew.SlapHomebrew
 depend: [Vault, PermissionsEx]
 author: naithantu
-version: 2.9.6
+version: 2.9.7
 description: SlapHomebrew homemade plugin.
 commands:
   vip:
@@ -108,4 +108,8 @@ commands:
     description: Player out of sync workaround
   horse:
     description: Horse commands
-    usage: "Usage: /horse [claim | allow <Player> | deny <Player> | allowed]"
+    usage: "Need help? /horse help"
+  changelog:
+    description: Show the server changelog!
+    usage: "Usage: /changelog <page>"
+    aliases: [new]

@@ -55,7 +55,7 @@ public class VehicleListener implements Listener {
 						event.setCancelled(true);
 					}
 				} else {
-					player.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + "This horse is not claimed yet. Use '/horse claim' to claim it.");
+					player.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + "This horse is not claimed yet. Use '/horse claim' to claim it (if it's yours).");
 				}
 			}
 		}
