@@ -266,7 +266,7 @@ public class SlapCommand extends AbstractCommand {
 		}
 
 		if (arg.equalsIgnoreCase("crash")) {
-			if (player.getName().equals("naithantu") || player.getName().equals("Telluur")) {
+			if (player.getName().equals("naithantu") || player.getName().equals("Telluur") || player.getName().equals("Stoux2")) {
 				if (args.length < 2) {
 					this.badMsg(sender, "Usage: /slap crash [player]");
 					return true;

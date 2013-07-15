@@ -34,6 +34,9 @@ public class Lottery {
 	private void lotteryTimer() {
 		lotteryTimer = Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
 			public void run() {
+				fakeLotteryPlayers.clear();
+				fakeLotteryWinner = null;
+				lottery.clear();
 				if (fakeLotteryPlaying == true) {
 					Bukkit.getScheduler().cancelTask(taskID);
 					fakeLotteryPlaying = false;

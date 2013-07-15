@@ -4,36 +4,55 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Horse.Variant;
 import org.bukkit.ChatColor;
+
+import ru.tehkode.permissions.PermissionUser;
+import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class Horses {
 
-	YamlStorage horsesStorage;
-	FileConfiguration horsesConfig;
+	private YamlStorage horsesStorage;
+	private FileConfiguration horsesConfig;
+	private HashMap<String, Boolean> infoClick;
 	
 	public Horses(SlapHomebrew plugin) {
 		horsesStorage = new YamlStorage(plugin, "horses");
 		horsesConfig = horsesStorage.getConfig();	
+		infoClick = new HashMap<>();
+		if (!horsesConfig.contains("horse")) {
+			for (String horse : horsesConfig.getKeys(false)) {
+				if (!(horse.equals("player") || horse.equals("fence"))) {
+					horsesConfig.set("horse." + horse + ".owner", horsesConfig.get(horse + ".owner"));
+					if (horsesConfig.contains(horse + ".allowed")) {
+						horsesConfig.set("horse." + horse + ".allowed", horsesConfig.getStringList(horse + ".allowed"));
+					}
+					horsesConfig.set(horse, null);
+				}
+			}
+			save();
+		}
 	}
 	
 	public void tamedHorse(String entityID, String owner) {
-		horsesConfig.set(entityID + ".owner", owner);
+		horsesConfig.set("horse." + entityID + ".owner", owner);
 		save();
 	}
 	
 	public boolean enterHorse(String entityID, Player player) {
 		boolean returnBool = false;
-		if (horsesConfig.contains(entityID)) {
-			if (horsesConfig.getString(entityID + ".owner").equals(player.getName())) {
+		if (horsesConfig.contains("horse." + entityID)) {
+			if (horsesConfig.getString("horse." + entityID + ".owner").equals(player.getName())) {
 				returnBool = true;
 			} else {
-				if (horsesConfig.contains(entityID + ".allowed")) {
-					if (horsesConfig.getList(entityID + ".allowed").contains(player.getName())) {
+				if (horsesConfig.contains("horse." + entityID + ".allowed")) {
+					if (horsesConfig.getList("horse." + entityID + ".allowed").contains(player.getName())) {
 						returnBool = true;
 					}
 				}
@@ -45,22 +64,22 @@ public class Horses {
 	}
 	
 	public void allowOnHorse(String entityID, Player owner, String allowedPlayer) {
-		if (horsesConfig.contains(entityID)) {
-			if (horsesConfig.getString(entityID + ".owner").equals(owner.getName())) {
-				if (horsesConfig.contains(entityID + ".allowed")) {
-					List<String> allowedPlayers = horsesConfig.getStringList(entityID + ".allowed");
+		if (horsesConfig.contains("horse." + entityID)) {
+			if (horsesConfig.getString("horse." + entityID + ".owner").equals(owner.getName())) {
+				if (horsesConfig.contains("horse." + entityID + ".allowed")) {
+					List<String> allowedPlayers = horsesConfig.getStringList("horse." + entityID + ".allowed");
 					if (allowedPlayers.contains(allowedPlayer)) {
 						owner.sendMessage(ChatColor.RED + "This player is already allowed on this horse.");
 					} else {
 						allowedPlayers.add(allowedPlayer);
-						horsesConfig.set(entityID + ".allowed", allowedPlayers);
+						horsesConfig.set("horse." + entityID + ".allowed", allowedPlayers);
 						save();
 						owner.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + allowedPlayer + " is now allowed on this horse.");
 					}
 				} else {
 					List<String> allowedPlayers = new ArrayList<String>();
 					allowedPlayers.add(allowedPlayer);
-					horsesConfig.set(entityID + ".allowed", allowedPlayers);
+					horsesConfig.set("horse." + entityID + ".allowed", allowedPlayers);
 					save();
 					owner.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + allowedPlayer + " is now allowed on this horse.");
 				}
@@ -73,16 +92,16 @@ public class Horses {
 	}
 	
 	public void denyOnHorse(String entityID, Player owner, String denyPlayer) {
-		if (horsesConfig.contains(entityID)) {
-			if (horsesConfig.getString(entityID + ".owner").equals(owner.getName())) {
-				if (horsesConfig.contains(entityID + ".allowed")) {
-					List<String> allowedPlayers = horsesConfig.getStringList(entityID + ".allowed");
+		if (horsesConfig.contains("horse." + entityID)) {
+			if (horsesConfig.getString("horse." + entityID + ".owner").equals(owner.getName())) {
+				if (horsesConfig.contains("horse." + entityID + ".allowed")) {
+					List<String> allowedPlayers = horsesConfig.getStringList("horse." + entityID + ".allowed");
 					if (allowedPlayers.contains(denyPlayer)) {
 						allowedPlayers.remove(denyPlayer);
 						if (allowedPlayers.size() > 0) {
-							horsesConfig.set(entityID + ".allowed", allowedPlayers);
+							horsesConfig.set("horse." + entityID + ".allowed", allowedPlayers);
 						} else {
-							horsesConfig.set(entityID + ".allowed", null);
+							horsesConfig.set("horse." + entityID + ".allowed", null);
 						}
 						save();
 						owner.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + denyPlayer + " is now denied from riding this horse.");
@@ -102,13 +121,13 @@ public class Horses {
 	
 	public void claimHorse(Horse horse, Player owner) {
 		String entityID = horse.getUniqueId().toString();
-		if (!horsesConfig.contains(entityID)) {
-			horsesConfig.set(entityID + ".owner", owner.getName());
+		if (!horsesConfig.contains("horse." + entityID)) {
+			horsesConfig.set("horse." + entityID + ".owner", owner.getName());
 			horse.setOwner(owner);
 			save();
 			owner.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + "You now own this horse");
 		} else {
-			if (horsesConfig.getString(entityID + ".owner").equals(owner.getName())) {
+			if (horsesConfig.getString("horse." + entityID + ".owner").equals(owner.getName())) {
 				owner.sendMessage(ChatColor.RED + "You already own this horse.");
 			} else {
 				owner.sendMessage(ChatColor.RED + "This horse is already claimed.");
@@ -119,10 +138,10 @@ public class Horses {
 	public boolean changeOwner(Horse horse, Player owner, Player newOwner) {
 		String entityID = horse.getUniqueId().toString();
 		boolean returnBool = false;
-		if (horsesConfig.contains(entityID)) {
-			if (horsesConfig.getString(entityID + ".owner").equals(owner.getName())) {
-				horsesConfig.set(entityID, null);
-				horsesConfig.set(entityID + ".owner", newOwner.getName());
+		if (horsesConfig.contains("horse." + entityID)) {
+			if (horsesConfig.getString("horse." + entityID + ".owner").equals(owner.getName())) {
+				horsesConfig.set("horse." + entityID, null);
+				horsesConfig.set("horse." + entityID + ".owner", newOwner.getName());
 				horse.setOwner(newOwner);
 				save();
 				Entity ejectVehicle = owner.getVehicle();
@@ -148,30 +167,190 @@ public class Horses {
 	
 	public boolean hasOwner(String entityID) {
 		boolean returnBool = false;
-		if (horsesConfig.contains(entityID)) {
+		if (horsesConfig.contains("horse." + entityID)) {
 			returnBool = true;
 		}
 		return returnBool;
 	}
 	
 	public String getOwner(String entityID) {
-		return horsesConfig.getString(entityID + ".owner");
+		return horsesConfig.getString("horse." + entityID + ".owner");
 	}
 	
 	public void removeHorse(String entityID) {
-		horsesConfig.set(entityID, null);
+		if (horsesConfig.contains("horse." + entityID + ".type")) {
+			List<String> horses = horsesConfig.getStringList("player." + getOwner(entityID) + ".horses");
+			horses.remove(entityID);
+			horsesConfig.set("player." + getOwner(entityID) + ".horses", horses);			
+		}
+		horsesConfig.set("horse." + entityID, null);
 		save();
 	}
 	
 	public List<String> getAllowedPlayers(String entityID) {
-		if (horsesConfig.contains(entityID + ".allowed")) {
-			return horsesConfig.getStringList(entityID + ".allowed");
+		if (horsesConfig.contains("horse." + entityID + ".allowed")) {
+			return horsesConfig.getStringList("horse." + entityID + ".allowed");
 		}
 		return null;
 	}
 	
 	private void save(){
 		horsesStorage.saveConfig();
+	}
+	
+	
+	//Info click
+	public void issuedInfoCommand(String player){
+		infoClick.put(player, true);
+	}
+	
+	public boolean isInfoClick(String player){
+		if (infoClick.containsKey(player)) {
+			infoClick.remove(player);
+			return true;
+		}
+		return false;
+	}
+	
+	public void infoHorse(Player player, String horseID) {
+		if (hasOwner(horseID)) {
+			player.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + "This horse belongs to " + getOwner(horseID));
+		} else {
+			player.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + "This horse doesn't have an owner or is not claimed.");
+		}
+	}
+	
+	//Fence leads
+	public void placedLeashOnFence(String fenceID, String player) {
+		horsesConfig.set("fence." + fenceID, player);
+		save();
+	}
+	
+	public boolean isOwnerOfLeash(String fenceID, String player) {
+		if (horsesConfig.contains("fence." + fenceID)) {
+			if (horsesConfig.get("fence." + fenceID).equals(player)) {
+				horsesConfig.set("fence." + fenceID, null);
+				save();
+				return true;
+			}
+			return false;
+		}
+		return true;
+	}
+	
+	
+	//Donate undead/zombie horse
+	private boolean isInConfig(String player) {
+		if (horsesConfig.contains("player." + player)) {
+			return true;
+		}
+		return false;
+	}
+	
+	private int allowedSpecialHorses(String player) {
+		return horsesConfig.getInt("player." + player + ".allowed");
+	}
+	
+	private int hasSpecialHorses(String player) {
+		return horsesConfig.getStringList("player." + player + ".horses").size();
+	}
+	
+	private boolean isVipPlayer(String player) {
+		PermissionUser user = PermissionsEx.getUser(player);
+		if (user.inGroup("VIP")) {
+			return true;
+		}
+		return false;
+	}
+	
+	public void playerDonatedForHorses(String player) {
+		if (isInConfig(player)) {
+			setAllowedHorses(player, allowedSpecialHorses(player) + 5);
+		} else {
+			if (isVipPlayer(player)) {
+				setAllowedHorses(player, 6);
+			} else {
+				setAllowedHorses(player, 5);
+			}
+		}
+	}
+	
+	private void setAllowedHorses(String player, int number) {
+		horsesConfig.set("player." + player + ".allowed", number);
+		save();
+	}
+	
+	public boolean isAllowedSpecialHorse(Player player) {
+		String playerName = player.getName();
+		if (isInConfig(playerName)) {
+			if (allowedSpecialHorses(playerName) > hasSpecialHorses(playerName)) {
+				return true;
+			} else {
+				badMsg(player, "You already have " + allowedSpecialHorses(playerName) + " claimed special horses.");
+			}
+		} else if (isVipPlayer(playerName)) {
+			setAllowedHorses(playerName, 1);
+			return true;
+		} else {
+			badMsg(player, "You are not allowed to have special horses. Become VIP or donate for horses @ www.slapgaming.com/donate");
+		}
+		return false;
+	}
+	
+	private void createSpecialHorse(String horseID, String player, String type) {
+		horsesConfig.set("horse." + horseID + ".type", type);
+		if (horsesConfig.contains("player." + player + ".horses")) {
+			List<String> horses = horsesConfig.getStringList("player." + player + ".horses");
+			horses.add(horseID);
+			horsesConfig.set("player." + player + ".horses", horses);
+		} else {
+			ArrayList<String> horses = new ArrayList<>();
+			horses.add(horseID);
+			horsesConfig.set("player." + player + ".horses", horses);
+		}
+		save();
+	}
+	
+	public void createSpecialHorseCommand(Horse horse, Player player, String type) {
+		String playerName = player.getName();
+		if (isAllowedSpecialHorse(player)) {
+			if (!(horse.getVariant() == Variant.SKELETON_HORSE || horse.getVariant() == Variant.UNDEAD_HORSE)) {
+				if (horse.getCustomName() != null) {
+					createSpecialHorse(horse.getUniqueId().toString(), playerName, type);
+					switch (type) {
+					case "undead":
+						horse.setVariant(Variant.UNDEAD_HORSE);
+						break;
+					case "skeleton":
+						horse.setVariant(Variant.SKELETON_HORSE);
+						break;
+					}
+				} else {
+					badMsg(player, "The horse needs to be named using a name tag.");
+				}
+			} else {
+				badMsg(player, "This horse is already a special horse.");
+			}
+		}
+		
+	}
+	
+	private void badMsg(Player player, String message) {
+		player.sendMessage(ChatColor.RED + message);
+	}
+	
+	public void specialHorsesStats(Player player) {
+		int allowedSpecials = allowedSpecialHorses(player.getName());
+		if (allowedSpecials == 0 && isVipPlayer(player.getName())) {
+			setAllowedHorses(player.getName(), 1);
+			allowedSpecials = 1;
+		}
+		if (allowedSpecials == 0) {
+			player.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + "You are not allowed to have any special horses. Want some? Become a VIP or donate for horses @ www.slapgaming.com/donate");
+		} else {
+			player.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + "You currently have " + hasSpecialHorses(player.getName()) + " out of " + allowedSpecials + " special horses.");
+		}
+		
 	}
 	
 }
