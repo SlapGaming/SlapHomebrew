@@ -20,6 +20,7 @@ public class StaffListCommand extends AbstractCommand {
 		
 		if (!(sender.hasPermission("slaphomebrew.stafflist"))) {
 			noPermission(sender);
+			return true;
 		}
 		
 		String staffOnline = "Staff online: "; boolean first = true; int xCount = 0;

@@ -320,9 +320,11 @@ public class Horses {
 					switch (type) {
 					case "undead":
 						horse.setVariant(Variant.UNDEAD_HORSE);
+						player.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + horse.getCustomName() + " mutated into an undead horse...");
 						break;
 					case "skeleton":
 						horse.setVariant(Variant.SKELETON_HORSE);
+						player.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + horse.getCustomName() + " mutated into a skeleton horse...");
 						break;
 					}
 				} else {

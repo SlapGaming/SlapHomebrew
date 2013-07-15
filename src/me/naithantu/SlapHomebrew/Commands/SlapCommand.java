@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 
 import me.naithantu.SlapHomebrew.Book;
 import me.naithantu.SlapHomebrew.Lottery;
@@ -362,21 +363,16 @@ public class SlapCommand extends AbstractCommand {
 				this.noPermission(sender);
 				return true;
 			}
-			if (args.length < 2) {
-				this.badMsg(sender, "Usage: /slap moo [player]");
-				return true;
+			Player[] onlineTargets = plugin.getServer().getOnlinePlayers();
+			for (Player target : onlineTargets) {
+				target.sendMessage(new String[]
+						{
+							"            (__)", "            (oo)", "   /------\\/", "  /  |      | |", " *  /\\---/\\", "    ~~    ~~", "....\"Have you mooed today?\"..."
+						});
+				target.playSound(player.getLocation(), Sound.COW_HURT, 1, 1.0f);
 			}
-			final Player target = Bukkit.getServer().getPlayer(args[1]);
-			if (target == null) {
-				this.badMsg(sender, "That player is not online!");
-				return true;
-			}
-			target.sendMessage(new String[]
-					{
-						"            (__)", "            (oo)", "   /------\\/", "  /  |      | |", " *  /\\---/\\", "    ~~    ~~", "....\"Have you mooed today?\"..."
-					});
-			target.playSound(player.getLocation(), Sound.COW_HURT, 1, 1.0f);
-			this.msg(player, "You Moo'd " + target.getName());
+			onlineTargets[new Random().nextInt(onlineTargets.length)].chat("Moooooo!");
+			
 		}
 
 		if (arg.equalsIgnoreCase("firemob")) {
