@@ -625,7 +625,7 @@ public class SlapCommand extends AbstractCommand {
 			}
 			break;
 		case "horse":
-			if (!testPermission(sender, "horse")) {
+			if (!testPermission(sender, "spawnhorse")) {
 				this.noPermission(sender);
 				return true;
 			}
@@ -662,7 +662,7 @@ public class SlapCommand extends AbstractCommand {
 			}
 			player.chat("(╯°□°）╯︵ ┻━┻ Table flip!");
 			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-				
+
 				@Override
 				public void run() {
 					Player[] onlinePlayers = plugin.getServer().getOnlinePlayers();
