@@ -26,18 +26,6 @@ public class Horses {
 		horsesStorage = new YamlStorage(plugin, "horses");
 		horsesConfig = horsesStorage.getConfig();	
 		infoClick = new HashMap<>();
-		if (!horsesConfig.contains("horse")) {
-			for (String horse : horsesConfig.getKeys(false)) {
-				if (!(horse.equals("player") || horse.equals("fence"))) {
-					horsesConfig.set("horse." + horse + ".owner", horsesConfig.get(horse + ".owner"));
-					if (horsesConfig.contains(horse + ".allowed")) {
-						horsesConfig.set("horse." + horse + ".allowed", horsesConfig.getStringList(horse + ".allowed"));
-					}
-					horsesConfig.set(horse, null);
-				}
-			}
-			save();
-		}
 	}
 	
 	public void tamedHorse(String entityID, String owner) {
@@ -316,16 +304,19 @@ public class Horses {
 		if (isAllowedSpecialHorse(player)) {
 			if (!(horse.getVariant() == Variant.SKELETON_HORSE || horse.getVariant() == Variant.UNDEAD_HORSE)) {
 				if (horse.getCustomName() != null) {
-					createSpecialHorse(horse.getUniqueId().toString(), playerName, type);
-					switch (type) {
-					case "undead":
-						horse.setVariant(Variant.UNDEAD_HORSE);
-						player.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + horse.getCustomName() + " mutated into an undead horse...");
-						break;
-					case "skeleton":
-						horse.setVariant(Variant.SKELETON_HORSE);
-						player.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + horse.getCustomName() + " mutated into a skeleton horse...");
-						break;
+					if (horse.getInventory().getArmor() == null) {
+						createSpecialHorse(horse.getUniqueId().toString(), playerName, type);
+						switch (type) {
+						case "zombie":
+							horse.setVariant(Variant.UNDEAD_HORSE);
+							break;
+						case "skeleton":
+							horse.setVariant(Variant.SKELETON_HORSE);
+							break;
+						}
+						player.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + horse.getCustomName() + " mutated into a " + type + " horse...");
+					} else {
+						badMsg(player, "Remove the armor, a " + type + " horse will not like having that armor on him.");
 					}
 				} else {
 					badMsg(player, "The horse needs to be named using a name tag.");
@@ -353,6 +344,19 @@ public class Horses {
 			player.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + "You currently have " + hasSpecialHorses(player.getName()) + " out of " + allowedSpecials + " special horses.");
 		}
 		
+	}
+	
+	public void specialHorsesStats(String player, Player mod) {
+		int allowedSpecials = allowedSpecialHorses(player);
+		if (allowedSpecials == 0 && isVipPlayer(player)) {
+			setAllowedHorses(player, 1);
+			allowedSpecials = 1;
+		}
+		if (allowedSpecials == 0) {
+			mod.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + player + " is not allowed to have any special horses.");
+		} else {
+			mod.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + player + " currently has " + hasSpecialHorses(player) + " out of " + allowedSpecials + " special horses.");
+		}
 	}
 	
 }

@@ -62,6 +62,13 @@ public class PlayerCommandListener implements Listener {
 			}
 		}
 		
+		//Catch /modlist command -> Force to /stafflist
+		if (commandMessage[0].equalsIgnoreCase("/modlist")) {
+			player.sendMessage(ChatColor.RED + "/modlist is now /stafflist");
+			player.chat("/stafflist");
+			event.setCancelled(true);
+		}
+		
 		//Cancel commands in Jail
 		User targetUser = plugin.getEssentials().getUserMap().getUser(player.getName());
 		if (targetUser.isJailed()) {

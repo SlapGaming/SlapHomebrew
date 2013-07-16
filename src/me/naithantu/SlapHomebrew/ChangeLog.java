@@ -52,9 +52,10 @@ public class ChangeLog {
 		changeLogArray.add(0, new LoggedChange("09/07/2013", "Extra messages added to notify you when someone teleports to you (/te)."));
 		changeLogArray.add(0, new LoggedChange("12/07/2013", "Manage your horses! For more info: /horse help"));
 		changeLogArray.add(0, new LoggedChange("12/07/2013", "This (/new | /changelog) has been added!"));
+		changeLogArray.add(0, new LoggedChange("14/07/2013", "Fences are now lockable."));
 		changeLogArray.add(0, new LoggedChange("14/07/2013", "/stafflist now replaces /modlist!"));
 		changeLogArray.add(0, new LoggedChange("14/07/2013", "Horse spawn eggs are now available in the shop."));
-		changeLogArray.add(0, new LoggedChange("15/07/2013", "Mutate your horses in skeleton or undead horses, check out /horse help 2 [VIP/Donate only]!"));
+		changeLogArray.add(0, new LoggedChange("15/07/2013", "Mutate your horses in skeleton or zombie horses, check out /horse help 2 [VIP/Donate only]!"));
 	}
 	
 	private class LoggedChange {

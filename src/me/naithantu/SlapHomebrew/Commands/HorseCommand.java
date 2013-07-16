@@ -82,8 +82,8 @@ public class HorseCommand extends AbstractCommand {
 				sender.sendMessage(ChatColor.YELLOW + "==================== " + ChatColor.GOLD  + "Horse Help" + ChatColor.YELLOW  + " ====================");
 				sender.sendMessage(ChatColor.GOLD + "/horse info : " + ChatColor.WHITE + "get the owner's name");
 				sender.sendMessage(ChatColor.GOLD + "/horse allowed : " + ChatColor.WHITE + "get a list of all the players who are allowed to use this horse.");
-				sender.sendMessage(ChatColor.GOLD + "/horse special [undead/skeleton] : " + ChatColor.WHITE + "mutates your horse into an undead/skeleton. [VIP/Donators only]");
-				sender.sendMessage(ChatColor.GOLD + "/horse special info : " + ChatColor.WHITE + "get your current special horses stats.");
+				sender.sendMessage(ChatColor.GOLD + "/horse mutate [zombie/skeleton] : " + ChatColor.WHITE + "mutates your horse into an zombie/skeleton. [VIP/Donators only]");
+				sender.sendMessage(ChatColor.GOLD + "/horse mutate info : " + ChatColor.WHITE + "gets your mutated horses stats.");
 				sender.sendMessage(ChatColor.YELLOW + "================== " + ChatColor.GOLD  + "Page 2 out of 2" + ChatColor.YELLOW  + " ==================");
 			}
 			return true;
@@ -188,15 +188,24 @@ public class HorseCommand extends AbstractCommand {
 				rider.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + "Right click on the horse you want info about");
 			}
 			break;
-		case "special":
+		case "mutate":
 			if (args.length > 1) {
 				switch (args[1].toLowerCase()) {
-				case "undead": case "skeleton":
+				case "zombie": case "skeleton":
 					if (isOwnerOnHorse()) {
 						horses.createSpecialHorseCommand(horse, rider, args[1].toLowerCase());
 					}
 					break;
 				case "info":
+					if (testPermission(sender, "staff")) {
+						if (args.length == 3) {
+							OfflinePlayer target = plugin.getServer().getOfflinePlayer(args[2]);
+							if (target != null) {
+								horses.specialHorsesStats(target.getName(), (Player)sender);
+								return true;
+							}
+						}
+					}
 					horses.specialHorsesStats((Player)sender);
 					break;
 				default: 

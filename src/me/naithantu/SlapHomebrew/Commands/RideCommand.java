@@ -1,14 +1,20 @@
 package me.naithantu.SlapHomebrew.Commands;
 
+import java.util.HashMap;
+import java.util.List;
+
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 public class RideCommand extends AbstractCommand {
 
+	private static HashMap<String, Boolean> rightClicks = new HashMap<>();
+	
 	public RideCommand(CommandSender sender, String[] args, SlapHomebrew plugin){
 		super(sender, args, plugin);
 	}
@@ -32,18 +38,37 @@ public class RideCommand extends AbstractCommand {
 		}
 		
 		if (args.length == 1) {
+			if (args[0].equalsIgnoreCase("click")) {
+				player.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + "Right-click an entity to ride it.");
+				rightClicks.put(player.getName(), true);
+				return true;
+			}
 			String targetName = args[0];
 			Player target = Bukkit.getServer().getPlayer(targetName);
 			if (target != null) {
+				if (target.getName().equals(player.getName())) {
+					badMsg(sender, "You trying to break the server m8?");
+					return true;
+				}
 				target.setPassenger(player);
 			}else{
 				this.badMsg(sender, "Error: That player is not online!");
 			}
 		} else {
-			for (Entity entity : player.getNearbyEntities(10.0, 10.0, 10.0)) {
-				entity.setPassenger(player);
+			List<Entity> entities = player.getNearbyEntities(10.0, 10.0, 10.0);
+			if (entities.size() > 0) {
+				entities.get(0).setPassenger(player);
 			}
+		}
+		return true;
+	}
+	
+	public static boolean rightClick(String player){
+		if (rightClicks.containsKey(player)) {
+			rightClicks.remove(player);
+			return true;
 		}
 		return false;
 	}
+	
 }

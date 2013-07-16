@@ -1,5 +1,7 @@
 package me.naithantu.SlapHomebrew.Commands;
 
+import java.util.ArrayList;
+
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 
 import org.bukkit.ChatColor;
@@ -11,42 +13,77 @@ import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 public class StaffListCommand extends AbstractCommand {
 	
+	private String onlineStaff;
+	private int mods;
+	private int admins;
+	private int adminPlus;
+	private ArrayList<String> staff;
+	private boolean first;
+	
 	protected StaffListCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
 		super(sender, args, plugin);
 	}
 
 	@Override
 	public boolean handle() {
-		
-		if (!(sender.hasPermission("slaphomebrew.stafflist"))) {
+		if (!testPermission(sender, "stafflist")) {
 			noPermission(sender);
 			return true;
 		}
 		
-		String staffOnline = "Staff online: "; boolean first = true; int xCount = 0;
+		staff = new ArrayList<>();
+		mods = admins = adminPlus = 0;
+		first = true;
+		
 		for (Player player : plugin.getServer().getOnlinePlayers()) {
 			if (player.hasPermission("reportrts.mod")) {
 				PermissionUser user =  PermissionsEx.getUser(player);
-				if (first) {
-					first = false;
-					staffOnline = staffOnline + user.getPrefix() + player.getName();
-				} else {
-					staffOnline = staffOnline + ChatColor.WHITE + ", " + user.getPrefix() + player.getName();
-				}
-				xCount++;
+				addToList(user.getPrefix() + player.getName());
 			}
 		}
-		if (xCount == 0) {
-			sender.sendMessage(ChatColor.RED + "There is currently no staff online.");
-		} else {
-			sender.sendMessage(colorize(staffOnline));
+				
+		if (staff.size() == 0) {
+			sender.sendMessage("There is currently no staff online.");
+		} else {		
+			onlineStaff = "Staff: ";
+			for (String staffMember : staff) {
+				addToString(staffMember);
+			}
+			sender.sendMessage(colorize(onlineStaff));
 		}
 		return true;
 	}
 	
-    public static String colorize(String s){
+    private static String colorize(String s){
     	if(s == null) return null;
     	return s.replaceAll("&([0-9a-f])", "\u00A7$1");
+    }
+    
+    private void addToList(String staffMember) {
+    	if (staffMember.contains("Guide")) {
+    		staff.add(0, staffMember);
+    		mods++;
+    		admins++;
+    		adminPlus++;
+    	} else if (staffMember.contains("Mod")) {
+    		staff.add(mods, staffMember);
+    		admins++;
+    		adminPlus++;
+    	} else if (staffMember.contains("Admin")) {
+    		staff.add(admins, staffMember);
+    		adminPlus++;
+    	} else {
+    		staff.add(adminPlus, staffMember);
+    	}
+    }
+        
+    private void  addToString(String staffMember) {
+    	if (first) {
+    		onlineStaff = onlineStaff + staffMember;
+    		first = false;
+    	} else {
+    		onlineStaff = onlineStaff + ChatColor.WHITE + ", " + staffMember;
+    	}
     }
 
 }

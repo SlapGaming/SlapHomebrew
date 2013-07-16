@@ -1,6 +1,7 @@
 package me.naithantu.SlapHomebrew.Listeners;
 
 import me.naithantu.SlapHomebrew.Horses;
+import me.naithantu.SlapHomebrew.Commands.RideCommand;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -8,6 +9,7 @@ import org.bukkit.craftbukkit.v1_6_R2.entity.CraftHanging;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Horse.Variant;
 import org.bukkit.event.EventHandler;
@@ -35,6 +37,17 @@ public class PlayerInteractEntityListener implements Listener {
 				player.sendMessage(ChatColor.RED + "This is not a horse.");
 			}
 			event.setCancelled(true);
+			return;
+		}
+		
+		//Entity Ride Click
+		if (RideCommand.rightClick(player.getName())) {
+			if (player.isInsideVehicle()) {
+				player.getVehicle().eject();
+			}
+			if (clickedEntity instanceof LivingEntity) {
+				clickedEntity.setPassenger(player);
+			}
 			return;
 		}
 				
@@ -67,14 +80,17 @@ public class PlayerInteractEntityListener implements Listener {
 						event.setCancelled(true);
 					}
 				}
-				
-				//Egg on horse
-				if (horse.getVariant() == Variant.SKELETON_HORSE || horse.getVariant() == Variant.UNDEAD_HORSE) {
-					if (player.getItemInHand().getType() == Material.MONSTER_EGG){ 
-						if (!event.isCancelled()) {
-							player.sendMessage(ChatColor.RED + "This horse doesn't like what you are trying to do...");
-							event.setCancelled(true);
-						}
+			}
+		}
+		
+		//Horse egg on undead/skeleton horse -> Nope
+		if (clickedEntity.getType() == EntityType.HORSE) {
+			Horse horse = (Horse) event.getRightClicked();
+			if (horse.getVariant() == Variant.SKELETON_HORSE || horse.getVariant() == Variant.UNDEAD_HORSE) {
+				if (player.getItemInHand().getType() == Material.MONSTER_EGG){ 
+					if (!event.isCancelled()) {
+						player.sendMessage(ChatColor.RED + "This horse doesn't like what you are trying to do...");
+						event.setCancelled(true);
 					}
 				}
 			}

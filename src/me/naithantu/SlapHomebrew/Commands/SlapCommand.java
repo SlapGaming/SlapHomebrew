@@ -61,7 +61,7 @@ public class SlapCommand extends AbstractCommand {
 			this.msg(sender, "Current SlapHomebrew Version: " + plugin.getDescription().getVersion());
 			return true;
 		}
-
+		
 		if (arg.equalsIgnoreCase("reload")) {
 			if (this.testPermission(sender, "manage")) {
 				Bukkit.getPluginManager().disablePlugin(plugin);
@@ -76,8 +76,11 @@ public class SlapCommand extends AbstractCommand {
 		}
 
 		final Player player = (Player) sender;
+		
+		World world; Location spawnLocation; int x; int i; int mobs; EntityType mobType; String mob;
 
-		if (arg.equalsIgnoreCase("retrobow")) {
+		switch (arg.toLowerCase()) {
+		case "retrobow":
 			if (!testPermission(player, "fun")) {
 				this.noPermission(sender);
 				return true;
@@ -89,10 +92,9 @@ public class SlapCommand extends AbstractCommand {
 				retroBow.remove(player.getName());
 				this.msg(sender, "Retrobow mode has been turned off!");
 			}
-		}
-
-		if (arg.equalsIgnoreCase("wolf")) {
-			World world = player.getWorld();
+			break;
+		case "wolf":
+			world = player.getWorld();
 			if (!testPermission(player, "fun")) {
 				this.noPermission(sender);
 				return true;
@@ -102,8 +104,7 @@ public class SlapCommand extends AbstractCommand {
 			} catch (ArrayIndexOutOfBoundsException e) {
 				// e.printStackTrace();
 			}
-			Location spawnLocation = player.getEyeLocation();
-			int x;
+			spawnLocation = player.getEyeLocation();
 			try {
 				Integer.valueOf(arg);
 			} catch (NumberFormatException e) {
@@ -117,10 +118,9 @@ public class SlapCommand extends AbstractCommand {
 			} else {
 				player.sendMessage(ChatColor.RED + "You are not allowed to spawn more then 20 wolves at the same time!");
 			}
-		}
-
-		if (arg.equalsIgnoreCase("cat")) {
-			World world = player.getWorld();
+			break;
+		case "cat":
+			world = player.getWorld();
 			Type type = null;
 			if (!testPermission(player, "fun")) {
 				this.noPermission(sender);
@@ -143,7 +143,7 @@ public class SlapCommand extends AbstractCommand {
 				player.sendMessage(ChatColor.RED + "Type not recognized. Only siamesecat, blackcat, wildocelot and redcat are allowed!");
 			}
 			if (type != null) {
-				Location spawnLocation = player.getEyeLocation();
+				spawnLocation = player.getEyeLocation();
 				try {
 					arg = args[2];
 				} catch (ArrayIndexOutOfBoundsException e) {
@@ -169,7 +169,6 @@ public class SlapCommand extends AbstractCommand {
 					return true;
 				}
 				if (Integer.valueOf(arg) <= 20) {
-					int x;
 					for (x = 0; x < Integer.valueOf(arg); x++) {
 						world.spawn(spawnLocation, Ocelot.class);
 						for (Entity entity : player.getNearbyEntities(1, 1, 1)) {
@@ -183,8 +182,8 @@ public class SlapCommand extends AbstractCommand {
 					player.sendMessage(ChatColor.RED + "You are not allowed to spawn more then 20 cats at the same time!");
 				}
 			}
-		}
-		if (arg.equalsIgnoreCase("removewolf")) {
+			break;
+		case "removewolf":
 			if (!testPermission(player, "fun")) {
 				this.noPermission(sender);
 				return true;
@@ -197,8 +196,8 @@ public class SlapCommand extends AbstractCommand {
 					}
 				}
 			}
-		}
-		if (arg.equalsIgnoreCase("removecat")) {
+			break;
+		case "removecat":
 			if (!testPermission(player, "fun")) {
 				this.noPermission(sender);
 				return true;
@@ -211,9 +210,8 @@ public class SlapCommand extends AbstractCommand {
 					}
 				}
 			}
-		}
-
-		if (arg.equalsIgnoreCase("notify")) {
+			break;
+		case "notify":
 			if (!testPermission(player, "notify")) {
 				this.noPermission(sender);
 				return true;
@@ -234,9 +232,8 @@ public class SlapCommand extends AbstractCommand {
 					}, 5);
 				}
 			}, 5);
-		}
-
-		if (arg.equalsIgnoreCase("savebook")) {
+			break;
+		case "savebook":
 			if (!testPermission(sender, "savebook")) {
 				this.noPermission(sender);
 				return true;
@@ -255,18 +252,16 @@ public class SlapCommand extends AbstractCommand {
 			}
 			Book.saveBook((BookMeta) itemStack.getItemMeta(), new YamlStorage(plugin, "book"));
 			this.msg(sender, "Saved book.");
-		}
-
-		//TODO remove this, just a test command.
-		if (arg.equalsIgnoreCase("getbook")) {
+			break;
+		case "getbook":
+			//Tagged as needs to be removed?
 			if (!testPermission(sender, "getbook")) {
 				this.noPermission(sender);
 				return true;
 			}
 			player.getInventory().addItem(Book.getBook(new YamlStorage(plugin, "book")));
-		}
-
-		if (arg.equalsIgnoreCase("crash")) {
+			break;
+		case "crash":
 			if (player.getName().equals("naithantu") || player.getName().equals("Telluur") || player.getName().equals("Stoux2")) {
 				if (args.length < 2) {
 					this.badMsg(sender, "Usage: /slap crash [player]");
@@ -275,6 +270,17 @@ public class SlapCommand extends AbstractCommand {
 				final Player target = Bukkit.getServer().getPlayer(args[1]);
 				if (target == null) {
 					this.badMsg(sender, "That player is not online!");
+					return true;
+				}
+				if (target.getName().equals("naithantu") || target.getName().equals("Telluur") || player.getName().equals("Stoux2")) {
+					this.badMsg(sender, "That would be a...");
+					plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+						
+						@Override
+						public void run() {
+							badMsg(sender, "No.");
+						}
+					}, 40);
 					return true;
 				}
 
@@ -356,9 +362,8 @@ public class SlapCommand extends AbstractCommand {
 					}
 				}, 50);
 			}
-		}
-		
-		if (arg.equalsIgnoreCase("moo")) {
+			break;
+		case "moo":
 			if (!testPermission(player, "fun")) {
 				this.noPermission(sender);
 				return true;
@@ -369,13 +374,11 @@ public class SlapCommand extends AbstractCommand {
 						{
 							"            (__)", "            (oo)", "   /------\\/", "  /  |      | |", " *  /\\---/\\", "    ~~    ~~", "....\"Have you mooed today?\"..."
 						});
-				target.playSound(player.getLocation(), Sound.COW_HURT, 1, 1.0f);
+				target.playSound(target.getLocation(), Sound.COW_HURT, 1, 1.0f);
 			}
 			onlineTargets[new Random().nextInt(onlineTargets.length)].chat("Moooooo!");
-			
-		}
-
-		if (arg.equalsIgnoreCase("firemob")) {
+			break;
+		case "firemob":
 			if (!testPermission(sender, "firemob")) {
 				this.noPermission(sender);
 				return true;
@@ -386,7 +389,7 @@ public class SlapCommand extends AbstractCommand {
 				return true;
 			}
 
-			int mobs = 1;
+			mobs = 1;
 			if (args.length == 3) {
 				try {
 					mobs = Integer.parseInt(args[2]);
@@ -396,8 +399,7 @@ public class SlapCommand extends AbstractCommand {
 				}
 			}
 
-			String mob = args[1];
-			EntityType mobType;
+			mob = args[1];
 			try {
 				mobType = EntityType.valueOf(mob.toUpperCase());
 			} catch (IllegalArgumentException e) {
@@ -407,17 +409,16 @@ public class SlapCommand extends AbstractCommand {
 			System.out.println("Mob: " + mobType);
 
 			Location location = player.getTargetBlock(null, 20).getLocation().add(0, 1, 0);
-			World world = player.getWorld();
-			int i = 0;
+			world = player.getWorld();
+			i = 0;
 			while (i < mobs) {
 				Entity burningMob = world.spawnEntity(location, mobType);
 				burningMob.setFireTicks(9999999);
 				burningMob.setMetadata("slapFireMob", new FixedMetadataValue(plugin, true));
 				i++;
 			}
-		}
-
-		if (arg.equalsIgnoreCase("fly")) {
+			break;
+		case "fly":
 			if (!testPermission(sender, "fly")) {
 				this.noPermission(sender);
 				return true;
@@ -428,7 +429,6 @@ public class SlapCommand extends AbstractCommand {
 				return true;
 			}
 
-			EntityType mobType;
 			try {
 				mobType = EntityType.valueOf(args[1].toUpperCase());
 			} catch (IllegalArgumentException e) {
@@ -436,7 +436,7 @@ public class SlapCommand extends AbstractCommand {
 				return true;
 			}
 
-			int mobs = 1;
+			mobs = 1;
 			if (args.length > 2) {
 				try {
 					mobs = Integer.parseInt(args[2]);
@@ -446,9 +446,9 @@ public class SlapCommand extends AbstractCommand {
 				}
 			}
 
-			Location location = player.getTargetBlock(null, 20).getLocation().add(0, 1, 0);
-			World world = player.getWorld();
-			int i = 0;
+			location = player.getTargetBlock(null, 20).getLocation().add(0, 1, 0);
+			world = player.getWorld();
+			i = 0;
 			while (i < mobs) {
 				LivingEntity bat = (LivingEntity) world.spawnEntity(location, EntityType.BAT);
 				bat.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 9999999, 1));
@@ -456,9 +456,8 @@ public class SlapCommand extends AbstractCommand {
 				bat.setPassenger(creeper);
 				i++;
 			}
-		}
-
-		if (arg.equalsIgnoreCase("stackmob")) {
+			break;
+		case "stackmob": case "mobstack":
 			if (!testPermission(sender, "stackmob")) {
 				this.noPermission(sender);
 				return true;
@@ -469,26 +468,25 @@ public class SlapCommand extends AbstractCommand {
 				return true;
 			}
 
-			List<EntityType> mobs = new ArrayList<EntityType>();
+			List<EntityType> mobsList = new ArrayList<EntityType>();
 
-			for (int i = 1; i < args.length; i++) {
-				String mob = args[i];
-				EntityType mobType;
+			for (i = 1; i < args.length; i++) {
+				mob = args[i];
 				try {
 					mobType = EntityType.valueOf(mob.toUpperCase());
 				} catch (IllegalArgumentException e) {
 					this.badMsg(sender, "That's not a mob!");
 					return true;
 				}
-				mobs.add(mobType);
+				mobsList.add(mobType);
 			}
 
-			Location location = player.getTargetBlock(null, 20).getLocation().add(0, 1, 0);
-			World world = player.getWorld();
-			int i = 0;
+			location = player.getTargetBlock(null, 20).getLocation().add(0, 1, 0);
+			world = player.getWorld();
+			i = 0;
 			Entity previousEntity = null;
-			while (i < mobs.size()) {
-				Entity newEntity = world.spawnEntity(location, mobs.get(i));
+			while (i < mobsList.size()) {
+				Entity newEntity = world.spawnEntity(location, mobsList.get(i));
 				if (newEntity.getType() == EntityType.BAT) {
 					((LivingEntity) newEntity).addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 9999999, 1));
 				}
@@ -498,9 +496,8 @@ public class SlapCommand extends AbstractCommand {
 				previousEntity = newEntity;
 				i++;
 			}
-		}
-
-		if (arg.equalsIgnoreCase("rainbow")) {
+			break;
+		case "rainbow":
 			if (!testPermission(sender, "rainbow.extra")) {
 				this.noPermission(sender);
 				//TODO Remove this next update.
@@ -543,9 +540,8 @@ public class SlapCommand extends AbstractCommand {
 					this.msg(sender, "Your armour will now have rainbow colours!");
 			}
 			plugin.getExtras().setRainbow(rainbow);
-		}
-
-		if (arg.equalsIgnoreCase("end")) {
+			break;
+		case "end":
 			if (!testPermission(sender, "end")) {
 				this.noPermission(sender);
 				return true;
@@ -569,10 +565,8 @@ public class SlapCommand extends AbstractCommand {
 			EntityPlayer nmsPlayer = ((CraftPlayer) target).getHandle();
 			nmsPlayer.viewingCredits = true;
 			nmsPlayer.playerConnection.sendPacket(new Packet70Bed(4, 0));
-
-		}
-
-		if (arg.equalsIgnoreCase("showmessage") || arg.equalsIgnoreCase("showmsg")) {
+			break;
+		case "showmessage": case "showmsg":
 			if (!testPermission(sender, "showmsg")) {
 				this.noPermission(sender);
 				return true;
@@ -591,7 +585,7 @@ public class SlapCommand extends AbstractCommand {
 			}
 
 			final StringBuilder message = new StringBuilder();
-			for (int i = 2; i < args.length; i++) {
+			for (i = 2; i < args.length; i++) {
 				if (i != 2) {
 					message.append(" ");
 				}
@@ -599,9 +593,8 @@ public class SlapCommand extends AbstractCommand {
 			}
 
 			targetPlayer.sendMessage(ChatColor.translateAlternateColorCodes('&', message.toString()));
-		}
-		
-		if (arg.equalsIgnoreCase("ghost")) {
+			break;
+		case "ghost":
 			if (!testPermission(sender, "ghost")) {
 				this.noPermission(sender);
 				return true;
@@ -620,44 +613,75 @@ public class SlapCommand extends AbstractCommand {
 					player.removePotionEffect(PotionEffectType.INVISIBILITY);
 				}
 			}
-		}
-		
-		if (arg.equalsIgnoreCase("fakelottery")) {
-			if (testPermission(sender, "fakelottery")) {
-				if (!lottery.getPlaying() && !lottery.isFakeLotteryPlaying()) {
-					lottery.startFakeLottery(sender.getName());
-				}
+			break;
+		case "fakelottery":
+			if (!testPermission(sender, "fakelottery")) {
+				this.noPermission(sender);
+				return true;
 			}
-		}
-
-		if (arg.equalsIgnoreCase("horse")) {
-			if (testPermission(sender, "horse")) {
-				if(args.length < 2)
-					return false;
-				
-				Variant variant;
-				try{
-					variant = Variant.valueOf(args[1].toUpperCase());
-				} catch (IllegalArgumentException e){
-					this.badMsg(sender, "Invalid horse variant!");
-					return true;
-				}
-				
-				Location location = player.getTargetBlock(null, 20).getLocation().add(0, 1, 0);
-				World world = player.getWorld();
-				Horse horse = (Horse) world.spawnEntity(location, EntityType.HORSE);
-				horse.setJumpStrength(2D);
-				horse.setVariant(variant);
-				horse.setTamed(true);
-				horse.setPassenger(player);
-				horse.getInventory().setSaddle(new ItemStack(Material.SADDLE));
-				this.msg(sender, "Spawned a " + variant.toString() + " horse!");
+			
+			if (!lottery.getPlaying() && !lottery.isFakeLotteryPlaying()) {
+				lottery.startFakeLottery(sender.getName());
 			}
+			break;
+		case "horse":
+			if (!testPermission(sender, "horse")) {
+				this.noPermission(sender);
+				return true;
+			}
+			if (args.length < 2) {
+				return false;
+			}
+			
+			Variant variant;
+			switch (args[1].toLowerCase()) {
+			case "zombie": variant = Variant.UNDEAD_HORSE; break;
+			case "skeleton": variant = Variant.SKELETON_HORSE; break;
+			case "mule": variant = Variant.MULE; break;
+			case "donkey": variant = Variant.DONKEY; break;
+			case "horse": variant = Variant.HORSE; break;
+			default: 
+				badMsg(sender, "Not a valid horse type. [zombie/skeleton/mule/donkey/horse]");
+				return false;
+			}
+	
+			location = player.getTargetBlock(null, 20).getLocation().add(0, 1, 0);
+			world = player.getWorld();
+			Horse horse = (Horse) world.spawnEntity(location, EntityType.HORSE);
+			horse.setJumpStrength(2D);
+			horse.setVariant(variant);
+			horse.setTamed(true);
+			horse.setPassenger(player);
+			horse.getInventory().setSaddle(new ItemStack(Material.SADDLE));
+			this.msg(sender, "Spawned a " + variant.toString() + " horse!");
+			break;
+		case "tableflip":
+			if (!testPermission(sender, "tableflip")) {
+				this.noPermission(sender);
+				return true;
+			}
+			player.chat("(╯°□°）╯︵ ┻━┻ Table flip!");
+			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+				
+				@Override
+				public void run() {
+					Player[] onlinePlayers = plugin.getServer().getOnlinePlayers();
+					Player target = onlinePlayers[new Random().nextInt(onlinePlayers.length)];
+					if (target.getName().equals(player.getName())) {
+						target.chat("┬──┬ ﾉ(° _°ﾉ) Sorry 'bout that guys..");
+					} else {
+						target.chat("┬──┬ ﾉ(° _°ﾉ) I fix");
+					}
+				}
+			}, 100);
+			break;			
+		default:
+			return false;
 		}
-		
 		
 		return true;
 	}
+	
 
 	public boolean checkLeatherArmor(PlayerInventory inventory) {
 		if (inventory.getBoots() == null || inventory.getLeggings() == null || inventory.getChestplate() == null || inventory.getHelmet() == null)
