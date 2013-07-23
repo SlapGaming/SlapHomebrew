@@ -1,5 +1,6 @@
 package me.naithantu.SlapHomebrew.Commands;
 
+import me.naithantu.SlapHomebrew.Lag;
 import me.naithantu.SlapHomebrew.Lottery;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 
@@ -9,10 +10,12 @@ import org.bukkit.command.CommandSender;
 public class CommandHandler {
 	SlapHomebrew plugin;
 	Lottery lottery;
+	Lag lag;
 
-	public CommandHandler(SlapHomebrew plugin, Lottery lottery) {
+	public CommandHandler(SlapHomebrew plugin, Lottery lottery, Lag lag) {
 		this.plugin = plugin;
 		this.lottery = lottery;
+		this.lag = lag;
 	}
 
 	public boolean handle(CommandSender sender, Command cmd, String[] args) {
@@ -29,6 +32,7 @@ public class CommandHandler {
 		case "group":			commandObj = new GroupCommand(sender, args, plugin);			break;
 		case "home":			commandObj = new HomeCommand(sender, args, plugin);				break;
 		case "homemenu":		commandObj = new HomeMenuCommand(sender, args, plugin);			break;
+		case "lag":				commandObj = new LagCommand(sender, args, plugin, lag);			break;
 		case "leavecake":		commandObj = new LeavecakeCommand(sender, args, plugin);		break;
 		case "message":			commandObj = new MessageCommand(sender, args, plugin);			break;
 		case "minecart":		commandObj = new MinecartCommand(sender, args, plugin);			break;

@@ -105,6 +105,7 @@ public class SlapHomebrew extends JavaPlugin {
 		afk = new AwayFromKeyboard(this);
 		horses = new Horses(this);
 		changeLog = new ChangeLog();
+		Lag lag = new Lag(this);
 		BlockfaqCommand.chatBotBlocks = loadHashSet("chatbotblocks");
 		setupEconomy();
 		setupChatBot();
@@ -114,7 +115,7 @@ public class SlapHomebrew extends JavaPlugin {
 		loadForumVip();
 		loadUnfinishedPlots();
 		new Schedulers(this);
-		commandHandler = new CommandHandler(this, lottery);
+		commandHandler = new CommandHandler(this, lottery, lag);
 		pm = getServer().getPluginManager();
 		pm.registerEvents(new BlockPlaceListener(this), this);
 		pm.registerEvents(new PlayerChatListener(this, afk), this);
