@@ -6,6 +6,7 @@ import me.naithantu.SlapHomebrew.Util;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Wither;
 import org.bukkit.event.EventHandler;
@@ -22,13 +23,27 @@ public class CreatureSpawnListener implements Listener {
 	}
 	@EventHandler
 	public void onCreatureSpawn(CreatureSpawnEvent event) {
+
+		Entity entity = event.getEntity();
+
+		//Block certain mob spawns in creative world.
 		if (event.getLocation().getWorld().getName().equals("world_creative")) {
 			if (event.getSpawnReason() == SpawnReason.EGG) {
 				event.setCancelled(true);
+			} else if (event.getSpawnReason() != SpawnReason.NATURAL) {
+				//Block mob spawning via dispenser if there are too many mobs nearby in the creative world.
+				int totalEntities = 0;
+				for (Entity nearbyEntity : entity.getNearbyEntities(50, 50, 50)) {
+					if (nearbyEntity instanceof Creature) {
+						totalEntities++;
+					}
+				}
+
+				if (totalEntities >= 50) {
+					event.setCancelled(true);
+				}
 			}
 		}
-		
-		Entity entity = event.getEntity();
 
 		if (entity instanceof Wither) {
 			//Always allow if the allowwitherspawn flag is used.

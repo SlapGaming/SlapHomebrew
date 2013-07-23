@@ -101,7 +101,7 @@ public class PlayerInteractListener implements Listener {
 						}
 					}
 
-					if (totalEntities > 50) {
+					if (totalEntities >= 50) {
 						event.setCancelled(true);
 						player.sendMessage(Util.getHeader() + "There are too many mobs in this area, you may not spawn more!");
 						return;
