@@ -216,6 +216,15 @@ public class Menus {
 	private void handleVipMenu(IconMenu.OptionClickEvent event) {
 		final Player player = event.getPlayer();
 		String playerName = player.getName();
+		
+		//Check for uses to prevent spam click abusing.
+		YamlStorage dataStorage = plugin.getDataStorage();
+		FileConfiguration dataConfig = dataStorage.getConfig();
+		int timesUsed = dataConfig.getInt("usedgrant." + playerName);
+		if(timesUsed >= 3){
+			return;
+		}
+		
 		if (event.getPosition() == 0) {
 			player.closeInventory();
 			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
@@ -262,20 +271,17 @@ public class Menus {
 			return;
 		}
 		event.setWillClose(false);
-		YamlStorage dataStorage = plugin.getDataStorage();
-		FileConfiguration dataConfig = dataStorage.getConfig();
 
 		if (player.getInventory().firstEmpty() == -1) {
 			player.sendMessage(ChatColor.RED + "Your inventory is full!");
 			return;
 		}
 
-		int timesUsed = dataConfig.getInt("usedgrant." + playerName);
 		timesUsed += 1;
 		dataConfig.set("usedgrant." + playerName, timesUsed);
 		player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + (3 - timesUsed) + " times left today.");
 		player.getInventory().addItem(event.getItemClicked());
-		if (timesUsed == 3) {
+		if (timesUsed >= 3) {
 			event.setWillClose(true);
 		}
 	}

@@ -93,7 +93,7 @@ public class IconMenu implements Listener {
 					clickedName = optionNames[slot];
 					command = optionCommands[slot];
 					Plugin plugin = this.plugin;
-					OptionClickEvent e = new OptionClickEvent((Player) event.getWhoClicked(), slot, clickedName, event.getCurrentItem(), command);
+					OptionClickEvent e = new OptionClickEvent((Player) event.getWhoClicked(), slot, clickedName, optionIcons[slot], command);
 					handler.onOptionClick(e);
 					if (e.willClose()) {
 						final Player p = (Player) event.getWhoClicked();
