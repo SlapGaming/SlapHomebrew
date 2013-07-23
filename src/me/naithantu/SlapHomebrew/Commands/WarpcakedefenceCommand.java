@@ -29,6 +29,8 @@ public class WarpcakedefenceCommand extends AbstractCommand {
 			if (Util.hasEmptyInventory(player)) {
 				player.teleport(new Location(Bukkit.getServer().getWorld("world") , 333.0, 28.0, -722.0));
 				this.msg(sender, "You have been teleported to cake defence!");
+				player.setFoodLevel(20);
+				player.setHealth(20d);
 			} else {
 				this.badMsg(sender, "Empty your inventory and take off your armor, then use /warpcakedefence again!");
 			}
