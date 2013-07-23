@@ -12,6 +12,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.NPC;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -30,6 +31,11 @@ public class EntityDamageByEntityListener implements Listener {
 	public void onEntityDamageByEvent(EntityDamageByEntityEvent event) {
 		//Entity protector on WG
 		Entity damager = event.getDamager();
+		if(damager instanceof Projectile){
+			Projectile projectile = (Projectile) damager;
+			damager = projectile.getShooter();
+		}
+		
 		if (damager != null && damager instanceof Player) {
 			Entity entity = event.getEntity();
 			if (entity instanceof Animals || entity instanceof NPC) {
