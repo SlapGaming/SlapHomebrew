@@ -36,7 +36,7 @@ public class Horses {
 	public boolean enterHorse(String entityID, Player player) {
 		boolean returnBool = false;
 		if (horsesConfig.contains("horse." + entityID)) {
-			if (horsesConfig.getString("horse." + entityID + ".owner").equals(player.getName())) {
+			if (getOwner(entityID).equals(player.getName())) {
 				returnBool = true;
 			} else {
 				if (horsesConfig.contains("horse." + entityID + ".allowed")) {
@@ -53,7 +53,7 @@ public class Horses {
 	
 	public void allowOnHorse(String entityID, Player owner, String allowedPlayer) {
 		if (horsesConfig.contains("horse." + entityID)) {
-			if (horsesConfig.getString("horse." + entityID + ".owner").equals(owner.getName())) {
+			if (getOwner(entityID).equals(owner.getName())) {
 				if (horsesConfig.contains("horse." + entityID + ".allowed")) {
 					List<String> allowedPlayers = horsesConfig.getStringList("horse." + entityID + ".allowed");
 					if (allowedPlayers.contains(allowedPlayer)) {
@@ -81,7 +81,7 @@ public class Horses {
 	
 	public void denyOnHorse(String entityID, Player owner, String denyPlayer) {
 		if (horsesConfig.contains("horse." + entityID)) {
-			if (horsesConfig.getString("horse." + entityID + ".owner").equals(owner.getName())) {
+			if (getOwner(entityID).equals(owner.getName())) {
 				if (horsesConfig.contains("horse." + entityID + ".allowed")) {
 					List<String> allowedPlayers = horsesConfig.getStringList("horse." + entityID + ".allowed");
 					if (allowedPlayers.contains(denyPlayer)) {
@@ -115,7 +115,7 @@ public class Horses {
 			save();
 			owner.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + "You now own this horse");
 		} else {
-			if (horsesConfig.getString("horse." + entityID + ".owner").equals(owner.getName())) {
+			if (getOwner("entityID").equals(owner.getName())) {
 				owner.sendMessage(ChatColor.RED + "You already own this horse.");
 			} else {
 				owner.sendMessage(ChatColor.RED + "This horse is already claimed.");
@@ -127,7 +127,7 @@ public class Horses {
 		String entityID = horse.getUniqueId().toString();
 		boolean returnBool = false;
 		if (horsesConfig.contains("horse." + entityID)) {
-			if (horsesConfig.getString("horse." + entityID + ".owner").equals(owner.getName())) {
+			if (getOwner(entityID).equals(owner.getName())) {
 				horsesConfig.set("horse." + entityID, null);
 				horsesConfig.set("horse." + entityID + ".owner", newOwner.getName());
 				horse.setOwner(newOwner);
