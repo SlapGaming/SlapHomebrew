@@ -10,6 +10,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
@@ -20,13 +21,13 @@ public class PlayerDeathListener implements Listener {
 		this.plugin = plugin;
 	}
 
-	@EventHandler
+	@EventHandler (priority = EventPriority.MONITOR)
 	public void onPlayerDeath(PlayerDeathEvent event) {
 		if (event.getEntity() instanceof Player) {
 			Player player = event.getEntity();
 			World world = player.getWorld();
 			//Only send death messages from pvp world to players in the pvp world.
-			if (world.getName().equalsIgnoreCase("world_pvp")) {
+			if (event.getDeathMessage() != null && world.getName().equalsIgnoreCase("world_pvp")) {
 				String message = event.getDeathMessage();
 				event.setDeathMessage(null);
 				for (Player messagePlayer : Bukkit.getServer().getOnlinePlayers()) {
