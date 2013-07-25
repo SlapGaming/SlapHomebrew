@@ -69,6 +69,7 @@ public class SlapHomebrew extends JavaPlugin {
 	AwayFromKeyboard afk;
 	Horses horses;
 	ChangeLog changeLog;
+	Mail mail;
 	
 	Essentials essentials;
 	
@@ -106,6 +107,7 @@ public class SlapHomebrew extends JavaPlugin {
 		horses = new Horses(this);
 		changeLog = new ChangeLog();
 		Lag lag = new Lag(this);
+		//mail = new Mail(this);
 		BlockfaqCommand.chatBotBlocks = loadHashSet("chatbotblocks");
 		setupEconomy();
 		setupChatBot();
@@ -429,6 +431,10 @@ public class SlapHomebrew extends JavaPlugin {
 	
 	public ChangeLog getChangeLog(){
 		return changeLog;
+	}
+	
+	public Mail getMail(){
+		return mail;
 	}
 
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {

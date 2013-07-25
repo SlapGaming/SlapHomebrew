@@ -61,6 +61,7 @@ public class CommandHandler {
 		case "horse":			commandObj = new HorseCommand(sender, args, plugin);			break;
 		case "changelog":		commandObj = new ChangeLogCommand(sender, args, plugin);		break;
 		case "stafflist":		commandObj = new StaffListCommand(sender, args, plugin);		break;
+		case "mail":			commandObj = new MailCommand(sender, args, plugin);				break;
 		case "plot":
 			if (args.length == 0) return false;
 			switch (args[0].toLowerCase()) {
