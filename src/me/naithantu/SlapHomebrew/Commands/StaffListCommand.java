@@ -3,6 +3,7 @@ package me.naithantu.SlapHomebrew.Commands;
 import java.util.ArrayList;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
+import me.naithantu.SlapHomebrew.Util;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -49,16 +50,11 @@ public class StaffListCommand extends AbstractCommand {
 			for (String staffMember : staff) {
 				addToString(staffMember);
 			}
-			sender.sendMessage(colorize(onlineStaff));
+			sender.sendMessage(Util.colorize(onlineStaff));
 		}
 		return true;
 	}
-	
-    private static String colorize(String s){
-    	if(s == null) return null;
-    	return s.replaceAll("&([0-9a-f])", "\u00A7$1");
-    }
-    
+	    
     private void addToList(String staffMember) {
     	if (staffMember.contains("Guide")) {
     		staff.add(0, staffMember);

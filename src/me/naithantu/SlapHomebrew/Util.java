@@ -142,4 +142,14 @@ public class Util {
 		}
 		return effect;
 	}
+	
+    public static String colorize(String s){
+    	if(s == null) return null;
+    	return s.replaceAll("&([0-9a-f])", "\u00A7$1");
+    }
+    
+    public static String decolorize(String s){
+    	if(s == null) return null;
+    	return s.replaceAll("&([0-9a-f])", "");
+    }
 }

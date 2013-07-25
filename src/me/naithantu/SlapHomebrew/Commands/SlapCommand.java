@@ -272,7 +272,7 @@ public class SlapCommand extends AbstractCommand {
 					this.badMsg(sender, "That player is not online!");
 					return true;
 				}
-				if (target.getName().equals("naithantu") || target.getName().equals("Telluur") || player.getName().equals("Stoux2")) {
+				if (target.getName().equals("naithantu") || target.getName().equals("Telluur") || target.getName().equals("Stoux2")) {
 					this.badMsg(sender, "That would be a...");
 					plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
 						
