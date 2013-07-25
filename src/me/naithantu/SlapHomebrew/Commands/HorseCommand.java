@@ -6,13 +6,15 @@ import me.naithantu.SlapHomebrew.Horses;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 
 import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Horse.Variant;
 import org.bukkit.entity.Player;
+
+import com.earth2me.essentials.Essentials;
+import com.earth2me.essentials.User;
 
 public class HorseCommand extends AbstractCommand {
 
@@ -21,10 +23,15 @@ public class HorseCommand extends AbstractCommand {
 	private String horseID;
 	private Player rider;
 	
+	private Essentials ess;
+	
 	protected HorseCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
 		super(sender, args, plugin);
 		if (horses == null) {
 			horses = plugin.getHorses();
+		}
+		if (ess == null) {
+			ess = plugin.getEssentials();
 		}
 	}
 
@@ -34,15 +41,11 @@ public class HorseCommand extends AbstractCommand {
 		if (sender.hasPermission("slaphomebrew.addhorses")) {
 			if (args.length  == 2) {
 				if (args[0].toLowerCase().equals("addhorses")) {
-					OfflinePlayer offPlayer = plugin.getServer().getOfflinePlayer(args[1]);
-					String name;
-					if (offPlayer.getPlayer() != null) {
-						name = offPlayer.getPlayer().getName();
+					User u = ess.getUserMap().getUser(args[1]);
+					if (u != null) {
+						horses.playerDonatedForHorses(u.getName());
 					} else {
-						name = offPlayer.getName();
-					}
-					if (offPlayer != null) {
-						horses.playerDonatedForHorses(name);
+						plugin.getLogger().info("Failed to give '" + args[1] + "' extra horses. Player unknown.");
 					}
 					return true;
 				}
@@ -124,7 +127,7 @@ public class HorseCommand extends AbstractCommand {
 				return true;
 			}
 			if (args.length > 1) {
-				OfflinePlayer allowedPlayer = plugin.getServer().getOfflinePlayer(args[1]);
+				User allowedPlayer = ess.getUserMap().getUser(args[1]);
 				if (allowedPlayer != null) {
 					if (rider.getName().equals(allowedPlayer.getName())) {
 						badMsg(sender, "You are the owner of this horse.");
@@ -143,7 +146,7 @@ public class HorseCommand extends AbstractCommand {
 				return true;
 			}
 			if (args.length > 1) {
-				OfflinePlayer allowedPlayer = plugin.getServer().getOfflinePlayer(args[1]);
+				User allowedPlayer = ess.getUserMap().getUser(args[1]);
 				if (allowedPlayer != null) {
 					if (rider.getName().equals(allowedPlayer.getName())) {
 						badMsg(sender, "You are the owner of this horse.");
@@ -199,7 +202,7 @@ public class HorseCommand extends AbstractCommand {
 				case "info":
 					if (testPermission(sender, "staff")) {
 						if (args.length == 3) {
-							OfflinePlayer target = plugin.getServer().getOfflinePlayer(args[2]);
+							User target = ess.getUserMap().getUser(args[2]);
 							if (target != null) {
 								horses.specialHorsesStats(target.getName(), (Player)sender);
 								return true;

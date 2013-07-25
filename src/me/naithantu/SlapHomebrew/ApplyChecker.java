@@ -7,9 +7,11 @@ import me.naithantu.SlapHomebrew.Runnables.ApplyGathererTask;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 
 import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+
+import com.earth2me.essentials.Essentials;
+import com.earth2me.essentials.User;
 
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
@@ -21,13 +23,14 @@ public class ApplyChecker {
 	private ApplyGathererTask gathererThread;
 	private ArrayList<String[]> failedThreads;
 	
+	private Essentials ess;
 	
-	public ApplyChecker(SlapHomebrew plugin){
+	public ApplyChecker(SlapHomebrew plugin, Essentials ess){
 		this.plugin = plugin;
+		this.ess = ess;
 		YamlStorage applyThreadStorage = plugin.getApplyThreadStorage();
     	FileConfiguration applyThreadConfig = applyThreadStorage.getConfig();
     	failedThreads = new ArrayList<String[]>();
-    	
     	try {
     		gathererThread = new ApplyGathererTask(this, applyThreadConfig, applyThreadStorage);
     		gathererThread.runTaskTimerAsynchronously(plugin, 600, 1200);
@@ -42,16 +45,10 @@ public class ApplyChecker {
 	
 	public boolean findUser(String username){
 		boolean returnBool = false;
-		Player newPlayer = plugin.getServer().getPlayerExact(username);
+		User newPlayer = ess.getUserMap().getUser(username);
 		if (newPlayer != null) {
 			promoteUser(newPlayer.getName());
 			returnBool = true;
-		} else {
-			OfflinePlayer offPlayer = plugin.getServer().getOfflinePlayer(username);
-			if (offPlayer != null) {
-				promoteUser(offPlayer.getName());
-				returnBool = true;
-			}
 		}
 		return returnBool;
 	}

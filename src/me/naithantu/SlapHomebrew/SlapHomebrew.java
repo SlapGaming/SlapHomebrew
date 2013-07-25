@@ -102,7 +102,7 @@ public class SlapHomebrew extends JavaPlugin {
 		extras = new Extras(this);
 		tpBlocks = loadHashSet("tpblocks");
 		lottery = new Lottery(this);
-		applyChecker = new ApplyChecker(this);
+		applyChecker = new ApplyChecker(this, essentials);
 		afk = new AwayFromKeyboard(this);
 		horses = new Horses(this);
 		changeLog = new ChangeLog();
