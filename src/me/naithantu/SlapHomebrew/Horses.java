@@ -115,7 +115,7 @@ public class Horses {
 			save();
 			owner.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + "You now own this horse");
 		} else {
-			if (getOwner("entityID").equals(owner.getName())) {
+			if (getOwner(entityID).equals(owner.getName())) {
 				owner.sendMessage(ChatColor.RED + "You already own this horse.");
 			} else {
 				owner.sendMessage(ChatColor.RED + "This horse is already claimed.");

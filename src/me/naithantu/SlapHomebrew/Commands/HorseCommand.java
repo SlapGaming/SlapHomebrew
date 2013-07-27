@@ -18,7 +18,7 @@ import com.earth2me.essentials.User;
 
 public class HorseCommand extends AbstractCommand {
 
-	private static Horses horses;
+	private Horses horses;
 	private Horse horse;
 	private String horseID;
 	private Player rider;
@@ -27,17 +27,12 @@ public class HorseCommand extends AbstractCommand {
 	
 	protected HorseCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
 		super(sender, args, plugin);
-		if (horses == null) {
-			horses = plugin.getHorses();
-		}
-		if (ess == null) {
-			ess = plugin.getEssentials();
-		}
+		horses = plugin.getHorses();
+		ess = plugin.getEssentials();
 	}
 
 	@Override
 	public boolean handle() {
-		
 		if (sender.hasPermission("slaphomebrew.addhorses")) {
 			if (args.length  == 2) {
 				if (args[0].toLowerCase().equals("addhorses")) {
