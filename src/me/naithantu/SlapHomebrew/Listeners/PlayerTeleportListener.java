@@ -1,8 +1,6 @@
 package me.naithantu.SlapHomebrew.Listeners;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -14,15 +12,6 @@ public class PlayerTeleportListener implements Listener {
 	@EventHandler
 	public void onPlayerTeleport(PlayerTeleportEvent event) {
 		Player player = event.getPlayer();
-		//Check for boats/minecarts to remove.
-		Location from = event.getFrom();
-		for(Entity entity: from.getWorld().getEntities()){
-			if(entity.hasMetadata("slapVehicle")){ 
-				if(entity.getMetadata("slapVehicle").get(0).asString().equals(player.getName())){
-					entity.remove();
-				}
-			}
-		}
 		
 		if (event.getTo().getWorld().getName().equals("world_nether") && event.getTo().getBlockY() >= 127){ 
 			player.sendMessage(ChatColor.RED + "You may not go above the nether!");

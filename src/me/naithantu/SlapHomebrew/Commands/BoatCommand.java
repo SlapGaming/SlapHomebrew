@@ -38,7 +38,7 @@ public class BoatCommand extends AbstractCommand {
 		if (depth > 0 && depth <= 5) {
 			final Boat boat = w.spawn(player.getLocation().add(0, 1, 0), Boat.class);
 			boat.setPassenger(player);			
-			boat.setMetadata("slapVehicle", new FixedMetadataValue(plugin, player.getName()));
+			boat.setMetadata("slapVehicle", new FixedMetadataValue(plugin, true));
 		} else {
 			this.badMsg(sender, "You can not use that here!");
 		}

@@ -37,7 +37,7 @@ public class MinecartCommand extends AbstractCommand {
 		if (railBlock == 66 || railBlock == 27 || railBlock == 28) {
 			Minecart minecart = w.spawn(player.getLocation(), Minecart.class);
 			minecart.setPassenger(player);
-			minecart.setMetadata("slapVehicle", new FixedMetadataValue(plugin, player.getName()));
+			minecart.setMetadata("slapVehicle", new FixedMetadataValue(plugin, true));
 			Vector v = minecart.getVelocity();
 			double degreeRotation = (player.getLocation().getYaw() - 90.0F) % 360.0F;
 			if (degreeRotation < 0.0D) {
