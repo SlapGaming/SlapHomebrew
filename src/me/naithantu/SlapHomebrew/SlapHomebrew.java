@@ -87,6 +87,8 @@ public class SlapHomebrew extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
+		essentials = (Essentials) this.getServer().getPluginManager().getPlugin("Essentials");
+
 		config = getConfig();
 		dataStorage = new YamlStorage(this, "data");
 		vipStorage = new YamlStorage(this, "vip");
@@ -158,7 +160,6 @@ public class SlapHomebrew extends JavaPlugin {
 			vipConfig.createSection("vipdays");
 		}
 		
-		essentials = (Essentials) this.getServer().getPluginManager().getPlugin("Essentials");
 		saveConfig();
 	}
 
