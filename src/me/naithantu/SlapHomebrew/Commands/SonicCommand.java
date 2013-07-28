@@ -4,7 +4,6 @@ import java.util.List;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Sonic;
-import me.naithantu.SlapHomebrew.Util;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -72,7 +71,7 @@ public class SonicCommand extends AbstractCommand {
 				for (int i = page * 10; i < leaderboard.size(); i++) {
 					String name = leaderboard.get(i);
 					sender.sendMessage(ChatColor.GOLD + "" + (i + 1) + ". " + ChatColor.WHITE + Bukkit.getServer().getOfflinePlayer(name).getName() + " - "
-							+ Util.changeTimeFormat(sonic.getTotalTime(name)));
+							+ Sonic.changeTimeFormat(sonic.getTotalTime(name)));
 					if (i == (page * 10) + 9)
 						break;
 				}
@@ -84,13 +83,13 @@ public class SonicCommand extends AbstractCommand {
 					for (int i = 0; i < leaderboard.size(); i++) {
 						if (leaderboard.get(i).equalsIgnoreCase(name)) {
 							String showName = Bukkit.getServer().getOfflinePlayer(name).getName();
-							this.msg(sender, showName + " has a highscore of " + Util.changeTimeFormat(sonic.getTotalTime(name)));
+							this.msg(sender, showName + " has a highscore of " + Sonic.changeTimeFormat(sonic.getTotalTime(name)));
 							this.msg(sender, showName + "'s times at each checkpoint were:");
 							String playerTimes = plugin.getSonicStorage().getConfig().getString("players." + name);
 							String[] playerTimesSplit = playerTimes.split(":");
 							for (int checkpoint = 0; checkpoint < playerTimesSplit.length - 1; checkpoint++) {
 								long time = Long.parseLong(playerTimesSplit[checkpoint]);
-								this.msg(sender, "Checkpoint " + (checkpoint + 1) + ": " + Util.changeTimeFormat(time));
+								this.msg(sender, "Checkpoint " + (checkpoint + 1) + ": " + Sonic.changeTimeFormat(time));
 							}
 							this.msg(sender, showName + " is ranked #" + (i + 1));
 							return true;
@@ -101,13 +100,13 @@ public class SonicCommand extends AbstractCommand {
 					List<String> leaderboard = sonic.getLeaderboard();
 					for (int i = 0; i < leaderboard.size(); i++) {
 						if (leaderboard.get(i).equalsIgnoreCase(name)) {
-							this.msg(sender, "You have a highscore of " + Util.changeTimeFormat(sonic.getTotalTime(name)));
+							this.msg(sender, "You have a highscore of " + Sonic.changeTimeFormat(sonic.getTotalTime(name)));
 							this.msg(sender, "Your times at each checkpoint were:");
 							String playerTimes = plugin.getSonicStorage().getConfig().getString("players." + name);
 							String[] playerTimesSplit = playerTimes.split(":");
 							for (int checkpoint = 0; checkpoint < playerTimesSplit.length - 1; checkpoint++) {
 								long time = Long.parseLong(playerTimesSplit[checkpoint]);
-								this.msg(sender, "Checkpoint " + (checkpoint + 1) + ": " + Util.changeTimeFormat(time));
+								this.msg(sender, "Checkpoint " + (checkpoint + 1) + ": " + Sonic.changeTimeFormat(time));
 							}
 							
 							this.msg(sender, "You are ranked #" + (i + 1));

@@ -37,7 +37,7 @@ public class SonicPlayer {
 				startTime = new Date().getTime();
 			} else {
 				long currentTime = (new Date().getTime() - startTime);
-				Util.broadcastToWorld("world_sonic", ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + playerName + " passed checkpoint " + checkpoint + ". Time: " + Util.changeTimeFormat(currentTime));
+				Util.broadcastToWorld("world_sonic", ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + playerName + " passed checkpoint " + checkpoint + ". Time: " + Sonic.changeTimeFormat(currentTime));
 				checkpointTimes[lastCheckpoint] = currentTime;
 			}
 			lastCheckpoint++;
@@ -45,7 +45,7 @@ public class SonicPlayer {
 			long currentTime = (new Date().getTime() - startTime);
 			checkpointTimes[lastCheckpoint] = currentTime;
 			sonic.addHighscore(playerName, checkpointTimes);
-			Util.broadcastToWorld("world_sonic", ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + playerName + " finished with a time of " + Util.changeTimeFormat(currentTime) + " seconds.");
+			Util.broadcastToWorld("world_sonic", ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + playerName + " finished with a time of " + Sonic.changeTimeFormat(currentTime) + " seconds.");
 			lastCheckpoint = -1;
 			return;
 		}

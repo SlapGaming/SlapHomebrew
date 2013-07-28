@@ -6,6 +6,7 @@ import java.util.Date;
 import me.naithantu.SlapHomebrew.AwayFromKeyboard;
 import me.naithantu.SlapHomebrew.Jail;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
+import me.naithantu.SlapHomebrew.Util;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -73,7 +74,7 @@ public class PlayerCommandListener implements Listener {
 		if (targetUser.isJailed()) {
 			if (!commandMessage[0].equalsIgnoreCase("/modreq")) {
 				event.setCancelled(true);
-				targetUser.sendMessage(ChatColor.RED + "You are still in jail for: " + targetUser.getJailTimeout());
+				targetUser.sendMessage(ChatColor.RED + "You are still in jail for " + Util.changeTimeFormat(targetUser.getJailTimeout() - System.currentTimeMillis(), "mm:ss") + "s.");
 			}
 		}
 		

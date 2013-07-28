@@ -90,10 +90,10 @@ public class Util {
 		}
 	}
 
-	public static String changeTimeFormat(long time) {
+	public static String changeTimeFormat(long time, String format) {
 		final Calendar cal = Calendar.getInstance();
 		cal.setTimeInMillis(time);
-		final String timeString = new SimpleDateFormat("mm:ss:SS").format(cal.getTime());
+		final String timeString = new SimpleDateFormat(format).format(cal.getTime());
 		return timeString;
 	}
 	

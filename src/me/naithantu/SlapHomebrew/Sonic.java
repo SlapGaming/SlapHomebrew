@@ -1,6 +1,8 @@
 package me.naithantu.SlapHomebrew;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -149,5 +151,12 @@ public class Sonic {
 	public long getTotalTime(String playerName){
 		String playerTimes = sonicConfig.getString("players." + playerName.toLowerCase());
 		return Long.parseLong(playerTimes.split(":")[5]);
+	}
+	
+	public static String changeTimeFormat(long time) {
+		final Calendar cal = Calendar.getInstance();
+		cal.setTimeInMillis(time);
+		final String timeString = new SimpleDateFormat("mm:ss:SS").format(cal.getTime());
+		return timeString;
 	}
 }
