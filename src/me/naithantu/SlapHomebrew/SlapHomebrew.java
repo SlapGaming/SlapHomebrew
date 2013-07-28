@@ -70,13 +70,12 @@ public class SlapHomebrew extends JavaPlugin {
 	Horses horses;
 	ChangeLog changeLog;
 	Mail mail;
-	
+
 	Essentials essentials;
-	
+
 	public static boolean allowCakeTp;
 
 	Configuration config;
-
 
 	PluginManager pm;
 
@@ -128,6 +127,7 @@ public class SlapHomebrew extends JavaPlugin {
 		pm.registerEvents(new CreatureDeathListener(this, horses), this);
 		pm.registerEvents(new EntityDamageByEntityListener(this, horses), this);
 		pm.registerEvents(new EntityDamageListener(), this);
+		pm.registerEvents(new EntityChangeBlockListener(this), this);
 		pm.registerEvents(new PlayerDeathListener(this), this);
 		pm.registerEvents(new DispenseListener(), this);
 		pm.registerEvents(new FoodLevelChangeListener(), this);
@@ -159,7 +159,7 @@ public class SlapHomebrew extends JavaPlugin {
 		if (vipConfig.getConfigurationSection("vipdays") == null) {
 			vipConfig.createSection("vipdays");
 		}
-		
+
 		saveConfig();
 	}
 
@@ -184,22 +184,22 @@ public class SlapHomebrew extends JavaPlugin {
 		}
 		return (WorldGuardPlugin) plugin;
 	}
-	
-	public Essentials getEssentials(){
+
+	public Essentials getEssentials() {
 		return essentials;
 	}
 
 	//TODO Use WGCustomFlags instead of crappy member flags.
-	
-/*	private WGCustomFlagsPlugin getWGCustomFlags() {
-		Plugin plugin = getServer().getPluginManager().getPlugin("WGCustomFlags");
 
-		if (plugin == null || !(plugin instanceof WGCustomFlagsPlugin)) {
-			return null;
-		}
-
-		return (WGCustomFlagsPlugin) plugin;
-	}*/
+	/*
+	 * private WGCustomFlagsPlugin getWGCustomFlags() { Plugin plugin =
+	 * getServer().getPluginManager().getPlugin("WGCustomFlags");
+	 * 
+	 * if (plugin == null || !(plugin instanceof WGCustomFlagsPlugin)) { return
+	 * null; }
+	 * 
+	 * return (WGCustomFlagsPlugin) plugin; }
+	 */
 
 	public Vip getVip() {
 		return vip;
@@ -216,16 +216,16 @@ public class SlapHomebrew extends JavaPlugin {
 	public YamlStorage getDataStorage() {
 		return dataStorage;
 	}
-	
+
 	public YamlStorage getSonicStorage() {
 		return sonicStorage;
 	}
-	
+
 	public YamlStorage getVipGrantStorage() {
 		return vipGrantStorage;
 	}
-	
-	public YamlStorage getApplyThreadStorage(){
+
+	public YamlStorage getApplyThreadStorage() {
 		return applyThreadStorage;
 	}
 
@@ -413,28 +413,28 @@ public class SlapHomebrew extends JavaPlugin {
 	public Bump getBump() {
 		return bump;
 	}
-	
-	public Sonic getSonic(){
+
+	public Sonic getSonic() {
 		return sonic;
 	}
-	
-	public Extras getExtras(){
+
+	public Extras getExtras() {
 		return extras;
 	}
-	
-	public AwayFromKeyboard getAwayFromKeyboard(){
+
+	public AwayFromKeyboard getAwayFromKeyboard() {
 		return afk;
 	}
-	
-	public Horses getHorses(){
+
+	public Horses getHorses() {
 		return horses;
 	}
-	
-	public ChangeLog getChangeLog(){
+
+	public ChangeLog getChangeLog() {
 		return changeLog;
 	}
-	
-	public Mail getMail(){
+
+	public Mail getMail() {
 		return mail;
 	}
 
