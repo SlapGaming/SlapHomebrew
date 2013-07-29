@@ -3,9 +3,7 @@ package me.naithantu.SlapHomebrew.Commands;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Util;
 
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 public abstract class AbstractCommand {
 
@@ -22,29 +20,18 @@ public abstract class AbstractCommand {
 	}
 
 	protected void msg(CommandSender sender, String msg) {
-		if (sender instanceof Player) {
-			sender.sendMessage(Util.getHeader() + msg);
-		} else {
-			sender.sendMessage("[SLAP] " + msg);
-		}
+		Util.msg(sender, msg);
 	}
 
 	protected void badMsg(CommandSender sender, String msg) {
-		if (sender instanceof Player) {
-			sender.sendMessage(ChatColor.RED + msg);
-		} else {
-			sender.sendMessage(msg);
-		}
+		Util.badMsg(sender, msg);
 	}
 
 	protected void noPermission(CommandSender sender) {
-		sender.sendMessage(ChatColor.RED + "You do not have access to that command.");
+		Util.noPermission(sender);
 	}
 
 	protected boolean testPermission(CommandSender sender, String perm) {
-		String permission = "slaphomebrew." + perm;
-		if (!(sender instanceof Player) || sender.hasPermission(permission))
-			return true;
-		return false;
+		return Util.testPermission(sender, perm);
 	}
 }

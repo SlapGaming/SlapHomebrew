@@ -2,12 +2,14 @@ package me.naithantu.SlapHomebrew;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -152,4 +154,31 @@ public class Util {
     	if(s == null) return null;
     	return s.replaceAll("&([0-9a-f])", "");
     }
+    
+    public static void msg(CommandSender sender, String msg) {
+		if (sender instanceof Player) {
+			sender.sendMessage(Util.getHeader() + msg);
+		} else {
+			sender.sendMessage("[SLAP] " + msg);
+		}
+	}
+
+    public static void badMsg(CommandSender sender, String msg) {
+		if (sender instanceof Player) {
+			sender.sendMessage(ChatColor.RED + msg);
+		} else {
+			sender.sendMessage(msg);
+		}
+	}
+
+    public static void noPermission(CommandSender sender) {
+		sender.sendMessage(ChatColor.RED + "You do not have access to that command.");
+	}
+
+    public static boolean testPermission(CommandSender sender, String perm) {
+		String permission = "slaphomebrew." + perm;
+		if (!(sender instanceof Player) || sender.hasPermission(permission))
+			return true;
+		return false;
+	}
 }
