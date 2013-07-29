@@ -68,7 +68,7 @@ public class PlayerCommandListener implements Listener {
 			player.chat("/stafflist");
 			event.setCancelled(true);
 		}
-		
+				
 		//Cancel commands in Jail
 		User targetUser = plugin.getEssentials().getUserMap().getUser(player.getName());
 		if (targetUser.isJailed()) {
@@ -123,8 +123,13 @@ public class PlayerCommandListener implements Listener {
 					if (commandMessage[1].equals("define") && !SlapHomebrew.worldGuard.containsKey(commandMessage[2])) {
 						SlapHomebrew.worldGuard.put(commandMessage[2], date + " " + player.getName() + " made region " + message.replace(getReplaceString(commandMessage[0], commandMessage[1]), ""));
 					} else if ( (commandMessage[1].equals("remove") && SlapHomebrew.worldGuard.containsKey(commandMessage[2])) || !commandMessage[1].equals("remove")) {
-						String replaceString = getReplaceString(commandMessage[0], commandMessage[1]);
-						logWorldGaurd(commandMessage[2], date, player.getName(), action, message, replaceString);
+						if(commandMessage[1].equals("addmember") && event.getMessage().contains("flag:") && !Util.testPermission(player, "flag")){
+							Util.badMsg(player, "You are not allowed to add member flags!");
+							event.setCancelled(true);
+						} else {
+							String replaceString = getReplaceString(commandMessage[0], commandMessage[1]);
+							logWorldGaurd(commandMessage[2], date, player.getName(), action, message, replaceString);
+						}
 					}
 				}
 				break;
