@@ -2,6 +2,7 @@ package me.naithantu.SlapHomebrew;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -10,6 +11,9 @@ import org.bukkit.scoreboard.Team;
 public class Extras {
 	SlapHomebrew plugin;
 
+	HashSet<String> pvpWorld = new HashSet<String>();
+	HashSet<String> pvpTimer = new HashSet<String>();
+	
 	HashMap<String, Integer> rainbow = new HashMap<String, Integer>();
 	HashMap<String, HomeMenu> homeMenus = new HashMap<String, HomeMenu>();
 	List<String> hasJumped = new ArrayList<String>();
@@ -22,6 +26,14 @@ public class Extras {
 		menus  = new Menus(plugin);
 		ghostTeam = Bukkit.getScoreboardManager().getNewScoreboard().registerNewTeam("ghosts");
 		ghostTeam.setCanSeeFriendlyInvisibles(true);
+	}
+	
+	public HashSet<String> getPvpWorld(){
+		return pvpWorld;
+	}
+	
+	public HashSet<String> getPvpTimer(){
+		return pvpTimer;
 	}
 
 	public HashMap<String, Integer> getRainbow() {

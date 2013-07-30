@@ -34,6 +34,7 @@ public class CommandHandler {
 		case "homemenu":		commandObj = new HomeMenuCommand(sender, args, plugin);			break;
 		case "lag":				commandObj = new LagCommand(sender, args, plugin, lag);			break;
 		case "leavecake":		commandObj = new LeavecakeCommand(sender, args, plugin);		break;
+		case "leave":			commandObj = new LeaveCommand(sender, args, plugin);			break;
 		case "message":			commandObj = new MessageCommand(sender, args, plugin);			break;
 		case "minecart":		commandObj = new MinecartCommand(sender, args, plugin);			break;
 		case "mobcheck":		commandObj = new MobcheckCommand(sender, args, plugin);			break;

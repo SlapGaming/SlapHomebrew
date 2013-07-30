@@ -1,5 +1,7 @@
 package me.naithantu.SlapHomebrew.Listeners;
 
+import java.util.HashSet;
+
 import me.naithantu.SlapHomebrew.Flag;
 import me.naithantu.SlapHomebrew.Horses;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
@@ -38,6 +40,18 @@ public class EntityDamageByEntityListener implements Listener {
 		
 		if (damager != null && damager instanceof Player) {
 			Entity entity = event.getEntity();
+			
+			if (event.getEntity() instanceof Player) {
+				String world = event.getEntity().getWorld().getName();
+				if (world.equals("world_pvp")) {
+					HashSet<String> pvpWorld = plugin.getExtras().getPvpWorld();
+					if (pvpWorld.contains(((Player) event.getEntity()).getName())) {
+						Util.msg((Player) entity, "You have been attacked! Teleport cancelled!");
+						pvpWorld.remove(((Player) event.getEntity()).getName());
+					}
+				}
+			}
+			
 			if (entity instanceof Animals || entity instanceof NPC) {
 				Location entityLoc = event.getEntity().getLocation();
 				Player player = (Player) damager;

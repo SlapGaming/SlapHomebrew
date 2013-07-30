@@ -119,3 +119,5 @@ commands:
     aliases: [modlist]
   lag:
     description: Shows the current TPS.
+  leave:
+    description: Leave the pvp world.
