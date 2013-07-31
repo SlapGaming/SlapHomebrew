@@ -39,7 +39,6 @@ public class CakedefenceCommand extends AbstractCommand {
 			if (arg.equalsIgnoreCase("toggle")) {
 				if (SlapHomebrew.allowCakeTp == false) {
 					SlapHomebrew.allowCakeTp = true;
-					System.out.println(SlapHomebrew.allowCakeTp);
 					player.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + "Players can now teleport to cake defence!");
 				} else {
 					SlapHomebrew.allowCakeTp = false;

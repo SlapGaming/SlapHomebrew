@@ -14,7 +14,6 @@ public class ChangeLog {
 		changeLogArray = new ArrayList<>();
 		createChangeLog();
 		pages = (int)Math.ceil((double)(changeLogArray.size() / 5));
-		System.out.println(pages);
 	}
 	
 	public void showPage(CommandSender targetPlayer, int page) {

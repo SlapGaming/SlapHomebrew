@@ -408,7 +408,6 @@ public class SlapCommand extends AbstractCommand {
 				this.badMsg(sender, "That's not a mob!");
 				return true;
 			}
-			System.out.println("Mob: " + mobType);
 
 			Location location = player.getTargetBlock(null, 20).getLocation().add(0, 1, 0);
 			world = player.getWorld();

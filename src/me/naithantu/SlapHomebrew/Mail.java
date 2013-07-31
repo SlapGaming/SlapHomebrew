@@ -25,15 +25,15 @@ public class Mail {
 
 	private SlapHomebrew plugin;
 	private MailSQL mailSQL;
-	
+
 	private HashMap<String, Boolean> crunchingData;
 	private SimpleDateFormat dateFormat;
 	private SimpleDateFormat monthFormat;
-	
+
 	private YamlStorage mailYML;
 	private FileConfiguration mailConfigYML;
-	
-	public Mail(SlapHomebrew plugin){
+
+	public Mail(SlapHomebrew plugin) {
 		this.plugin = plugin;
 		mailSQL = new MailSQL();
 		crunchingData = new HashMap<>();
@@ -44,7 +44,7 @@ public class Mail {
 		if (mailSQL.isConnected()) {
 			plugin.getLogger().info("[MAIL] Connected with MySQL database");
 			Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
-				
+
 				@Override
 				public void run() {
 					ConvertEssentialsMail();
@@ -54,21 +54,24 @@ public class Mail {
 			plugin.getLogger().info("[MAIL] Connection with MySQL database failed. Will deny all mail interaction.");
 		}
 	}
-	
+
 	/* SEND */
 	public void SendMail(Player Sender, String Reciever, String Mail) {
-		if (!sqlConnected(Sender)) return;
-		if (isCrunching(Sender)) return;
-		if (isBlocked(Sender, Reciever)) return;
-		
+		if (!sqlConnected(Sender))
+			return;
+		if (isCrunching(Sender))
+			return;
+		if (isBlocked(Sender, Reciever))
+			return;
+
 		crunchData(Sender.getName());
-		
+
 		final Player sender = Sender;
 		final String reciever = Reciever;
 		final String mail = Mail;
 
 		runAsync(new Runnable() {
-			
+
 			@Override
 			public void run() {
 				//boolean succes = sqlStorage.sendMail(sender.getName(), reciever, mail, null);
@@ -78,28 +81,30 @@ public class Mail {
 			}
 		});
 	}
-	
-	
+
 	/* REPLY */
 	public void replyToMailID(Player Sender, int ReplyID, String Mail) {
-		if (!sqlConnected(Sender)) return;
-		if (isCrunching(Sender)) return;
-		
+		if (!sqlConnected(Sender))
+			return;
+		if (isCrunching(Sender))
+			return;
+
 		crunchData(Sender.getName());
-		
+
 		final Player sender = Sender;
 		final int replyID = ReplyID;
 		final String mail = Mail;
-		
+
 		runAsync(new Runnable() {
-			
+
 			@Override
 			public void run() {
 				Object[] objects = mailSQL.getPlayerFromIDRecieved(sender.getName(), replyID);
 				if (objects != null) {
-					if (isBlocked(sender, (String)objects[0])) return;
-					int recieverID = mailSQL.getIdForReciever(sender.getName(), (String)objects[0], (int)objects[1]);
-					boolean succes = mailSQL.sendMail(sender.getName(), (String)objects[0], mail, String.valueOf(replyID), String.valueOf(recieverID));
+					if (isBlocked(sender, (String) objects[0]))
+						return;
+					int recieverID = mailSQL.getIdForReciever(sender.getName(), (String) objects[0], (int) objects[1]);
+					boolean succes = mailSQL.sendMail(sender.getName(), (String) objects[0], mail, String.valueOf(replyID), String.valueOf(recieverID));
 					sendMailDoneMessage(sender, succes);
 				} else {
 					sender.sendMessage(ChatColor.RED + "This #MailID doesn't exist.");
@@ -108,25 +113,28 @@ public class Mail {
 			}
 		});
 	}
-	
-	public void replyToPlayer(Player Sender, String Reciever, String Mail){
-		if (!sqlConnected(Sender)) return;
-		if (isCrunching(Sender)) return;
-		if (isBlocked(Sender, Reciever)) return;
-		
+
+	public void replyToPlayer(Player Sender, String Reciever, String Mail) {
+		if (!sqlConnected(Sender))
+			return;
+		if (isCrunching(Sender))
+			return;
+		if (isBlocked(Sender, Reciever))
+			return;
+
 		crunchData(Sender.getName());
-		
+
 		final Player sender = Sender;
 		final String reciever = Reciever;
 		final String mail = Mail;
-		
+
 		runAsync(new Runnable() {
-			
+
 			@Override
 			public void run() {
 				Object[] objects = mailSQL.getIdFromPlayerRecieved(sender.getName(), reciever);
 				if (objects != null) {
-					int recieverID = mailSQL.getIdForReciever(sender.getName(), reciever, (int)objects[1]);
+					int recieverID = mailSQL.getIdForReciever(sender.getName(), reciever, (int) objects[1]);
 					boolean succes = mailSQL.sendMail(sender.getName(), reciever, mail, String.valueOf(objects[0]), String.valueOf(recieverID));
 					sendMailDoneMessage(sender, succes);
 				} else {
@@ -136,20 +144,21 @@ public class Mail {
 			}
 		});
 	}
-	
-	
+
 	/* READ */
 	public void readMail(Player sender, int ID) {
-		if (!sqlConnected(sender)) return;
-		if (isCrunching(sender)) return;
-		
+		if (!sqlConnected(sender))
+			return;
+		if (isCrunching(sender))
+			return;
+
 		crunchData(sender.getName());
-		
+
 		final Player fSender = sender;
 		final int fID = ID;
-		
+
 		runAsync(new Runnable() {
-			
+
 			@Override
 			public void run() {
 				Object[] mail = mailSQL.getRecievedMail(fSender.getName(), fID);
@@ -162,27 +171,29 @@ public class Mail {
 			}
 		});
 	}
-	
+
 	public void readMail(Player sender, String fromPlayer) {
-		if (!sqlConnected(sender)) return;
-		if (isCrunching(sender)) return;
-		
+		if (!sqlConnected(sender))
+			return;
+		if (isCrunching(sender))
+			return;
+
 		crunchData(sender.getName());
-		
+
 		final Player fSender = sender;
 		final String fFromPlayer = fromPlayer;
-		
+
 		runAsync(new Runnable() {
-			
+
 			@Override
 			public void run() {
 				Object[] mailID = mailSQL.getIdFromPlayerRecieved(fSender.getName(), fFromPlayer);
 				if (mailID != null) {
-					Object[] mail = mailSQL.getRecievedMail(fSender.getName(), (int)mailID[0]);
+					Object[] mail = mailSQL.getRecievedMail(fSender.getName(), (int) mailID[0]);
 					if (mail != null) {
-						readMailActions(fSender, mail, (int)mailID[0]);
+						readMailActions(fSender, mail, (int) mailID[0]);
 					} else {
-						fSender.sendMessage(ChatColor.RED + "No recieved mail found with MailID " + (int)mailID[0]);
+						fSender.sendMessage(ChatColor.RED + "No recieved mail found with MailID " + (int) mailID[0]);
 					}
 				} else {
 					fSender.sendMessage(ChatColor.RED + "You currently do not have a mail conversation with this person.");
@@ -191,39 +202,49 @@ public class Mail {
 			}
 		});
 	}
-	
+
 	private void readMailActions(Player sender, Object[] mail, int mailID) {
 		// `sender`, `date`, `has_read`, `removed`, `marked`, `response_to`, `message_id` - Message
 		String extraFirstLine = "";
-		if ((boolean)mail[3]) extraFirstLine = " | " + ChatColor.RED + "Removed" + ChatColor.WHITE;
-		if ((boolean)mail[4]) extraFirstLine = extraFirstLine + " | " + ChatColor.BLUE + "Marked" + ChatColor.WHITE;
-		if ((String)mail[5] != null) extraFirstLine = extraFirstLine + " | Response to " + ChatColor.GREEN + "#S" + mail[5] + ChatColor.WHITE;
-		PermissionUser user =  PermissionsEx.getUser((String)mail[0]);
-		sender.sendMessage(new String[] {ChatColor.GOLD + "[INFO] " + ChatColor.WHITE + "Mail " + ChatColor.GREEN + "#" + mailID + ChatColor.WHITE + " sent on " + ChatColor.GREEN + dateFormat.format((Date)mail[1]) + ChatColor.WHITE + " by " + Util.colorize(user.getPrefix() + user.getName()) + ChatColor.WHITE + extraFirstLine + ".",
-				ChatColor.GOLD + "[MAIL] " + ChatColor.ITALIC + ChatColor.WHITE + colorizeMail(user, (String)mail[7])} );
+		if ((boolean) mail[3])
+			extraFirstLine = " | " + ChatColor.RED + "Removed" + ChatColor.WHITE;
+		if ((boolean) mail[4])
+			extraFirstLine = extraFirstLine + " | " + ChatColor.BLUE + "Marked" + ChatColor.WHITE;
+		if ((String) mail[5] != null)
+			extraFirstLine = extraFirstLine + " | Response to " + ChatColor.GREEN + "#S" + mail[5] + ChatColor.WHITE;
+		PermissionUser user = PermissionsEx.getUser((String) mail[0]);
+		sender.sendMessage(new String[] {
+				ChatColor.GOLD + "[INFO] " + ChatColor.WHITE + "Mail " + ChatColor.GREEN + "#" + mailID + ChatColor.WHITE + " sent on " + ChatColor.GREEN + dateFormat.format((Date) mail[1])
+						+ ChatColor.WHITE + " by " + Util.colorize(user.getPrefix() + user.getName()) + ChatColor.WHITE + extraFirstLine + ".",
+				ChatColor.GOLD + "[MAIL] " + ChatColor.ITALIC + ChatColor.WHITE + colorizeMail(user, (String) mail[7]) });
 	}
-	
+
 	public void readSendMail(Player sender, int ID) {
-		if (!sqlConnected(sender)) return;
-		if (isCrunching(sender)) return;
-		
+		if (!sqlConnected(sender))
+			return;
+		if (isCrunching(sender))
+			return;
+
 		crunchData(sender.getName());
-		
+
 		final Player fSender = sender;
 		final int fID = ID;
-		
+
 		runAsync(new Runnable() {
-			
+
 			@Override
 			public void run() {
 				Object[] mail = mailSQL.getSendMail(fSender.getName(), fID);
 				if (mail != null) {
 					//`reciever`, `date`, `response_to`, `message_id` - message
 					String extraFirstLine = "";
-					if ((String)mail[2] != null) extraFirstLine = extraFirstLine + " | Response to " + ChatColor.GREEN + "#" + mail[2] + ChatColor.WHITE;
-					PermissionUser user = PermissionsEx.getUser((String)mail[0]);
-					fSender.sendMessage(new String[] {ChatColor.GOLD + "[INFO] " + ChatColor.WHITE + "Mail " + ChatColor.GREEN + "#S" + fID + ChatColor.WHITE + " sent on " + ChatColor.GREEN + dateFormat.format((Date)mail[1]) + ChatColor.WHITE + " to " + Util.colorize(user.getPrefix() + user.getName()) + ChatColor.WHITE + extraFirstLine + ".",
-							ChatColor.GOLD + "[MAIL] " + ChatColor.ITALIC + ChatColor.WHITE + colorizeMail(PermissionsEx.getUser(fSender), (String)mail[4])} );
+					if ((String) mail[2] != null)
+						extraFirstLine = extraFirstLine + " | Response to " + ChatColor.GREEN + "#" + mail[2] + ChatColor.WHITE;
+					PermissionUser user = PermissionsEx.getUser((String) mail[0]);
+					fSender.sendMessage(new String[] {
+							ChatColor.GOLD + "[INFO] " + ChatColor.WHITE + "Mail " + ChatColor.GREEN + "#S" + fID + ChatColor.WHITE + " sent on " + ChatColor.GREEN + dateFormat.format((Date) mail[1])
+									+ ChatColor.WHITE + " to " + Util.colorize(user.getPrefix() + user.getName()) + ChatColor.WHITE + extraFirstLine + ".",
+							ChatColor.GOLD + "[MAIL] " + ChatColor.ITALIC + ChatColor.WHITE + colorizeMail(PermissionsEx.getUser(fSender), (String) mail[4]) });
 				} else {
 					fSender.sendMessage(ChatColor.RED + "No send mail found with MailID " + fID);
 				}
@@ -231,17 +252,19 @@ public class Mail {
 			}
 		});
 	}
-	
+
 	public void setAllToRead(Player sender) {
-		if (!sqlConnected(sender)) return;
-		if (isCrunching(sender)) return;
-		
+		if (!sqlConnected(sender))
+			return;
+		if (isCrunching(sender))
+			return;
+
 		crunchData(sender.getName());
-		
+
 		final Player fSender = sender;
-		
+
 		runAsync(new Runnable() {
-			
+
 			@Override
 			public void run() {
 				int affectedMails = mailSQL.setReadAll(fSender.getName());
@@ -257,27 +280,28 @@ public class Mail {
 				doneCrunching(fSender.getName());
 			}
 		});
-		
+
 	}
-	
-	
+
 	/* CHECK */
 	public void checkMailPage(Player sender, MailSQL.CheckType type, int page) {
-		if (!sqlConnected(sender)) return;
-		if (isCrunching(sender)) return;
-		
+		if (!sqlConnected(sender))
+			return;
+		if (isCrunching(sender))
+			return;
+
 		crunchData(sender.getName());
-		
+
 		final Player fSender = sender;
 		final MailSQL.CheckType fType = type;
 		final int fPage = page;
-		
+
 		runAsync(new Runnable() {
-			
+
 			@Override
 			public void run() {
 				String playerName = fSender.getName();
-				int nrOfMails  = mailSQL.checkNrOfPages(playerName, fType);
+				int nrOfMails = mailSQL.checkNrOfPages(playerName, fType);
 				if (nrOfMails == 0) {
 					// no mail
 					if (fType == CheckType.NEW) {
@@ -286,12 +310,13 @@ public class Mail {
 						fSender.sendMessage(ChatColor.RED + "You have no mail with this type.");
 					}
 				} else if (nrOfMails > 0) {
-					int pages = (int)Math.ceil((double)nrOfMails / (double)5);
+					int pages = (int) Math.ceil((double) nrOfMails / (double) 5);
 					if (fPage <= pages && fPage > 0) {
 						Object[][] mails = mailSQL.getMailPage(playerName, fType, ((fPage - 1) * 5));
 						if (mails != null) {
 							sendPageBegin(fSender, fType);
-							String toBy; PermissionUser senderOfMail = null;
+							String toBy;
+							PermissionUser senderOfMail = null;
 							if (fType == CheckType.SEND) {
 								toBy = "to";
 								senderOfMail = PermissionsEx.getUser(fSender);
@@ -300,14 +325,14 @@ public class Mail {
 							}
 							for (Object[] mail : mails) {
 								if (mail[0] != null && mail[3] != null) {
-									String formattedDate = monthFormat.format((Date)mail[2]);
-									PermissionUser pexUser = PermissionsEx.getUser((String)mail[1]);
+									String formattedDate = monthFormat.format((Date) mail[2]);
+									PermissionUser pexUser = PermissionsEx.getUser((String) mail[1]);
 									String prefixColor = "";
 									if (pexUser.getPrefix().length() > 1) {
 										prefixColor = pexUser.getPrefix().substring(0, 2);
 									}
 									String line = Util.colorize("ID:&a#" + mail[0] + " &fon &a" + formattedDate + " &f" + toBy + " " + prefixColor + mail[1] + "&f: ");
-									int allowedChars = 53 - 4 - String.valueOf(mail[0]).length() - 4 - formattedDate.length()  - 2 - toBy.length() - String.valueOf(mail[1]).length() - 2;
+									int allowedChars = 53 - 4 - String.valueOf(mail[0]).length() - 4 - formattedDate.length() - 2 - toBy.length() - String.valueOf(mail[1]).length() - 2;
 									String mailString;
 									String mailMessage = String.valueOf(mail[3]);
 									PermissionUser usedUser;
@@ -329,8 +354,10 @@ public class Mail {
 						}
 					} else {
 						String onlyPagesText;
-						if (pages == 1) onlyPagesText = "There is only 1 page.";
-						else onlyPagesText = "There are " + pages + " pages.";
+						if (pages == 1)
+							onlyPagesText = "There is only 1 page.";
+						else
+							onlyPagesText = "There are " + pages + " pages.";
 						fSender.sendMessage(ChatColor.RED + "The page number you entered is out of range. " + onlyPagesText);
 					}
 				} else if (nrOfMails < 0) {
@@ -340,14 +367,15 @@ public class Mail {
 			}
 		});
 	}
-	
+
 	public void hasNewMail(Player player) {
-		if (!mailSQL.isConnected()) return;
-		
+		if (!mailSQL.isConnected())
+			return;
+
 		final Player fPlayer = player;
-		
+
 		runAsync(new Runnable() {
-			
+
 			@Override
 			public void run() {
 				int mails = mailSQL.checkNrOfNewMails(fPlayer.getName());
@@ -359,20 +387,21 @@ public class Mail {
 			}
 		});
 	}
-	
-	
+
 	/* DELETE */
 	public void deleteMail(Player sender, int ID) {
-		if (!sqlConnected(sender)) return;
-		if (isCrunching(sender)) return;
-		
+		if (!sqlConnected(sender))
+			return;
+		if (isCrunching(sender))
+			return;
+
 		crunchData(sender.getName());
-		
+
 		final Player fSender = sender;
 		final int fID = ID;
-		
+
 		runAsync(new Runnable() {
-			
+
 			@Override
 			public void run() {
 				boolean succes = mailSQL.setDeleted(fID, fSender.getName(), true);
@@ -385,18 +414,20 @@ public class Mail {
 			}
 		});
 	}
-	
+
 	public void undeleteMail(Player sender, int ID) {
-		if (!sqlConnected(sender)) return;
-		if (isCrunching(sender)) return;
-		
+		if (!sqlConnected(sender))
+			return;
+		if (isCrunching(sender))
+			return;
+
 		crunchData(sender.getName());
-		
+
 		final Player fSender = sender;
 		final int fID = ID;
-		
+
 		runAsync(new Runnable() {
-			
+
 			@Override
 			public void run() {
 				boolean succes = mailSQL.setDeleted(fID, fSender.getName(), false);
@@ -409,20 +440,21 @@ public class Mail {
 			}
 		});
 	}
-	
-	
+
 	/* MARKING */
 	public void markMail(Player sender, int ID) {
-		if (!sqlConnected(sender)) return;
-		if (isCrunching(sender)) return;
-		
+		if (!sqlConnected(sender))
+			return;
+		if (isCrunching(sender))
+			return;
+
 		crunchData(sender.getName());
-		
+
 		final Player fSender = sender;
 		final int fID = ID;
-		
+
 		runAsync(new Runnable() {
-			
+
 			@Override
 			public void run() {
 				boolean succes = mailSQL.setMarked(fID, fSender.getName(), true);
@@ -435,18 +467,20 @@ public class Mail {
 			}
 		});
 	}
-	
+
 	public void unmarkMail(Player sender, int ID) {
-		if (!sqlConnected(sender)) return;
-		if (isCrunching(sender)) return;
-		
+		if (!sqlConnected(sender))
+			return;
+		if (isCrunching(sender))
+			return;
+
 		crunchData(sender.getName());
-		
+
 		final Player fSender = sender;
 		final int fID = ID;
-		
+
 		runAsync(new Runnable() {
-			
+
 			@Override
 			public void run() {
 				boolean succes = mailSQL.setMarked(fID, fSender.getName(), false);
@@ -459,8 +493,7 @@ public class Mail {
 			}
 		});
 	}
-	
-	
+
 	/* BLOCKING */
 	public void blockPlayer(Player sender, String blockPlayer) {
 		String playerName = sender.getName();
@@ -478,7 +511,7 @@ public class Mail {
 		mailConfigYML.set(playerName + ".blocked", blockedPlayers);
 		mailYML.saveConfig();
 	}
-	
+
 	public void unblockPlayer(Player sender, String blockedPlayer) {
 		String playerName = sender.getName();
 		List<String> blockedPlayers;
@@ -495,7 +528,7 @@ public class Mail {
 		mailConfigYML.set(playerName + ".blocked", blockedPlayers);
 		mailYML.saveConfig();
 	}
-	
+
 	private boolean isBlocked(Player sender, String toPlayer) {
 		if (PermissionsEx.getUser(toPlayer).has("slaphomebrew.staff") || sender.hasPermission("slaphomebrew.staff")) {
 			return false;
@@ -504,18 +537,19 @@ public class Mail {
 		if (mailConfigYML.contains(toPlayer + ".blocked")) {
 			if (mailConfigYML.getStringList(toPlayer + ".blocked").contains(sender.getName())) {
 				sender.sendMessage(ChatColor.RED + "You cannot send mails to this person.");
-				returnBool  = true;
+				returnBool = true;
 			}
 		}
 		return returnBool;
 	}
-	
+
 	public void getBlockList(Player sender) {
 		String playerName = sender.getName();
 		if (mailConfigYML.contains(playerName + ".blocked")) {
 			List<String> blockedPlayers = mailConfigYML.getStringList(playerName + ".blocked");
 			if (blockedPlayers.size() > 0) {
-				String blocked = ""; boolean first = true;
+				String blocked = "";
+				boolean first = true;
 				for (String blockedPlayer : blockedPlayers) {
 					if (first) {
 						first = false;
@@ -532,59 +566,70 @@ public class Mail {
 			sender.sendMessage(ChatColor.RED + "You have no people blocked.");
 		}
 	}
-	
-	
+
 	/* GROUP */
 	public enum MailGroups {
-		VIP, GUIDE, MOD, ADMIN, OP,
-		VIPU, GUIDEU, MODU, ADMINU, PAPOI, STAFF
+		VIP, GUIDE, MOD, ADMIN, OP, VIPU, GUIDEU, MODU, ADMINU, PAPOI, STAFF
 	}
-	
+
 	public void mailGroup(Player Sender, MailGroups Group, String Mail) {
-		if (!sqlConnected(Sender)) return;
-		if (isCrunching(Sender)) return;
-		
+		if (!sqlConnected(Sender))
+			return;
+		if (isCrunching(Sender))
+			return;
+
 		crunchData(Sender.getName());
-		
+
 		final Player sender = Sender;
 		final MailGroups group = Group;
 		final String mail = Mail;
-		
+
 		runAsync(new Runnable() {
-			
+
 			@Override
 			public void run() {
 				boolean groupUp = false;
-				if (group.toString().matches("[A-Z]*U")) groupUp = true;
-				if (group == MailGroups.STAFF) groupUp = true;
+				if (group.toString().matches("[A-Z]*U"))
+					groupUp = true;
+				if (group == MailGroups.STAFF)
+					groupUp = true;
 				ArrayList<String> playerNames = new ArrayList<>();
 				UserMap uMap = plugin.getEssentials().getUserMap();
 				switch (group) {
-				case VIP: case VIPU:
-					for (PermissionUser user: PermissionsEx.getPermissionManager().getGroup("VIP").getUsers()) {
+				case VIP:
+				case VIPU:
+					for (PermissionUser user : PermissionsEx.getPermissionManager().getGroup("VIP").getUsers()) {
 						playerNames.add(user.getName());
 					}
-					if (!groupUp) break;
-				case GUIDE: case GUIDEU: case STAFF:
-					for (PermissionUser user: PermissionsEx.getPermissionManager().getGroup("Guide").getUsers()) {
+					if (!groupUp)
+						break;
+				case GUIDE:
+				case GUIDEU:
+				case STAFF:
+					for (PermissionUser user : PermissionsEx.getPermissionManager().getGroup("Guide").getUsers()) {
 						addToGroup(playerNames, user.getName(), uMap);
 					}
-					for (PermissionUser user: PermissionsEx.getPermissionManager().getGroup("VIPGuide").getUsers()) {
+					for (PermissionUser user : PermissionsEx.getPermissionManager().getGroup("VIPGuide").getUsers()) {
 						addToGroup(playerNames, user.getName(), uMap);
 					}
-					if (!groupUp) break;
-				case MOD: case MODU:
-					for (PermissionUser user: PermissionsEx.getPermissionManager().getGroup("Mod").getUsers()) {
+					if (!groupUp)
+						break;
+				case MOD:
+				case MODU:
+					for (PermissionUser user : PermissionsEx.getPermissionManager().getGroup("Mod").getUsers()) {
 						addToGroup(playerNames, user.getName(), uMap);
 					}
-					if (!groupUp) break;
-				case ADMIN: case ADMINU:
-					for (PermissionUser user: PermissionsEx.getPermissionManager().getGroup("Admin").getUsers()) {
+					if (!groupUp)
+						break;
+				case ADMIN:
+				case ADMINU:
+					for (PermissionUser user : PermissionsEx.getPermissionManager().getGroup("Admin").getUsers()) {
 						addToGroup(playerNames, user.getName(), uMap);
 					}
-					if (!groupUp) break;
+					if (!groupUp)
+						break;
 				case OP:
-					for (PermissionUser user: PermissionsEx.getPermissionManager().getGroup("SuperAdmin").getUsers()) {
+					for (PermissionUser user : PermissionsEx.getPermissionManager().getGroup("SuperAdmin").getUsers()) {
 						addToGroup(playerNames, user.getName(), uMap);
 					}
 					break;
@@ -599,13 +644,14 @@ public class Mail {
 				if (playerNames.contains(senderName.toLowerCase())) {
 					playerNames.remove(senderName.toLowerCase());
 				}
-				int succes = 0; 
+				int succes = 0;
 				sender.sendMessage(Util.getHeader() + "Starting to send " + playerNames.size() + " mails...");
 				int messageID = mailSQL.insertMessage(mail);
 				if (messageID > 0) {
 					for (String player : playerNames) {
 						boolean send = mailSQL.sendMailGroup(senderName, player, messageID);
-						if (send) succes++;
+						if (send)
+							succes++;
 					}
 					sender.sendMessage(Util.getHeader() + succes + " out of the " + playerNames.size() + " mails sent.");
 				} else {
@@ -613,61 +659,69 @@ public class Mail {
 				}
 				doneCrunching(sender.getName());
 			}
-		});	
-		
+		});
+
 	}
-	
+
 	private void addToGroup(ArrayList<String> playerNames, String user, UserMap uMap) {
 		long _1month = 1000 * 60 * 60 * 24 * 30;
 		if ((System.currentTimeMillis() - uMap.getUser(user).getLastOnlineActivity()) < _1month) {
 			playerNames.add(user);
 		}
 	}
-	
-	
+
 	/* SEARCH */
 	public void searchPlayerConversation(Player sender, String otherPlayer, int page) {
-		if (!sqlConnected(sender)) return;
-		if (isCrunching(sender)) return;
-		
+		if (!sqlConnected(sender))
+			return;
+		if (isCrunching(sender))
+			return;
+
 		crunchData(sender.getName());
-		
+
 		final Player fSender = sender;
 		final String fOtherPlayer = otherPlayer;
 		final int fPage = page;
-		
+
 		runAsync(new Runnable() {
-			
+
 			@Override
 			public void run() {
 				int nrOfMails = mailSQL.checkNrOfMailsConversation(fSender.getName(), fOtherPlayer);
 				if (nrOfMails > 0) {
-					int pages = (int)Math.ceil((double)nrOfMails / (double)5);
+					int pages = (int) Math.ceil((double) nrOfMails / (double) 5);
 					if (fPage > 0 && fPage <= pages) {
 						Object[][] mails = mailSQL.getMailConversation(fSender.getName(), fOtherPlayer, (fPage - 1) * 5);
 						if (mails != null) {
-							int nrOfIs = (int)Math.floor((53 - String.valueOf(" " + fSender.getName() + " <-Mail-> " + fOtherPlayer + " ").length()) / (double)2);
-							String isString = ChatColor.YELLOW + ""; int xCount = 0;
+							int nrOfIs = (int) Math.floor((53 - String.valueOf(" " + fSender.getName() + " <-Mail-> " + fOtherPlayer + " ").length()) / (double) 2);
+							String isString = ChatColor.YELLOW + "";
+							int xCount = 0;
 							while (xCount < nrOfIs) {
 								isString = isString + "=";
 								xCount++;
 							}
-							String senderName = fSender.getName(); 
+							String senderName = fSender.getName();
 							String otherName = fOtherPlayer;
 							PermissionUser senderU = PermissionsEx.getUser(fSender);
 							PermissionUser otherU = PermissionsEx.getUser(fOtherPlayer);
-							if (senderU != null) if (senderU.getPrefix().length() > 1) senderName = senderU.getPrefix().substring(0, 2) + senderName;
-							if (otherU != null) if (otherU.getPrefix().length() > 1) otherName = otherU.getPrefix().substring(0, 2) + fOtherPlayer;
-							fSender.sendMessage(isString + ChatColor.WHITE + " " + Util.colorize(senderName) + ChatColor.WHITE + " <-Mail-> " + Util.colorize(otherName) + " " + isString );
+							if (senderU != null)
+								if (senderU.getPrefix().length() > 1)
+									senderName = senderU.getPrefix().substring(0, 2) + senderName;
+							if (otherU != null)
+								if (otherU.getPrefix().length() > 1)
+									otherName = otherU.getPrefix().substring(0, 2) + fOtherPlayer;
+							fSender.sendMessage(isString + ChatColor.WHITE + " " + Util.colorize(senderName) + ChatColor.WHITE + " <-Mail-> " + Util.colorize(otherName) + " " + isString);
 							//Begin
 							for (Object[] mail : mails) {
 								if (mail[0] != null && mail[1] != null && mail[2] != null && mail[3] != null) {
-									switch ((String)mail[3]) {
+									switch ((String) mail[3]) {
 									case "S":
-										fSender.sendMessage(ChatColor.WHITE + "ID:" + ChatColor.GREEN + "#S" + mail[0] + ChatColor.WHITE + " sent on " + ChatColor.GREEN + monthFormat.format((Date)mail[1]) + ChatColor.WHITE + ": " + colorizeMail(senderU, (String)mail[2]));
+										fSender.sendMessage(ChatColor.WHITE + "ID:" + ChatColor.GREEN + "#S" + mail[0] + ChatColor.WHITE + " sent on " + ChatColor.GREEN
+												+ monthFormat.format((Date) mail[1]) + ChatColor.WHITE + ": " + colorizeMail(senderU, (String) mail[2]));
 										break;
-									case  "R":
-										fSender.sendMessage(ChatColor.WHITE + "ID:" + ChatColor.GREEN + "#" + mail[0] + ChatColor.WHITE + " recieved on " + ChatColor.GREEN + monthFormat.format((Date)mail[1]) + ChatColor.WHITE + ": " + colorizeMail(otherU, (String)mail[2]));
+									case "R":
+										fSender.sendMessage(ChatColor.WHITE + "ID:" + ChatColor.GREEN + "#" + mail[0] + ChatColor.WHITE + " recieved on " + ChatColor.GREEN
+												+ monthFormat.format((Date) mail[1]) + ChatColor.WHITE + ": " + colorizeMail(otherU, (String) mail[2]));
 										break;
 									}
 								}
@@ -678,8 +732,10 @@ public class Mail {
 						}
 					} else {
 						String onlyPagesText;
-						if (pages == 1) onlyPagesText = "There is only 1 page.";
-						else onlyPagesText = "There are " + pages + " pages.";
+						if (pages == 1)
+							onlyPagesText = "There is only 1 page.";
+						else
+							onlyPagesText = "There are " + pages + " pages.";
 						fSender.sendMessage(ChatColor.RED + "The page number you entered is out of range. " + onlyPagesText);
 					}
 				} else if (nrOfMails == 0) {
@@ -691,18 +747,17 @@ public class Mail {
 			}
 		});
 	}
-	
-	
+
 	/* OTHER STUFF */
-	private boolean sqlConnected(Player sender)  {
+	private boolean sqlConnected(Player sender) {
 		if (mailSQL.isConnected()) {
 			return true;
 		} else {
 			sender.sendMessage(ChatColor.RED + "The mail system is currently not available.");
 			return false;
-		}		
+		}
 	}
-	
+
 	private boolean isCrunching(Player sender) {
 		if (crunchingData.containsKey(sender.getName())) {
 			sender.sendMessage(ChatColor.RED + "A previous command is still running, please wait...");
@@ -711,21 +766,21 @@ public class Mail {
 			return false;
 		}
 	}
-	
+
 	private void runAsync(Runnable run) {
 		plugin.getServer().getScheduler().runTaskAsynchronously(plugin, run);
 	}
-	
+
 	private void crunchData(String player) {
 		crunchingData.put(player, true);
 	}
-	
+
 	private void doneCrunching(String player) {
 		crunchingData.remove(player);
 	}
-	
+
 	/* MESSAGERS */
-	
+
 	private void sendMailDoneMessage(Player sender, boolean succes) {
 		if (succes) {
 			sender.sendMessage(ChatColor.GRAY + "Mail sent!");
@@ -733,7 +788,7 @@ public class Mail {
 			sender.sendMessage(ChatColor.RED + "Mail did not send. Contact a staff member.");
 		}
 	}
-	
+
 	private String colorizeMail(PermissionUser user, String mail) {
 		if (user != null) {
 			if (user.has("chatmanager.chat.color")) {
@@ -742,8 +797,8 @@ public class Mail {
 		}
 		return mail;
 	}
-	
-	private String decolorizeMail(PermissionUser user, String mail){
+
+	private String decolorizeMail(PermissionUser user, String mail) {
 		if (user != null) {
 			if (user.has("chatmanager.chat.color")) {
 				return Util.decolorize(mail);
@@ -751,7 +806,7 @@ public class Mail {
 		}
 		return mail;
 	}
-	
+
 	private void sendPageBegin(Player sender, MailSQL.CheckType type) {
 		String is = ChatColor.YELLOW + "==================="; //15 chars left
 		switch (type) {
@@ -772,20 +827,29 @@ public class Mail {
 			break;
 		}
 	}
-	
+
 	private void sendPageEnd(Player sender, String page, String ofPages) {
 		String is = ChatColor.YELLOW + "================"; //21 chars left 
-		String extraIsB = ""; String extraIsE = "";
+		String extraIsB = "";
+		String extraIsE = "";
 		switch (page.length() + ofPages.length()) {
-		case 2:	extraIsB = extraIsE = "==";	break;
-		case 3:	extraIsB = "="; extraIsE = "=="; break;
-		case 4:	extraIsB = extraIsE = "="; break;
-		case 5: extraIsE = "="; break;
+		case 2:
+			extraIsB = extraIsE = "==";
+			break;
+		case 3:
+			extraIsB = "=";
+			extraIsE = "==";
+			break;
+		case 4:
+			extraIsB = extraIsE = "=";
+			break;
+		case 5:
+			extraIsE = "=";
+			break;
 		}
 		sender.sendMessage(ChatColor.YELLOW + is + extraIsB + ChatColor.GOLD + " Page " + page + " out of " + ofPages + " " + is + extraIsE);
 	}
-	
-	
+
 	//REMOVE AFTER CONVERSION
 	private void ConvertEssentialsMail() {
 		if (!mailConfigYML.contains("mailconverted")) {
@@ -796,27 +860,32 @@ public class Mail {
 			UserMap uMap = plugin.getEssentials().getUserMap();
 			for (String player : plugin.getEssentials().getUserMap().getAllUniqueUsers()) {
 				User u = uMap.getUser(player);
-				for (String mail : u.getMails()) {
-					boolean succes = false;
-					String[] splitMail = mail.split(": ");
-					if (splitMail.length == 2) {
-						succes = mailSQL.sendMail(u.getName(), splitMail[0], splitMail[1], null, null);
-					} else if (splitMail.length > 2) {
-						int xCount = 1; String msg = ""; boolean first = true;
-						while (xCount < splitMail.length) {
-							if (first) {
-								first = false;
-								msg = splitMail[xCount];
-							} else {
-								msg = msg + ": " + splitMail[xCount];
+				if (u != null) {
+					for (String mail : u.getMails()) {
+						boolean succes = false;
+						String[] splitMail = mail.split(": ");
+						if (splitMail.length == 2) {
+							succes = mailSQL.sendMail(splitMail[0], u.getName(), splitMail[1], null, null);
+						} else if (splitMail.length > 2) {
+							int xCount = 1;
+							String msg = "";
+							boolean first = true;
+							while (xCount < splitMail.length) {
+								if (first) {
+									first = false;
+									msg = splitMail[xCount];
+								} else {
+									msg = msg + ": " + splitMail[xCount];
+								}
+								xCount++;
 							}
-							xCount++;
+							succes = mailSQL.sendMail(splitMail[0], u.getName(), msg, null, null);
 						}
-						succes = mailSQL.sendMail(splitMail[0], u.getName(), msg, null, null);
+						if (succes)
+							mailsMoved++;
 					}
-					if (succes) mailsMoved++;
+					u.setMails(emptyList);
 				}
-				u.setMails(emptyList);
 			}
 			plugin.getLogger().info("[MAIL] " + mailsMoved + " mails moved from Essentials -> SlapMail.");
 		}

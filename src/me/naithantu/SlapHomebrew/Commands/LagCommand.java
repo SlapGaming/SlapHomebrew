@@ -21,7 +21,6 @@ public class LagCommand extends AbstractCommand {
 		}
 		
 		double tps = lag.getTPS();
-		System.out.println("TPS: " + tps);
 		StringBuilder builder = new StringBuilder();
 		builder.append(ChatColor.YELLOW).append("Ticks per second: ");
 		if (tps >= 17 && tps <= 23) {
