@@ -23,22 +23,36 @@ public class ApplyChecker {
 	private ApplyGathererTask gathererThread;
 	private ArrayList<String[]> failedThreads;
 	
+	private YamlStorage applyThreadStorage;
+	private FileConfiguration applyThreadConfig;
+	
 	private Essentials ess;
+	
+	private boolean disabled;
 	
 	public ApplyChecker(SlapHomebrew plugin, Essentials ess){
 		this.plugin = plugin;
 		this.ess = ess;
-		YamlStorage applyThreadStorage = plugin.getApplyThreadStorage();
-    	FileConfiguration applyThreadConfig = applyThreadStorage.getConfig();
+		applyThreadStorage = plugin.getApplyThreadStorage();
+    	applyThreadConfig = applyThreadStorage.getConfig();
+    	if (applyThreadConfig.contains("disabled")) {
+    		disabled = applyThreadConfig.getBoolean("disabled");
+    	} else {
+    		applyThreadConfig.set("disabled", false);
+    		applyThreadStorage.saveConfig();
+    		disabled = false;
+    	}
     	failedThreads = new ArrayList<String[]>();
-    	try {
-    		gathererThread = new ApplyGathererTask(this, applyThreadConfig, applyThreadStorage);
-    		gathererThread.runTaskTimerAsynchronously(plugin, 600, 1200);
-    	} catch (Exception e) {
-    		getLogger().info("Apply Forum Gatherer task failed.");
+    	if (!disabled) {
+	    	try {
+	    		gathererThread = new ApplyGathererTask(this, applyThreadConfig, applyThreadStorage);
+	    		gathererThread.runTaskTimerAsynchronously(plugin, 600, 1200);
+	    	} catch (Exception e) {
+	    		getLogger().info("Apply Forum Gatherer task failed.");
+	    	}
     	}
 	}
-	
+		
 	public void forumsDown(){
 		getLogger().info("[ApplyThread] Forums Down? - Retrying in a minute..");
 	}

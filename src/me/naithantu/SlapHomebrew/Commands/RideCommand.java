@@ -57,7 +57,9 @@ public class RideCommand extends AbstractCommand {
 		} else {
 			List<Entity> entities = player.getNearbyEntities(10.0, 10.0, 10.0);
 			if (entities.size() > 0) {
-				entities.get(0).setPassenger(player);
+				if (player.getPassenger() != null) {
+					entities.get(0).setPassenger(player);
+				}
 			}
 		}
 		return true;

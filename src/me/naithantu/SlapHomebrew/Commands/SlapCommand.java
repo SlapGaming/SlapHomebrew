@@ -21,6 +21,8 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_6_R2.entity.CraftPlayer;
 import org.bukkit.entity.EntityType;
@@ -660,7 +662,7 @@ public class SlapCommand extends AbstractCommand {
 				this.noPermission(sender);
 				return true;
 			}
-			player.chat("(╯°□°）╯︵ ┻━┻ Table flip!");
+			player.chat("(â•¯Â°â–¡Â°ï¼‰â•¯ï¸µ â”»â”�â”» Table flip!");
 			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
 
 				@Override
@@ -668,13 +670,122 @@ public class SlapCommand extends AbstractCommand {
 					Player[] onlinePlayers = plugin.getServer().getOnlinePlayers();
 					Player target = onlinePlayers[new Random().nextInt(onlinePlayers.length)];
 					if (target.getName().equals(player.getName())) {
-						target.chat("┬──┬ ﾉ(° _°ﾉ) Sorry 'bout that guys..");
+						target.chat("â”¬â”€â”€â”¬ ï¾‰(Â° _Â°ï¾‰) Sorry 'bout that guys..");
 					} else {
-						target.chat("┬──┬ ﾉ(° _°ﾉ) I fix");
+						target.chat("â”¬â”€â”€â”¬ ï¾‰(Â° _Â°ï¾‰) I fix");
 					}
 				}
 			}, 100);
-			break;			
+			break;	
+		case "forcerider": 
+			if (!testPermission(sender, "forcerider")) {
+				this.noPermission(sender);
+				return true;
+			}
+			if (args.length == 1) {
+				badMsg(sender, "You're doing it wrong.");
+				return true;
+			}
+			Player rider = plugin.getServer().getPlayer(args[1]);
+			if (rider == null) {
+				badMsg(sender, "This player doesn't exist.");
+				return true;
+			}
+			if (rider.getPassenger() != null || rider.getVehicle() != null) {
+				badMsg(sender, "The rider already has a passenenger or is riding a vehicle.");
+				return true;
+			}
+			boolean sameWorld = false;
+			if (player.getWorld().getName().equals(rider.getWorld().getName())) {
+				sameWorld = true;
+			}
+			boolean reversed = false;
+			if (args.length == 3) {
+				if (args[2].toLowerCase().equals("reverse")) {
+					reversed = true;
+					args = new String[] {"", args[1]};
+				}
+			}
+			LivingEntity targetEntity = null;
+			if (args.length == 2) {
+				List<Block> lineOfSightBlocks = player.getLineOfSight(null, 10);
+				for (Entity ent : player.getNearbyEntities(10, 10, 10)) {
+					if (ent instanceof LivingEntity) {
+						Block targetBlock = ent.getLocation().getBlock();
+						if (containsBlockRelatives(lineOfSightBlocks, targetBlock)) {
+							targetEntity = (LivingEntity) ent;
+							break;
+						} 
+					}
+				}
+				if (targetEntity != null) {
+					if (targetEntity.getPassenger() == null) {
+						if (!sameWorld) rider.teleport(targetEntity.getLocation());
+						if (!reversed) targetEntity.setPassenger(rider);
+						else rider.setPassenger(targetEntity);
+					} else badMsg(sender, "Target already has a passenger.");
+				} else badMsg(sender, "No LivingEntity found in line of sight");
+			} else if (args.length == 3) {
+				targetEntity = plugin.getServer().getPlayer(args[2]);
+				if (targetEntity != null) {
+					boolean sameWorld2 = false;
+					if (rider.getWorld().getName().equals(targetEntity.getWorld().getName())) sameWorld2 = true;
+					if (targetEntity.getPassenger() == null) {
+						if (!sameWorld2) rider.teleport(targetEntity.getLocation());
+						targetEntity.setPassenger(rider);
+					} else {
+						badMsg(sender, "Target already has a passenger.");
+					}
+				} else badMsg(sender, "Second player not found.");
+			} else {
+				badMsg(sender, "You're doing it wrong.");
+				return true;
+			}
+			break;
+		case "kickrider":
+			if (!testPermission(sender, "kickrider")) {
+				noPermission(sender);
+				return true;
+			}
+			if (args.length == 1) {
+				if (player.getPassenger() != null) {
+					player.getPassenger().leaveVehicle();
+				}
+			} else if (args.length == 2) {
+				List<Block> lineOfSightBlocks = player.getLineOfSight(null, 10);
+				for (Entity ent : player.getNearbyEntities(10, 10, 10)) {
+					if (ent instanceof LivingEntity) {
+						Block targetBlock = ent.getLocation().getBlock();
+						if (containsBlockRelatives(lineOfSightBlocks, targetBlock)) {
+							if (ent.getPassenger() != null) {
+								ent.getPassenger().leaveVehicle();
+							}
+							break;
+						} 
+					}
+				}
+			} else if (args.length == 3) {
+				Player targetRider = plugin.getServer().getPlayer(args[1]);
+				
+				if (targetRider != null) {
+					targetRider.sendMessage("Je bestaat");
+					if (args[2].toLowerCase().equals("p")) {
+						//Kick passenger
+						targetRider.sendMessage("Kick Passenger");
+						if (targetRider.getPassenger() != null) {
+							targetRider.getPassenger().leaveVehicle();
+						}
+					} else if (args[2].toLowerCase().equals("v")) {
+						//Kick out vehicle
+						targetRider.sendMessage("Leave vehicle");
+						if (targetRider.getVehicle() != null) {
+							targetRider.leaveVehicle();
+							targetRider.sendMessage("huh");
+						}
+					}
+				}
+			}
+			break;
 		default:
 			return false;
 		}
@@ -688,5 +799,19 @@ public class SlapCommand extends AbstractCommand {
 			return false;
 		return inventory.getBoots().getType() == Material.LEATHER_BOOTS && inventory.getLeggings().getType() == Material.LEATHER_LEGGINGS
 				&& inventory.getChestplate().getType() == Material.LEATHER_CHESTPLATE && inventory.getHelmet().getType() == Material.LEATHER_HELMET;
+	}
+	
+	private boolean containsBlockRelatives (List<Block> l, Block o) {
+		boolean returnBool = false;
+		if (l.contains(o)) returnBool = true;
+		else {
+			for (BlockFace face : BlockFace.values()) {
+				if (l.contains(o.getRelative(face))) {
+					returnBool = true;
+					break;
+				}
+			}
+		}
+		return returnBool;
 	}
 }
