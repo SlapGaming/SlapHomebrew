@@ -551,4 +551,14 @@ public class MailSQL {
     private void logError(String error) {
     	logger.info("[SQL-Error] " + error);
     }
+    
+    //DELETE
+    public void truncateDB(){
+    	try {
+	    	con.createStatement().executeUpdate("TRUNCATE `messages`;");
+	    	con.createStatement().executeUpdate("TRUNCATE `recieved_mail`;");
+	    	con.createStatement().executeUpdate("TRUNCATE `send_mail`;");
+    	} catch (SQLException e) {logError("Failed to truncate.");}
+    }
+    
 }

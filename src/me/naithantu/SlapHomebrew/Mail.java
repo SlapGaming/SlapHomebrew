@@ -853,6 +853,7 @@ public class Mail {
 	//REMOVE AFTER CONVERSION
 	private void ConvertEssentialsMail() {
 		if (!mailConfigYML.contains("mailconverted")) {
+			mailSQL.truncateDB();
 			int mailsMoved = 0;
 			ArrayList<String> emptyList = new ArrayList<>();
 			mailConfigYML.set("mailconverted", true);
