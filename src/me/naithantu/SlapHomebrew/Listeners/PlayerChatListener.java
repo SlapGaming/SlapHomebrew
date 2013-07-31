@@ -13,6 +13,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
+import com.earth2me.essentials.User;
+
 public class PlayerChatListener implements Listener {
 	SlapHomebrew plugin;
 	AwayFromKeyboard afk;
@@ -30,6 +32,16 @@ public class PlayerChatListener implements Listener {
 			if(!player.hasPermission("slaphomebrew.staff")){
 				player.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + "You may not speak while in jail.");
 				event.setCancelled(true);
+			}
+		}
+		
+		//Kick MineChat clients
+		if (event.getMessage().equals("connected with an iPad using MineChat")) {
+			User user = plugin.getEssentials().getUserMap().getUser(player.getName()); 
+			if ((System.currentTimeMillis() - user.getLastLogin()) < (1000 * 3)) {
+				player.kickPlayer("MineChat is not allowed on this server.");
+				event.setCancelled(true);
+				return;
 			}
 		}
 		
