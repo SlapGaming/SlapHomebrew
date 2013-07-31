@@ -1,8 +1,8 @@
 name: SlapHomebrew
 main: me.naithantu.SlapHomebrew.SlapHomebrew
-depend: [Vault, PermissionsEx]
+depend: [Essentials, Vault, PermissionsEx]
 author: naithantu
-version: 2.10.6
+version: 2.11.0
 description: SlapHomebrew homemade plugin.
 commands:
   vip:
@@ -121,3 +121,6 @@ commands:
     description: Shows the current TPS.
   leave:
     description: Leave the pvp world.
+  mail:
+    description: Mail plugin
+    usage: "Usage: /mail help"

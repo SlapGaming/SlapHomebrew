@@ -43,8 +43,8 @@ public class MailCommand extends AbstractCommand {
 		}
 		
 		if (args.length == 0) {
-			//Mail info stuff
-			return true;
+			//-> check new
+			args = new String[]{"check"};
 		}
 		
 		switch(args[0].toLowerCase()) {
@@ -61,7 +61,7 @@ public class MailCommand extends AbstractCommand {
 					badMsg(sender, "This player has never been on the server.");
 				}
 			} else {
-				badMsg(sender, "Not enough arguments.");
+				sendUsageMessage(UsageType.SEND);
 			}
 			break;
 		case "reply":
@@ -91,7 +91,7 @@ public class MailCommand extends AbstractCommand {
 					}
 				}
 			} else {
-				badMsg(sender, "Not enough arguments.");
+				sendUsageMessage(UsageType.REPLY);
 			}
 			break;	
 		case "read":
@@ -134,7 +134,7 @@ public class MailCommand extends AbstractCommand {
 					}
 				}
 			} else {
-				badMsg(sender, "Not enough arguments.");
+				sendUsageMessage(UsageType.READ);
 			}
 			break;
 		case "check": case "c":
@@ -167,7 +167,7 @@ public class MailCommand extends AbstractCommand {
 					case "send": case "s":
 						mail.checkMailPage((Player)sender, MailSQL.CheckType.SEND, page);
 						break;
-					case "recieved": case "r":
+					case "received": case "r":
 						mail.checkMailPage((Player)sender, MailSQL.CheckType.RECIEVED, page);
 						break;
 					case "new": case "n":
@@ -180,7 +180,7 @@ public class MailCommand extends AbstractCommand {
 						mail.checkMailPage((Player)sender, MailSQL.CheckType.MARKED, page);
 						break;
 					default:
-						badMsg(sender, "This is not a valid mail type. Use: send/recieved/new/deleted/marked");
+						sendUsageMessage(UsageType.CHECK);
 					}
 				}
 			} else {
@@ -206,7 +206,7 @@ public class MailCommand extends AbstractCommand {
 					badMsg(sender, args[1] + " is not a valid mail number/ID.");
 				}
 			} else {
-				return false;
+				sendUsageMessage(UsageType.DELETE);
 			}
 			break;
 		case "undelete":
@@ -227,8 +227,9 @@ public class MailCommand extends AbstractCommand {
 					badMsg(sender, args[1] + " is not a valid mail number/ID.");
 				}
 			} else {
-				return false;
+				sendUsageMessage(UsageType.UNDELETE);
 			}
+			break;
 		case "search": case "searchplayer": case "player": case "check-conversation": case "conversation": case "con": case "conv":
 			if (args.length > 1) {
 				int page = 1;
@@ -248,7 +249,7 @@ public class MailCommand extends AbstractCommand {
 					badMsg(sender, "This player has never been on the server.");
 				}
 			} else {
-				badMsg(sender, "Not enough arguments. Try /mail help");
+				sendUsageMessage(UsageType.SEARCH);
 			}
 			break;
 		case "mark":
@@ -269,7 +270,7 @@ public class MailCommand extends AbstractCommand {
 					badMsg(sender, args[1] + " is not a valid mail number/ID.");
 				}
 			} else {
-				return false;
+				sendUsageMessage(UsageType.MARK);
 			}
 			break;
 		case "unmark": 
@@ -290,47 +291,47 @@ public class MailCommand extends AbstractCommand {
 					badMsg(sender, args[1] + " is not a valid mail number/ID.");
 				}
 			} else {
-				return false;
+				sendUsageMessage(UsageType.UNMARK);
 			}
 			break;
 		case "block":
-			if (testPermission(sender, "mail.block")) {
-				if (args.length > 1) {
-					PermissionUser user = PermissionsEx.getUser(args[1]);
-					if (user != null) {
-						mail.blockPlayer((Player)sender, user.getName());
-					} else {
-						badMsg(sender, "This player has never been on the server.");
-					}
+			if (!testPermission(sender, "mail.block")) {
+				noPermission(sender);
+				return true;
+			}
+			if (args.length > 1) {
+				PermissionUser user = PermissionsEx.getUser(args[1]);
+				if (user != null) {
+					mail.blockPlayer((Player)sender, user.getName());
 				} else {
-					return false;
+					badMsg(sender, "This player has never been on the server.");
 				}
 			} else {
-				noPermission(sender);
+				sendUsageMessage(UsageType.BLOCK);
 			}
 			break;
 		case "unblock":
-			if (testPermission(sender, "mail.block")) {
-				if (args.length > 1) {
-					PermissionUser user = PermissionsEx.getUser(args[1]);
-					if (user != null) {
-						mail.blockPlayer((Player)sender, user.getName());
-					} else {
-						badMsg(sender, "This player has never been on the server.");
-					}
+			if (!testPermission(sender, "mail.block")) {
+				noPermission(sender);
+				return true;
+			}
+			if (args.length > 1) {
+				PermissionUser user = PermissionsEx.getUser(args[1]);
+				if (user != null) {
+					mail.blockPlayer((Player)sender, user.getName());
 				} else {
-					return false;
+					badMsg(sender, "This player has never been on the server.");
 				}
 			} else {
-				noPermission(sender);
+				sendUsageMessage(UsageType.UNBLOCK);
 			}
 			break;
 		case "blocklist":
-			if (testPermission(sender, "mail.block")) {
-				mail.getBlockList((Player)sender);
-			} else {
+			if (!testPermission(sender, "mail.block")) {
 				noPermission(sender);
+				return true;
 			}
+			mail.getBlockList((Player)sender);
 			break;
 		case "group":
 			//This command is way to dangerous..
@@ -346,15 +347,50 @@ public class MailCommand extends AbstractCommand {
 					sender.sendMessage(ChatColor.RED + "Wrong Group. Try: " + MailGroups.values().toString());
 				}
 			} else {
-				badMsg(sender, "Not enough arguments.");
+				sendUsageMessage(UsageType.GROUP);
 			}
 			break;
 		case "help":
-			badMsg(sender, "This is not yet supported.");
+			int page = 1;
+			if (args.length > 1) {
+				try {
+					page = Integer.parseInt(args[1]);
+					if (page < 1) throw new NumberFormatException();
+				} catch (NumberFormatException e) {
+					badMsg(sender, args[1] + " is not a valid page number. There are only 3 pages.");
+					return true;
+				}
+			}
+			if (page > 0 && page < 4)  {
+				String is = ChatColor.YELLOW + "===================="; //16 Left
+				sender.sendMessage(ChatColor.GRAY + "Check the forums for more detailed information!");
+				sender.sendMessage(is + "= " + ChatColor.GOLD + "Help Page " + is + "=");
+				switch (page) {
+				case 1:
+					sendHelpLine("send [Player] [Message]", "Send a mail to a person.");
+					sendHelpLine("reply [#MailID/Player] [Message]", "Reply to a mail or a person.");
+					sendHelpLine("read [#MailID]", "Read a mail. Add 'S' infront of the ID to check a send mail.");
+					sendHelpLine("read all", "Mark all your new mails as read.");
+					break;
+				case 2:
+					sendHelpLine("check <send/recieved/new/deleted/marked> <page>", "Check (a type of) your mail.");
+					sendHelpLine("delete/undelete [#MailID]", "Delete/Undelete one of your mails.");
+					sendHelpLine("mark/unmark [#MailID]", "Mark/Unmark one of your mails as special.");
+					sendHelpLine("search [Player] <page>", "Get all the send/recieved to/from that player.");
+					break;
+				case 3:
+					sendHelpLine("block/unblock [Player]", "Block/Unblock a player from mailing you.");
+					sendHelpLine("blocklist", "Get a list of all the blocked players.");
+					break;
+				}
+				sender.sendMessage(is + " " + ChatColor.GOLD + "Page " + page + " of 3 " + is);
+			} else {
+				badMsg(sender, "There are only 3 help pages.");
+			}
 			break;
-			
+		default:
+			return false;
 		}
-		
 		return true;
 	}
 	
@@ -370,7 +406,32 @@ public class MailCommand extends AbstractCommand {
 		}
 		return message;
 	}
+	
+	private enum UsageType {
+		SEND, REPLY, READ, CHECK, DELETE, UNDELETE, MARK, UNMARK, SEARCH, BLOCK, UNBLOCK, BLOCKLIST, GROUP
+	}
+	
+	private void sendUsageMessage(UsageType type) {
+		String msg = ChatColor.RED + "Usage: ";
+		switch (type) {
+		case BLOCK: sender.sendMessage(msg + "/mail block [Playername]"); break;
+		case BLOCKLIST: sender.sendMessage(msg + "/mail blocklist"); break;
+		case CHECK: sender.sendMessage(msg + "/mail check <send/recieved/new/deleted/special/marked> <page>"); break;
+		case DELETE: sender.sendMessage(msg + "/mail delete [#MailID]"); break;
+		case GROUP: sender.sendMessage(msg + "/mail group [Group] [Message]"); break;
+		case MARK: sender.sendMessage(msg + "/mail mark [#MailID]"); break;
+		case READ: sender.sendMessage(msg + "/mail read [#MailID/Playername]"); break;
+		case REPLY: sender.sendMessage(msg + "/mail reply [#MailID/Playername] [Message]"); break;
+		case SEARCH: sender.sendMessage(msg + "/mail search [Playername]"); break;
+		case SEND: sender.sendMessage(msg + "/mail send [Playername] [Message]"); break;
+		case UNBLOCK: sender.sendMessage(msg + "/mail unblock [Playername]"); break;
+		case UNDELETE: sender.sendMessage(msg + "/mail undelete [#MailID]"); break;
+		case UNMARK: sender.sendMessage(msg + "/mail unmark [#MailID]"); break;
+		}
+	}
 		
-
+	private void sendHelpLine(String command, String help) {
+		sender.sendMessage(ChatColor.GOLD + "/mail " + command + " : " + ChatColor.WHITE + help);
+	}
 
 }

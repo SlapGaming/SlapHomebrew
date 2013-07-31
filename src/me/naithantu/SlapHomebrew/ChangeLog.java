@@ -56,6 +56,9 @@ public class ChangeLog {
 		changeLogArray.add(0, new LoggedChange("14/07/2013", "/stafflist now replaces /modlist!"));
 		changeLogArray.add(0, new LoggedChange("14/07/2013", "Horse spawn eggs are now available in the shop."));
 		changeLogArray.add(0, new LoggedChange("15/07/2013", "Mutate your horses in skeleton or zombie horses, check out /horse help 2 [VIP/Donate only]!"));
+		changeLogArray.add(0, new LoggedChange("28/07/2013", "WorldGaurd owners can now add/remove members to/from their worldgaurd."));
+		changeLogArray.add(0, new LoggedChange("29/07/2013", "Players have a 5% chance of dropping their head in PvP."));
+		changeLogArray.add(0, new LoggedChange("31/07/2013", "Mail is now an actual mail plugin. Check out /mail help or the forums!"));
 	}
 	
 	private class LoggedChange {

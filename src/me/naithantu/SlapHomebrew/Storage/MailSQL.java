@@ -6,15 +6,20 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Logger;
+
+import org.bukkit.Bukkit;
 
 public class MailSQL {
 
     private Connection con;
     
     private boolean connected;
+    private Logger logger;
     	
 	public MailSQL() {
 		connected = false;
+		logger = Bukkit.getLogger();
 		getConnection();
 		if (connected) {
 			createTables();
@@ -23,7 +28,7 @@ public class MailSQL {
 	
     private void getConnection() {
         try {   
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/slapmail","root", "");
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/mcecon","mecon", "B9eCusTa");
             connected = true;
         }
         catch(Exception e) {
@@ -45,7 +50,7 @@ public class MailSQL {
     		tempStatement.executeUpdate("CREATE TABLE IF NOT EXISTS `send_mail` ( `mail_id` int(10) NOT NULL, `sender` varchar(255) DEFAULT NULL, `reciever` varchar(255) DEFAULT NULL, `date` datetime NOT NULL, `response_to` varchar(10) DEFAULT NULL, `message_id` int(10) NOT NULL, PRIMARY KEY (`mail_id`,`sender`), KEY `message_id` (`message_id`) ) ENGINE=InnoDB DEFAULT CHARSET=latin1;");   		
     	} catch (SQLException e) {
     		//Fatal error
-    		System.out.println(e.getMessage());
+    		logError(e.getMessage());
     		connected = false;
     	}
     }
@@ -70,7 +75,7 @@ public class MailSQL {
     		messageFailed = false;
     	} catch (SQLException e) {
     		messageFailed = true;
-    		System.out.println("message failed - " + e.getMessage());
+    		logError(e.getMessage());
     	}
     	
     	//Message inserted
@@ -113,7 +118,7 @@ public class MailSQL {
     			messageID = messageIDRS.getInt(1);
     		}
     	} catch (SQLException e) {
-    		System.out.println("message failed - " + e.getMessage());
+    		logError(e.getMessage());
     	}
     	return messageID;
     }
@@ -158,7 +163,7 @@ public class MailSQL {
     			return true;
     		}
     	} catch (SQLException e) {
-    		System.out.println(e.getMessage());
+    		logError(e.getMessage());
     	}
     	return false;
     }
@@ -175,7 +180,7 @@ public class MailSQL {
     			return true;
     		}
     	} catch (SQLException e) {
-    		System.out.println(e.getMessage());
+    		logError(e.getMessage());
     	}
     	return false;
     }
@@ -192,7 +197,7 @@ public class MailSQL {
     			returnInt = idRS.getInt(1) + 1;
     		}
     	} catch (SQLException e) {
-    		System.out.println(e.getMessage());
+    		logError(e.getMessage());
     	}
     	return returnInt;
     }
@@ -206,7 +211,7 @@ public class MailSQL {
     			returnInt = idRS.getInt(1) + 1;
     		}
     	} catch (SQLException e) {
-    		System.out.println(e.getMessage());
+    		logError(e.getMessage());
     	}
     	return returnInt;
     }
@@ -226,7 +231,7 @@ public class MailSQL {
     			returnObjects[1] = idRS.getInt(2);
     		}
     	} catch (SQLException e) {
-    		System.out.println(e.getMessage());
+    		logError(e.getMessage());
     	}
     	
     	return returnObjects;
@@ -244,7 +249,7 @@ public class MailSQL {
     			returnObjects[1] = idRS.getInt(2);
     		}
     	} catch (SQLException e) {
-    		System.out.println(e.getMessage());
+    		logError(e.getMessage());
     	}
     	return returnObjects;
     }
@@ -262,7 +267,7 @@ public class MailSQL {
     			returnInt = idRS.getInt(1);
     		}
     	} catch (SQLException e) {
-    		System.out.println(e.getMessage());
+    		logError(e.getMessage());
     	}
     	return returnInt;
     }
@@ -291,7 +296,7 @@ public class MailSQL {
        			}
     		}
     	} catch (SQLException e) {
-    		System.out.println(e.getMessage());
+    		logError(e.getMessage());
     	}
     	return returnObjects;
     }
@@ -312,7 +317,7 @@ public class MailSQL {
     			returnObjects[4] = getMessage((int)returnObjects[3]);
     		}
     	} catch (SQLException e) {
-    		System.out.println(e.getMessage());
+    		logError(e.getMessage());
     	}
     	
     	return returnObjects;
@@ -362,7 +367,7 @@ public class MailSQL {
 	    		}
     		}
     	} catch (SQLException e) {
-    		System.out.println(e.getMessage());
+    		logError(e.getMessage());
     	}
     	return returnInt;
     }
@@ -408,9 +413,24 @@ public class MailSQL {
     		
     		}
     	} catch (SQLException e) {
-    		System.out.println(e.getMessage());
+    		logError(e.getMessage());
     	}
     	return returnMails;
+    }
+    
+    public int checkNrOfNewMails(String player) {
+    	int returnInt = -1;
+    	try {
+    		PreparedStatement countStatement = con.prepareStatement("SELECT COUNT(*) as `mails` FROM `recieved_mail` where `reciever` = ? AND `has_read` = 0;");
+    		countStatement.setString(1, player);
+    		ResultSet countRS = countStatement.executeQuery();
+    		if (countRS.next()) {
+    			returnInt = countRS.getInt(1);
+    		}
+    	} catch (SQLException e) {
+    		logError(e.getMessage());
+    	}
+    	return returnInt;
     }
     
     //Get Mail Conversation
@@ -431,7 +451,7 @@ public class MailSQL {
     			returnInt = convPageRS.getInt(1);
     		}
     	} catch (SQLException e) {
-    		System.out.println(e.getMessage());
+    		logError(e.getMessage());
     	}
     	return returnInt;
     }
@@ -460,7 +480,7 @@ public class MailSQL {
     			xCount++;
     		}
     	} catch (SQLException e) {
-    		System.out.println(e.getMessage());
+    		logError(e.getMessage());
     	}
     	return returnObjects;
     }
@@ -477,7 +497,7 @@ public class MailSQL {
     			returnBool = true;
     		}
     	} catch (SQLException e) {
-    		System.out.println(e.getMessage());
+    		logError(e.getMessage());
     	}
     	return returnBool;
     }
@@ -489,7 +509,7 @@ public class MailSQL {
     		readStatement.setString(1, reciever);
     		affectedMails = readStatement.executeUpdate();
     	} catch (SQLException e) {
-    		System.out.println(e.getMessage());
+    		logError(e.getMessage());
     	}
     	return affectedMails;
     }
@@ -506,7 +526,7 @@ public class MailSQL {
     			returnBool = true;
     		}
     	} catch (SQLException e) {
-    		System.out.println(e.getMessage());
+    		logError(e.getMessage());
     	}
     	return returnBool;
     }
@@ -523,17 +543,12 @@ public class MailSQL {
     			returnBool = true;
     		}
     	} catch (SQLException e) {
-    		System.out.println(e.getMessage());
+    		logError(e.getMessage());
     	}
     	return returnBool;
     }
-        
-    /*private boolean setRemovedMail() {
-    	return false;
+    
+    private void logError(String error) {
+    	logger.info("[SQL-Error] " + error);
     }
-    
-    private boolean setMarkedMail() {
-    	return false;
-    }*/
-    
 }

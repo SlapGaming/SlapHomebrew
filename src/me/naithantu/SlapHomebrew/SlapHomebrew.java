@@ -108,7 +108,7 @@ public class SlapHomebrew extends JavaPlugin {
 		horses = new Horses(this);
 		changeLog = new ChangeLog();
 		Lag lag = new Lag(this);
-		//mail = new Mail(this);
+		mail = new Mail(this);
 		BlockfaqCommand.chatBotBlocks = loadHashSet("chatbotblocks");
 		setupEconomy();
 		setupChatBot();
@@ -132,7 +132,7 @@ public class SlapHomebrew extends JavaPlugin {
 		pm.registerEvents(new DispenseListener(), this);
 		pm.registerEvents(new FoodLevelChangeListener(), this);
 		pm.registerEvents(new PlayerInteractListener(this, horses), this);
-		pm.registerEvents(new PlayerLoginListener(this, timeStorage, dataStorage, vipStorage), this);
+		pm.registerEvents(new PlayerLoginListener(this, timeStorage, dataStorage, vipStorage, mail), this);
 		pm.registerEvents(new PlayerMoveListener(this, extras, afk), this);
 		pm.registerEvents(new PlayerPortalListener(), this);
 		pm.registerEvents(new PotionListener(), this);

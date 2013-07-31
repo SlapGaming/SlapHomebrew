@@ -6,9 +6,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+
+import com.earth2me.essentials.User;
+import com.earth2me.essentials.UserMap;
 
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
@@ -32,16 +36,23 @@ public class Mail {
 	public Mail(SlapHomebrew plugin){
 		this.plugin = plugin;
 		mailSQL = new MailSQL();
-		if (mailSQL.isConnected()) {
-			plugin.getLogger().info("[MAIL] Connected with MySQL database");
-		} else {
-			plugin.getLogger().info("[MAIL] Connection with MySQL database failed. Will deny all mail interaction.");
-		}
 		crunchingData = new HashMap<>();
 		dateFormat = new SimpleDateFormat("HH:mm dd-MM-yyyy a");
 		monthFormat = new SimpleDateFormat("dd-MM");
 		mailYML = new YamlStorage(plugin, "mail");
 		mailConfigYML = mailYML.getConfig();
+		if (mailSQL.isConnected()) {
+			plugin.getLogger().info("[MAIL] Connected with MySQL database");
+			Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
+				
+				@Override
+				public void run() {
+					ConvertEssentialsMail();
+				}
+			}, 40);
+		} else {
+			plugin.getLogger().info("[MAIL] Connection with MySQL database failed. Will deny all mail interaction.");
+		}
 	}
 	
 	/* SEND */
@@ -214,7 +225,7 @@ public class Mail {
 					fSender.sendMessage(new String[] {ChatColor.GOLD + "[INFO] " + ChatColor.WHITE + "Mail " + ChatColor.GREEN + "#S" + fID + ChatColor.WHITE + " sent on " + ChatColor.GREEN + dateFormat.format((Date)mail[1]) + ChatColor.WHITE + " to " + Util.colorize(user.getPrefix() + user.getName()) + ChatColor.WHITE + extraFirstLine + ".",
 							ChatColor.GOLD + "[MAIL] " + ChatColor.ITALIC + ChatColor.WHITE + colorizeMail(PermissionsEx.getUser(fSender), (String)mail[4])} );
 				} else {
-					fSender.sendMessage(ChatColor.RED + "No sent mail found with MailID " + fID);
+					fSender.sendMessage(ChatColor.RED + "No send mail found with MailID " + fID);
 				}
 				doneCrunching(fSender.getName());
 			}
@@ -330,6 +341,25 @@ public class Mail {
 		});
 	}
 	
+	public void hasNewMail(Player player) {
+		if (!mailSQL.isConnected()) return;
+		
+		final Player fPlayer = player;
+		
+		runAsync(new Runnable() {
+			
+			@Override
+			public void run() {
+				int mails = mailSQL.checkNrOfNewMails(fPlayer.getName());
+				if (mails == 1) {
+					fPlayer.sendMessage(Util.getHeader() + "You have " + mails + " new mail. " + ChatColor.GRAY + "Use " + ChatColor.RED + "/mail check" + ChatColor.GRAY + " to check your mail.");
+				} else if (mails > 1) {
+					fPlayer.sendMessage(Util.getHeader() + "You have " + mails + " new mails. " + ChatColor.GRAY + "Use " + ChatColor.RED + "/mail check" + ChatColor.GRAY + " to check your mail.");
+				}
+			}
+		});
+	}
+	
 	
 	/* DELETE */
 	public void deleteMail(Player sender, int ID) {
@@ -375,6 +405,7 @@ public class Mail {
 				} else {
 					fSender.sendMessage(ChatColor.RED + "Failed to undelete mail. (Does it even exist/not deleted?)");
 				}
+				doneCrunching(fSender.getName());
 			}
 		});
 	}
@@ -424,6 +455,7 @@ public class Mail {
 				} else {
 					fSender.sendMessage(ChatColor.RED + "Failed to unmark mail. (Does it even exist/not marked?)");
 				}
+				doneCrunching(fSender.getName());
 			}
 		});
 	}
@@ -505,7 +537,7 @@ public class Mail {
 	/* GROUP */
 	public enum MailGroups {
 		VIP, GUIDE, MOD, ADMIN, OP,
-		VIPu, GUIDEu, MODu, ADMINu, PAPOI
+		VIPU, GUIDEU, MODU, ADMINU, PAPOI, STAFF
 	}
 	
 	public void mailGroup(Player Sender, MailGroups Group, String Mail) {
@@ -523,35 +555,37 @@ public class Mail {
 			@Override
 			public void run() {
 				boolean groupUp = false;
-				if (group.toString().matches("[A-Z]*u")) groupUp = true;
+				if (group.toString().matches("[A-Z]*U")) groupUp = true;
+				if (group == MailGroups.STAFF) groupUp = true;
 				ArrayList<String> playerNames = new ArrayList<>();
+				UserMap uMap = plugin.getEssentials().getUserMap();
 				switch (group) {
-				case VIP: case VIPu:
+				case VIP: case VIPU:
 					for (PermissionUser user: PermissionsEx.getPermissionManager().getGroup("VIP").getUsers()) {
 						playerNames.add(user.getName());
 					}
 					if (!groupUp) break;
-				case GUIDE: case GUIDEu:
+				case GUIDE: case GUIDEU: case STAFF:
 					for (PermissionUser user: PermissionsEx.getPermissionManager().getGroup("Guide").getUsers()) {
-						playerNames.add(user.getName());
+						addToGroup(playerNames, user.getName(), uMap);
 					}
 					for (PermissionUser user: PermissionsEx.getPermissionManager().getGroup("VIPGuide").getUsers()) {
-						playerNames.add(user.getName());
+						addToGroup(playerNames, user.getName(), uMap);
 					}
 					if (!groupUp) break;
-				case MOD: case MODu:
+				case MOD: case MODU:
 					for (PermissionUser user: PermissionsEx.getPermissionManager().getGroup("Mod").getUsers()) {
-						playerNames.add(user.getName());
+						addToGroup(playerNames, user.getName(), uMap);
 					}
 					if (!groupUp) break;
-				case ADMIN: case ADMINu:
+				case ADMIN: case ADMINU:
 					for (PermissionUser user: PermissionsEx.getPermissionManager().getGroup("Admin").getUsers()) {
-						playerNames.add(user.getName());
+						addToGroup(playerNames, user.getName(), uMap);
 					}
 					if (!groupUp) break;
 				case OP:
 					for (PermissionUser user: PermissionsEx.getPermissionManager().getGroup("SuperAdmin").getUsers()) {
-						playerNames.add(user.getName());
+						addToGroup(playerNames, user.getName(), uMap);
 					}
 					break;
 				case PAPOI:
@@ -573,14 +607,21 @@ public class Mail {
 						boolean send = mailSQL.sendMailGroup(senderName, player, messageID);
 						if (send) succes++;
 					}
-					sender.sendMessage(Util.getHeader() + succes + " out of the " + playerNames.size() + " mails send.");
+					sender.sendMessage(Util.getHeader() + succes + " out of the " + playerNames.size() + " mails sent.");
 				} else {
-					sender.sendMessage(ChatColor.RED + "Failed to place message. No mails send.");
+					sender.sendMessage(ChatColor.RED + "Failed to save message. No mails sent.");
 				}
 				doneCrunching(sender.getName());
 			}
 		});	
 		
+	}
+	
+	private void addToGroup(ArrayList<String> playerNames, String user, UserMap uMap) {
+		long _1month = 1000 * 60 * 60 * 24 * 30;
+		if ((System.currentTimeMillis() - uMap.getUser(user).getLastOnlineActivity()) < _1month) {
+			playerNames.add(user);
+		}
 	}
 	
 	
@@ -623,7 +664,7 @@ public class Mail {
 								if (mail[0] != null && mail[1] != null && mail[2] != null && mail[3] != null) {
 									switch ((String)mail[3]) {
 									case "S":
-										fSender.sendMessage(ChatColor.WHITE + "ID:" + ChatColor.GREEN + "#S" + mail[0] + ChatColor.WHITE + " send on " + ChatColor.GREEN + monthFormat.format((Date)mail[1]) + ChatColor.WHITE + ": " + colorizeMail(senderU, (String)mail[2]));
+										fSender.sendMessage(ChatColor.WHITE + "ID:" + ChatColor.GREEN + "#S" + mail[0] + ChatColor.WHITE + " sent on " + ChatColor.GREEN + monthFormat.format((Date)mail[1]) + ChatColor.WHITE + ": " + colorizeMail(senderU, (String)mail[2]));
 										break;
 									case  "R":
 										fSender.sendMessage(ChatColor.WHITE + "ID:" + ChatColor.GREEN + "#" + mail[0] + ChatColor.WHITE + " recieved on " + ChatColor.GREEN + monthFormat.format((Date)mail[1]) + ChatColor.WHITE + ": " + colorizeMail(otherU, (String)mail[2]));
@@ -744,4 +785,40 @@ public class Mail {
 		sender.sendMessage(ChatColor.YELLOW + is + extraIsB + ChatColor.GOLD + " Page " + page + " out of " + ofPages + " " + is + extraIsE);
 	}
 	
+	
+	//REMOVE AFTER CONVERSION
+	private void ConvertEssentialsMail() {
+		if (!mailConfigYML.contains("mailconverted")) {
+			int mailsMoved = 0;
+			ArrayList<String> emptyList = new ArrayList<>();
+			mailConfigYML.set("mailconverted", true);
+			mailYML.saveConfig();
+			UserMap uMap = plugin.getEssentials().getUserMap();
+			for (String player : plugin.getEssentials().getUserMap().getAllUniqueUsers()) {
+				User u = uMap.getUser(player);
+				for (String mail : u.getMails()) {
+					boolean succes = false;
+					String[] splitMail = mail.split(": ");
+					if (splitMail.length == 2) {
+						succes = mailSQL.sendMail(u.getName(), splitMail[0], splitMail[1], null, null);
+					} else if (splitMail.length > 2) {
+						int xCount = 1; String msg = ""; boolean first = true;
+						while (xCount < splitMail.length) {
+							if (first) {
+								first = false;
+								msg = splitMail[xCount];
+							} else {
+								msg = msg + ": " + splitMail[xCount];
+							}
+							xCount++;
+						}
+						succes = mailSQL.sendMail(splitMail[0], u.getName(), msg, null, null);
+					}
+					if (succes) mailsMoved++;
+				}
+				u.setMails(emptyList);
+			}
+			plugin.getLogger().info("[MAIL] " + mailsMoved + " mails moved from Essentials -> SlapMail.");
+		}
+	}
 }
