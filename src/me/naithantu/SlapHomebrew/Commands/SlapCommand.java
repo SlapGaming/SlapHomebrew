@@ -767,19 +767,15 @@ public class SlapCommand extends AbstractCommand {
 				Player targetRider = plugin.getServer().getPlayer(args[1]);
 				
 				if (targetRider != null) {
-					targetRider.sendMessage("Je bestaat");
 					if (args[2].toLowerCase().equals("p")) {
 						//Kick passenger
-						targetRider.sendMessage("Kick Passenger");
 						if (targetRider.getPassenger() != null) {
 							targetRider.getPassenger().leaveVehicle();
 						}
 					} else if (args[2].toLowerCase().equals("v")) {
 						//Kick out vehicle
-						targetRider.sendMessage("Leave vehicle");
 						if (targetRider.getVehicle() != null) {
 							targetRider.leaveVehicle();
-							targetRider.sendMessage("huh");
 						}
 					}
 				}

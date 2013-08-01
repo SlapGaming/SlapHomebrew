@@ -2,7 +2,7 @@ name: SlapHomebrew
 main: me.naithantu.SlapHomebrew.SlapHomebrew
 depend: [Essentials, Vault, PermissionsEx]
 author: naithantu
-version: 2.11.0
+version: 2.12.0
 description: SlapHomebrew homemade plugin.
 commands:
   vip:
@@ -124,3 +124,12 @@ commands:
   mail:
     description: Mail plugin
     usage: "Usage: /mail help"
+  jail:
+    description: Jail a person.
+    usage: "Usage: /Jail [player] [jail] [time] [h/m/s] [reason]"
+  jails:
+    description: Get a list of all the jails.
+    usage: "Usage: /jails"
+  unjail:
+    description: Unjail a player.
+    usage: "Usage: /unjail [player]"

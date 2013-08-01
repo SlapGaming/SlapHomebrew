@@ -1,6 +1,7 @@
 package me.naithantu.SlapHomebrew.Listeners;
 
 import me.naithantu.SlapHomebrew.Horses;
+import me.naithantu.SlapHomebrew.Jails;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Util;
 import me.naithantu.SlapHomebrew.Commands.SlapCommand;
@@ -21,17 +22,27 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 
 public class PlayerInteractListener implements Listener {
+	
 	SlapHomebrew plugin;
 	Horses horses;
+	Jails jails;
 
-	public PlayerInteractListener(SlapHomebrew plugin, Horses horses) {
+	public PlayerInteractListener(SlapHomebrew plugin, Horses horses, Jails jails) {
 		this.plugin = plugin;
 		this.horses = horses;
+		this.jails = jails;
 	}
-
+	
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		final Player player = event.getPlayer();
+		
+		//Block if in jail
+		if (jails.isInJail(player.getName())) {
+			event.setCancelled(true);
+			return;
+		}
+		
 		if (SlapCommand.retroBow.contains(player.getName())) {
 			Arrow arrow = player.launchProjectile(Arrow.class);
 			arrow.setMetadata("retrobow", new FixedMetadataValue(plugin, true));

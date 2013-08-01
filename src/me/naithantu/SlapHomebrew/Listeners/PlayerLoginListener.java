@@ -8,11 +8,13 @@ import java.util.List;
 import java.util.Map;
 
 import me.naithantu.SlapHomebrew.Book;
+import me.naithantu.SlapHomebrew.Jails;
 import me.naithantu.SlapHomebrew.Mail;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Util;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -33,9 +35,10 @@ public class PlayerLoginListener implements Listener {
 	FileConfiguration dataConfig;
 	FileConfiguration vipConfig;
 	
-	Mail mail;
+	private Mail mail;
+	private Jails jails;
 
-	public PlayerLoginListener(SlapHomebrew plugin, YamlStorage timeStorage, YamlStorage dataStorage, YamlStorage vipStorage, Mail mail) {
+	public PlayerLoginListener(SlapHomebrew plugin, YamlStorage timeStorage, YamlStorage dataStorage, YamlStorage vipStorage, Mail mail, Jails jails) {
 		this.plugin = plugin;
 		this.timeStorage = timeStorage;
 		this.dataStorage = dataStorage;
@@ -44,6 +47,7 @@ public class PlayerLoginListener implements Listener {
 		dataConfig = dataStorage.getConfig();
 		vipConfig = vipStorage.getConfig();
 		this.mail = mail;
+		this.jails = jails;
 	}
 
 	@EventHandler
@@ -125,6 +129,17 @@ public class PlayerLoginListener implements Listener {
 		
 		//Check mails
 		mail.hasNewMail(player);
+		
+		//Throw in jail
+		if (jails.isInJail(player.getName())) {
+			Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
+				
+				@Override
+				public void run() {
+					jails.switchToOnlineJail(player);
+				}
+			}, 2);
+		}
 	}
 
 	private void updateVipDays() {

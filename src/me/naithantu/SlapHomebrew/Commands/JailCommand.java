@@ -23,10 +23,10 @@ public class JailCommand extends AbstractCommand {
 	protected JailCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
 		super(sender, args, plugin);
 		if (jails == null) {
-			//Get jails
+			jails = plugin.getJails();
 		}
 		if (ess == null) {
-			plugin.getEssentials();
+			ess = plugin.getEssentials();
 		}
 	}
 
@@ -76,6 +76,23 @@ public class JailCommand extends AbstractCommand {
 			jails.createJail(args[1].toLowerCase(), player.getLocation(), chatAllowed, msgAllowed);
 			player.sendMessage(Util.getHeader() + "Jail created.");
 			break;
+		case "remove":
+			//jail remove [name]
+			if (!testPermission(sender, "jail.remove")) {
+				noPermission(sender);
+				return true;
+			}
+			if (args.length <= 1) {
+				badMsg(sender, ChatColor.RED + "/jail remove [name]");
+			} else {
+				if (jails.jailExists(args[1].toLowerCase())) {
+					jails.deleteJail(args[1].toLowerCase());
+					sender.sendMessage(Util.getHeader() + "Jail removed.");
+				} else {
+					badMsg(sender, "This jail doesn't exist.");
+				}
+			}
+			break;
 		case "info":
 			if (args.length == 2) {
 				User u = ess.getUserMap().getUser(args[1]);
@@ -84,6 +101,8 @@ public class JailCommand extends AbstractCommand {
 						jails.getJailInfo(sender, u.getName());
 					} else badMsg(sender, "Player not in jail.");
 				} else badMsg(sender, "This player doesn't exist.");
+			} else {
+				badMsg(sender, "/jail info [player]");
 			}
 			break;
 		default:
@@ -92,6 +111,10 @@ public class JailCommand extends AbstractCommand {
 				User u = ess.getUserMap().getUser(args[0]);
 				if (u == null) {
 					badMsg(sender, "Player doesn't exist.");
+					return true;
+				}
+				if (jails.isInJail(u.getName())) {
+					badMsg(sender, "Player already jailed.");
 					return true;
 				}
 				if (testPermission(u, "jail.except")) {
@@ -118,10 +141,13 @@ public class JailCommand extends AbstractCommand {
 					badMsg(sender, "Not a valid time type. Types: h/m/s");
 					return true;
 				}
+				if (timeInJail > 10800000) {
+					badMsg(sender, "You can't jail someone for that long."); return true;
+				}
 				String reason = null; boolean first = true; int xCount = 4;
-				while (xCount <= args.length) {
+				while (xCount < args.length) {
 					if (first) { reason = args[xCount]; first = false;}
-					else { reason = reason + ", " + args[xCount]; }
+					else { reason = reason + " " + args[xCount]; }
 					xCount++;
 				}
 				Player targetPlayer = plugin.getServer().getPlayer(u.getName());
@@ -130,8 +156,9 @@ public class JailCommand extends AbstractCommand {
 				} else {
 					jails.putOnlinePlayerInJail(targetPlayer, reason, args[1], timeInJail);
 				}
+				sender.sendMessage(Util.getHeader() + "Player jailed.");
 			} else {
-				badMsg(sender, "/Jail [player] [jail] [time] [h/m/s] [reason]");
+				return false;
 			}
 		}
 		return true;

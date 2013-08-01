@@ -4,7 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import me.naithantu.SlapHomebrew.AwayFromKeyboard;
-import me.naithantu.SlapHomebrew.Jail;
+import me.naithantu.SlapHomebrew.Jails;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Util;
 
@@ -15,16 +15,15 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
-import com.earth2me.essentials.User;
 
 public class PlayerCommandListener implements Listener {
 
 	private AwayFromKeyboard afk;
-	private SlapHomebrew plugin;
+	private Jails jails;
 	
-	public PlayerCommandListener(SlapHomebrew plugin, AwayFromKeyboard afk){
+	public PlayerCommandListener(AwayFromKeyboard afk, Jails jails){
 		this.afk = afk;
-		this.plugin = plugin;
+		this.jails = jails;
 	}
 	
 	@EventHandler
@@ -32,54 +31,39 @@ public class PlayerCommandListener implements Listener {
 		Player player = event.getPlayer();
 		String message = event.getMessage().toLowerCase().trim();
 		String[] commandMessage = message.split(" ");
-		if (commandMessage[0].equalsIgnoreCase("/tjail") || commandMessage[0].equalsIgnoreCase("/jail") || commandMessage[0].equalsIgnoreCase("/togglejail")) {
-			boolean hasBeenJailed = true;
-			if (!player.hasPermission("slaphomebrew.longjail") && player.hasPermission("essentials.togglejail")) {
-				//Check the number of args, to not block usage messages.
-				if (commandMessage.length > 3) {
-					String time = "";
-					int i = 0;
-					for (String string : commandMessage) {
-						if (i > 2)
-							time += string + " ";
-						i++;
-					}
-					Jail jail = new Jail();
-					if (!jail.testJail(time)) {
-						player.sendMessage(ChatColor.RED + "You may not jail someone for that long!");
-						hasBeenJailed = false;
+		String playerName = player.getName();
+		
+		//Cancel commands in Jail
+		if (jails.isInJail(playerName)) {
+			if (commandMessage[0].equalsIgnoreCase("/timeleft")) {
+				jails.getJailInfo(player);
+				event.setCancelled(true);
+				player.sendMessage(ChatColor.GRAY + "You are jailed. Use /timeleft to check your time left in jail.");
+			} else if (commandMessage[0].equalsIgnoreCase("/unjail")) {
+				if (!player.hasPermission("slaphomebrew.jail")) {
+					event.setCancelled(true);
+				}
+			} else if (!commandMessage[0].equalsIgnoreCase("/modreq") && !commandMessage[0].equalsIgnoreCase("/ping") && !commandMessage[0].equalsIgnoreCase("/timeleft")) {
+				if (commandMessage[0].equalsIgnoreCase("/msg") || commandMessage[0].equalsIgnoreCase("/m") || commandMessage[0].equalsIgnoreCase("/message") || commandMessage[0].equalsIgnoreCase("/r") || commandMessage[0].equalsIgnoreCase("/reply")) {
+					if (!jails.isAllowedToMsg(playerName)) {
 						event.setCancelled(true);
+						player.sendMessage(ChatColor.GRAY + "You are jailed. Use /timeleft to check your time left in jail.");
 					}
+				} else {
+					event.setCancelled(true);
+					player.sendMessage(ChatColor.GRAY + "You are jailed. Use /timeleft to check your time left in jail.");
 				}
 			}
-			if(hasBeenJailed && Bukkit.getServer().getPlayer(commandMessage[1]) != null && commandMessage.length > 3)
-				Bukkit.getServer().broadcastMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + Bukkit.getServer().getPlayer(commandMessage[1]).getName() + " has been jailed.");
 		}
-		
-		if (commandMessage[0].equalsIgnoreCase("/jails")) {
-			if (player.hasPermission("slaphomebrew.jails") && player.hasPermission("essentials.togglejail")) {
-				player.sendMessage(ChatColor.GRAY + "one two three");
-				event.setCancelled(true);
-			}
-		}
-		
+						
 		//Catch /modlist command -> Force to /stafflist
 		if (commandMessage[0].equalsIgnoreCase("/modlist")) {
 			player.chat("/stafflist");
 			event.setCancelled(true);
 		}
 				
-		//Cancel commands in Jail
-		User targetUser = plugin.getEssentials().getUserMap().getUser(player.getName());
-		if (targetUser.isJailed()) {
-			if (!commandMessage[0].equalsIgnoreCase("/modreq")) {
-				event.setCancelled(true);
-				targetUser.sendMessage(ChatColor.RED + "You are still in jail for " + Util.changeTimeFormat(targetUser.getJailTimeout() - System.currentTimeMillis(), "mm:ss") + "s.");
-			}
-		}
 		
 		//Leave AFK on certain Commands
-		String playerName = player.getName();
 		String[] command = event.getMessage().toLowerCase().split(" ");
 		if (afk.isAfk(playerName)) {
 			switch(command[0]) {

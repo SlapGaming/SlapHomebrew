@@ -1,9 +1,8 @@
 package me.naithantu.SlapHomebrew.Listeners;
 
 import me.naithantu.SlapHomebrew.AwayFromKeyboard;
-import me.naithantu.SlapHomebrew.Flag;
+import me.naithantu.SlapHomebrew.Jails;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
-import me.naithantu.SlapHomebrew.Util;
 import me.naithantu.SlapHomebrew.Commands.BlockfaqCommand;
 import me.naithantu.SlapHomebrew.Commands.MessageCommand;
 
@@ -18,20 +17,25 @@ import com.earth2me.essentials.User;
 public class PlayerChatListener implements Listener {
 	SlapHomebrew plugin;
 	AwayFromKeyboard afk;
+	Jails jails;
 	
-	public PlayerChatListener(SlapHomebrew plugin, AwayFromKeyboard afk){
+	public PlayerChatListener(SlapHomebrew plugin, AwayFromKeyboard afk, Jails jails){
 		this.plugin = plugin;
 		this.afk = afk;
+		this.jails = jails;
 	}
 	@EventHandler
 	public void onPlayerChat(AsyncPlayerChatEvent event) {
 		String serverMessage;
 		Player player = event.getPlayer();
+		String playerName = player.getName();
+		
 		//Block chat while in jail.
-		if(Util.hasFlag(plugin, player.getLocation(), Flag.JAIL)){
-			if(!player.hasPermission("slaphomebrew.staff")){
-				player.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + "You may not speak while in jail.");
+		if (jails.isInJail(playerName)) {
+			if (!jails.isAllowedToChat(playerName)) {
 				event.setCancelled(true);
+				player.sendMessage(ChatColor.GRAY + "You are jailed. Use /timeleft to check your time left in jail.");
+				return;
 			}
 		}
 		
@@ -120,7 +124,7 @@ public class PlayerChatListener implements Listener {
 			plugin.saveConfig();
 		}
 		
-		String playerName = player.getName();
+		//Check for AFK
 		if (afk.isAfk(playerName)) {
 			afk.leaveAfk(playerName);
 		}

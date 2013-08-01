@@ -1,5 +1,7 @@
 package me.naithantu.SlapHomebrew.Listeners;
 
+import me.naithantu.SlapHomebrew.Jails;
+
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -9,9 +11,21 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 public class PlayerTeleportListener implements Listener {
 
+	private Jails jails;
+	
+	public PlayerTeleportListener(Jails jails) {
+		this.jails = jails;
+	}
+	
 	@EventHandler
 	public void onPlayerTeleport(PlayerTeleportEvent event) {
 		Player player = event.getPlayer();
+		
+		//Block if in jail
+		if (jails.isInsideJail(player.getName())) {
+			event.setCancelled(true);
+			return;
+		}
 		
 		if (event.getTo().getWorld().getName().equals("world_nether") && event.getTo().getBlockY() >= 127){ 
 			player.sendMessage(ChatColor.RED + "You may not go above the nether!");
@@ -22,4 +36,5 @@ public class PlayerTeleportListener implements Listener {
 			event.setCancelled(true);
 		}
 	}
+	
 }

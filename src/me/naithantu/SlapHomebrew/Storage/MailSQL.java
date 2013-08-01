@@ -551,14 +551,16 @@ public class MailSQL {
     private void logError(String error) {
     	logger.info("[SQL-Error] " + error);
     }
-    
-    //DELETE
-    public void truncateDB(){
+
+    public int countX(String from, String where) {
+    	int returnInt = -1;
     	try {
-	    	con.createStatement().executeUpdate("TRUNCATE `messages`;");
-	    	con.createStatement().executeUpdate("TRUNCATE `recieved_mail`;");
-	    	con.createStatement().executeUpdate("TRUNCATE `send_mail`;");
-    	} catch (SQLException e) {logError("Failed to truncate.");}
+    		ResultSet countRS = con.createStatement().executeQuery("SELECT COUNT(*) FROM `" + from + "` WHERE " + where);
+    		if (countRS.next()) {
+    			returnInt = countRS.getInt(1);
+    		}
+    	} catch (SQLException e) {}
+    	return returnInt;
     }
     
 }

@@ -4,7 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import me.naithantu.SlapHomebrew.AwayFromKeyboard;
-import me.naithantu.SlapHomebrew.SlapHomebrew;
+import me.naithantu.SlapHomebrew.Jails;
 import me.naithantu.SlapHomebrew.Util;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 
@@ -15,14 +15,15 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 public class PlayerQuitListener implements Listener {
-	SlapHomebrew plugin;
-	YamlStorage timeStorage;
-	AwayFromKeyboard afk;
+	
+	private YamlStorage timeStorage;
+	private AwayFromKeyboard afk;
+	private Jails jails;
 
-	public PlayerQuitListener(SlapHomebrew plugin, YamlStorage timeStorage, AwayFromKeyboard afk) {
-		this.plugin = plugin;
+	public PlayerQuitListener(YamlStorage timeStorage, AwayFromKeyboard afk, Jails jails) {
 		this.timeStorage = timeStorage;
 		this.afk = afk;
+		this.jails = jails;
 	}
 
 	@EventHandler
@@ -35,10 +36,18 @@ public class PlayerQuitListener implements Listener {
 			if (!isOnlineStaff(player.getName()))
 				Util.dateIntoTimeConfig(date, "There is no staff online!", timeStorage);
 		}
+		
+		//Remove from AFK
 		afk.removeAfk(player.getName());
+		
+		//Check if player is in jail
+		if (jails.isInJail(player.getName())) {
+			jails.switchToOfflineJail(player);
+		}
+		
 	}
 
-	boolean isOnlineStaff(String leavingPlayer) {
+	private boolean isOnlineStaff(String leavingPlayer) {
 		int onlineStaff = 0;
 		for (Player player : Bukkit.getServer().getOnlinePlayers()) {
 			if (player.hasPermission("slaphomebrew.staff") && !player.getName().equals(leavingPlayer)) {

@@ -2,6 +2,7 @@ package me.naithantu.SlapHomebrew.Commands;
 
 import me.naithantu.SlapHomebrew.Jails;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
+import me.naithantu.SlapHomebrew.Util;
 
 import org.bukkit.command.CommandSender;
 
@@ -16,10 +17,10 @@ public class UnjailCommand extends AbstractCommand {
 	protected UnjailCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
 		super(sender, args, plugin);
 		if (jails == null) {
-			//Getjails
+			jails = plugin.getJails();
 		}
 		if (ess == null) {
-			plugin.getEssentials();
+			ess = plugin.getEssentials();
 		}
 	}
 
@@ -32,10 +33,11 @@ public class UnjailCommand extends AbstractCommand {
 		if (args.length < 1) {
 			return false;
 		}
-		User u = ess.getUserMap().getUser(args[1]);
+		User u = ess.getUserMap().getUser(args[0]);
 		if (u != null) {
 			if (jails.isInJail(u.getName())) {
 				jails.releasePlayerFromJail(u.getName());
+				sender.sendMessage(Util.getHeader() + "Player unjailed.");
 			} else {
 				badMsg(sender, "This player is not in jail.");
 			}

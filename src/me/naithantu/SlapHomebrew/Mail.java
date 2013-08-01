@@ -6,12 +6,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
-import com.earth2me.essentials.User;
 import com.earth2me.essentials.UserMap;
 
 import ru.tehkode.permissions.PermissionUser;
@@ -37,19 +35,12 @@ public class Mail {
 		this.plugin = plugin;
 		mailSQL = new MailSQL();
 		crunchingData = new HashMap<>();
-		dateFormat = new SimpleDateFormat("HH:mm dd-MM-yyyy a");
+		dateFormat = new SimpleDateFormat("HH:mm dd-MM-yyyy zzz");
 		monthFormat = new SimpleDateFormat("dd-MM");
 		mailYML = new YamlStorage(plugin, "mail");
 		mailConfigYML = mailYML.getConfig();
 		if (mailSQL.isConnected()) {
 			plugin.getLogger().info("[MAIL] Connected with MySQL database");
-			Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
-
-				@Override
-				public void run() {
-					ConvertEssentialsMail();
-				}
-			}, 40);
 		} else {
 			plugin.getLogger().info("[MAIL] Connection with MySQL database failed. Will deny all mail interaction.");
 		}
@@ -849,46 +840,10 @@ public class Mail {
 		}
 		sender.sendMessage(ChatColor.YELLOW + is + extraIsB + ChatColor.GOLD + " Page " + page + " out of " + ofPages + " " + is + extraIsE);
 	}
-
-	//REMOVE AFTER CONVERSION
-	private void ConvertEssentialsMail() {
-		if (!mailConfigYML.contains("mailconverted")) {
-			mailSQL.truncateDB();
-			int mailsMoved = 0;
-			ArrayList<String> emptyList = new ArrayList<>();
-			mailConfigYML.set("mailconverted", true);
-			mailYML.saveConfig();
-			UserMap uMap = plugin.getEssentials().getUserMap();
-			for (String player : plugin.getEssentials().getUserMap().getAllUniqueUsers()) {
-				User u = uMap.getUser(player);
-				if (u != null) {
-					for (String mail : u.getMails()) {
-						boolean succes = false;
-						String[] splitMail = mail.split(": ");
-						if (splitMail.length == 2) {
-							succes = mailSQL.sendMail(splitMail[0], u.getName(), splitMail[1], null, null);
-						} else if (splitMail.length > 2) {
-							int xCount = 1;
-							String msg = "";
-							boolean first = true;
-							while (xCount < splitMail.length) {
-								if (first) {
-									first = false;
-									msg = splitMail[xCount];
-								} else {
-									msg = msg + ": " + splitMail[xCount];
-								}
-								xCount++;
-							}
-							succes = mailSQL.sendMail(splitMail[0], u.getName(), msg, null, null);
-						}
-						if (succes)
-							mailsMoved++;
-					}
-					u.setMails(emptyList);
-				}
-			}
-			plugin.getLogger().info("[MAIL] " + mailsMoved + " mails moved from Essentials -> SlapMail.");
-		}
+	
+	public void countSQL(Player sender, String from, String where) {
+		int count = mailSQL.countX(from, where);
+		if (count > 0) sender.sendMessage(Util.getHeader() + "Counted: " + count);
+		else sender.sendMessage(ChatColor.RED + "Failed.");
 	}
 }

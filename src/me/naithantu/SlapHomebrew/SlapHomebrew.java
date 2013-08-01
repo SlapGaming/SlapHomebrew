@@ -70,6 +70,7 @@ public class SlapHomebrew extends JavaPlugin {
 	Horses horses;
 	ChangeLog changeLog;
 	Mail mail;
+	Jails jails;
 
 	Essentials essentials;
 
@@ -109,6 +110,7 @@ public class SlapHomebrew extends JavaPlugin {
 		changeLog = new ChangeLog();
 		Lag lag = new Lag(this);
 		mail = new Mail(this);
+		jails = new Jails(this);
 		BlockfaqCommand.chatBotBlocks = loadHashSet("chatbotblocks");
 		setupEconomy();
 		setupChatBot();
@@ -121,24 +123,24 @@ public class SlapHomebrew extends JavaPlugin {
 		commandHandler = new CommandHandler(this, lottery, lag);
 		pm = getServer().getPluginManager();
 		pm.registerEvents(new BlockPlaceListener(this), this);
-		pm.registerEvents(new PlayerChatListener(this, afk), this);
-		pm.registerEvents(new PlayerCommandListener(this, afk), this);
+		pm.registerEvents(new PlayerChatListener(this, afk, jails), this);
+		pm.registerEvents(new PlayerCommandListener(afk, jails), this);
 		pm.registerEvents(new CreatureSpawnListener(this), this);
 		pm.registerEvents(new CreatureDeathListener(this, horses), this);
 		pm.registerEvents(new EntityDamageByEntityListener(this, horses), this);
-		pm.registerEvents(new EntityDamageListener(), this);
+		pm.registerEvents(new EntityDamageListener(jails), this);
 		pm.registerEvents(new EntityChangeBlockListener(this), this);
 		pm.registerEvents(new PlayerDeathListener(this), this);
 		pm.registerEvents(new DispenseListener(), this);
 		pm.registerEvents(new FoodLevelChangeListener(), this);
-		pm.registerEvents(new PlayerInteractListener(this, horses), this);
-		pm.registerEvents(new PlayerLoginListener(this, timeStorage, dataStorage, vipStorage, mail), this);
+		pm.registerEvents(new PlayerInteractListener(this, horses, jails), this);
+		pm.registerEvents(new PlayerLoginListener(this, timeStorage, dataStorage, vipStorage, mail, jails), this);
 		pm.registerEvents(new PlayerMoveListener(this, extras, afk), this);
 		pm.registerEvents(new PlayerPortalListener(), this);
 		pm.registerEvents(new PotionListener(), this);
 		pm.registerEvents(new ProjectileHitListener(), this);
-		pm.registerEvents(new PlayerQuitListener(this, timeStorage, afk), this);
-		pm.registerEvents(new PlayerTeleportListener(), this);
+		pm.registerEvents(new PlayerQuitListener(timeStorage, afk, jails), this);
+		pm.registerEvents(new PlayerTeleportListener(jails), this);
 		pm.registerEvents(new PlayerToggleFlightListener(extras), this);
 		pm.registerEvents(new VehicleListener(horses), this);
 		pm.registerEvents(new PlayerInteractEntityListener(horses), this);
@@ -173,6 +175,7 @@ public class SlapHomebrew extends JavaPlugin {
 		savePlots();
 		saveForumVip();
 		saveUnfinishedForumVip();
+		jails.shutdown();
 	}
 
 	public WorldGuardPlugin getWorldGuard() {
@@ -436,6 +439,10 @@ public class SlapHomebrew extends JavaPlugin {
 
 	public Mail getMail() {
 		return mail;
+	}
+	
+	public Jails getJails() {
+		return jails;
 	}
 
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {

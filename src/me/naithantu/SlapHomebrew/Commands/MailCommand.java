@@ -388,6 +388,23 @@ public class MailCommand extends AbstractCommand {
 				badMsg(sender, "There are only 3 help pages.");
 			}
 			break;
+		case "sql":
+			if (!testPermission(sender, "mail.sql")) {
+				noPermission(sender);
+				return true;
+			}
+			//Mail sql [from] [Where clause]
+			if (args.length > 2) {
+				String whereClause = ""; int xCount = 2;
+				while (xCount < args.length) {
+					if (xCount == 2) whereClause = args[xCount];
+					else whereClause = whereClause + " " + args[xCount];
+					xCount++;
+				}
+				sender.sendMessage(ChatColor.RED + "Executing SQL: " + ChatColor.WHITE + "SELECT COUNT(*) FROM `" + args[1] + "` WHERE " + whereClause);
+				mail.countSQL((Player)sender, args[1], whereClause);
+			}				
+			break;
 		default:
 			return false;
 		}
