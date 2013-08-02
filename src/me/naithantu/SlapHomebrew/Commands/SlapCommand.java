@@ -80,8 +80,11 @@ public class SlapCommand extends AbstractCommand {
 			for (World serverWorld : Bukkit.getWorlds()) {
 				for (Entity entity : serverWorld.getEntities()) {
 					if (entity instanceof Ocelot) {
-						entity.remove();
-						ocelotsRemoved++;
+						Ocelot ocelot = (Ocelot) entity;
+						if(!ocelot.isTamed()){
+							entity.remove();
+							ocelotsRemoved++;
+						}
 					}
 				}
 			}
