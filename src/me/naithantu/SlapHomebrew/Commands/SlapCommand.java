@@ -81,7 +81,7 @@ public class SlapCommand extends AbstractCommand {
 				for (Entity entity : serverWorld.getEntities()) {
 					if (entity instanceof Ocelot) {
 						Ocelot ocelot = (Ocelot) entity;
-						if(!ocelot.isTamed()){
+						if(ocelot.getOwner() == null){
 							entity.remove();
 							ocelotsRemoved++;
 						}
