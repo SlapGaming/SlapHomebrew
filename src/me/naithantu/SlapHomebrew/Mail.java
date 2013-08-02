@@ -10,6 +10,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
+import com.earth2me.essentials.User;
 import com.earth2me.essentials.UserMap;
 
 import ru.tehkode.permissions.PermissionUser;
@@ -625,9 +626,9 @@ public class Mail {
 					}
 					break;
 				case PAPOI:
-					playerNames.add("stoux2");
-					playerNames.add("jackster21");
-					playerNames.add("telluur");
+					playerNames.add("Stoux2");
+					playerNames.add("Jackster21");
+					playerNames.add("Telluur");
 					playerNames.add("naithantu");
 					break;
 				}
@@ -656,8 +657,11 @@ public class Mail {
 
 	private void addToGroup(ArrayList<String> playerNames, String user, UserMap uMap) {
 		long _1month = 1000 * 60 * 60 * 24 * 30;
-		if ((System.currentTimeMillis() - uMap.getUser(user).getLastOnlineActivity()) < _1month) {
-			playerNames.add(user);
+		User u = uMap.getUser(user);
+		if (u != null) {
+			if ((System.currentTimeMillis() - u.getLastOnlineActivity()) < _1month) {
+				playerNames.add(u.getName());
+			}
 		}
 	}
 

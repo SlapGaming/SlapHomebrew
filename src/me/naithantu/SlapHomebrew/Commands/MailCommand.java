@@ -1,5 +1,7 @@
 package me.naithantu.SlapHomebrew.Commands;
 
+import java.util.Arrays;
+
 import me.naithantu.SlapHomebrew.Mail;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Mail.MailGroups;
@@ -341,10 +343,16 @@ public class MailCommand extends AbstractCommand {
 			}
 			if (args.length > 2) {
 				try {
-					MailGroups group = MailGroups.valueOf(args[1]);
+					MailGroups group = MailGroups.valueOf(args[1].toUpperCase());
 					mail.mailGroup((Player)sender, group, createMailMessage(args));
 				} catch (Exception e) {
-					sender.sendMessage(ChatColor.RED + "Wrong Group. Try: " + MailGroups.values().toString());
+					String[] groups = new String[MailGroups.values().length];
+					int xCount = 0;
+					for (MailGroups a : MailGroups.values()) {
+						groups[xCount] = a.toString().toLowerCase();
+						xCount++;
+					}
+					sender.sendMessage(ChatColor.RED + "Incorrect group. Try: " + Arrays.toString(groups));
 				}
 			} else {
 				sendUsageMessage(UsageType.GROUP);
@@ -404,6 +412,9 @@ public class MailCommand extends AbstractCommand {
 				sender.sendMessage(ChatColor.RED + "Executing SQL: " + ChatColor.WHITE + "SELECT COUNT(*) FROM `" + args[1] + "` WHERE " + whereClause);
 				mail.countSQL((Player)sender, args[1], whereClause);
 			}				
+			break;
+		case "clear":
+			sender.sendMessage(ChatColor.RED + "No need to use clear anymore! Use " + ChatColor.WHITE + "/mail read all" + ChatColor.RED + " to mark all your mail as read.");
 			break;
 		default:
 			return false;

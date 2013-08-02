@@ -9,6 +9,7 @@ import java.util.Random;
 import me.naithantu.SlapHomebrew.Book;
 import me.naithantu.SlapHomebrew.Lottery;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
+import me.naithantu.SlapHomebrew.Util;
 import me.naithantu.SlapHomebrew.Runnables.RainbowTask;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 import net.minecraft.server.v1_6_R2.EntityPlayer;
@@ -47,6 +48,7 @@ public class SlapCommand extends AbstractCommand {
 	Integer used = 0;
 	HashSet<String> vipItemsList = new HashSet<String>();
 	public static HashSet<String> retroBow = new HashSet<String>();
+	private static HashSet<String> commandSpy = new HashSet<>();
 	Lottery lottery;
 	
 	public SlapCommand(CommandSender sender, String[] args, SlapHomebrew plugin, Lottery lottery) {
@@ -720,8 +722,8 @@ public class SlapCommand extends AbstractCommand {
 				if (targetEntity != null) {
 					if (targetEntity.getPassenger() == null) {
 						if (!sameWorld) rider.teleport(targetEntity.getLocation());
-						if (!reversed) targetEntity.setPassenger(rider);
-						else rider.setPassenger(targetEntity);
+						if (!reversed) if (!ride(rider, targetEntity)) rider.sendMessage(ChatColor.RED + "Trying to break the server huh?");
+						else if (!ride(targetEntity, rider)) rider.sendMessage(ChatColor.RED + "Trying to break the server huh?");
 					} else badMsg(sender, "Target already has a passenger.");
 				} else badMsg(sender, "No LivingEntity found in line of sight");
 			} else if (args.length == 3) {
@@ -731,7 +733,7 @@ public class SlapCommand extends AbstractCommand {
 					if (rider.getWorld().getName().equals(targetEntity.getWorld().getName())) sameWorld2 = true;
 					if (targetEntity.getPassenger() == null) {
 						if (!sameWorld2) rider.teleport(targetEntity.getLocation());
-						targetEntity.setPassenger(rider);
+						if (!ride(rider, targetEntity)) rider.sendMessage(ChatColor.RED + "Trying to break the server huh?");
 					} else {
 						badMsg(sender, "Target already has a passenger.");
 					}
@@ -781,10 +783,31 @@ public class SlapCommand extends AbstractCommand {
 				}
 			}
 			break;
+		case "commandspy":
+			if (!testPermission(sender, "commandspy")) {
+				noPermission(sender);
+				return true;
+			}
+			if (commandSpy.contains(sender.getName())) {
+				commandSpy.remove(sender.getName());
+				sender.sendMessage(Util.getHeader() + "CommandSpy turned off.");
+			} else {
+				commandSpy.add(sender.getName());
+				sender.sendMessage(Util.getHeader() + "CommandSpy turned on.");
+			}
+			break;
 		default:
 			return false;
 		}
 		
+		return true;
+	}
+	
+	private boolean ride(LivingEntity a, LivingEntity b) {
+		if (a.getEntityId() == b.getEntityId()) return false;
+		if (a.getPassenger() != null || a.getVehicle() != null) return false;
+		if (b.getPassenger() != null || b.getVehicle() != null) return false;
+		b.setPassenger(a);
 		return true;
 	}
 	
@@ -796,7 +819,7 @@ public class SlapCommand extends AbstractCommand {
 				&& inventory.getChestplate().getType() == Material.LEATHER_CHESTPLATE && inventory.getHelmet().getType() == Material.LEATHER_HELMET;
 	}
 	
-	private boolean containsBlockRelatives (List<Block> l, Block o) {
+	private static boolean containsBlockRelatives (List<Block> l, Block o) {
 		boolean returnBool = false;
 		if (l.contains(o)) returnBool = true;
 		else {
@@ -808,5 +831,18 @@ public class SlapCommand extends AbstractCommand {
 			}
 		}
 		return returnBool;
+	}
+	
+	public static void sendCommand(String player, String command) {
+		try {
+			if (commandSpy.size() > 0) {
+				for (String spy : commandSpy) {
+					Player pSpy = Bukkit.getPlayer(spy);
+					if (pSpy != null) {
+						pSpy.sendMessage(ChatColor.GRAY + "[CS] " + player + ": " + command);
+					}
+				}
+			}
+		} catch (NullPointerException e) {}
 	}
 }
