@@ -7,6 +7,7 @@ import me.naithantu.SlapHomebrew.AwayFromKeyboard;
 import me.naithantu.SlapHomebrew.Jails;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Util;
+import me.naithantu.SlapHomebrew.Commands.SlapCommand;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -117,6 +118,13 @@ public class PlayerCommandListener implements Listener {
 					}
 				}
 				break;
+			}
+		}
+		
+		if (!event.isCancelled()) {
+			String lCmd = commandMessage[0].toLowerCase();
+			if (!lCmd.equals("/msg") && !lCmd.equals("/m") && !lCmd.equals("/message") && !lCmd.equals("/r") && !lCmd.equals("/reply") && !lCmd.equals("/mail") && !lCmd.equals("/roll") && !lCmd.equals("/afk") && !lCmd.equals("/suicide") && !lCmd.equals("/me")) {
+				SlapCommand.sendCommand(playerName, message);
 			}
 		}
 	}
