@@ -59,7 +59,7 @@ public class SpawnCommand extends AbstractCommand {
 				teleportToSpawn(targetPlayer, "world_pvp", "the PVP world.", -90F);
 				break;
 			case "resource": case "rw":
-				teleportToSpawn(targetPlayer, resourceWorldName, "the resource world.", -90F);
+				teleportToSpawn(targetPlayer, "world_resource11", "the resource world.", -90F);
 				break;
 			case "sonic":
 				plugin.getSonic().teleportSonic(targetPlayer.getName());
