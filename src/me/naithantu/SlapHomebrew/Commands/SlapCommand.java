@@ -884,7 +884,9 @@ public class SlapCommand extends AbstractCommand {
 				for (String spy : commandSpy) {
 					Player pSpy = Bukkit.getPlayer(spy);
 					if (pSpy != null) {
-						pSpy.sendMessage(ChatColor.GRAY + "[CS] " + player + ": " + command);
+						if (!pSpy.getName().equals(player)) {
+							pSpy.sendMessage(ChatColor.GRAY + "[CS] " + player + ": " + command);
+						}
 					}
 				}
 			}

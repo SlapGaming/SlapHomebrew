@@ -2,7 +2,7 @@ name: SlapHomebrew
 main: me.naithantu.SlapHomebrew.SlapHomebrew
 depend: [Essentials, Vault, PermissionsEx]
 author: naithantu
-version: 2.12.2
+version: 2.13.0
 description: SlapHomebrew homemade plugin.
 commands:
   vip:
@@ -133,3 +133,6 @@ commands:
   unjail:
     description: Unjail a player.
     usage: "Usage: /unjail [player]"
+  xray:
+    description: Check the mined blocks stats of a player in a certain world
+    usage: "Usage: /xray [player] [world] <all>"

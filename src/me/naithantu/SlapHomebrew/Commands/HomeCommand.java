@@ -26,6 +26,31 @@ public class HomeCommand extends AbstractCommand {
 			return true;
 		}
 		
+		if (args.length == 3) {
+			if (testPermission(sender, "home.other")) {
+				// /home other [player] [home/list]
+				if (args[0].toLowerCase().equals("other")) {
+					User u = plugin.getEssentials().getUserMap().getUser(args[1]);
+					if (u != null) {
+						try {
+							if (args[2].toLowerCase().equals("list")) {
+								sendHomes(u.getHomes());
+							} else {
+								if (u.getHomes().contains(args[2].toLowerCase())) {
+									Player player = (Player)sender;
+									player.teleport(u.getHome(args[2].toLowerCase()));
+								}
+							}
+							return true;
+						} catch (Exception e) {
+							sender.sendMessage(ChatColor.RED + "Something went wrong.");
+							return true;
+						}
+					}
+				}
+			}
+		}
+		
 		User targetPlayer = plugin.getEssentials().getUserMap().getUser(sender.getName()); //Fetch Essentials User (which extends Player)
 		List<String> homes = targetPlayer.getHomes();
 		if (args.length > 0) {

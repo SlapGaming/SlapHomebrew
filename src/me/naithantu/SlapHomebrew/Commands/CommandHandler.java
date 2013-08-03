@@ -66,6 +66,7 @@ public class CommandHandler {
 		case "jail":			commandObj = new JailCommand(sender, args, plugin);					break;
 		case "jails":			commandObj = new JailCommand(sender, new String[]{"list"}, plugin); break;
 		case "unjail":			commandObj = new UnjailCommand(sender, args, plugin);				break;
+		case "xray":			commandObj = new XRayCommand(sender, args, plugin);					break;
 		case "plot":
 			if (args.length == 0) return false;
 			switch (args[0].toLowerCase()) {

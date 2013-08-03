@@ -40,7 +40,7 @@ public class PlayerChatListener implements Listener {
 		}
 		
 		//Kick MineChat clients
-		if (event.getMessage().equals("connected with an iPad using MineChat")) {
+		if (event.getMessage().matches("connected with .* using MineChat")) {
 			User user = plugin.getEssentials().getUserMap().getUser(player.getName()); 
 			if ((System.currentTimeMillis() - user.getLastLogin()) < (1000 * 3)) {
 				player.kickPlayer("MineChat is not allowed on this server.");

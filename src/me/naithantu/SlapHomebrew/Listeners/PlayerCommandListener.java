@@ -123,7 +123,7 @@ public class PlayerCommandListener implements Listener {
 		
 		if (!event.isCancelled()) {
 			String lCmd = commandMessage[0].toLowerCase();
-			if (!lCmd.equals("/msg") && !lCmd.equals("/m") && !lCmd.equals("/message") && !lCmd.equals("/r") && !lCmd.equals("/reply") && !lCmd.equals("/mail") && !lCmd.equals("/roll") && !lCmd.equals("/afk") && !lCmd.equals("/suicide") && !lCmd.equals("/me")) {
+			if (!lCmd.equals("/msg") && !lCmd.equals("/m") && !lCmd.equals("/message") && !lCmd.equals("/r") && !lCmd.equals("/reply") && !lCmd.equals("/mail") && !lCmd.equals("/roll") && !lCmd.equals("/afk") && !lCmd.equals("/suicide") && !lCmd.equals("/me") && !lCmd.equals("/j") && !lCmd.equals("/jumpto") && !lCmd.equals("/ac") && !lCmd.equals("/a") && !lCmd.equals("/amsg") && !lCmd.equals("/helpop")) {
 				SlapCommand.sendCommand(playerName, message);
 			}
 		}
