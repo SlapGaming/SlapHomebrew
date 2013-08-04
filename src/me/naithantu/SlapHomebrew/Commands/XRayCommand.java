@@ -10,6 +10,7 @@ import me.naithantu.SlapHomebrew.Util;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.User;
@@ -51,12 +52,16 @@ public class XRayCommand extends AbstractCommand {
 				ArrayList<String> worldList = new ArrayList<>();
 				for (World w : plugin.getServer().getWorlds()) {
 					String worldName = w.getName();
-					if (worldName.contains("world_resource") || worldName.equals("world") || worldName.equals("world_survival2") || worldName.equals("world_nether")) {
+					if (worldName.contains("world_resource") || worldName.equals("world") || worldName.equals("world_survival2") ) {
 						worldList.add(worldName);
 					}
 				}
 				sender.sendMessage(Util.getHeader() + "Worlds: " + Arrays.toString(worldList.toArray()));
 				return true;
+			} else {
+				if (sender instanceof Player) {
+					args = new String[] {args[0], ((Player) sender).getWorld().getName()};
+				}
 			}
 		}
 		all = false;
@@ -80,7 +85,7 @@ public class XRayCommand extends AbstractCommand {
 			return true;
 		}
 		String worldName = w.getName();
-		if (!worldName.contains("world_resource") && !worldName.equals("world") && !worldName.equals("world_survival2") && !worldName.equals("world_nether")) {
+		if (!worldName.contains("world_resource") && !worldName.equals("world") && !worldName.equals("world_survival2")) {
 			badMsg(sender, "This world doesn't get logged, or can't be checked.");
 		}
 		runAsync(new Runnable() {
