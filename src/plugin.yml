@@ -2,7 +2,7 @@ name: SlapHomebrew
 main: me.naithantu.SlapHomebrew.SlapHomebrew
 depend: [Essentials, Vault, PermissionsEx]
 author: naithantu
-version: 2.13.0
+version: 2.13.1
 description: SlapHomebrew homemade plugin.
 commands:
   vip:
@@ -136,3 +136,4 @@ commands:
   xray:
     description: Check the mined blocks stats of a player in a certain world
     usage: "Usage: /xray [player] [world] <all>"
+    aliases: [xcheck]

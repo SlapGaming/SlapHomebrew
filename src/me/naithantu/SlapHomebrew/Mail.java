@@ -343,6 +343,7 @@ public class Mail {
 								}
 							}
 							sendPageEnd(fSender, String.valueOf(fPage), String.valueOf(pages));
+							fSender.sendMessage(ChatColor.GRAY + "Type '/mail read [ID/PlayerName]' to check a mail.");
 						}
 					} else {
 						String onlyPagesText;

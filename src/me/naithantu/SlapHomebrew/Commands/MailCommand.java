@@ -381,7 +381,7 @@ public class MailCommand extends AbstractCommand {
 					sendHelpLine("read all", "Mark all your new mails as read.");
 					break;
 				case 2:
-					sendHelpLine("check <send/recieved/new/deleted/marked> <page>", "Check (a type of) your mail.");
+					sendHelpLine("check <send/received/new/deleted/marked> <page>", "Check (a type of) your mail.");
 					sendHelpLine("delete/undelete [#MailID]", "Delete/Undelete one of your mails.");
 					sendHelpLine("mark/unmark [#MailID]", "Mark/Unmark one of your mails as special.");
 					sendHelpLine("search [Player] <page>", "Get all the send/recieved to/from that player.");

@@ -1,8 +1,8 @@
 package me.naithantu.SlapHomebrew.Commands;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Util;
@@ -48,13 +48,14 @@ public class XRayCommand extends AbstractCommand {
 		}
 		if (args.length == 1) {
 			if (args[0].toLowerCase().equals("worldlist") || args[0].toLowerCase().equals("worlds")) {
-				List<World> worlds = plugin.getServer().getWorlds();
-				String[] worldList = new String[worlds.size()]; int xCount = 0;
-				for (World w : worlds) {
-					worldList[xCount] = w.getName();
-					xCount++;
+				ArrayList<String> worldList = new ArrayList<>();
+				for (World w : plugin.getServer().getWorlds()) {
+					String worldName = w.getName();
+					if (worldName.contains("world_resource") || worldName.equals("world") || worldName.equals("world_survival2") || worldName.equals("world_nether")) {
+						worldList.add(worldName);
+					}
 				}
-				sender.sendMessage(Util.getHeader() + "Worlds: " + Arrays.toString(worldList));
+				sender.sendMessage(Util.getHeader() + "Worlds: " + Arrays.toString(worldList.toArray()));
 				return true;
 			}
 		}
@@ -77,6 +78,10 @@ public class XRayCommand extends AbstractCommand {
 		if (w == null) {
 			badMsg(sender, "This world doesn't exist.");
 			return true;
+		}
+		String worldName = w.getName();
+		if (!worldName.contains("world_resource") && !worldName.equals("world") && !worldName.equals("world_survival2") && !worldName.equals("world_nether")) {
+			badMsg(sender, "This world doesn't get logged, or can't be checked.");
 		}
 		runAsync(new Runnable() {
 			
@@ -104,7 +109,7 @@ public class XRayCommand extends AbstractCommand {
 						}
 					}
 					if (stone == 0 && coal == 0 && iron == 0 && lapis == 0 && gold == 0 && redstone == 0 && diamond == 0 && emerald == 0) {
-						badMsg(sender, "This player has not mined anything in this world or this world isn't logged.");
+						badMsg(sender, "This player has not mined anything in this world.");
 					} else {
 						int totalBlocks = stone + coal + iron + lapis + gold + redstone + diamond + emerald;
 						double _1per = (double)totalBlocks / 100;
