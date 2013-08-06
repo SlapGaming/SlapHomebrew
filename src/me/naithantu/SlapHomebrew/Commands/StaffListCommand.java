@@ -2,6 +2,7 @@ package me.naithantu.SlapHomebrew.Commands;
 
 import java.util.ArrayList;
 
+import me.naithantu.SlapHomebrew.AwayFromKeyboard;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Util;
 
@@ -20,9 +21,15 @@ public class StaffListCommand extends AbstractCommand {
 	private int adminPlus;
 	private ArrayList<String> staff;
 	private boolean first;
+	private final String afkString = ChatColor.WHITE + " [AFK]";
+	
+	private static AwayFromKeyboard afk = null;
 	
 	protected StaffListCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
 		super(sender, args, plugin);
+		if (afk == null) {
+			afk = plugin.getAwayFromKeyboard();
+		}
 	}
 
 	@Override
@@ -39,7 +46,11 @@ public class StaffListCommand extends AbstractCommand {
 		for (Player player : plugin.getServer().getOnlinePlayers()) {
 			if (player.hasPermission("reportrts.mod")) {
 				PermissionUser user =  PermissionsEx.getUser(player);
-				addToList(user.getPrefix() + player.getName());
+				if (afk.isAfk(player.getName())) {
+					addToList(user.getPrefix() + player.getName() + afkString);
+				} else {
+					addToList(user.getPrefix() + player.getName());
+				}
 			}
 		}
 				

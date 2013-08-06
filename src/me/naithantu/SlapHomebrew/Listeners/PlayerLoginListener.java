@@ -127,6 +127,9 @@ public class PlayerLoginListener implements Listener {
 			}
 		}
 		
+		//Show playerlist
+		player.chat("/list");
+		
 		//Check mails
 		mail.hasNewMail(player);
 		
