@@ -5,6 +5,7 @@ import java.util.Date;
 
 import me.naithantu.SlapHomebrew.AwayFromKeyboard;
 import me.naithantu.SlapHomebrew.Jails;
+import me.naithantu.SlapHomebrew.PlayerLogger;
 import me.naithantu.SlapHomebrew.Util;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 
@@ -19,11 +20,13 @@ public class PlayerQuitListener implements Listener {
 	private YamlStorage timeStorage;
 	private AwayFromKeyboard afk;
 	private Jails jails;
+	private PlayerLogger playerLogger;
 
-	public PlayerQuitListener(YamlStorage timeStorage, AwayFromKeyboard afk, Jails jails) {
+	public PlayerQuitListener(YamlStorage timeStorage, AwayFromKeyboard afk, Jails jails, PlayerLogger playerLogger) {
 		this.timeStorage = timeStorage;
 		this.afk = afk;
 		this.jails = jails;
+		this.playerLogger = playerLogger;
 	}
 
 	@EventHandler
@@ -44,6 +47,9 @@ public class PlayerQuitListener implements Listener {
 		if (jails.isInJail(player.getName())) {
 			jails.switchToOfflineJail(player);
 		}
+		
+		//Log logout time
+		playerLogger.setLogoutTime(player.getName());
 		
 	}
 

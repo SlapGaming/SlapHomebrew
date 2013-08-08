@@ -68,6 +68,8 @@ public class CommandHandler {
 		case "unjail":			commandObj = new UnjailCommand(sender, args, plugin);				break;
 		case "xray":			commandObj = new XRayCommand(sender, args, plugin);					break;
 		case "list":			commandObj = new ListCommand(sender, args, plugin);					break;
+		case "fireworkshow":	commandObj = new FireworkCommand(sender, args, plugin);				break;
+		case "timecheck":		commandObj = new TimecheckCommand(sender, args, plugin);			break;
 		case "plot":
 			if (args.length == 0) return false;
 			switch (args[0].toLowerCase()) {

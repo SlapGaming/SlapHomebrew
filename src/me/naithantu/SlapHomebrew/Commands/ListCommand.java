@@ -6,7 +6,6 @@ import java.util.TreeSet;
 
 import me.naithantu.SlapHomebrew.AwayFromKeyboard;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
-import me.naithantu.SlapHomebrew.Util;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -59,13 +58,13 @@ public class ListCommand extends AbstractCommand {
 		}
 		
 		if (nrOfOnlinePlayers == 0) {
-			sender.sendMessage(Util.getHeader() + "There are no players online.");
+			sender.sendMessage(ChatColor.RED + "There are no players online.");
 		} else {
 			String firstline;
 			if (nrOfOnlinePlayers == 1) {
-				firstline = Util.getHeader() + "There is " + ChatColor.GOLD + "1" + ChatColor.WHITE + " out of maximum " + ChatColor.GOLD + maxPlayers + ChatColor.WHITE + " players online.";
+				firstline = "There is " + ChatColor.GOLD + "1" + ChatColor.WHITE + " out of maximum " + ChatColor.GOLD + maxPlayers + ChatColor.WHITE + " players online.";
 			} else {
-				firstline = Util.getHeader() + "There are " + ChatColor.GOLD + nrOfOnlinePlayers + ChatColor.WHITE + " out of maximum " + ChatColor.GOLD + maxPlayers + ChatColor.WHITE + " players online.";
+				firstline = "There are " + ChatColor.GOLD + nrOfOnlinePlayers + ChatColor.WHITE + " out of maximum " + ChatColor.GOLD + maxPlayers + ChatColor.WHITE + " players online.";
 			}
 			boolean first = true;
 			String secondLine = "Players: ";

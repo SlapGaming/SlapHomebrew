@@ -71,6 +71,8 @@ public class SlapHomebrew extends JavaPlugin {
 	ChangeLog changeLog;
 	Mail mail;
 	Jails jails;
+	FireworkShow show;
+	PlayerLogger playerLogger;
 
 	Essentials essentials;
 
@@ -111,6 +113,8 @@ public class SlapHomebrew extends JavaPlugin {
 		Lag lag = new Lag(this);
 		mail = new Mail(this);
 		jails = new Jails(this);
+		show = new FireworkShow(this);
+		playerLogger = new PlayerLogger(this);
 		BlockfaqCommand.chatBotBlocks = loadHashSet("chatbotblocks");
 		setupEconomy();
 		setupChatBot();
@@ -134,12 +138,12 @@ public class SlapHomebrew extends JavaPlugin {
 		pm.registerEvents(new DispenseListener(), this);
 		pm.registerEvents(new FoodLevelChangeListener(), this);
 		pm.registerEvents(new PlayerInteractListener(this, horses, jails), this);
-		pm.registerEvents(new PlayerLoginListener(this, timeStorage, dataStorage, vipStorage, mail, jails), this);
+		pm.registerEvents(new PlayerLoginListener(this, timeStorage, dataStorage, vipStorage, mail, jails, playerLogger), this);
 		pm.registerEvents(new PlayerMoveListener(this, extras, afk), this);
 		pm.registerEvents(new PlayerPortalListener(), this);
 		pm.registerEvents(new PotionListener(), this);
 		pm.registerEvents(new ProjectileHitListener(), this);
-		pm.registerEvents(new PlayerQuitListener(timeStorage, afk, jails), this);
+		pm.registerEvents(new PlayerQuitListener(timeStorage, afk, jails, playerLogger), this);
 		pm.registerEvents(new PlayerTeleportListener(jails), this);
 		pm.registerEvents(new PlayerToggleFlightListener(extras), this);
 		pm.registerEvents(new VehicleListener(horses), this);
@@ -443,6 +447,14 @@ public class SlapHomebrew extends JavaPlugin {
 	
 	public Jails getJails() {
 		return jails;
+	}
+	
+	public FireworkShow getFireworkShow() {
+		return show;
+	}
+	
+	public PlayerLogger getPlayerLogger() {
+		return playerLogger;
 	}
 
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {

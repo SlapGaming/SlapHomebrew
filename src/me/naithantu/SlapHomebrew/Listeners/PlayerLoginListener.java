@@ -10,6 +10,7 @@ import java.util.Map;
 import me.naithantu.SlapHomebrew.Book;
 import me.naithantu.SlapHomebrew.Jails;
 import me.naithantu.SlapHomebrew.Mail;
+import me.naithantu.SlapHomebrew.PlayerLogger;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Util;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
@@ -37,8 +38,9 @@ public class PlayerLoginListener implements Listener {
 	
 	private Mail mail;
 	private Jails jails;
+	private PlayerLogger playerLogger;
 
-	public PlayerLoginListener(SlapHomebrew plugin, YamlStorage timeStorage, YamlStorage dataStorage, YamlStorage vipStorage, Mail mail, Jails jails) {
+	public PlayerLoginListener(SlapHomebrew plugin, YamlStorage timeStorage, YamlStorage dataStorage, YamlStorage vipStorage, Mail mail, Jails jails, PlayerLogger playerLogger) {
 		this.plugin = plugin;
 		this.timeStorage = timeStorage;
 		this.dataStorage = dataStorage;
@@ -48,6 +50,7 @@ public class PlayerLoginListener implements Listener {
 		vipConfig = vipStorage.getConfig();
 		this.mail = mail;
 		this.jails = jails;
+		this.playerLogger = playerLogger;
 	}
 
 	@EventHandler
@@ -143,6 +146,10 @@ public class PlayerLoginListener implements Listener {
 				}
 			}, 2);
 		}
+		
+		//Log login time
+		playerLogger.setLoginTime(player.getName());
+		
 	}
 
 	private void updateVipDays() {
