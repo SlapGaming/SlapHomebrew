@@ -40,7 +40,7 @@ public class FireworkShow {
 		pillars.put(2, new DispenserPillar(new Location(world, -4667, 67, -4564)));
 		pillars.put(3, new DispenserPillar(new Location(world, -4676, 67, -4564)));
 		pillars.put(4, new DispenserPillar(new Location(world, -4685, 67, -4564)));
-		pillars.put(5, new DispenserPillar(new Location(world, -7694, 67, -4564)));
+		pillars.put(5, new DispenserPillar(new Location(world, -4694, 67, -4564)));
 		pillars.put(6, new DispenserPillar(new Location(world, -4703, 67, -4564)));
 		pillars.put(7, new DispenserPillar(new Location(world, -4712, 67, -4564)));
 		pillars.put(8, new DispenserPillar(new Location(world, -4721, 67, -4564)));
