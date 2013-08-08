@@ -16,9 +16,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
-import com.earth2me.essentials.User;
-import com.earth2me.essentials.UserMap;
-
 import me.naithantu.SlapHomebrew.Runnables.JailChecker;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 
@@ -45,35 +42,6 @@ public class Jails {
 		enable();
 		jailChecker = new JailChecker(this);
 		jailChecker.runTaskTimer(plugin, 10, 10);
-		if (!jailConfig.contains("essunjailed")) {
-			jailConfig.set("essunjailed", true);
-			Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, new Runnable() {
-				
-				@Override
-				public void run() {
-					// TODO Auto-generated method stub
-					unjailEss();
-				}
-			}, 20);
-		}
-	}
-	
-	private void unjailEss() {
-		UserMap uMap = plugin.getEssentials().getUserMap();
-		Bukkit.getLogger().info("Unjailing all essential users.");
-		String letter = "";
-		for (String name : uMap.getAllUniqueUsers()) {
-			User u = uMap.getUser(name);
-			if (u != null) {
-				u.setJailed(false);
-				if (!name.substring(0,1).toLowerCase().equals(letter)) {
-					letter = name.substring(0,1).toLowerCase();
-					Bukkit.getLogger().info("Unjailing essentials users, letter: " + letter);
-				}
-			}
-		}
-		Bukkit.getLogger().info("Unjailed all users.");
-			
 	}
 		
 	public boolean onlinePlayersJailed(){
