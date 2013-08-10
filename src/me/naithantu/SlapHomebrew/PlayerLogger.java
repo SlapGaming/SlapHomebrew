@@ -31,6 +31,7 @@ public class PlayerLogger {
 		onlineFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
 		format = new SimpleDateFormat("dd-MM-yyyy");
 		format.setTimeZone(TimeZone.getTimeZone("GMT"));
+		onEnable();
 	}
 	
 	public void setLoginTime(String playername) {

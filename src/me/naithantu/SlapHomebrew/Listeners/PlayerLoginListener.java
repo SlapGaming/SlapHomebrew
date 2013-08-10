@@ -12,6 +12,7 @@ import me.naithantu.SlapHomebrew.Jails;
 import me.naithantu.SlapHomebrew.Mail;
 import me.naithantu.SlapHomebrew.PlayerLogger;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
+import me.naithantu.SlapHomebrew.TabController;
 import me.naithantu.SlapHomebrew.Util;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 
@@ -39,8 +40,9 @@ public class PlayerLoginListener implements Listener {
 	private Mail mail;
 	private Jails jails;
 	private PlayerLogger playerLogger;
+	private TabController tabController;
 
-	public PlayerLoginListener(SlapHomebrew plugin, YamlStorage timeStorage, YamlStorage dataStorage, YamlStorage vipStorage, Mail mail, Jails jails, PlayerLogger playerLogger) {
+	public PlayerLoginListener(SlapHomebrew plugin, YamlStorage timeStorage, YamlStorage dataStorage, YamlStorage vipStorage, Mail mail, Jails jails, PlayerLogger playerLogger, TabController tabController) {
 		this.plugin = plugin;
 		this.timeStorage = timeStorage;
 		this.dataStorage = dataStorage;
@@ -51,6 +53,7 @@ public class PlayerLoginListener implements Listener {
 		this.mail = mail;
 		this.jails = jails;
 		this.playerLogger = playerLogger;
+		this.tabController = tabController;
 	}
 
 	@EventHandler
@@ -149,6 +152,9 @@ public class PlayerLoginListener implements Listener {
 		
 		//Log login time
 		playerLogger.setLoginTime(player.getName());
+		
+		//Add to Tab
+		tabController.playerJoin(player);
 		
 	}
 

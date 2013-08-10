@@ -76,6 +76,10 @@ public class SlapCommand extends AbstractCommand {
 
 		switch (arg.toLowerCase()) {
 		case "removeocelots":
+			if (!testPermission(sender, "removeocelots")) {
+				noPermission(sender);
+				return true;
+			}
 			int ocelotsRemoved = 0;
 			for (World serverWorld : Bukkit.getWorlds()) {
 				for (Entity entity : serverWorld.getEntities()) {
@@ -88,8 +92,23 @@ public class SlapCommand extends AbstractCommand {
 					}
 				}
 			}
-
 			Util.msg(sender, "You have removed " + ocelotsRemoved + " ocelots!");
+			break;
+		case "tabupdate": case "updatetab":
+			if (!testPermission(sender, "updatetab")) {
+				noPermission(sender);
+				return true;
+			}
+			if (args.length < 2) {
+				badMsg(sender, "Usage: /slap updatetab [player]");
+				return true;
+			}
+			Player updateTabPlayer = plugin.getServer().getPlayer(args[1]);
+			if (updateTabPlayer == null) {
+				badMsg(sender, "This player is not online.");
+			} else {
+				plugin.getTabController().playerSwitchGroup(updateTabPlayer);
+			}
 			break;
 		default:
 			if (!(sender instanceof Player)) {

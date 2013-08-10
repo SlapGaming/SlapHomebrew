@@ -73,6 +73,7 @@ public class SlapHomebrew extends JavaPlugin {
 	Jails jails;
 	FireworkShow show;
 	PlayerLogger playerLogger;
+	TabController tabController;
 
 	Essentials essentials;
 
@@ -106,7 +107,8 @@ public class SlapHomebrew extends JavaPlugin {
 		extras = new Extras(this);
 		tpBlocks = loadHashSet("tpblocks");
 		lottery = new Lottery(this);
-		applyChecker = new ApplyChecker(this, essentials);
+		tabController = new TabController(this);
+		applyChecker = new ApplyChecker(this, essentials, tabController);
 		afk = new AwayFromKeyboard(this);
 		horses = new Horses(this);
 		changeLog = new ChangeLog();
@@ -138,12 +140,12 @@ public class SlapHomebrew extends JavaPlugin {
 		pm.registerEvents(new DispenseListener(), this);
 		pm.registerEvents(new FoodLevelChangeListener(), this);
 		pm.registerEvents(new PlayerInteractListener(this, horses, jails), this);
-		pm.registerEvents(new PlayerLoginListener(this, timeStorage, dataStorage, vipStorage, mail, jails, playerLogger), this);
+		pm.registerEvents(new PlayerLoginListener(this, timeStorage, dataStorage, vipStorage, mail, jails, playerLogger, tabController), this);
 		pm.registerEvents(new PlayerMoveListener(this, extras, afk), this);
 		pm.registerEvents(new PlayerPortalListener(), this);
 		pm.registerEvents(new PotionListener(), this);
 		pm.registerEvents(new ProjectileHitListener(), this);
-		pm.registerEvents(new PlayerQuitListener(timeStorage, afk, jails, playerLogger), this);
+		pm.registerEvents(new PlayerQuitListener(timeStorage, afk, jails, playerLogger, tabController), this);
 		pm.registerEvents(new PlayerTeleportListener(jails), this);
 		pm.registerEvents(new PlayerToggleFlightListener(extras), this);
 		pm.registerEvents(new VehicleListener(horses), this);
@@ -180,6 +182,7 @@ public class SlapHomebrew extends JavaPlugin {
 		saveForumVip();
 		saveUnfinishedForumVip();
 		jails.shutdown();
+		playerLogger.onDisable();
 	}
 
 	public WorldGuardPlugin getWorldGuard() {
@@ -455,6 +458,10 @@ public class SlapHomebrew extends JavaPlugin {
 	
 	public PlayerLogger getPlayerLogger() {
 		return playerLogger;
+	}
+	
+	public TabController getTabController() {
+		return tabController;
 	}
 
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {

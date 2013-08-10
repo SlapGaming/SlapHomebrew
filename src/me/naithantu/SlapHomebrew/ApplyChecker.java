@@ -27,12 +27,14 @@ public class ApplyChecker {
 	private FileConfiguration applyThreadConfig;
 	
 	private Essentials ess;
+	private TabController tabController;
 	
 	private boolean disabled;
 	
-	public ApplyChecker(SlapHomebrew plugin, Essentials ess){
+	public ApplyChecker(SlapHomebrew plugin, Essentials ess, TabController tabController){
 		this.plugin = plugin;
 		this.ess = ess;
+		this.tabController = tabController;
 		applyThreadStorage = plugin.getApplyThreadStorage();
     	applyThreadConfig = applyThreadStorage.getConfig();
     	if (applyThreadConfig.contains("disabled")) {
@@ -75,6 +77,10 @@ public class ApplyChecker {
 			user.setGroups(memberGroup);
 			plugin.getServer().broadcastMessage(Util.getHeader() + ChatColor.GREEN + name + ChatColor.WHITE + " is promoted to member, congratulations!");
 			plugin.getServer().broadcastMessage(Util.getHeader() + "Not a member yet? Go to " + ChatColor.GREEN + "www.slapgaming.com/apply" + ChatColor.WHITE + " to apply!");
+			Player tabPlayer = plugin.getServer().getPlayer(name);
+			if (tabPlayer != null) {
+				tabController.playerSwitchGroup(tabPlayer);
+			}
 		}
 	}
     
