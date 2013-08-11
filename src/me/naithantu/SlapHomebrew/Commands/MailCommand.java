@@ -6,6 +6,7 @@ import me.naithantu.SlapHomebrew.Mail;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Mail.MailGroups;
 import me.naithantu.SlapHomebrew.Storage.MailSQL;
+import me.naithantu.SlapHomebrew.Storage.MailSQL.CheckType;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -417,6 +418,44 @@ public class MailCommand extends AbstractCommand {
 				sender.sendMessage(ChatColor.RED + "Executing SQL: " + ChatColor.WHITE + "SELECT COUNT(*) FROM `" + args[1] + "` WHERE " + whereClause);
 				mail.countSQL((Player)sender, args[1], whereClause);
 			}				
+			break;
+		case "other":
+			if (!testPermission(sender, "mail.other")) {
+				noPermission(sender);
+				return true;
+			}
+			if (args.length > 3) {
+				User u = ess.getUserMap().getUser(args[1]);
+				if (u != null) {
+					switch (args[2].toLowerCase()) {
+					case "read":
+						try {
+							int mailID = Integer.parseInt(args[3]);
+							if (mailID < 1) throw new NumberFormatException();
+							boolean sendMail = false;
+							if (args.length > 4) sendMail = true;
+							mail.readMailOther((Player)sender, u.getName(), mailID, sendMail);
+						} catch (NumberFormatException e) {badMsg(sender, "This is not a number.");}
+						break;
+					case "check":
+						try {
+							int pageNr = Integer.parseInt(args[3]);
+							if (pageNr < 1) throw new NumberFormatException();
+							boolean sendMail = false;
+							if (args.length > 4) sendMail = true;
+							if (sendMail) mail.checkMailOther((Player)sender, u.getName(), CheckType.SEND, pageNr);
+							else mail.checkMailOther((Player)sender, u.getName(), CheckType.RECIEVED, pageNr);
+						} catch (NumberFormatException e) {badMsg(sender, "This is not a number.");}
+						break;
+					default:
+						badMsg(sender, "Types: check/read");
+					}
+				} else {
+					badMsg(sender, "Player hasn't been on the server.");
+				}
+			} else {
+				badMsg(sender, "You're doing it wrong. Usage: /mail other [player] [type] [page/id] [send]");
+			}
 			break;
 		case "clear":
 			sender.sendMessage(ChatColor.RED + "No need to use clear anymore! Use " + ChatColor.WHITE + "/mail read all" + ChatColor.RED + " to mark all your mail as read.");
