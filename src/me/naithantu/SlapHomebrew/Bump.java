@@ -21,7 +21,19 @@ public class Bump {
 		this.plugin = plugin;
 		this.dataStorage = dataStorage;
 		this.dataConfig = dataConfig;
-		bumpTimer();
+		boolean devServer = false;
+		FileConfiguration pluginConfig = plugin.getConfig();
+		if (pluginConfig.contains("devserver")) {
+			devServer = pluginConfig.getBoolean("devserver");
+		} else {
+			pluginConfig.set("devserver", false);
+			plugin.saveConfig();
+		}
+		if (!devServer) {
+			bumpTimer();
+		} else {
+			plugin.getLogger().info("[Bump] Running a dev server, Bump is disabled.");
+		}
 	}
 
 	public void bumpTimer() {

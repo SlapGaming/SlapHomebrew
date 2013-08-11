@@ -29,29 +29,30 @@ public class ApplyChecker {
 	private Essentials ess;
 	private TabController tabController;
 	
-	private boolean disabled;
-	
 	public ApplyChecker(SlapHomebrew plugin, Essentials ess, TabController tabController){
 		this.plugin = plugin;
 		this.ess = ess;
 		this.tabController = tabController;
+		boolean devServer = false;
+		FileConfiguration pluginConfig = plugin.getConfig();
+		if (pluginConfig.contains("devserver")) {
+			devServer = pluginConfig.getBoolean("devserver");
+		} else {
+			pluginConfig.set("devserver", false);
+			plugin.saveConfig();
+		}
 		applyThreadStorage = plugin.getApplyThreadStorage();
     	applyThreadConfig = applyThreadStorage.getConfig();
-    	if (applyThreadConfig.contains("disabled")) {
-    		disabled = applyThreadConfig.getBoolean("disabled");
-    	} else {
-    		applyThreadConfig.set("disabled", false);
-    		applyThreadStorage.saveConfig();
-    		disabled = false;
-    	}
     	failedThreads = new ArrayList<String[]>();
-    	if (!disabled) {
+    	if (!devServer) {
 	    	try {
 	    		gathererThread = new ApplyGathererTask(this, applyThreadConfig, applyThreadStorage);
 	    		gathererThread.runTaskTimerAsynchronously(plugin, 600, 1200);
 	    	} catch (Exception e) {
 	    		getLogger().info("Apply Forum Gatherer task failed.");
 	    	}
+    	} else {
+    		getLogger().info("[ApplyChecker] Running a dev server, ApplyChecker is disabled.");
     	}
 	}
 		

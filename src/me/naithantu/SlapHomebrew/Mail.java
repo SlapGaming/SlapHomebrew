@@ -31,19 +31,33 @@ public class Mail {
 
 	private YamlStorage mailYML;
 	private FileConfiguration mailConfigYML;
+	
+	private boolean devServer;
 
 	public Mail(SlapHomebrew plugin) {
 		this.plugin = plugin;
-		mailSQL = new MailSQL();
-		crunchingData = new HashMap<>();
-		dateFormat = new SimpleDateFormat("HH:mm dd-MM-yyyy zzz");
-		monthFormat = new SimpleDateFormat("dd-MM");
-		mailYML = new YamlStorage(plugin, "mail");
-		mailConfigYML = mailYML.getConfig();
-		if (mailSQL.isConnected()) {
-			plugin.getLogger().info("[MAIL] Connected with MySQL database");
+		devServer = false;
+		FileConfiguration pluginConfig = plugin.getConfig();
+		if (pluginConfig.contains("devserver")) {
+			devServer = pluginConfig.getBoolean("devserver");
 		} else {
-			plugin.getLogger().info("[MAIL] Connection with MySQL database failed. Will deny all mail interaction.");
+			pluginConfig.set("devserver", false);
+			plugin.saveConfig();
+		}
+		if (!devServer) {
+			mailSQL = new MailSQL();
+			crunchingData = new HashMap<>();
+			dateFormat = new SimpleDateFormat("HH:mm dd-MM-yyyy zzz");
+			monthFormat = new SimpleDateFormat("dd-MM");
+			mailYML = new YamlStorage(plugin, "mail");
+			mailConfigYML = mailYML.getConfig();
+			if (mailSQL.isConnected()) {
+				plugin.getLogger().info("[MAIL] Connected with MySQL database");
+			} else {
+				plugin.getLogger().info("[MAIL] Connection with MySQL database failed. Will deny all mail interaction.");
+			}
+		} else {
+			plugin.getLogger().info("[MAIL] Running a dev server. Mail disabled.");
 		}
 	}
 
@@ -850,5 +864,9 @@ public class Mail {
 		int count = mailSQL.countX(from, where);
 		if (count > 0) sender.sendMessage(Util.getHeader() + "Counted: " + count);
 		else sender.sendMessage(ChatColor.RED + "Failed.");
+	}
+	
+	public boolean isDevServer() {
+		return devServer;
 	}
 }

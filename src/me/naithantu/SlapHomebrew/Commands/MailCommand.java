@@ -44,6 +44,11 @@ public class MailCommand extends AbstractCommand {
 			return true;
 		}
 		
+		if (mail.isDevServer()) {
+			badMsg(sender, "Running a dev server, mail is disabled.");
+			return true;
+		}
+		
 		if (args.length == 0) {
 			//-> check new
 			args = new String[]{"check"};
