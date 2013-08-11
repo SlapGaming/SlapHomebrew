@@ -176,7 +176,7 @@ public class Lottery {
 	public void givePrice(String playerName, ItemStack price) {
 		Player targetPlayer = plugin.getServer().getPlayer(playerName);
 		String worldName = targetPlayer.getWorld().getName();
-		if (!worldName.equals("world_sonic") && !worldName.equals("world_creative")) {
+		if (!worldName.equals("world_sonic") && !worldName.equals("world_creative") && !worldName.equals("world_pvp")) {
 			if (targetPlayer.getInventory().firstEmpty() != -1) {
 				targetPlayer.getInventory().addItem(price);
 			} else {

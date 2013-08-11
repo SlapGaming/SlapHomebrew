@@ -58,6 +58,7 @@ public class ChangeLog {
 		changeLogArray.add(0, new LoggedChange("28/07/2013", "WorldGaurd owners can now add/remove members to/from their worldgaurd."));
 		changeLogArray.add(0, new LoggedChange("29/07/2013", "Players have a 5% chance of dropping their head in PvP."));
 		changeLogArray.add(0, new LoggedChange("31/07/2013", "Mail is now an actual mail plugin. Check out /mail help or the forums!"));
+		changeLogArray.add(0, new LoggedChange("06/08/2013", "Added [AFK] tags to /list & /stafflist."));
 		changeLogArray.add(0, new LoggedChange("10/08/2013", "Tab is now customized, yay colors!"));
 	}
 	

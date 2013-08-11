@@ -164,7 +164,16 @@ public class TabController {
 						slaps.add(playerName);
 						break;
 					case "VIP":
-						vips.add(playerName);
+						String prefix = user.getPrefix();
+						if (prefix != null) {
+							if (prefix.toLowerCase().contains("slap")) {
+								slaps.add(playerName);
+							} else {
+								vips.add(playerName);
+							}
+						} else {
+							vips.add(playerName);
+						}
 						break;
 					case "Guide": case "VIPGuide":
 						guides.add(playerName);
