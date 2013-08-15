@@ -1,8 +1,8 @@
 name: SlapHomebrew
 main: me.naithantu.SlapHomebrew.SlapHomebrew
-depend: [Essentials, Vault, PermissionsEx]
+depend: [TabAPI, Essentials, Vault, PermissionsEx]
 author: naithantu
-version: 2.13.7
+version: 2.13.9
 description: SlapHomebrew homemade plugin.
 commands:
   vip:

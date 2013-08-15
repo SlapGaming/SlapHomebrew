@@ -349,8 +349,10 @@ public class Mail {
 	}
 
 	public void hasNewMail(final Player player) {
+		if (devServer) return;
 		if (!mailSQL.isConnected())
 			return;
+		
 
 		runAsync(new Runnable() {
 
