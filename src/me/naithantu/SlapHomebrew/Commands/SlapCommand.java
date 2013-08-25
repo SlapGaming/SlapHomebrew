@@ -110,6 +110,32 @@ public class SlapCommand extends AbstractCommand {
 				plugin.getTabController().playerSwitchGroup(updateTabPlayer);
 			}
 			break;
+		case "cleartab":
+			if (!testPermission(sender, "updatetab")) {
+				noPermission(sender);
+				return true;
+			}
+			if (args.length < 1) {
+				badMsg(sender, "Usage: /slap cleartab");
+				return true;
+			}
+			plugin.getTabController().reEnable();
+			break;
+		case "header":
+			if (!testPermission(sender, "header")) {
+				noPermission(sender);
+				return true;
+			}
+			if (args.length < 2) {
+				badMsg(sender, "Usage: /slap header [msg..]");
+			}
+			String msg = args[1]; int xCount = 2;
+			while (xCount < args.length) {
+				msg = msg + " " + args[xCount];
+				xCount++;
+			}
+			plugin.getServer().broadcastMessage(Util.getHeader() + msg);
+			break;
 		default:
 			if (!(sender instanceof Player)) {
 				this.badMsg(sender, "You need to be in-game to do that!");
@@ -499,8 +525,7 @@ public class SlapCommand extends AbstractCommand {
 					i++;
 				}
 				break;
-			case "stackmob":
-			case "mobstack":
+			case "stackmob": case "mobstack":
 				if (!testPermission(sender, "stackmob")) {
 					this.noPermission(sender);
 					return true;
@@ -609,8 +634,7 @@ public class SlapCommand extends AbstractCommand {
 				nmsPlayer.viewingCredits = true;
 				nmsPlayer.playerConnection.sendPacket(new Packet70Bed(4, 0));
 				break;
-			case "showmessage":
-			case "showmsg":
+			case "showmessage":	case "showmsg":
 				if (!testPermission(sender, "showmsg")) {
 					this.noPermission(sender);
 					return true;
@@ -774,11 +798,13 @@ public class SlapCommand extends AbstractCommand {
 						if (targetEntity.getPassenger() == null) {
 							if (!sameWorld)
 								rider.teleport(targetEntity.getLocation());
-							if (!reversed)
+							if (!reversed) {
 								if (!ride(rider, targetEntity))
 									rider.sendMessage(ChatColor.RED + "Trying to break the server huh?");
-								else if (!ride(targetEntity, rider))
+							} else {
+								if (!ride(targetEntity, rider))
 									rider.sendMessage(ChatColor.RED + "Trying to break the server huh?");
+							}
 						} else
 							badMsg(sender, "Target already has a passenger.");
 					} else

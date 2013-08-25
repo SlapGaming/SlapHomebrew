@@ -155,45 +155,51 @@ public class TabController {
 				if (groups.length > 0) {
 					switch (groups[0].getName()) {
 					case "builder":
-						builders.add(playerName);
+						addToList(builders, playerName);
 						break;
 					case "Member":
-						members.add(playerName);
+						addToList(members, playerName);
 						break;
 					case "Slap":
-						slaps.add(playerName);
+						addToList(slaps, playerName);
 						break;
 					case "VIP":
 						String prefix = user.getPrefix();
 						if (prefix != null) {
 							if (prefix.toLowerCase().contains("slap")) {
-								slaps.add(playerName);
+								addToList(slaps, playerName);
 							} else {
-								vips.add(playerName);
+								addToList(vips, playerName);
 							}
 						} else {
-							vips.add(playerName);
+							addToList(vips, playerName);
 						}
 						break;
 					case "Guide": case "VIPGuide":
-						guides.add(playerName);
+						addToList(guides, playerName);
 						break;
 					case "Mod":
-						mods.add(playerName);
+						addToList(mods, playerName);
 						break;
 					case "Admin":
-						admins.add(playerName);
+						addToList(admins, playerName);
 						break;
 					case "SuperAdmin":
 						if (playerName.equals("Telluur")) {
-							admins.add(playerName);
+							addToList(admins, playerName);
 						} else {
-							ops.add(playerName);
+							addToList(ops, playerName);
 						}
 						break;
 					}
 				}
 			}
+		}
+	}
+	
+	private void addToList(ArrayList<String> list, String player) {
+		if (!list.contains(player)) {
+			list.add(player);
 		}
 	}
 	
@@ -218,8 +224,19 @@ public class TabController {
 	public void playerSwitchGroup(Player p) {
 		String playerName = p.getName();
 		removeFromGroups(playerName);
-		playerJoin(p);
-		
+		playerJoin(p);	
+	}
+	
+	public void reEnable() {
+		builders.clear();
+		members.clear();
+		slaps.clear();
+		vips.clear();
+		guides.clear();
+		mods.clear();
+		admins.clear();
+		ops.clear();
+		onEnable();
 	}
 
 }
