@@ -1,6 +1,7 @@
 package me.naithantu.SlapHomebrew.Listeners;
 
 import me.naithantu.SlapHomebrew.Lottery;
+import me.naithantu.SlapHomebrew.Mail;
 
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
@@ -11,9 +12,11 @@ import org.bukkit.event.player.PlayerChangedWorldEvent;
 public class PlayerChangedWorldListener implements Listener {
 
 	Lottery lottery;
+	Mail mail;
 
-	public PlayerChangedWorldListener(Lottery lottery) {
+	public PlayerChangedWorldListener(Lottery lottery, Mail mail) {
 		this.lottery = lottery;
+		this.mail = mail;
 	}
 
 	@EventHandler
@@ -35,6 +38,9 @@ public class PlayerChangedWorldListener implements Listener {
 		} else if (event.getFrom().getName().equals("world_start") && !player.getWorld().getName().equals("world_start") && player.getGameMode() != GameMode.CREATIVE) {
 			player.setAllowFlight(false);
 		}
+		
+		//Check if the player has new mail
+		mail.hasNewMail(player);
 	}
 
 }

@@ -135,7 +135,7 @@ public class XRayCommand extends AbstractCommand {
 						lines[0] = Util.getHeader() + "XRay Player: " + ChatColor.GREEN + u.getName() + ChatColor.WHITE + " | World: " + ChatColor.GREEN + w.getName();
 						lines[1] = Util.getHeader() + createXrayLine("Iron", iron, ironP, 15, 25);
 						lines[2] = Util.getHeader() + createXrayLine("Gold", gold, goldP, 5, 10);
-						lines[3] = Util.getHeader() + createXrayLine("Diamond", diamond, diamondP, 3.5, 7.5);
+						lines[3] = Util.getHeader() + createXrayLine("Diamond", diamond, diamondP, 2.5, 5);
 						lines[4] = Util.getHeader() + createXrayLine("Emerald", emerald, emeraldP, 3.5, 7.5);
 						int last = 5;
 						if (all) {

@@ -111,7 +111,7 @@ public class SlapHomebrew extends JavaPlugin {
 		applyChecker = new ApplyChecker(this, essentials, tabController);
 		afk = new AwayFromKeyboard(this);
 		horses = new Horses(this);
-		changeLog = new ChangeLog();
+		changeLog = new ChangeLog(this);
 		Lag lag = new Lag(this);
 		mail = new Mail(this);
 		jails = new Jails(this);
@@ -151,7 +151,7 @@ public class SlapHomebrew extends JavaPlugin {
 		pm.registerEvents(new VehicleListener(horses), this);
 		pm.registerEvents(new PlayerInteractEntityListener(horses), this);
 		pm.registerEvents(new PlayerRespawnListener(), this);
-		pm.registerEvents(new PlayerChangedWorldListener(lottery), this);
+		pm.registerEvents(new PlayerChangedWorldListener(lottery, mail), this);
 		pm.registerEvents(new PlayerInventoryEvent(lottery), this);
 		pm.registerEvents(new AnimalTameListener(horses), this);
 

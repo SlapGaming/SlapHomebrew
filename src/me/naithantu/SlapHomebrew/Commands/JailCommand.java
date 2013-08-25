@@ -156,7 +156,6 @@ public class JailCommand extends AbstractCommand {
 				} else {
 					jails.putOnlinePlayerInJail(targetPlayer, reason, args[1], timeInJail);
 				}
-				sender.sendMessage(Util.getHeader() + "Player jailed.");
 			} else {
 				return false;
 			}
