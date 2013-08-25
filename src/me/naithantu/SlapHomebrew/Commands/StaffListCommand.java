@@ -6,10 +6,16 @@ import me.naithantu.SlapHomebrew.AwayFromKeyboard;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Util;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import com.earth2me.essentials.User;
+import com.earth2me.essentials.UserMap;
+
+import ru.tehkode.permissions.PermissionGroup;
+import ru.tehkode.permissions.PermissionManager;
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
@@ -37,6 +43,45 @@ public class StaffListCommand extends AbstractCommand {
 		if (!testPermission(sender, "stafflist")) {
 			noPermission(sender);
 			return true;
+		}
+		
+		staff = new ArrayList<>();
+		mods = admins = adminPlus = 0;
+		first = true;
+		
+		if (args.length == 1) {
+			if (args[0].equalsIgnoreCase("all")) {
+				Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+					
+					@Override
+					public void run() {
+						String[] groups = new String[]{"SuperAdmin", "Admin", "VIPGuide", "Guide", "Mod"};
+						PermissionManager pManager = PermissionsEx.getPermissionManager();
+						UserMap uMap = plugin.getEssentials().getUserMap();
+						for (String group : groups) {
+							PermissionGroup pGroup = pManager.getGroup(group);
+							if (pGroup != null) {
+								for (PermissionUser user : pGroup.getUsers()) {
+									User u = uMap.getUser(user.getName());
+									if (u != null) {
+										addToList(user.getPrefix() + u.getName());
+									}
+								}
+							}
+						}
+						if (staff.size() == 0) {
+							badMsg(sender, "There is no staff... That can't be right");
+						} else {
+							onlineStaff = "All staff: ";
+							for (String staffMember: staff) {
+								addToString(staffMember);
+							}
+							sender.sendMessage(Util.colorize(onlineStaff));
+						}
+					}
+				});		
+				return true;
+			}
 		}
 		
 		staff = new ArrayList<>();
