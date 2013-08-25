@@ -1,23 +1,35 @@
 package me.naithantu.SlapHomebrew;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 
 public class ChangeLog {
 
 	private int pages;
 	private ArrayList<ChangeLog.LoggedChange> changeLogArray;
 	
-	public ChangeLog() {
+	private YamlStorage storage;
+	private FileConfiguration config;
+	
+	public ChangeLog(SlapHomebrew plugin) {
 		changeLogArray = new ArrayList<>();
-		createChangeLog();
-		pages = (int)Math.ceil((double)(changeLogArray.size() / 5));
+		
+		storage = new YamlStorage(plugin, "changelog");
+		config = storage.getConfig();
+		load();
 	}
 	
 	public void showPage(CommandSender targetPlayer, int page) {
-		if (page > pages || page < 1) {
+		if (pages < 1) {
+			targetPlayer.sendMessage(ChatColor.RED + "There is no changelog available");
+			return;
+		} else if (page > pages || page < 1) {
 			targetPlayer.sendMessage(ChatColor.RED + "There are only " + pages + " pages.");
 			return;
 		}
@@ -27,7 +39,7 @@ public class ChangeLog {
 		while (xCount < last) {
 			try {
 				sendMessage(targetPlayer, changeLogArray.get(xCount));
-			} catch (ArrayIndexOutOfBoundsException e) {
+			} catch (Exception ex) {
 				break;
 			}
 			xCount++;
@@ -35,31 +47,37 @@ public class ChangeLog {
 		targetPlayer.sendMessage(ChatColor.YELLOW + "================== " + ChatColor.GOLD  + "Page " + page + " out of " + pages + ChatColor.YELLOW  + " ==================");
 	}
 	
-	public void sendMessage(CommandSender targetPlayer, LoggedChange loggedChange) {
+	private void sendMessage(CommandSender targetPlayer, LoggedChange loggedChange) {
 		targetPlayer.sendMessage(ChatColor.GOLD + "[" + loggedChange.date + "] " + ChatColor.WHITE + loggedChange.change);
 	}
 	
+	public void addToChangelog(String date, String change) {
+		changeLogArray.add(0, new LoggedChange(date, change));
+		List<String> changes;
+		if (config.contains(date)) {
+			changes = config.getStringList(date);
+		} else {
+			changes = new ArrayList<>();
+		}
+		changes.add(change);
+		config.set(date, changes);
+		storage.saveConfig();
+	}
 	
-	public void createChangeLog() {
-		changeLogArray.add(0, new LoggedChange("28/06/2013", "Membership applies are now handeld automaticly!"));
-		changeLogArray.add(0, new LoggedChange("29/06/2013", "Custom AFK messages added. '/afk [reason]'"));
-		changeLogArray.add(0, new LoggedChange("01/07/2013", "Ocelot spawner eggs added to the spawn shop!"));
-		changeLogArray.add(0, new LoggedChange("02/07/2013", "Lottery fixed, multiple people can win now!"));
-		changeLogArray.add(0, new LoggedChange("04/07/2013", "/world command added, see what world you are in!"));
-		changeLogArray.add(0, new LoggedChange("06/07/2013", "Teleport to a specific spawn. Try it out: /spawn [new/old/sonic/rw/pvp/end]"));
-		changeLogArray.add(0, new LoggedChange("08/07/2013", "Iconmenu for /home added, VIP only! Try it out: /homemenu"));
-		changeLogArray.add(0, new LoggedChange("09/07/2013", "Extra messages added to notify you when someone teleports to you (/te)."));
-		changeLogArray.add(0, new LoggedChange("12/07/2013", "Manage your horses! For more info: /horse help"));
-		changeLogArray.add(0, new LoggedChange("12/07/2013", "This (/new | /changelog) has been added!"));
-		changeLogArray.add(0, new LoggedChange("14/07/2013", "Fences are now lockable."));
-		changeLogArray.add(0, new LoggedChange("14/07/2013", "/stafflist now replaces /modlist!"));
-		changeLogArray.add(0, new LoggedChange("14/07/2013", "Horse spawn eggs are now available in the shop."));
-		changeLogArray.add(0, new LoggedChange("15/07/2013", "Mutate your horses in skeleton or zombie horses, check out /horse help 2 [VIP/Donate only]!"));
-		changeLogArray.add(0, new LoggedChange("28/07/2013", "WorldGaurd owners can now add/remove members to/from their worldgaurd."));
-		changeLogArray.add(0, new LoggedChange("29/07/2013", "Players have a 5% chance of dropping their head in PvP."));
-		changeLogArray.add(0, new LoggedChange("31/07/2013", "Mail is now an actual mail plugin. Check out /mail help or the forums!"));
-		changeLogArray.add(0, new LoggedChange("06/08/2013", "Added [AFK] tags to /list & /stafflist."));
-		changeLogArray.add(0, new LoggedChange("10/08/2013", "Tab is now customized, yay colors!"));
+	private void load() {
+		for (String date : config.getKeys(false)) {
+			List<String> changes = config.getStringList(date);
+			for (String change : changes) {
+				changeLogArray.add(0, new LoggedChange(date, change));
+			}
+		}
+		pages = (int)Math.ceil((changeLogArray.size() / (double)5));
+	}
+	
+	public void reload() {
+		storage.reloadConfig();
+		changeLogArray.clear();
+		load();
 	}
 	
 	private class LoggedChange {

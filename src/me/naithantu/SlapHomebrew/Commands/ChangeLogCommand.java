@@ -2,6 +2,7 @@ package me.naithantu.SlapHomebrew.Commands;
 
 import me.naithantu.SlapHomebrew.ChangeLog;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
+import me.naithantu.SlapHomebrew.Util;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -23,6 +24,23 @@ public class ChangeLogCommand extends AbstractCommand {
 			//get Latest
 			changeLog.showPage(sender, 1);
 		} else {
+			if (testPermission(sender, "addchangelog")) {
+				if (args.length > 2 && args[0].equalsIgnoreCase("add")) {
+					//Args[0] = add | args[1] = date | The rest = change
+					String change = args[2]; int x = 3;
+					while (x < args.length) {
+						change = change + " " + args[x];
+						x++;
+					}
+					changeLog.addToChangelog(args[1], change);
+					sender.sendMessage(Util.getHeader() + "Added.");
+					return true;
+				} else if (args[0].equals("reload")) {
+					changeLog.reload();
+					sender.sendMessage(Util.getHeader() + "Changelog reloaded.");
+					return true;
+				}
+			}
 			try {
 				int page = Integer.parseInt(args[0]);
 				if (page > 0) {
