@@ -2,7 +2,7 @@ name: SlapHomebrew
 main: me.naithantu.SlapHomebrew.SlapHomebrew
 depend: [TabAPI, Essentials, Vault, PermissionsEx]
 author: naithantu
-version: 2.13.9
+version: 2.13.10
 description: SlapHomebrew homemade plugin.
 commands:
   vip:
@@ -116,7 +116,7 @@ commands:
   stafflist:
     description: Shows the current online staffmembers
     usage: "Usage: /stafflist"
-    aliases: [modlist]
+    aliases: [modlist, staff, mods]
   lag:
     description: Shows the current TPS.
   leave:

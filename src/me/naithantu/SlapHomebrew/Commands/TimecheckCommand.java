@@ -35,38 +35,35 @@ public class TimecheckCommand extends AbstractCommand {
 		if (args.length < 1) {
 			return false;
 		}
+		if (args[0].equalsIgnoreCase("list")) {
+			if (args.length < 2) return false;
+			Date fromDate = null;
+			if (args.length == 3) {
+				fromDate = logger.parseDate(args[2]);
+			}
+			try {
+				int nr = Integer.parseInt(args[1]);
+				logger.getTimeList(sender, false, nr, fromDate);
+			} catch (NumberFormatException e) {
+				logger.getTimeList(sender, true, 0, fromDate);
+			}
+			return true;
+		}
 		User u = ess.getUserMap().getUser(args[0]);
 		if (u == null) {
 			badMsg(sender, "This player has never been on the server.");
 		} else {
-			boolean isOnline = false;
-			if (plugin.getServer().getPlayer(u.getName()) != null) {
-				isOnline = true;
-			}
-			Date fromDate; Date tillDate;
+			Date fromDate = null;
 			switch (args.length) {
 			case 1:
-				sender.sendMessage(logger.getOnlineTime(u.getName(), isOnline));
+				logger.getOnlineTime(sender, u.getName(), u.isOnline());
 				break;
 			case 2:
 				fromDate = logger.parseDate(args[1]);
 				if (fromDate == null) {
 					sender.sendMessage(ChatColor.RED + args[1] + " is not a valid date. Format: dd-mm-yyyy");
 				} else {
-					sender.sendMessage(logger.getOnlineTime(u.getName(), isOnline, fromDate));
-				}
-				break;
-			case 3:
-				fromDate = logger.parseDate(args[1]);
-				if (fromDate == null) {
-					sender.sendMessage(ChatColor.RED + args[1] + " is not a valid date. Format: dd-mm-yyyy");
-				} else {
-					tillDate = logger.parseDate(args[2]);
-					if (tillDate == null) {
-						sender.sendMessage(ChatColor.RED + args[2] + " is not a valid date. Format: dd-mm-yyyy");
-					} else {
-						sender.sendMessage(logger.getOnlineTime(u.getName(), isOnline, fromDate, tillDate));
-					}
+					logger.getOnlineTime(sender, u.getName(), u.isOnline(), fromDate);
 				}
 				break;
 			}

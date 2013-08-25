@@ -181,4 +181,39 @@ public class Util {
 			return true;
 		return false;
 	}
+    
+    public static String getTimePlayedString(long l) {
+    	String returnString = "";
+    	int t = 0; 
+    	l = l / 1000;
+    	if (l < 60) {
+    		t = 1; //Seconds
+    	} else if (l < 3600) {
+    		t = 2; //Minutes
+    	} else if (l < 86400) {
+    		t = 3; //Hours
+    	} else {
+    		t = 4; //Days
+    	}
+    	switch (t) {
+    	case 4:
+    		int days = (int)Math.floor(l / 86400.00);
+    		l = l - (days * 86400);
+    		returnString = days + " days, ";
+    	case 3:
+    		int hours = (int)Math.floor(l / 3600.00);
+    		l = l - (hours * 3600);
+    		returnString = returnString + hours + " hours, ";
+    	case 2:
+    		int minutes = (int)Math.floor(l / 60.00);
+    		l = l - (minutes * 60);
+    		returnString = returnString + minutes + " minutes and ";
+    	case 1:
+    		returnString = returnString + l + " seconds";
+    		break;
+    	default:
+    		returnString = "Unkown";
+    	}
+    	return returnString;
+    }
 }
