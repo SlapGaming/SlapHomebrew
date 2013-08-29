@@ -1,7 +1,7 @@
 package me.naithantu.SlapHomebrew.Commands;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
-import me.naithantu.SlapHomebrew.Util;
+import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.command.CommandSender;
 

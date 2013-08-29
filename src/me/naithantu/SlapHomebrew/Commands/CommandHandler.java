@@ -1,21 +1,26 @@
 package me.naithantu.SlapHomebrew.Commands;
 
-import me.naithantu.SlapHomebrew.Lag;
-import me.naithantu.SlapHomebrew.Lottery;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
+import me.naithantu.SlapHomebrew.Commands.Staff.*;
+import me.naithantu.SlapHomebrew.Commands.Staff.Plot.*;
+import me.naithantu.SlapHomebrew.Commands.Staff.VIP.*;
+import me.naithantu.SlapHomebrew.Commands.VIP.*;
+import me.naithantu.SlapHomebrew.Commands.AFK.*;
+import me.naithantu.SlapHomebrew.Commands.Basics.*;
+import me.naithantu.SlapHomebrew.Commands.Fun.*;
+import me.naithantu.SlapHomebrew.Commands.Games.*;
+import me.naithantu.SlapHomebrew.Commands.Jail.*;
+import me.naithantu.SlapHomebrew.Commands.Lists.*;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
 public class CommandHandler {
-	SlapHomebrew plugin;
-	Lottery lottery;
-	Lag lag;
+	
+	private SlapHomebrew plugin;
 
-	public CommandHandler(SlapHomebrew plugin, Lottery lottery, Lag lag) {
+	public CommandHandler(SlapHomebrew plugin) {
 		this.plugin = plugin;
-		this.lottery = lottery;
-		this.lag = lag;
 	}
 
 	public boolean handle(CommandSender sender, Command cmd, String[] args) {
@@ -32,7 +37,7 @@ public class CommandHandler {
 		case "group":			commandObj = new GroupCommand(sender, args, plugin);				break;
 		case "home":			commandObj = new HomeCommand(sender, args, plugin);					break;
 		case "homemenu":		commandObj = new HomeMenuCommand(sender, args, plugin);				break;
-		case "lag":				commandObj = new LagCommand(sender, args, plugin, lag);				break;
+		case "lag":				commandObj = new LagCommand(sender, args, plugin);					break;
 		case "leavecake":		commandObj = new LeavecakeCommand(sender, args, plugin);			break;
 		case "leave":			commandObj = new LeaveCommand(sender, args, plugin);				break;
 		case "message":			commandObj = new MessageCommand(sender, args, plugin);				break;
@@ -43,10 +48,10 @@ public class CommandHandler {
 		case "potion":			commandObj = new PotionCommand(sender, args, plugin);				break;
 		case "rainbow":			commandObj = new RainbowCommand(sender, args, plugin);				break;
 		case "ride":			commandObj = new RideCommand(sender, args, plugin);					break;
-		case "roll":			commandObj = new RollCommand(sender, args, plugin, lottery);		break;
+		case "roll":			commandObj = new RollCommand(sender, args, plugin);					break;
 		case "searchregion":	commandObj = new SearchregionCommand(sender, args, plugin);			break;
 		case "sgm":				commandObj = new SgmCommand(sender, args, plugin);					break;
-		case "slap":			commandObj = new SlapCommand(sender, args, plugin, lottery);		break;
+		case "slap":			commandObj = new SlapCommand(sender, args, plugin);					break;
 		case "sonic":			commandObj = new SonicCommand(sender, args, plugin);				break;
 		case "sparta":			commandObj = new SpartaCommand(sender, args, plugin);				break;
 		case "te":				commandObj = new TeCommand(sender, args, plugin);					break;

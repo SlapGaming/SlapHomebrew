@@ -2,7 +2,7 @@ package me.naithantu.SlapHomebrew.Runnables;
 
 import java.util.ArrayList;
 
-import me.naithantu.SlapHomebrew.ApplyChecker;
+import me.naithantu.SlapHomebrew.Controllers.ApplyChecker;
 import me.naithantu.SlapHomebrew.Storage.XMLParser;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 

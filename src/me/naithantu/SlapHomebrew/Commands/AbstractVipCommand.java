@@ -1,10 +1,10 @@
 package me.naithantu.SlapHomebrew.Commands;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
+import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 public abstract class AbstractVipCommand extends AbstractCommand {
 
@@ -14,10 +14,15 @@ public abstract class AbstractVipCommand extends AbstractCommand {
 	
 	@Override
 	public void msg(CommandSender sender, String msg) {
-		if (sender instanceof Player) {
-			sender.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + msg);
-		} else {
-			sender.sendMessage("[VIP] " + msg);
-		}
+		sender.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + msg);
 	}
+	
+	public boolean testVipPermission(CommandSender sender, String permission) {
+		return Util.testPermission(sender, "vip." + permission);
+	}
+	
+	public void noVipPermission(CommandSender sender) {
+		sender.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "You need to be a vip to do that.");
+	}
+	
 }

@@ -1,6 +1,6 @@
 package me.naithantu.SlapHomebrew.Runnables;
 
-import me.naithantu.SlapHomebrew.Jails;
+import me.naithantu.SlapHomebrew.Controllers.Jails;
 
 import org.bukkit.scheduler.BukkitRunnable;
 

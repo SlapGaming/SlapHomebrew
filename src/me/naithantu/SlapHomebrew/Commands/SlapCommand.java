@@ -3,15 +3,16 @@ package me.naithantu.SlapHomebrew.Commands;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-import me.naithantu.SlapHomebrew.Book;
-import me.naithantu.SlapHomebrew.Lottery;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
-import me.naithantu.SlapHomebrew.Util;
+import me.naithantu.SlapHomebrew.Controllers.Book;
+import me.naithantu.SlapHomebrew.Controllers.Lottery;
 import me.naithantu.SlapHomebrew.Runnables.RainbowTask;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
+import me.naithantu.SlapHomebrew.Util.Util;
 import net.minecraft.server.v1_6_R2.EntityPlayer;
 import net.minecraft.server.v1_6_R2.Packet24MobSpawn;
 import net.minecraft.server.v1_6_R2.Packet70Bed;
@@ -42,6 +43,10 @@ import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
+
+import com.sk89q.worldguard.protection.ApplicableRegionSet;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 public class SlapCommand extends AbstractCommand {
 
@@ -49,11 +54,13 @@ public class SlapCommand extends AbstractCommand {
 	HashSet<String> vipItemsList = new HashSet<String>();
 	public static HashSet<String> retroBow = new HashSet<String>();
 	private static HashSet<String> commandSpy = new HashSet<>();
-	Lottery lottery;
+	private static Lottery lottery;
 
-	public SlapCommand(CommandSender sender, String[] args, SlapHomebrew plugin, Lottery lottery) {
+	public SlapCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
 		super(sender, args, plugin);
-		this.lottery = lottery;
+		if (lottery == null) {
+			lottery = plugin.getLottery();
+		}
 	}
 
 	public boolean handle() {
@@ -128,6 +135,7 @@ public class SlapCommand extends AbstractCommand {
 			}
 			if (args.length < 2) {
 				badMsg(sender, "Usage: /slap header [msg..]");
+				return true;
 			}
 			String msg = args[1]; int xCount = 2;
 			while (xCount < args.length) {
@@ -882,6 +890,43 @@ public class SlapCommand extends AbstractCommand {
 					commandSpy.add(sender.getName());
 					sender.sendMessage(Util.getHeader() + "CommandSpy turned on.");
 				}
+				break;
+			case "sel": case "select": case "info":
+				if (!testPermission(player, "worldgaurdsc")) {
+					noPermission(player);
+					return true;
+				}
+				final String rgCommand = arg.toLowerCase();
+				plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new BukkitRunnable() {
+					
+					@Override
+					public void run() {
+						ApplicableRegionSet s = plugin.getWorldGaurd().getRegionManager(player.getWorld()).getApplicableRegions(player.getLocation());
+						Iterator<ProtectedRegion> iterator = s.iterator();
+						ArrayList<ProtectedRegion> regions = new ArrayList<>();
+						int highestPriority = -9001;
+						while (iterator.hasNext()) {
+							ProtectedRegion region = iterator.next();
+							int priority = region.getPriority();
+							if (priority > highestPriority) {
+								regions.clear();
+								regions.add(region);
+								highestPriority = priority;
+							} else if (highestPriority == priority) {
+								regions.add(region);
+							}
+						}
+						int regionsSize = regions.size();
+						if (regionsSize == 1) {
+							player.chat("/rg " + rgCommand + " " + regions.get(0).getId());
+						} else if (regionsSize == 0) {
+							badMsg(player, "No regions found.");
+						} else {
+							badMsg(player, "Multiple regions with highest priority found.");
+							player.chat("/rg " + rgCommand);
+						}
+					}
+				});	
 				break;
 			default:
 				return false;

@@ -1,6 +1,6 @@
 package me.naithantu.SlapHomebrew.Listeners;
 
-import me.naithantu.SlapHomebrew.Horses;
+import me.naithantu.SlapHomebrew.Controllers.Horses;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Horse;

@@ -5,8 +5,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import me.naithantu.SlapHomebrew.Extras;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
+import me.naithantu.SlapHomebrew.Controllers.Extras;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
