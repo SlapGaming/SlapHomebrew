@@ -5,6 +5,7 @@ import me.naithantu.SlapHomebrew.Commands.Basics.BlockfaqCommand;
 import me.naithantu.SlapHomebrew.Commands.Staff.MessageCommand;
 import me.naithantu.SlapHomebrew.Controllers.AwayFromKeyboard;
 import me.naithantu.SlapHomebrew.Controllers.Jails;
+import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -12,39 +13,41 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
-import com.earth2me.essentials.User;
-
 public class PlayerChatListener implements Listener {
-	SlapHomebrew plugin;
-	AwayFromKeyboard afk;
-	Jails jails;
+	private SlapHomebrew plugin;
+	private AwayFromKeyboard afk;
+	private Jails jails;
+	private PlayerLogger playerLogger;
 	
-	public PlayerChatListener(SlapHomebrew plugin, AwayFromKeyboard afk, Jails jails){
+	public PlayerChatListener(SlapHomebrew plugin, AwayFromKeyboard afk, Jails jails, PlayerLogger playerLogger){
 		this.plugin = plugin;
 		this.afk = afk;
 		this.jails = jails;
+		this.playerLogger = playerLogger;
 	}
 	@EventHandler
 	public void onPlayerChat(AsyncPlayerChatEvent event) {
 		String serverMessage;
 		Player player = event.getPlayer();
 		String playerName = player.getName();
+				
+		//Block chat if not moved yet
+		if (!playerLogger.hasMoved(playerName)) {
+			if (event.getMessage().matches("connected with .* using MineChat")) {
+				player.kickPlayer("MineChat is not allowed on this server.");
+				event.setCancelled(true);
+				return;
+			}
+			event.setCancelled(true);
+			playerLogger.sendNotMovedMessage(player);
+			return;
+		}		
 		
 		//Block chat while in jail.
 		if (jails.isInJail(playerName)) {
 			if (!jails.isAllowedToChat(playerName)) {
 				event.setCancelled(true);
 				player.sendMessage(ChatColor.GRAY + "You are jailed. Use /timeleft to check your time left in jail.");
-				return;
-			}
-		}
-		
-		//Kick MineChat clients
-		if (event.getMessage().matches("connected with .* using MineChat")) {
-			User user = plugin.getEssentials().getUserMap().getUser(player.getName()); 
-			if ((System.currentTimeMillis() - user.getLastLogin()) < (1000 * 3)) {
-				player.kickPlayer("MineChat is not allowed on this server.");
-				event.setCancelled(true);
 				return;
 			}
 		}

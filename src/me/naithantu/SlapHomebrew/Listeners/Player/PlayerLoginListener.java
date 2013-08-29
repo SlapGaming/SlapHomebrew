@@ -16,7 +16,6 @@ import me.naithantu.SlapHomebrew.Controllers.TabController;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 import me.naithantu.SlapHomebrew.Util.Util;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -131,30 +130,32 @@ public class PlayerLoginListener implements Listener {
 				vipConfig.set("book", playerList);
 				vipStorage.saveConfig();
 			}
-		}
-		
-		//Show playerlist
-		player.chat("/list");
-		
-		//Check mails
-		mail.hasNewMail(player);
-		
-		//Throw in jail
-		if (jails.isInJail(player.getName())) {
-			Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
-				
-				@Override
-				public void run() {
-					jails.switchToOnlineJail(player);
-				}
-			}, 2);
-		}
+		}	
 		
 		//Log login time
 		playerLogger.setLoginTime(player.getName());
 		
 		//Add to Tab
 		tabController.playerJoin(player);
+		
+		Util.runLater(plugin, new Runnable() {
+			
+			@Override
+			public void run() {
+				//Minechat prevention
+				playerLogger.joinedMinechatChecker(player);
+				
+				//Throw in jail
+				if (jails.isInJail(player.getName())) {
+					jails.switchToOnlineJail(player);
+				}
+				
+				//Check mails
+				mail.hasNewMail(player);
+				
+				
+			}
+		}, 10);
 		
 	}
 

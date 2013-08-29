@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Set;
 import java.util.TimeZone;
 
@@ -39,6 +40,8 @@ public class PlayerLogger {
 	
 	private Comparator<TimePlayer> comp;
 	
+	private HashMap<String, Boolean> minechatMoved;
+	
 	public PlayerLogger(SlapHomebrew plugin) {
 		this.plugin = plugin;
 		logYML = new YamlStorage(plugin, "playerlog");
@@ -47,6 +50,7 @@ public class PlayerLogger {
 		onlineFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
 		format = new SimpleDateFormat("dd-MM-yyyy");
 		format.setTimeZone(TimeZone.getTimeZone("GMT"));
+		minechatMoved = new HashMap<>();
 		createComp();
 		onEnable();
 	}
@@ -267,7 +271,8 @@ public class PlayerLogger {
 	public void onEnable(){
 		for (Player onlinePlayer : plugin.getServer().getOnlinePlayers()) {
 			String date = format.format(new Date()); 
-			logConfig.set("time." + onlinePlayer.getName() + "." + date, System.currentTimeMillis()); 
+			logConfig.set("time." + onlinePlayer.getName() + "." + date, System.currentTimeMillis());
+			setMoved(onlinePlayer.getName(), false);
 		}
 	}
 
@@ -283,6 +288,42 @@ public class PlayerLogger {
 			date = format.parse(dateString);
 		} catch (ParseException e) {}
 		return date;
+	}
+	
+	
+	/*
+	 * Minechat prevention
+	 */
+	public boolean hasMoved(String playername) {
+		return minechatMoved.get(playername);
+	}
+	
+	public void setMoved(String playername, boolean moved) {
+		minechatMoved.put(playername, moved);
+	}
+	
+	public void joinedMinechatChecker(Player p) {
+		if (!p.hasPermission("slaphomebrew.staff")) {
+			setMoved(p.getName(), false);
+		} else {
+			setMoved(p.getName(), true); //Staff
+		}
+	}
+	
+	public void removeFromMoved(String playername) {
+		minechatMoved.remove(playername);
+	}
+	
+	public void sendNotMovedMessage(Player p) {
+		p.sendMessage(ChatColor.GRAY + "You're not allowed to do commands/chat until you have moved.");
+	}
+	
+	public boolean inMovedHashMap(String playername) {
+		if (minechatMoved.containsKey(playername)) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 }

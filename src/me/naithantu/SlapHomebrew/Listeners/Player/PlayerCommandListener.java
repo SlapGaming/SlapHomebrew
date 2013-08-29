@@ -7,6 +7,7 @@ import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.SlapCommand;
 import me.naithantu.SlapHomebrew.Controllers.AwayFromKeyboard;
 import me.naithantu.SlapHomebrew.Controllers.Jails;
+import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.Bukkit;
@@ -22,11 +23,13 @@ public class PlayerCommandListener implements Listener {
 	private SlapHomebrew plugin;
 	private AwayFromKeyboard afk;
 	private Jails jails;
+	private PlayerLogger playerLogger;
 	
-	public PlayerCommandListener(SlapHomebrew plugin, AwayFromKeyboard afk, Jails jails){
+	public PlayerCommandListener(SlapHomebrew plugin, AwayFromKeyboard afk, Jails jails, PlayerLogger playerLogger){
 		this.plugin = plugin;
 		this.afk = afk;
 		this.jails = jails;
+		this.playerLogger = playerLogger;
 	}
 	
 	@EventHandler
@@ -35,6 +38,13 @@ public class PlayerCommandListener implements Listener {
 		String message = event.getMessage().toLowerCase().trim();
 		String[] commandMessage = message.split(" ");
 		String playerName = player.getName();
+		
+		//Block commands if not moved yet
+		if (!playerLogger.hasMoved(playerName)) {
+			event.setCancelled(true);
+			playerLogger.sendNotMovedMessage(player);
+			return;
+		}
 		
 		//Cancel commands in Jail
 		if (jails.isInJail(playerName)) {
@@ -125,7 +135,7 @@ public class PlayerCommandListener implements Listener {
 		
 		if (!event.isCancelled()) {
 			String lCmd = commandMessage[0].toLowerCase();
-			if (!lCmd.equals("/msg") && !lCmd.equals("/m") && !lCmd.equals("/message") && !lCmd.equals("/r") && !lCmd.equals("/reply") && !lCmd.equals("/mail") && !lCmd.equals("/roll") && !lCmd.equals("/afk") && !lCmd.equals("/suicide") && !lCmd.equals("/me") && !lCmd.equals("/j") && !lCmd.equals("/jumpto") && !lCmd.equals("/ac") && !lCmd.equals("/a") && !lCmd.equals("/amsg") && !lCmd.equals("/helpop")) {
+			if (!lCmd.equals("/msg") && !lCmd.equals("/m") && !lCmd.equals("/r") && !lCmd.equals("/reply") && !lCmd.equals("/mail") && !lCmd.equals("/roll") && !lCmd.equals("/afk") && !lCmd.equals("/suicide") && !lCmd.equals("/me") && !lCmd.equals("/j") && !lCmd.equals("/jumpto") && !lCmd.equals("/ac") && !lCmd.equals("/a") && !lCmd.equals("/amsg") && !lCmd.equals("/helpop")) {
 				SlapCommand.sendCommand(playerName, message);
 			}
 		}

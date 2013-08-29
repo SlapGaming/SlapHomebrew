@@ -7,6 +7,7 @@ import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Controllers.AwayFromKeyboard;
 import me.naithantu.SlapHomebrew.Controllers.Extras;
 import me.naithantu.SlapHomebrew.Controllers.Flag;
+import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.Bukkit;
@@ -18,26 +19,30 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 public class PlayerMoveListener implements Listener {
-	SlapHomebrew plugin;
-	Extras extras;
-	AwayFromKeyboard afk;
+	
+	private SlapHomebrew plugin;
+	private Extras extras;
+	private AwayFromKeyboard afk;
+	private PlayerLogger playerLogger;
 
-	public PlayerMoveListener(SlapHomebrew plugin, Extras extras, AwayFromKeyboard afk) {
+	public PlayerMoveListener(SlapHomebrew plugin, Extras extras, AwayFromKeyboard afk, PlayerLogger playerLogger) {
 		this.plugin = plugin;
 		this.extras = extras;
 		this.afk = afk;
+		this.playerLogger = playerLogger;
 	}
 
 	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent event) {
 		Player player = event.getPlayer();
+		String playername = player.getName();
 		Location location = player.getLocation();
 		if(player.getWorld().getName().equals("world_start")){
-			if(extras.getHasJumped().contains(player.getName())){
+			if(extras.getHasJumped().contains(playername)){
 				Entity playerEntity = (Entity) player;
 				if(playerEntity.isOnGround()){
 					List<String> hasJumped = extras.getHasJumped();
-					hasJumped.remove(player.getName());
+					hasJumped.remove(playername);
 					player.setAllowFlight(true);
 				}
 			}
@@ -72,7 +77,7 @@ public class PlayerMoveListener implements Listener {
 			String flagCommand = flag.replace("flag:command(", "").replace(")", "");
 			String command = flagCommand.replaceAll("_", " ");
 			//Add proper player names to command.
-			command = command.replaceAll("<player>", player.getName());
+			command = command.replaceAll("<player>", playername);
 			System.out.println(command);
 			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
 		} else if (Util.hasFlag(plugin, event.getFrom(), Flag.COMMAND_LEAVE) && !Util.hasFlag(plugin, event.getTo(), Flag.COMMAND_LEAVE)) {
@@ -80,15 +85,24 @@ public class PlayerMoveListener implements Listener {
 			String flagCommand = flag.replace("flag:command_leave(", "").replace(")", "");
 			String command = flagCommand.replaceAll("_", " ");
 			//Add proper player names to command.
-			command = command.replaceAll("<player>", player.getName());
+			command = command.replaceAll("<player>", playername);
 			System.out.println(command);
 			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
 		}
 		
-		if (afk.isAfk(player.getName())) {
+		//Remove AFK
+		if (afk.isAfk(playername)) {
 			if (event.getFrom().getBlockX() != event.getTo().getBlockX() || event.getFrom().getBlockZ() != event.getTo().getBlockZ() || event.getFrom().getBlockY() != event.getTo().getBlockY()) {
-				afk.leaveAfk(player.getName());
+				afk.leaveAfk(playername);
 			}
 		}
+		
+		//Set moved if moved
+		if (playerLogger.inMovedHashMap(playername)) {
+			if (!playerLogger.hasMoved(playername)) {
+				playerLogger.setMoved(playername, true);
+			}
+		}
+		
 	}
 }

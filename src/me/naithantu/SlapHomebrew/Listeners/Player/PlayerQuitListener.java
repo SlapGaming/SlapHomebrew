@@ -35,27 +35,31 @@ public class PlayerQuitListener implements Listener {
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		Player player = event.getPlayer();
+		String playername = player.getName();
 		if (player.hasPermission("slaphomebrew.staff")) {
 			String date = new SimpleDateFormat("MMM-d HH:mm:ss z").format(new Date());
 			date = date.substring(0, 1).toUpperCase() + date.substring(1);
-			Util.dateIntoTimeConfig(date, player.getName() + " logged off.", timeStorage);
-			if (!isOnlineStaff(player.getName()))
+			Util.dateIntoTimeConfig(date, playername + " logged off.", timeStorage);
+			if (!isOnlineStaff(playername))
 				Util.dateIntoTimeConfig(date, "There is no staff online!", timeStorage);
 		}
 		
 		//Remove from AFK
-		afk.removeAfk(player.getName());
+		afk.removeAfk(playername);
 		
 		//Check if player is in jail
-		if (jails.isInJail(player.getName())) {
+		if (jails.isInJail(playername)) {
 			jails.switchToOfflineJail(player);
 		}
 		
 		//Log logout time
-		playerLogger.setLogoutTime(player.getName());
+		playerLogger.setLogoutTime(playername);
 		
 		//Leave tab
 		tabController.playerQuit(player);
+		
+		//Remove from minechatChecker
+		playerLogger.removeFromMoved(playername);
 		
 	}
 
