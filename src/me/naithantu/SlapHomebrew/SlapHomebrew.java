@@ -208,7 +208,7 @@ public class SlapHomebrew extends JavaPlugin {
 		 playerLogger = new PlayerLogger(this);
 		 sonic = new Sonic(this);
 		 tabController = new TabController(this);
-		 vip = new Vip(this, vipStorage);
+		 vip = new Vip(this, vipStorage, tabController);
 		 
 		 new ApplyChecker(this, essentials, tabController);
 	}
