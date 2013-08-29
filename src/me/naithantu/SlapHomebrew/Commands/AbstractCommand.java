@@ -13,7 +13,7 @@ public abstract class AbstractCommand {
 	protected String[] args;
 	protected SlapHomebrew plugin;
 
-	protected AbstractCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
+	public AbstractCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
 		this.sender = sender;
 		this.args = args;
 		this.plugin = plugin;

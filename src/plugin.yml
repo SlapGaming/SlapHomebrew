@@ -2,7 +2,7 @@ name: SlapHomebrew
 main: me.naithantu.SlapHomebrew.SlapHomebrew
 depend: [TabAPI, Essentials, Vault, PermissionsEx]
 author: naithantu
-version: 2.13.11
+version: 2.13.12
 description: SlapHomebrew homemade plugin.
 commands:
   vip:
@@ -148,3 +148,7 @@ commands:
     description: Check online-time of a player
     usage: "Usage: /timecheck [Player]"
     aliases: [checktime]
+  spromote:
+    description: Promote a player
+  sdemote:
+    description: Demote a player

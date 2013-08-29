@@ -75,6 +75,8 @@ public class CommandHandler {
 		case "list":			commandObj = new ListCommand(sender, args, plugin);					break;
 		case "fireworkshow":	commandObj = new FireworkCommand(sender, args, plugin);				break;
 		case "timecheck":		commandObj = new TimecheckCommand(sender, args, plugin);			break;
+		case "spromote": 		commandObj = new SPromoteCommand(sender, args, plugin);				break;
+		case "sdemote":			commandObj = new SDemoteCommand(sender, args, plugin); 				break;
 		case "plot":
 			if (args.length == 0) return false;
 			switch (args[0].toLowerCase()) {

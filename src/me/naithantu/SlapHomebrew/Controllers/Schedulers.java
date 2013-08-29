@@ -24,7 +24,7 @@ public class Schedulers {
 	}
 
 	public void removeInvisibility() {
-		Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
+		Util.runTimer(plugin, new Runnable() {
 			public void run() {
 				for (Player player : Bukkit.getServer().getOnlinePlayers()) {
 					Collection<PotionEffect> potionEffects = player.getActivePotionEffects();
@@ -42,7 +42,7 @@ public class Schedulers {
 	}
 
 	public void checkFlags() {
-		Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
+		Util.runTimer(plugin, new Runnable() {
 			public void run() {
 				for (Player player : Bukkit.getServer().getOnlinePlayers()) {
 					Location location = player.getLocation();
@@ -65,7 +65,7 @@ public class Schedulers {
 	}
 	
 	public void startWeather() {
-		plugin.getServer().getScheduler().runTaskTimer(plugin, new WeatherTask(plugin), 1200, 1200);
+		Util.runTimer(plugin, new WeatherTask(plugin), 1200, 1200);
 	}
 	
 }

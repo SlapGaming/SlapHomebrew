@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 import java.util.TimeZone;
 
@@ -325,5 +326,50 @@ public class PlayerLogger {
 			return false;
 		}
 	}
+	
+	/*
+	 * Log Promotions
+	 */
+	public void logPromotion(String sender, String player, String fromRank, String toRank, boolean promotion) {
+		String today = format.format(new Date());
+		List<String> promotions;
+		if (logConfig.contains("promotions." + today)) {
+			promotions = logConfig.getStringList("promotions." + today);
+		} else {
+			promotions = new ArrayList<>();
+		}
+		String promotionString;
+		if (promotion) promotionString = " promoted ";
+		else promotionString = " demoted ";
+		promotions.add(sender + promotionString + player + " from " + fromRank + " to " + toRank);
+		logConfig.set("promotions." + today, promotions);
+		save();
+	}
+	
+	public void getPromotions(CommandSender sender, int ammount) {
+		ConfigurationSection promotions = logConfig.getConfigurationSection("promotions");
+		if (promotions == null) {
+			sender.sendMessage(ChatColor.RED + "No promotions.");
+			return;
+		}
+		int x = 0;
+		ArrayList<String> allPromotions = new ArrayList<>();
+		for (String key : promotions.getKeys(false)) {
+			for (String promotion : promotions.getStringList(key)) {
+				allPromotions.add(0, "(" + key + ") " + promotion);
+				x++;
+				if (x >= ammount) {
+					break;
+				}
+			}
+			if (x >= ammount) {
+				break;
+			}
+		}
+		sender.sendMessage(allPromotions.toArray(new String[allPromotions.size()]));
+	}
+	
+	
+	
 	
 }

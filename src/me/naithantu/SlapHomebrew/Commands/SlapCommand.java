@@ -144,6 +144,30 @@ public class SlapCommand extends AbstractCommand {
 			}
 			plugin.getServer().broadcastMessage(Util.getHeader() + msg);
 			break;
+		case "promotions":
+			if (!testPermission(sender, "promotions")) {
+				noPermission(sender);
+				return true;
+			}
+			if (args.length != 2) {
+				badMsg(sender, "Usage: /slap promotions [number of promotions]");
+				return true;
+			}
+			try {
+				final int nrOfPromtions = Integer.parseInt(args[1]);
+				if (nrOfPromtions < 1) throw new NumberFormatException();
+				Util.runASync(plugin, new Runnable() {
+					
+					@Override
+					public void run() {
+						plugin.getPlayerLogger().getPromotions(sender, nrOfPromtions);
+					}
+				});
+			} catch (NumberFormatException ex) {
+				badMsg(sender, args[1] + " is not a valid number.");
+				return true;
+			}
+			break;
 		default:
 			if (!(sender instanceof Player)) {
 				this.badMsg(sender, "You need to be in-game to do that!");
