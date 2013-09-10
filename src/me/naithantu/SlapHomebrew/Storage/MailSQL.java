@@ -517,7 +517,7 @@ public class MailSQL {
     public boolean setDeleted(int mailID, String reciever, boolean deleted) {
     	boolean returnBool = false;
     	try {
-    		PreparedStatement delStatement = con.prepareStatement("UPDATE `recieved_mail` SET `removed` = ? WHERE `mail_id` = ? AND `reciever` = ? ;");
+    		PreparedStatement delStatement = con.prepareStatement("UPDATE `recieved_mail` SET `removed` = ?, `has_read` = 1 WHERE `mail_id` = ? AND `reciever` = ? ;");
     		delStatement.setBoolean(1, deleted);
     		delStatement.setInt(2, mailID);
     		delStatement.setString(3, reciever);
@@ -534,7 +534,7 @@ public class MailSQL {
     public boolean setMarked(int mailID, String reciever, boolean marked) {
     	boolean returnBool = false;
     	try {
-    		PreparedStatement markStatement = con.prepareStatement("UPDATE `recieved_mail` SET `marked` = ? WHERE `mail_id` = ? AND `reciever` = ? ;");
+    		PreparedStatement markStatement = con.prepareStatement("UPDATE `recieved_mail` SET `marked` = ?, `has_read` = 1 WHERE `mail_id` = ? AND `reciever` = ? ;");
     		markStatement.setBoolean(1, marked);
     		markStatement.setInt(2, mailID);
     		markStatement.setString(3, reciever);

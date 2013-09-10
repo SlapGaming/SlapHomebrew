@@ -14,8 +14,10 @@ public class DispenseListener implements Listener {
 			}
 		}
 		
-		if (event.getItem().getType() == Material.FIREBALL) {
+		Material type = event.getItem().getType();
+		if (type == Material.FIREBALL || type == Material.FIRE || type == Material.FLINT_AND_STEEL) {
 			event.setCancelled(true);
 		}
+		
 	}
 }

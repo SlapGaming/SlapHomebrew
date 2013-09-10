@@ -8,6 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.Wither;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -25,12 +26,17 @@ public class CreatureSpawnListener implements Listener {
 	public void onCreatureSpawn(CreatureSpawnEvent event) {
 
 		Entity entity = event.getEntity();
+		SpawnReason reason = event.getSpawnReason();
 
 		//Block certain mob spawns in creative world.
 		if (event.getLocation().getWorld().getName().equals("world_creative")) {
-			if (event.getSpawnReason() == SpawnReason.EGG) {
+			if (reason == SpawnReason.EGG) {
 				event.setCancelled(true);
-			} else if (event.getSpawnReason() != SpawnReason.NATURAL) {
+			} else if (reason == SpawnReason.NATURAL) {
+				if (entity instanceof Ocelot) {
+					event.setCancelled(true);
+				}
+			} else if (reason != SpawnReason.NATURAL) {
 				//Block mob spawning via dispenser if there are too many mobs nearby in the creative world.
 				int totalEntities = 0;
 				for (Entity nearbyEntity : entity.getNearbyEntities(50, 50, 50)) {
@@ -62,7 +68,7 @@ public class CreatureSpawnListener implements Listener {
 			//If flag isn't used, only allow creation in the nether world.
 			if (!event.getLocation().getWorld().getName().equalsIgnoreCase("world_nether")) {
 				event.setCancelled(true);
-			} else if (event.getSpawnReason().equals(SpawnReason.BUILD_WITHER)) {
+			} else if (reason.equals(SpawnReason.BUILD_WITHER)) {
 				event.setCancelled(true);
 			}
 		}

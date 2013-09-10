@@ -12,6 +12,7 @@ import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
+import me.naithantu.SlapHomebrew.Util.Util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -109,6 +110,10 @@ public class Horses {
 	}
 	
 	public void claimHorse(Horse horse, Player owner) {
+		if (!horse.isTamed()) {
+			Util.badMsg(owner, "The horse needs to be tamed first.");
+			return;
+		}
 		String entityID = horse.getUniqueId().toString();
 		if (!horsesConfig.contains("horse." + entityID)) {
 			horsesConfig.set("horse." + entityID + ".owner", owner.getName());
