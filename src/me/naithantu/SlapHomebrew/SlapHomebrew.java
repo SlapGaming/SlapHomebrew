@@ -100,6 +100,7 @@ public class SlapHomebrew extends JavaPlugin {
 	private Sonic sonic;
 	private TabController tabController;
 	private Vip vip;
+	private WorthList worthList;
 
 	/**
 	 * External
@@ -209,6 +210,7 @@ public class SlapHomebrew extends JavaPlugin {
 		 sonic = new Sonic(this);
 		 tabController = new TabController(this);
 		 vip = new Vip(this, vipStorage, tabController);
+		 worthList = new WorthList(this);
 		 
 		 new ApplyChecker(this, essentials, tabController);
 	}
@@ -509,6 +511,10 @@ public class SlapHomebrew extends JavaPlugin {
 	
 	public Vip getVip() {
 		return vip;
+	}
+	
+	public WorthList getWorthList() {
+		return worthList;
 	}
 	
 	

@@ -2,7 +2,7 @@ name: SlapHomebrew
 main: me.naithantu.SlapHomebrew.SlapHomebrew
 depend: [TabAPI, Essentials, Vault, PermissionsEx]
 author: naithantu
-version: 2.13.12
+version: 2.14.0
 description: SlapHomebrew homemade plugin.
 commands:
   vip:
@@ -152,3 +152,10 @@ commands:
     description: Promote a player
   sdemote:
     description: Demote a player
+  worldgaurds:
+    description: Get the regions at your location
+    usage: "Usage: /worldgaurds"
+    aliases: [wgs]
+  worthlist:
+    description: See how much all the items are worth
+    usage: "Usage: /worthlist <page>"
