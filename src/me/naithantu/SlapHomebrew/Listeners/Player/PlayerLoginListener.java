@@ -23,6 +23,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
 
+import com.earth2me.essentials.User;
+
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
@@ -138,6 +140,14 @@ public class PlayerLoginListener implements Listener {
 		//Add to Tab
 		tabController.playerJoin(player);
 		
+		//First time join?
+		User u = plugin.getEssentials().getUserMap().getUser(player.getName());
+		boolean firstTime = false;
+		if (u == null) {
+			firstTime = true;
+		}
+		final boolean fFirstTime = firstTime;
+		
 		Util.runLater(plugin, new Runnable() {
 			
 			@Override
@@ -153,6 +163,12 @@ public class PlayerLoginListener implements Listener {
 				//Check mails
 				mail.hasNewMail(player);
 				
+				//First time broadcast
+				if (fFirstTime) {
+					plugin.getServer().broadcastMessage(Util.getHeader() + "Welcome " + ChatColor.GREEN + player.getName() + ChatColor.WHITE + " to the SlapGaming Minecraft Server. If you need help please contact a " + ChatColor.GOLD + "Guide" + ChatColor.WHITE + ", " +
+							ChatColor.AQUA + "Mod" + ChatColor.WHITE + " or " + ChatColor.RED + "Admin" + ChatColor.WHITE +
+							" by typing " + ChatColor.RED + "/modreq [message]" + ChatColor.WHITE + "!");
+				}
 				
 			}
 		}, 10);
