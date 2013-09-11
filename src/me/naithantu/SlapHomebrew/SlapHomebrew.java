@@ -44,7 +44,7 @@ public class SlapHomebrew extends JavaPlugin {
 	private HashMap<String, Location> backDeathMap = new HashMap<String, Location>();
 	
 	/**
-	 * WorldGaurd HashMap - Key Regionname -> value x
+	 * worldGuard HashMap - Key Regionname -> value x
 	 */
 	private HashMap<String, String> regionMap = new HashMap<String, String>();
 	
@@ -107,7 +107,7 @@ public class SlapHomebrew extends JavaPlugin {
 	 */
 	private Essentials essentials;
 	private Economy economy;
-	private WorldGuardPlugin worldGaurd;
+	private WorldGuardPlugin worldGuard;
 	
 	/**
 	 * allowCakeTp boolean - 
@@ -176,7 +176,7 @@ public class SlapHomebrew extends JavaPlugin {
 			return;
 		}
 		essentials = (Essentials) getServer().getPluginManager().getPlugin("Essentials");
-		worldGaurd = (WorldGuardPlugin) getServer().getPluginManager().getPlugin("WorldGuard");
+		worldGuard = (WorldGuardPlugin) getServer().getPluginManager().getPlugin("WorldGuard");
 		RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
 		if (rsp != null) {
 			economy = rsp.getProvider();
@@ -563,8 +563,8 @@ public class SlapHomebrew extends JavaPlugin {
 		return essentials;
 	}
 	
-	public WorldGuardPlugin getWorldGaurd() {
-		return worldGaurd;
+	public WorldGuardPlugin getworldGuard() {
+		return worldGuard;
 	}
 	
 	

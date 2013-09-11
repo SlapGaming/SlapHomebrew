@@ -54,7 +54,7 @@ public class PlayerInteractListener implements Listener {
 				clickedBlock = event.getClickedBlock().getType();
 				
 				if (clickedBlock == Material.NOTE_BLOCK || clickedBlock == Material.DIODE_BLOCK_ON || clickedBlock == Material.DIODE_BLOCK_OFF || clickedBlock == Material.CAKE_BLOCK || clickedBlock == Material.LEASH) {
-					if (!(plugin.getWorldGaurd().canBuild(event.getPlayer(), event.getClickedBlock()))) {
+					if (!(plugin.getworldGuard().canBuild(event.getPlayer(), event.getClickedBlock()))) {
 						event.setCancelled(true);
 					}
 				}
@@ -98,7 +98,7 @@ public class PlayerInteractListener implements Listener {
 					}
 
 					//Block if player has no build rights.
-					if (!(plugin.getWorldGaurd().canBuild(event.getPlayer(), event.getClickedBlock()))) {
+					if (!(plugin.getworldGuard().canBuild(event.getPlayer(), event.getClickedBlock()))) {
 						event.setCancelled(true);
 						player.sendMessage(Util.getHeader() + "You may not spawn mobs in this area!");
 						return;

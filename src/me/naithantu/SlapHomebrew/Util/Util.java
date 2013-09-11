@@ -42,7 +42,7 @@ public class Util {
 	}
 
 	public static boolean hasFlag(SlapHomebrew plugin, Location location, Flag flag) {
-		RegionManager regionManager = plugin.getWorldGaurd().getRegionManager(location.getWorld());
+		RegionManager regionManager = plugin.getworldGuard().getRegionManager(location.getWorld());
 		ApplicableRegionSet regions = regionManager.getApplicableRegions(location);
 		for (ProtectedRegion region : regions) {
 			for (String string : region.getMembers().getPlayers()) {
@@ -54,7 +54,7 @@ public class Util {
 	}
 
 	public static String getFlag(SlapHomebrew plugin, Location location, Flag flag) {
-		RegionManager regionManager = plugin.getWorldGaurd().getRegionManager(location.getWorld());
+		RegionManager regionManager = plugin.getworldGuard().getRegionManager(location.getWorld());
 		ApplicableRegionSet regions = regionManager.getApplicableRegions(location);
 		for (ProtectedRegion region : regions) {
 			for (String string : region.getMembers().getPlayers()) {

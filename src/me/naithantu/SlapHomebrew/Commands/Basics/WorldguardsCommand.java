@@ -14,15 +14,15 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 
-public class WorldgaurdsCommand extends AbstractCommand {
+public class WorldguardsCommand extends AbstractCommand {
 
-	public WorldgaurdsCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
+	public WorldguardsCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
 		super(sender, args, plugin);
 	}
 	
 	@Override
 	public boolean handle() {
-		if (!testPermission(sender, "worldgaurds")) {
+		if (!testPermission(sender, "worldGuards")) {
 			noPermission(sender);
 			return true;
 		}
@@ -32,7 +32,7 @@ public class WorldgaurdsCommand extends AbstractCommand {
 		}
 		try {
 			Player player = (Player) sender;
-			WorldGuardPlugin wg = plugin.getWorldGaurd();
+			WorldGuardPlugin wg = plugin.getworldGuard();
 			ApplicableRegionSet regions = wg.getRegionManager(player.getWorld()).getApplicableRegions(player.getLocation());
 			LocalPlayer localPlayer = wg.wrapPlayer(player);
 			String[] messages = new String[2];

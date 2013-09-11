@@ -152,9 +152,9 @@ commands:
     description: Promote a player
   sdemote:
     description: Demote a player
-  worldgaurds:
+  worldguards:
     description: Get the regions at your location
-    usage: "Usage: /worldgaurds"
+    usage: "Usage: /worldguards or /wgs"
     aliases: [wgs]
   worthlist:
     description: See how much all the items are worth

@@ -25,7 +25,7 @@ public class EntityChangeBlockListener implements Listener {
 				event.setCancelled(true);
 			} else if (boat.getPassenger() instanceof Player) {
 				Player player = (Player) boat.getPassenger();
-				if (!plugin.getWorldGaurd().canBuild(player, event.getBlock())) {
+				if (!plugin.getworldGuard().canBuild(player, event.getBlock())) {
 					event.setCancelled(true);
 				}
 			}

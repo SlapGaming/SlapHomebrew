@@ -55,7 +55,7 @@ public class EntityDamageByEntityListener implements Listener {
 			if (entity instanceof Animals || entity instanceof NPC) {
 				Location entityLoc = event.getEntity().getLocation();
 				Player player = (Player) damager;
-				if (!player.hasPermission("slaphomebrew.staff") && !Util.hasFlag(plugin, entityLoc, Flag.NOMOBPROTECT) && !plugin.getWorldGaurd().canBuild(player, entityLoc)) {
+				if (!player.hasPermission("slaphomebrew.staff") && !Util.hasFlag(plugin, entityLoc, Flag.NOMOBPROTECT) && !plugin.getworldGuard().canBuild(player, entityLoc)) {
 					event.setCancelled(true);
 					player.sendMessage(Util.getHeader() + "You may not attack animals or villagers here!");
 				}

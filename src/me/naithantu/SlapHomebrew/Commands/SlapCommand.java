@@ -925,7 +925,7 @@ public class SlapCommand extends AbstractCommand {
 					
 					@Override
 					public void run() {
-						ApplicableRegionSet s = plugin.getWorldGaurd().getRegionManager(player.getWorld()).getApplicableRegions(player.getLocation());
+						ApplicableRegionSet s = plugin.getworldGuard().getRegionManager(player.getWorld()).getApplicableRegions(player.getLocation());
 						Iterator<ProtectedRegion> iterator = s.iterator();
 						ArrayList<ProtectedRegion> regions = new ArrayList<>();
 						int highestPriority = -9001;
