@@ -22,7 +22,7 @@ public class WorldguardsCommand extends AbstractCommand {
 	
 	@Override
 	public boolean handle() {
-		if (!testPermission(sender, "worldGuards")) {
+		if (!testPermission(sender, "worldguards")) {
 			noPermission(sender);
 			return true;
 		}

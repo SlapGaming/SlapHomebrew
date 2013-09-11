@@ -152,6 +152,7 @@ commands:
     description: Promote a player
   sdemote:
     description: Demote a player
+  skick:
   worldguards:
     description: Get the regions at your location
     usage: "Usage: /worldguards or /wgs"
@@ -159,3 +160,4 @@ commands:
   worthlist:
     description: See how much all the items are worth
     usage: "Usage: /worthlist <page>"
+  

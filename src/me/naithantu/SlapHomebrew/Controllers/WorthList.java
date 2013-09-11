@@ -35,11 +35,11 @@ public class WorthList {
 		for (String key : keys) {
 			Material material = Material.matchMaterial(key);
 			if (material != null) {
-				worthList.add(ChatColor.GOLD + capitalizeFirst(key) + ChatColor.WHITE + ": $" + worthConfig.getString(key));
+				worthList.add(ChatColor.GOLD + capitalizeFirst(key) + ChatColor.WHITE + ": $" + getPrice(key));
 			} else {
 				material = parseKey(key);
 				if (material != null) {
-					worthList.add(ChatColor.GOLD + capitalizeFirst(material.toString().replace("_", " ")) + ChatColor.WHITE + ": " + worthConfig.getString(key));
+					worthList.add(ChatColor.GOLD + capitalizeFirst(material.toString().replace("_", " ")) + ChatColor.WHITE + ": " + getPrice(key));
 				}
 			}
 		}
@@ -54,6 +54,14 @@ public class WorthList {
 			 }
 		}
 		return null;
+	}
+	
+	private String getPrice(String key) {
+		if (worthConfig.contains(key + ".0")) {
+			return worthConfig.getString(key + ".0");
+		} else {
+			return worthConfig.getString(key);
+		}
 	}
 	
 	private String capitalizeFirst(String s) {
