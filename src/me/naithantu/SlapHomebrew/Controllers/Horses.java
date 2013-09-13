@@ -5,6 +5,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Horse.Variant;
+import org.bukkit.inventory.HorseInventory;
 import org.bukkit.ChatColor;
 
 import ru.tehkode.permissions.PermissionUser;
@@ -127,6 +128,35 @@ public class Horses {
 				owner.sendMessage(ChatColor.RED + "This horse is already claimed.");
 			}
 		}		
+	}
+	
+	public void unclaimHorse(Horse horse, Player owner) {
+		String entityID = horse.getUniqueId().toString();
+		if (horsesConfig.contains("horse." + entityID)) {
+			if (getOwner(entityID).equals(owner.getName())) {
+				horse.eject();
+				horse.leaveVehicle();
+				horse.setTamed(false);
+				
+				HorseInventory inventory = horse.getInventory();
+				owner.getInventory().addItem(inventory.getSaddle(), inventory.getArmor());
+				inventory.setArmor(null);
+				inventory.setContents(null);
+				inventory.setSaddle(null);
+				
+				removeHorse(entityID);
+				if (horse.getVariant() == Variant.SKELETON_HORSE || horse.getVariant() == Variant.UNDEAD_HORSE) {
+					horse.setHealth(0);
+					badMsg(owner, "The mutated horse was lost without you and died :(..");
+				} else {
+					owner.sendMessage(Util.getHeader() + "The horse is once again free.");
+				}
+			} else {
+				badMsg(owner, "This is not your horse!");
+			}
+		} else {
+			badMsg(owner, "This horse is not claimed!");
+		}
 	}
 	
 	public boolean changeOwner(Horse horse, Player owner, Player newOwner) {

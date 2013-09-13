@@ -214,6 +214,24 @@ public class HorseCommand extends AbstractCommand {
 				return false;
 			}
 			break;
+		case "unclaim":
+			if (!isOwnerOnHorse()) {
+				return true;
+			}
+			horses.unclaimHorse(horse, rider);
+			break;
+		case "public":
+			if (!isOwnerOnHorse()) {
+				return true;
+			}
+			badMsg(sender, "This command is not supported yet.");
+			break;
+		case "private":
+			if (!isOwnerOnHorse()) {
+				return true;
+			}
+			badMsg(sender, "This command is not supported yet.");
+			break;
 		default:
 			return false;
 		}
