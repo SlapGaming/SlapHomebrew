@@ -89,6 +89,7 @@ public class SlapHomebrew extends JavaPlugin {
 	private AwayFromKeyboard afk;
 	private Bump bump;
 	private ChangeLog changeLog;
+	private DuelArena duelArena;
 	private Extras extras;
 	private FireworkShow show;
 	private Horses horses;
@@ -199,6 +200,7 @@ public class SlapHomebrew extends JavaPlugin {
 		 afk = new AwayFromKeyboard(this);
 		 bump = new Bump(this, dataStorage, dataConfig);
 		 changeLog = new ChangeLog(this);
+		 duelArena = new DuelArena(this);
 		 extras = new Extras(this);
 		 show = new FireworkShow(this);
 		 horses = new Horses(this);
@@ -232,6 +234,7 @@ public class SlapHomebrew extends JavaPlugin {
 		pm.registerEvents(new PlayerCommandListener(this, afk, jails, playerLogger), this);
 		pm.registerEvents(new CreatureSpawnListener(this), this);
 		pm.registerEvents(new CreatureDeathListener(this, horses), this);
+		pm.registerEvents(new DuelArenaListener(duelArena), this);
 		pm.registerEvents(new EntityDamageByEntityListener(this, horses), this);
 		pm.registerEvents(new EntityDamageListener(jails), this);
 		pm.registerEvents(new EntityChangeBlockListener(this), this);
