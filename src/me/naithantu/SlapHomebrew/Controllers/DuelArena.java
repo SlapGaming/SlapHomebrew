@@ -6,6 +6,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -173,15 +176,26 @@ public class DuelArena {
 	/*
 	 * Player dies
 	 */
-	public void player1Dies() {
-		broadcastWorldMessage(p1.getName() + " died! " + p2.getName() + " has won the duel!");
+	public void player1Dies(PlayerDeathEvent event) {
+		playerDies(p1, p2, event);
 		p1 = null;
 		stopGame();
 	}
 	
-	public void player2Dies() {
-		broadcastWorldMessage(p2.getName() + " died! " + p1.getName() + " has won the duel!");
+	public void player2Dies(PlayerDeathEvent event) {
+		playerDies(p2, p1, event);
 		p2 = null;
+		stopGame();
+	}
+	
+	private void playerDies(Player died, Player wins, PlayerDeathEvent event) {
+		try {
+			PlayerInventory inv = wins.getInventory();
+			for (ItemStack item : event.getDrops()) {
+				inv.addItem(item);
+			}
+		} catch (Exception e) {}
+		broadcastWorldMessage(died.getName() + " died! " + wins.getName() + " has won the duel!");
 		stopGame();
 	}
 	

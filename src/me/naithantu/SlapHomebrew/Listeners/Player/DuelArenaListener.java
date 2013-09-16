@@ -26,13 +26,20 @@ public class DuelArenaListener implements Listener {
 			int player = duelArena.isAPlayer(p);
 			switch(player) {
 			case 1:
-				duelArena.player1Dies();
+				duelArena.player1Dies(event);
+				wipeDrops(event);
 				break;
 			case 2:
-				duelArena.player2Dies();
+				duelArena.player2Dies(event);
+				wipeDrops(event);
 				break;
 			}
 		}
+	}
+	
+	private void wipeDrops(PlayerDeathEvent e) {
+		e.setDroppedExp(0);
+		e.getDrops().clear();
 	}
 	
 	@EventHandler
