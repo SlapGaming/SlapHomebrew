@@ -5,6 +5,7 @@ import java.util.List;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Controllers.Horses;
+import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -233,13 +234,17 @@ public class HorseCommand extends AbstractCommand {
 			if (!isOwnerOnHorse()) {
 				return true;
 			}
-			horses.setHorsePublic(horse, rider);
+			if (horses.setHorsePublic(horse, rider)) {
+				sender.sendMessage(Util.getHeader() + "The horse can now be accessed by anyone! Be careful.");
+			}
 			break;
 		case "private":
 			if (!isOwnerOnHorse()) {
 				return true;
 			}
-			horses.setHorsePrivate(horse, rider);
+			if (horses.setHorsePrivate(horse, rider)) {
+				sender.sendMessage(Util.getHeader() + "The horse is now private and can only be accessed by you!");
+			}
 			break;
 		default:
 			return false;
