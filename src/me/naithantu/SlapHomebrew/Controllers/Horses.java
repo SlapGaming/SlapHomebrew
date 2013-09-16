@@ -6,7 +6,10 @@ import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Horse.Variant;
 import org.bukkit.inventory.HorseInventory;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
@@ -142,10 +145,16 @@ public class Horses {
 				horse.setTamed(false);
 				
 				HorseInventory inventory = horse.getInventory();
-				owner.getInventory().addItem(inventory.getSaddle(), inventory.getArmor());
-				inventory.setArmor(null);
-				inventory.setContents(null);
-				inventory.setSaddle(null);
+				Inventory inv = owner.getInventory();
+				try {
+					for (ItemStack item : inventory.getContents()) {
+						inv.addItem(item);
+					}
+				} catch (IllegalArgumentException e) {
+					owner.getInventory();
+				}
+				
+				inventory.setContents(new ItemStack[] {new ItemStack(Material.AIR)});
 				
 				horsesConfig.set("horse." + entityID, null);
 				if (horse.getVariant() == Variant.SKELETON_HORSE || horse.getVariant() == Variant.UNDEAD_HORSE) {

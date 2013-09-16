@@ -79,6 +79,7 @@ public class CommandHandler {
 		case "sdemote":			commandObj = new SDemoteCommand(sender, args, plugin); 				break;
 		case "worldguards":		commandObj = new WorldguardsCommand(sender, args, plugin);			break;
 		case "worthlist":		commandObj = new WorthListCommand(sender, args, plugin);			break;
+		case "skick":			commandObj = new SKickCommand(sender, args, plugin);				break;
 		case "plot":
 			if (args.length == 0) return false;
 			switch (args[0].toLowerCase()) {

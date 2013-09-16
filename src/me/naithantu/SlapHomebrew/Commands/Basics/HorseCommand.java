@@ -95,7 +95,6 @@ public class HorseCommand extends AbstractCommand {
 				sender.sendMessage(ChatColor.YELLOW + "==================== " + ChatColor.GOLD  + "Horse Help" + ChatColor.YELLOW  + " ====================");
 				sender.sendMessage(ChatColor.GOLD + "/horse public : " + ChatColor.WHITE + "allow everyone on this horse (while staying the owner).");
 				sender.sendMessage(ChatColor.GOLD + "/horse private : " + ChatColor.WHITE + "allow no-one on this horse.");
-				sender.sendMessage(ChatColor.GOLD + "/horse unclaim : " + ChatColor.WHITE + "unclaim the horse.");
 				sender.sendMessage(ChatColor.YELLOW + "================== " + ChatColor.GOLD  + "Page 3 out of 3" + ChatColor.YELLOW  + " ==================");
 			}
 			return true;
@@ -228,10 +227,7 @@ public class HorseCommand extends AbstractCommand {
 			}
 			break;
 		case "unclaim":
-			if (!isOwnerOnHorse()) {
-				return true;
-			}
-			horses.unclaimHorse(horse, rider);
+			badMsg(sender, "This command isn't supported yet.");
 			break;
 		case "public":
 			if (!isOwnerOnHorse()) {
