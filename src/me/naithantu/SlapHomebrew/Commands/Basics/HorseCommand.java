@@ -65,9 +65,16 @@ public class HorseCommand extends AbstractCommand {
 		
 		if (args[0].toLowerCase().equals("help")) {
 			int page = 1;
-			if (args.length > 1) {
-				if (args[1].equals("2")) {
-					page = 2;
+			if (args.length > 0) {
+				try {
+					page = Integer.parseInt(args[1]);
+					if (page < 1 || page > 3) {
+						badMsg(sender, "There are only 3 pages.");
+						return true;
+					}
+				} catch (NumberFormatException e) {
+					badMsg(sender, "This is not a number.");
+					return true;
 				}
 			}
 			if (page == 1) {
@@ -76,14 +83,20 @@ public class HorseCommand extends AbstractCommand {
 				sender.sendMessage(ChatColor.GOLD + "/horse deny <player> : " + ChatColor.WHITE + "deny an allowed player from futher using your horse.");
 				sender.sendMessage(ChatColor.GOLD + "/horse changeowner <player> : " + ChatColor.WHITE + "give all rights over the horse to the specified player. You will LOSE ALL rights!");
 				sender.sendMessage(ChatColor.GOLD + "/horse claim : " + ChatColor.WHITE + "claim a tamed horse that is not auto claimed.");
-				sender.sendMessage(ChatColor.YELLOW + "================== " + ChatColor.GOLD  + "Page 1 out of 2" + ChatColor.YELLOW  + " ==================");
-			} else {
+				sender.sendMessage(ChatColor.YELLOW + "================== " + ChatColor.GOLD  + "Page 1 out of 3" + ChatColor.YELLOW  + " ==================");
+			} else if (page == 2) {
 				sender.sendMessage(ChatColor.YELLOW + "==================== " + ChatColor.GOLD  + "Horse Help" + ChatColor.YELLOW  + " ====================");
 				sender.sendMessage(ChatColor.GOLD + "/horse info : " + ChatColor.WHITE + "get the owner's name");
 				sender.sendMessage(ChatColor.GOLD + "/horse allowed : " + ChatColor.WHITE + "get a list of all the players who are allowed to use this horse.");
 				sender.sendMessage(ChatColor.GOLD + "/horse mutate [zombie/skeleton] : " + ChatColor.WHITE + "mutates your horse into an zombie/skeleton. [VIP/Donators only]");
 				sender.sendMessage(ChatColor.GOLD + "/horse mutate info : " + ChatColor.WHITE + "gets your mutated horses stats.");
-				sender.sendMessage(ChatColor.YELLOW + "================== " + ChatColor.GOLD  + "Page 2 out of 2" + ChatColor.YELLOW  + " ==================");
+				sender.sendMessage(ChatColor.YELLOW + "================== " + ChatColor.GOLD  + "Page 2 out of 3" + ChatColor.YELLOW  + " ==================");
+			} else {
+				sender.sendMessage(ChatColor.YELLOW + "==================== " + ChatColor.GOLD  + "Horse Help" + ChatColor.YELLOW  + " ====================");
+				sender.sendMessage(ChatColor.GOLD + "/horse public : " + ChatColor.WHITE + "allow everyone on this horse (while staying the owner).");
+				sender.sendMessage(ChatColor.GOLD + "/horse private : " + ChatColor.WHITE + "allow no-one on this horse.");
+				sender.sendMessage(ChatColor.GOLD + "/horse unclaim : " + ChatColor.WHITE + "unclaim the horse.");
+				sender.sendMessage(ChatColor.YELLOW + "================== " + ChatColor.GOLD  + "Page 3 out of 3" + ChatColor.YELLOW  + " ==================");
 			}
 			return true;
 		}
@@ -224,13 +237,13 @@ public class HorseCommand extends AbstractCommand {
 			if (!isOwnerOnHorse()) {
 				return true;
 			}
-			badMsg(sender, "This command is not supported yet.");
+			horses.setHorsePublic(horse, rider);
 			break;
 		case "private":
 			if (!isOwnerOnHorse()) {
 				return true;
 			}
-			badMsg(sender, "This command is not supported yet.");
+			horses.setHorsePrivate(horse, rider);
 			break;
 		default:
 			return false;

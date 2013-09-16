@@ -43,7 +43,8 @@ public class Horses {
 				returnBool = true;
 			} else {
 				if (horsesConfig.contains("horse." + entityID + ".allowed")) {
-					if (horsesConfig.getList("horse." + entityID + ".allowed").contains(player.getName())) {
+					List<String> list = horsesConfig.getStringList("horse." + entityID + ".allowed");
+					if (list.contains("public") || list.contains(player.getName())) {
 						returnBool = true;
 					}
 				}
@@ -61,6 +62,8 @@ public class Horses {
 					List<String> allowedPlayers = horsesConfig.getStringList("horse." + entityID + ".allowed");
 					if (allowedPlayers.contains(allowedPlayer)) {
 						owner.sendMessage(ChatColor.RED + "This player is already allowed on this horse.");
+					} else if (allowedPlayers.contains("public")) {
+						Util.badMsg(owner, "This horse is public, anyone can acces it already.");
 					} else {
 						allowedPlayers.add(allowedPlayer);
 						horsesConfig.set("horse." + entityID + ".allowed", allowedPlayers);
@@ -144,9 +147,14 @@ public class Horses {
 				inventory.setContents(null);
 				inventory.setSaddle(null);
 				
-				removeHorse(entityID);
+				horsesConfig.set("horse." + entityID, null);
 				if (horse.getVariant() == Variant.SKELETON_HORSE || horse.getVariant() == Variant.UNDEAD_HORSE) {
 					horse.setHealth(0);
+					if (horsesConfig.contains("player." + owner.getName() + ".horses")) {
+						List<String> list = horsesConfig.getStringList("player." + owner.getName() + ".horses");
+						list.remove(entityID);
+						horsesConfig.set("player." + owner.getName() + ".horses", list);
+					}
 					badMsg(owner, "The mutated horse was lost without you and died :(..");
 				} else {
 					owner.sendMessage(Util.getHeader() + "The horse is once again free.");
@@ -185,6 +193,40 @@ public class Horses {
 			}
 		} else {
 			owner.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + "This horse is not claimed yet. Use '/horse claim' to claim it.");
+		}
+		return returnBool;
+	}
+	
+	public boolean setHorsePublic(Horse horse, Player owner) {
+		String entityID = horse.getUniqueId().toString();
+		boolean returnBool = false;
+		if (horsesConfig.contains("horse." + entityID)) {
+			if (getOwner(entityID).equals(owner.getName())) {
+				List<String> list = new ArrayList<>();
+				list.add("public");
+				horsesConfig.set("horse." + entityID + ".allowed", list);
+				returnBool = true;
+			} else {
+				Util.badMsg(owner, "You are not the owner of this horse.");
+			}
+		} else {
+			owner.sendMessage(Util.getHeader() + "This horse is not claimed yet. Use '/horse claim' to claim it.");
+		}
+		return returnBool;
+	}
+	
+	public boolean setHorsePrivate(Horse horse, Player owner) {
+		String entityID = horse.getUniqueId().toString();
+		boolean returnBool = false;
+		if (horsesConfig.contains("horse." + entityID)) {
+			if (getOwner(entityID).equals(owner.getName())) {
+				horsesConfig.set("horse." + entityID + ".allowed", null);
+				returnBool = true;
+			} else {
+				Util.badMsg(owner, "You are not the owner of this horse.");
+			}
+		} else {
+			owner.sendMessage(Util.getHeader() + "This horse is not claimed yet. Use '/horse claim' to claim it.");
 		}
 		return returnBool;
 	}
