@@ -66,7 +66,7 @@ public class HorseCommand extends AbstractCommand {
 		
 		if (args[0].toLowerCase().equals("help")) {
 			int page = 1;
-			if (args.length > 0) {
+			if (args.length > 1) {
 				try {
 					page = Integer.parseInt(args[1]);
 					if (page < 1 || page > 3) {

@@ -5,6 +5,7 @@ import me.naithantu.SlapHomebrew.Controllers.DuelArena;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -19,7 +20,7 @@ public class DuelArenaListener implements Listener {
 		this.duelArena = duelArena;
 	}
 	
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGH)
 	public void onPlayerDeath(PlayerDeathEvent event) {
 		Player p = event.getEntity();
 		if (duelArena.isGameInProgress()) {
@@ -34,6 +35,7 @@ public class DuelArenaListener implements Listener {
 				wipeDrops(event);
 				break;
 			}
+			event.setDeathMessage(null);
 		}
 	}
 	
@@ -53,6 +55,18 @@ public class DuelArenaListener implements Listener {
 				break;
 			case 2:
 				duelArena.player2Quits();
+				break;
+			}
+		} else if (duelArena.isOnPad1() || duelArena.isOnPad2()) {
+			int player = duelArena.isAPlayer(p);
+			switch (player) {
+			case 1:
+				duelArena.player1QuitsOnPad();
+				duelArena.playerQuitsOnPad();
+				break;
+			case 2:
+				duelArena.player2QuitsOnPad();
+				duelArena.playerQuitsOnPad();
 				break;
 			}
 		}

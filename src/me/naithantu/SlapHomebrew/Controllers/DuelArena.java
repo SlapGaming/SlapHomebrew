@@ -1,10 +1,12 @@
 package me.naithantu.SlapHomebrew.Controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
@@ -39,6 +41,11 @@ public class DuelArena {
 	private Location arenaLoc2;
 	private Location gameLoc;
 	
+	//Signs
+	private ArrayList<Sign> signs;
+	private String[] newGame;
+	private String noPlayer;
+	
 	public DuelArena(SlapHomebrew plugin) {
 		this.plugin = plugin;
 		pvpWorld = plugin.getServer().getWorld("world_pvp");
@@ -47,7 +54,14 @@ public class DuelArena {
 		onPad2 = false;
 		arenaLoc1 = new Location(pvpWorld, 949.5, 29, -671.5, 0, 0);
 		arenaLoc2 = new Location(pvpWorld, 949.5, 29, -635.5, 180, 0);
-		gameLoc = new Location(pvpWorld, 949.5, 29, -628.5);
+		gameLoc = new Location(pvpWorld, 949.5, 29, -628.5, 180, 0);
+		signs = new ArrayList<>();
+		signs.add((Sign) pvpWorld.getBlockAt(932, 32, -654).getState());
+		signs.add((Sign) pvpWorld.getBlockAt(966, 32, -654).getState());
+		signs.add((Sign) pvpWorld.getBlockAt(949, 30, -631).getState());
+		noPlayer = ChatColor.DARK_GRAY + "Available";
+		newGame = new String[] {"-- Pad 1 --", noPlayer, "-- Pad 2 --", noPlayer};
+		setLines(newGame);
 	}
 	
 	//Game methods
@@ -85,6 +99,7 @@ public class DuelArena {
 			gameTask.cancel();
 			gameTask = null;
 		}
+		setLines(new String[] {"Dueling:", ChatColor.WHITE + p1.getName(), "Versus.", ChatColor.WHITE + p2.getName()});
 		p1.teleport(arenaLoc1);
 		p2.teleport(arenaLoc2);
 	}
@@ -99,6 +114,7 @@ public class DuelArena {
 			p2.teleport(gameLoc);
 			p2 = null;
 		}
+		setLines(newGame);
 	}
 	
 	public World getPvpWorld() {
@@ -116,6 +132,28 @@ public class DuelArena {
 	}
 	
 	/*
+	 * Signs
+	 */
+	
+	private void setLines(String[] lines) {
+		for (Sign sign : signs) {
+			int x = 0;
+			for (String line : lines) {
+				sign.setLine(x, line);
+				x++;
+			}
+			sign.update();
+		}
+	}
+	
+	private void setLine(int index, String line) {
+		for (Sign sign : signs) {
+			sign.setLine(index, line);
+			sign.update();
+		}
+	}
+	
+	/*
 	 * Step on pad
 	 */
 	public void stepOnPad1(Player p) {
@@ -125,6 +163,7 @@ public class DuelArena {
 			return;
 		}
 		p.sendMessage(pvpTag + "Stay on the pad!");
+		setLine(1, ChatColor.WHITE + p.getName());
 		p1 = p;
 		onPad1 = true;
 		if (onPad2) {
@@ -141,6 +180,7 @@ public class DuelArena {
 			return;
 		}
 		p.sendMessage(pvpTag + "Stay on the pad!");
+		setLine(3, ChatColor.WHITE + p.getName());
 		p2 = p;
 		onPad2 = true;
 		if (onPad1) {
@@ -155,22 +195,12 @@ public class DuelArena {
 	 */
 	protected void leftPad1() {
 		p1.sendMessage(pvpTag + "You left the pad!");
-		onPad1 = false;
-		if (p1Task instanceof BukkitTask) {
-			p1Task.cancel();
-			p1Task = null;
-		}
-		p1 = null;
+		player1QuitsOnPad();
 	}
 	
 	protected void leftPad2() {
 		p2.sendMessage(pvpTag + "You left the pad!");
-		onPad2 = false;
-		if (p2Task instanceof BukkitTask) {
-			p2Task.cancel();
-			p2Task = null;
-		}
-		p2 = null;
+		player2QuitsOnPad();
 	}
 	
 	/*
@@ -212,6 +242,38 @@ public class DuelArena {
 		plugin.getEconomy().withdrawPlayer(p2.getName(), 200);
 		broadcastWorldMessage(p2.getName() + " forfeited and lost 200$! " + p1.getName() + " has won the duel!");
 		stopGame();
+	}
+	
+	public void player1QuitsOnPad() {
+		onPad1 = false;
+		if (p1Task instanceof BukkitTask) {
+			p1Task.cancel();
+			p1Task = null;
+		}
+		setLine(1, noPlayer);
+		p1 = null;
+	}
+	
+	public void player2QuitsOnPad() {
+		onPad2 = false;
+		if (p2Task instanceof BukkitTask) {
+			p2Task.cancel();
+			p2Task = null;
+		}
+		setLine(3, noPlayer);
+		p2 = null;
+	}
+	
+	public void playerQuitsOnPad() {
+		if (gameTask instanceof BukkitTask) {
+			stopGameCountdown();
+			if (p1 instanceof Player) {
+				p1.sendMessage(pvpTag + "The other player has logged out.");
+			}
+			if (p2 instanceof Player) {
+				p2.sendMessage(pvpTag + "The other player has logged out.");
+			}
+		}
 	}
 	
 	
