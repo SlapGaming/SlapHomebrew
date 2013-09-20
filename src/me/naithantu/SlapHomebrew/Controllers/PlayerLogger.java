@@ -1,5 +1,6 @@
 package me.naithantu.SlapHomebrew.Controllers;
 
+import java.sql.ResultSet;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -20,6 +21,9 @@ import org.bukkit.entity.Player;
 
 import com.earth2me.essentials.User;
 import com.earth2me.essentials.UserMap;
+import com.nyancraft.reportrts.ReportRTS;
+import com.nyancraft.reportrts.persistence.Database;
+import com.nyancraft.reportrts.persistence.DatabaseManager;
 
 import ru.tehkode.permissions.PermissionManager;
 import ru.tehkode.permissions.PermissionUser;
@@ -43,6 +47,11 @@ public class PlayerLogger {
 	
 	private HashMap<String, Boolean> minechatMoved;
 	
+	private Database db;
+	private boolean reportRTSfound;
+	private HashMap<String, Integer> modreqs;
+	
+	
 	public PlayerLogger(SlapHomebrew plugin) {
 		this.plugin = plugin;
 		logYML = new YamlStorage(plugin, "playerlog");
@@ -52,6 +61,13 @@ public class PlayerLogger {
 		format = new SimpleDateFormat("dd-MM-yyyy");
 		format.setTimeZone(TimeZone.getTimeZone("GMT"));
 		minechatMoved = new HashMap<>();
+		modreqs = new HashMap<>();
+		ReportRTS rts = (ReportRTS) plugin.getServer().getPluginManager().getPlugin("ReportRTS");
+		reportRTSfound = false;
+		if (rts != null) {
+			reportRTSfound = true;
+			db = DatabaseManager.getDatabase();
+		}
 		createComp();
 		onEnable();
 	}
@@ -59,14 +75,33 @@ public class PlayerLogger {
 	/*
 	 * SET IN CONFIG
 	 */
-	public void setLoginTime(String playername) {
+	public void setLoginTime(final String playername) {
+		if (PermissionsEx.getUser(playername).has("reportrts.mod") && reportRTSfound) {
+			Util.runASync(plugin, new Runnable() {
+				
+				@Override
+				public void run() {
+					try {
+						ResultSet rs = db.getHandledBy(playername);
+	                    int totalCompleted = 0;
+	                    while(rs.next()){
+	                        if(rs.getInt("status") == 3) totalCompleted++;
+	                    }
+	                    modreqs.put(playername, totalCompleted);
+					} catch (Exception e) {
+						
+					}
+				}
+			});
+		}
 		logConfig.set("time." + playername + "." + format.format(new Date()) + ".login", System.currentTimeMillis()); 
 		save();
 	}
 	
-	public void setLogoutTime(String playername) {
-		long loginTime = 0; long timeToday = 0; long currentTime = System.currentTimeMillis();
-		String todayString = "time." + playername + "." + format.format(new Date(currentTime)) + ".";
+	public void setLogoutTime(final String playername) {
+		long loginTime = 0; long timeToday = 0; 
+		long currentTime = System.currentTimeMillis();
+		final String todayString = "time." + playername + "." + format.format(new Date(currentTime)) + ".";
 		if (logConfig.contains(todayString + "login")) {
 			loginTime = logConfig.getLong(todayString + "login");
 			logConfig.set(todayString + "login", null);
@@ -84,6 +119,31 @@ public class PlayerLogger {
 			Long timePlayed = currentTime - loginTime;
 			timePlayed = timePlayed + timeToday;
 			logConfig.set(todayString + "timetoday", timePlayed);
+		}
+		if (PermissionsEx.getUser(playername).has("reportrts.mod") && reportRTSfound) {
+			Util.runASync(plugin, new Runnable() {
+				
+				@Override
+				public void run() {
+					try {
+						ResultSet rs = db.getHandledBy(playername);
+	                    int totalCompleted = 0;
+	                    while(rs.next()){
+	                        if(rs.getInt("status") == 3) totalCompleted++;
+	                    }
+	                    if (!modreqs.containsKey(playername)) return;
+	                    int nrOfModreqs = totalCompleted - modreqs.get(playername);
+	                    modreqs.remove(playername);
+	                    if (logConfig.contains(todayString + "modreqs")) {
+	                    	nrOfModreqs = nrOfModreqs + logConfig.getInt(todayString + "modreqs");
+	                    }
+	                    logConfig.set(todayString + "modreqs", nrOfModreqs);
+	                    save();
+					} catch (Exception e) {
+						
+					}
+				}
+			});
 		}
 		save();
 	}
@@ -271,9 +331,7 @@ public class PlayerLogger {
 	
 	public void onEnable(){
 		for (Player onlinePlayer : plugin.getServer().getOnlinePlayers()) {
-			String date = format.format(new Date()); 
-			logConfig.set("time." + onlinePlayer.getName() + "." + date, System.currentTimeMillis());
-			setMoved(onlinePlayer.getName(), false);
+			setLoginTime(onlinePlayer.getName());
 		}
 	}
 

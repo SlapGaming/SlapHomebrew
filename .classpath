@@ -14,6 +14,7 @@
 	<classpathentry kind="lib" path="lib/WorldGuard.jar"/>
 	<classpathentry kind="lib" path="lib/LogBlock.jar"/>
 	<classpathentry kind="lib" path="lib/TabAPI.jar"/>
+	<classpathentry kind="lib" path="lib/ReportRTS.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/Essentials.jar"/>
 	<classpathentry kind="lib" path="lib/Craftbukkit.jar"/>
