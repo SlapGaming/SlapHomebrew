@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -106,14 +107,19 @@ public class DuelArena {
 	
 	private void stopGame() {
 		gameInProgress = false;
-		if (p1 != null) {
-			p1.teleport(gameLoc);
-			p1 = null;
+		Player[] ps = new Player[] {p1, p2};
+		for (Player p : ps) {
+			if (p != null && !p.isDead()) {
+				p.teleport(gameLoc);
+				p.setHealth(p1.getMaxHealth());
+				p.setFoodLevel(20);
+				for (PotionEffect effect : new ArrayList<>(p.getActivePotionEffects())) {
+					p.removePotionEffect(effect.getType());
+				}
+			}
 		}
-		if (p2 != null) {
-			p2.teleport(gameLoc);
-			p2 = null;
-		}
+		p1 = null; 
+		p2 = null;
 		setLines(newGame);
 	}
 	
