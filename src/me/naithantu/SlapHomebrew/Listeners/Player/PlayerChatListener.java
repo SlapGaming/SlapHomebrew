@@ -52,8 +52,16 @@ public class PlayerChatListener implements Listener {
 			}
 		}
 		
+		String message = event.getMessage().toLowerCase();
+		
+		//Block "lag" messages
+		if (message.equals("lag") || message.equals("lagg")) {
+			event.setCancelled(true);
+			player.chat("/lag");
+			return;
+		}
+		
 		if (!BlockfaqCommand.chatBotBlocks.contains(player.getName())) { //TODO
-			String message = event.getMessage().toLowerCase();
 			if (message.contains("i") && message.contains("can") && message.contains("member") || message.contains("how") && message.contains("get") && message.contains("member")
 					|| message.contains("how") && message.contains("become") && message.contains("member")) {
 				serverMessage = plugin.getConfig().get("chatmessages.member").toString();
@@ -119,7 +127,7 @@ public class PlayerChatListener implements Listener {
 			}
 		}
 		if (plugin.getMessages().contains(player.getName())) {
-			String message = event.getMessage();
+			message = event.getMessage();
 			player.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + "The new message has " + MessageCommand.messageName + " as name and " + message + " as message.");
 			plugin.getMessages().remove(player.getName());
 			plugin.getConfig().set("messages." + MessageCommand.messageName, message);
@@ -130,6 +138,23 @@ public class PlayerChatListener implements Listener {
 		//Check for AFK
 		if (afk.isAfk(playerName)) {
 			afk.leaveAfk(playerName);
+		}
+		
+		//DoubleMsg
+		if (player.hasPermission("slaphomebrew.staff") && !event.isCancelled()) {
+			message = event.getMessage();
+			if (playerLogger.hasMessage(playerName)) {
+				playerLogger.sendSecondMessage(playerName, message);
+				event.setCancelled(true);
+			} else {
+				int l = message.length();
+				if (l > 10) {
+					if (message.substring(l - 3).equals("*--")) {
+						playerLogger.setFirstMessage(playerName, message);
+						event.setCancelled(true);
+					}
+				}
+			}
 		}
 	}
 }

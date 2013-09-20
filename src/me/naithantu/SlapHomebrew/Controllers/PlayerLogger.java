@@ -47,6 +47,8 @@ public class PlayerLogger {
 	
 	private HashMap<String, Boolean> minechatMoved;
 	
+	private HashMap<String, String> doubleMessage;
+	
 	private Database db;
 	private boolean reportRTSfound;
 	private HashMap<String, Integer> modreqs;
@@ -61,6 +63,7 @@ public class PlayerLogger {
 		format = new SimpleDateFormat("dd-MM-yyyy");
 		format.setTimeZone(TimeZone.getTimeZone("GMT"));
 		minechatMoved = new HashMap<>();
+		doubleMessage = new HashMap<>();
 		modreqs = new HashMap<>();
 		ReportRTS rts = (ReportRTS) plugin.getServer().getPluginManager().getPlugin("ReportRTS");
 		reportRTSfound = false;
@@ -121,31 +124,39 @@ public class PlayerLogger {
 			logConfig.set(todayString + "timetoday", timePlayed);
 		}
 		if (PermissionsEx.getUser(playername).has("reportrts.mod") && reportRTSfound) {
+			if (plugin.isEnabled()) {
 			Util.runASync(plugin, new Runnable() {
 				
 				@Override
 				public void run() {
-					try {
-						ResultSet rs = db.getHandledBy(playername);
-	                    int totalCompleted = 0;
-	                    while(rs.next()){
-	                        if(rs.getInt("status") == 3) totalCompleted++;
-	                    }
-	                    if (!modreqs.containsKey(playername)) return;
-	                    int nrOfModreqs = totalCompleted - modreqs.get(playername);
-	                    modreqs.remove(playername);
-	                    if (logConfig.contains(todayString + "modreqs")) {
-	                    	nrOfModreqs = nrOfModreqs + logConfig.getInt(todayString + "modreqs");
-	                    }
-	                    logConfig.set(todayString + "modreqs", nrOfModreqs);
-	                    save();
-					} catch (Exception e) {
-						
-					}
+					logoutTask(playername, todayString);
 				}
 			});
+			} else {
+				logoutTask(playername, todayString);
+			}
 		}
 		save();
+	}
+	
+	private void logoutTask(String playername, String todayString) {
+		try {
+			ResultSet rs = db.getHandledBy(playername);
+            int totalCompleted = 0;
+            while(rs.next()){
+                if(rs.getInt("status") == 3) totalCompleted++;
+            }
+            if (!modreqs.containsKey(playername)) return;
+            int nrOfModreqs = totalCompleted - modreqs.get(playername);
+            modreqs.remove(playername);
+            if (logConfig.contains(todayString + "modreqs")) {
+            	nrOfModreqs = nrOfModreqs + logConfig.getInt(todayString + "modreqs");
+            }
+            logConfig.set(todayString + "modreqs", nrOfModreqs);
+            save();
+		} catch (Exception e) {
+			
+		}
 	}
 	
 	
@@ -427,7 +438,23 @@ public class PlayerLogger {
 		sender.sendMessage(allPromotions.toArray(new String[allPromotions.size()]));
 	}
 	
+	/*
+	 * Double message
+	 */
+	public void setFirstMessage(String player, String message) {
+		PermissionUser user = PermissionsEx.getUser(player);
+		String tag = "<" + user.getPrefix() + player + ChatColor.WHITE + "> ";
+		doubleMessage.put(player, tag + message.replace("*--", " "));
+	}
 	
+	public void sendSecondMessage(String player, String message) {
+		plugin.getServer().broadcastMessage(ChatColor.translateAlternateColorCodes('&', doubleMessage.get(player) + message));
+		doubleMessage.remove(player);
+	}
+	
+	public boolean hasMessage(String player) {
+		return doubleMessage.containsKey(player);
+	}
 	
 	
 }
