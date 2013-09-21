@@ -9,7 +9,7 @@ import me.naithantu.SlapHomebrew.Util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_6_R2.entity.CraftHanging;
+import org.bukkit.craftbukkit.v1_6_R3.entity.CraftHanging;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;

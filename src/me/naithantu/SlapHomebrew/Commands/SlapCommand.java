@@ -13,9 +13,9 @@ import me.naithantu.SlapHomebrew.Controllers.Lottery;
 import me.naithantu.SlapHomebrew.Runnables.RainbowTask;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 import me.naithantu.SlapHomebrew.Util.Util;
-import net.minecraft.server.v1_6_R2.EntityPlayer;
-import net.minecraft.server.v1_6_R2.Packet24MobSpawn;
-import net.minecraft.server.v1_6_R2.Packet70Bed;
+import net.minecraft.server.v1_6_R3.EntityPlayer;
+import net.minecraft.server.v1_6_R3.Packet24MobSpawn;
+import net.minecraft.server.v1_6_R3.Packet70Bed;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -26,7 +26,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.v1_6_R2.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_6_R3.entity.CraftPlayer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Horse;
@@ -770,7 +770,7 @@ public class SlapCommand extends AbstractCommand {
 					this.noPermission(sender);
 					return true;
 				}
-				player.chat("(â•¯Â°â–¡Â°ï¼‰â•¯ï¸µ â”»â”�â”» Table flip!");
+				player.chat("(Ã¢â€¢Â¯Ã‚Â°Ã¢â€“Â¡Ã‚Â°Ã¯Â¼â€°Ã¢â€¢Â¯Ã¯Â¸Âµ Ã¢â€�Â»Ã¢â€�ï¿½Ã¢â€�Â» Table flip!");
 				Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
 
 					@Override
@@ -778,9 +778,9 @@ public class SlapCommand extends AbstractCommand {
 						Player[] onlinePlayers = plugin.getServer().getOnlinePlayers();
 						Player target = onlinePlayers[new Random().nextInt(onlinePlayers.length)];
 						if (target.getName().equals(player.getName())) {
-							target.chat("â”¬â”€â”€â”¬ ï¾‰(Â° _Â°ï¾‰) Sorry 'bout that guys..");
+							target.chat("Ã¢â€�Â¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�Â¬ Ã¯Â¾â€°(Ã‚Â° _Ã‚Â°Ã¯Â¾â€°) Sorry 'bout that guys..");
 						} else {
-							target.chat("â”¬â”€â”€â”¬ ï¾‰(Â° _Â°ï¾‰) I fix");
+							target.chat("Ã¢â€�Â¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�Â¬ Ã¯Â¾â€°(Ã‚Â° _Ã‚Â°Ã¯Â¾â€°) I fix");
 						}
 					}
 				}, 100);

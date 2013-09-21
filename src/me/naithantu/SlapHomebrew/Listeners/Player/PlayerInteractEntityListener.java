@@ -5,7 +5,7 @@ import me.naithantu.SlapHomebrew.Controllers.Horses;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_6_R2.entity.CraftHanging;
+import org.bukkit.craftbukkit.v1_6_R3.entity.CraftHanging;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
