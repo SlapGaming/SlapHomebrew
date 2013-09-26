@@ -21,14 +21,14 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 
 import com.earth2me.essentials.User;
 
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
-public class PlayerLoginListener implements Listener {
+public class PlayerJoinListener implements Listener {
 	SlapHomebrew plugin;
 	YamlStorage timeStorage;
 	YamlStorage dataStorage;
@@ -43,7 +43,7 @@ public class PlayerLoginListener implements Listener {
 	private PlayerLogger playerLogger;
 	private TabController tabController;
 
-	public PlayerLoginListener(SlapHomebrew plugin, YamlStorage timeStorage, YamlStorage dataStorage, YamlStorage vipStorage, Mail mail, Jails jails, PlayerLogger playerLogger, TabController tabController) {
+	public PlayerJoinListener(SlapHomebrew plugin, YamlStorage timeStorage, YamlStorage dataStorage, YamlStorage vipStorage, Mail mail, Jails jails, PlayerLogger playerLogger, TabController tabController) {
 		this.plugin = plugin;
 		this.timeStorage = timeStorage;
 		this.dataStorage = dataStorage;
@@ -58,7 +58,7 @@ public class PlayerLoginListener implements Listener {
 	}
 
 	@EventHandler
-	public void onPlayerLogin(PlayerLoginEvent event) {
+	public void onPlayerLogin(PlayerJoinEvent event) {
 		final Player player = event.getPlayer();
 
 		plugin.getExtras().getGhostTeam().addPlayer(player);
