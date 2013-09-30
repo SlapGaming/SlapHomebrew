@@ -154,6 +154,8 @@ public class TabController {
 		if (user != null) {
 			PermissionGroup[] groups = user.getGroups();
 			if (groups != null) {
+				String prefix;
+				boolean added = false;
 				if (groups.length > 0) {
 					switch (groups[0].getName()) {
 					case "builder":
@@ -166,16 +168,14 @@ public class TabController {
 						addToList(slaps, playerName);
 						break;
 					case "VIP":
-						String prefix = user.getPrefix();
+						prefix = user.getPrefix();
 						if (prefix != null) {
 							if (prefix.toLowerCase().contains("slap")) {
 								addToList(slaps, playerName);
-							} else {
-								addToList(vips, playerName);
+								added = true;
 							}
-						} else {
-							addToList(vips, playerName);
 						}
+						if (!added) addToList(vips, playerName);
 						break;
 					case "Guide": case "VIPGuide":
 						addToList(guides, playerName);
@@ -187,11 +187,14 @@ public class TabController {
 						addToList(admins, playerName);
 						break;
 					case "SuperAdmin":
-						if (playerName.equals("Telluur")) {
-							addToList(admins, playerName);
-						} else {
-							addToList(ops, playerName);
+						prefix = user.getPrefix();
+						if (prefix != null) {
+							if (prefix.toLowerCase().contains("admin")) {
+								addToList(admins, playerName);
+								added = true;
+							}
 						}
+						if (!added) addToList(ops, playerName);
 						break;
 					}
 				}
