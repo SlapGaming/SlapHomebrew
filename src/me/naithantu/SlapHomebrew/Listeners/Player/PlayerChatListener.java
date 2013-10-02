@@ -52,6 +52,9 @@ public class PlayerChatListener implements Listener {
 			}
 		}
 		
+		//Set last activity
+		playerLogger.setLastActivity(playerName);
+		
 		String message = event.getMessage().toLowerCase();
 		
 		//Block "lag" messages

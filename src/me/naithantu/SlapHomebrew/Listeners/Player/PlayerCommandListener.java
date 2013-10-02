@@ -4,7 +4,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
-import me.naithantu.SlapHomebrew.Commands.SlapCommand;
 import me.naithantu.SlapHomebrew.Controllers.AwayFromKeyboard;
 import me.naithantu.SlapHomebrew.Controllers.Jails;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
@@ -45,6 +44,9 @@ public class PlayerCommandListener implements Listener {
 			playerLogger.sendNotMovedMessage(player);
 			return;
 		}
+		
+		//Set last activity
+		playerLogger.setLastActivity(playerName);
 		
 		//Cancel commands in Jail
 		if (jails.isInJail(playerName)) {
@@ -133,10 +135,11 @@ public class PlayerCommandListener implements Listener {
 			}
 		}
 		
+		//Send commandspy message
 		if (!event.isCancelled()) {
 			String lCmd = commandMessage[0].toLowerCase();
-			if (!lCmd.equals("/msg") && !lCmd.equals("/m") && !lCmd.equals("/r") && !lCmd.equals("/reply") && !lCmd.equals("/mail") && !lCmd.equals("/roll") && !lCmd.equals("/afk") && !lCmd.equals("/suicide") && !lCmd.equals("/me") && !lCmd.equals("/j") && !lCmd.equals("/jumpto") && !lCmd.equals("/ac") && !lCmd.equals("/a") && !lCmd.equals("/amsg") && !lCmd.equals("/helpop")) {
-				SlapCommand.sendCommand(playerName, message);
+			if (!lCmd.equals("/roll") && !lCmd.equals("/afk") && !lCmd.equals("/suicide") && !lCmd.equals("/me") && !lCmd.equals("/j") && !lCmd.equals("/jumpto") && !lCmd.equals("/ac") && !lCmd.equals("/a") && !lCmd.equals("/amsg") && !lCmd.equals("/helpop")) {
+				playerLogger.sendToCommandSpies(playerName, message);
 			}
 		}
 	}

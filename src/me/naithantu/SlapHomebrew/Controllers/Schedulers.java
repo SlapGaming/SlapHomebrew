@@ -3,6 +3,7 @@ package me.naithantu.SlapHomebrew.Controllers;
 import java.util.Collection;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
+import me.naithantu.SlapHomebrew.Runnables.AFKChecker;
 import me.naithantu.SlapHomebrew.Runnables.WeatherTask;
 import me.naithantu.SlapHomebrew.Util.Util;
 
@@ -14,16 +15,18 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 public class Schedulers {
-	SlapHomebrew plugin;
+	
+	private SlapHomebrew plugin;
 
 	public Schedulers(SlapHomebrew plugin) {
 		this.plugin = plugin;
 		removeInvisibility();
 		checkFlags();
 		startWeather();
+		startAFKChecker();
 	}
 
-	public void removeInvisibility() {
+	private void removeInvisibility() {
 		Util.runTimer(plugin, new Runnable() {
 			public void run() {
 				for (Player player : Bukkit.getServer().getOnlinePlayers()) {
@@ -41,7 +44,7 @@ public class Schedulers {
 		}, 0, 20);
 	}
 
-	public void checkFlags() {
+	private void checkFlags() {
 		Util.runTimer(plugin, new Runnable() {
 			public void run() {
 				for (Player player : Bukkit.getServer().getOnlinePlayers()) {
@@ -64,8 +67,12 @@ public class Schedulers {
 		}, 0, 20);
 	}
 	
-	public void startWeather() {
+	private void startWeather() {
 		Util.runTimer(plugin, new WeatherTask(plugin), 1200, 1200);
+	}
+	
+	private void startAFKChecker() {
+		Util.runTimer(plugin, new AFKChecker(plugin, plugin.getAwayFromKeyboard(), plugin.getPlayerLogger(), 5), 300, 6000);
 	}
 	
 }

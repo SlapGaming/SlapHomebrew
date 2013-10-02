@@ -2,6 +2,7 @@ package me.naithantu.SlapHomebrew.Listeners.Player;
 
 import me.naithantu.SlapHomebrew.Commands.Fun.RideCommand;
 import me.naithantu.SlapHomebrew.Controllers.Horses;
+import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -19,18 +20,24 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 public class PlayerInteractEntityListener implements Listener {
 	
 	private Horses horses;
+	private PlayerLogger playerLogger;
 	
-	public PlayerInteractEntityListener(Horses horses) {
+	public PlayerInteractEntityListener(Horses horses, PlayerLogger playerLogger) {
 		this.horses = horses;
+		this.playerLogger = playerLogger;
 	}
 	
 	@EventHandler
 	public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
 		Player player = event.getPlayer();
+		String playername = player.getName();
 		Entity clickedEntity = event.getRightClicked();
-						
+				
+		//Set last activity
+		playerLogger.setLastActivity(playername);
+		
 		//Horse info click
-		if (horses.isInfoClick(player.getName())) {
+		if (horses.isInfoClick(playername)) {
 			if (clickedEntity.getType() == EntityType.HORSE) {
 				horses.infoHorse(player, clickedEntity.getUniqueId().toString());
 			} else {
@@ -41,7 +48,7 @@ public class PlayerInteractEntityListener implements Listener {
 		}
 		
 		//Entity Ride Click
-		if (RideCommand.rightClick(player.getName())) {
+		if (RideCommand.rightClick(playername)) {
 			if (player.isInsideVehicle()) {
 				player.getVehicle().eject();
 			}
@@ -64,7 +71,7 @@ public class PlayerInteractEntityListener implements Listener {
 			
 			//Leash on Fence -- Warning: Dirty fix -- Will probably break on update
 			if (clickedEntity instanceof CraftHanging) {
-				if (!horses.isOwnerOfLeash(clickedEntity.getUniqueId().toString(), player.getName())) {
+				if (!horses.isOwnerOfLeash(clickedEntity.getUniqueId().toString(), playername)) {
 					player.sendMessage(ChatColor.RED + "You are not the owner of that leash.");
 					event.setCancelled(true);
 				}

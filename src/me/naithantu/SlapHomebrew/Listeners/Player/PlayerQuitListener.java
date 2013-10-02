@@ -61,6 +61,9 @@ public class PlayerQuitListener implements Listener {
 		//Remove from minechatChecker
 		playerLogger.removeFromMoved(playername);
 		
+		//Remove from last activity
+		playerLogger.setLastActivity(playername);
+		
 	}
 
 	private boolean isOnlineStaff(String leavingPlayer) {

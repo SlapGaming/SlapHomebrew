@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TimeZone;
@@ -47,7 +48,11 @@ public class PlayerLogger {
 	
 	private HashMap<String, Boolean> minechatMoved;
 	
+	private HashMap<String, Long> lastActivity;
+	
 	private HashMap<String, String> doubleMessage;
+	
+	private HashSet<String> commandSpy;
 	
 	private Database db;
 	private boolean reportRTSfound;
@@ -64,6 +69,7 @@ public class PlayerLogger {
 		format.setTimeZone(TimeZone.getTimeZone("GMT"));
 		minechatMoved = new HashMap<>();
 		doubleMessage = new HashMap<>();
+		lastActivity = new HashMap<>();
 		modreqs = new HashMap<>();
 		ReportRTS rts = (ReportRTS) plugin.getServer().getPluginManager().getPlugin("ReportRTS");
 		reportRTSfound = false;
@@ -72,6 +78,13 @@ public class PlayerLogger {
 			db = DatabaseManager.getDatabase();
 		}
 		createComp();
+		
+		commandSpy = new HashSet<>();
+		List<String> list = logConfig.getStringList("commandspy");
+		for (String player : list) {
+			commandSpy.add(player);
+		}
+		
 		onEnable();
 	}
 	
@@ -439,6 +452,24 @@ public class PlayerLogger {
 	}
 	
 	/*
+	 * Last Activity
+	 */
+	public void setLastActivity(String player) {
+		lastActivity.put(player, System.currentTimeMillis());
+	}
+	
+	public long getLastActivity(String player) {
+		Long a = lastActivity.get(player);
+		if (a == null) return 0;
+		else return a;
+	}
+	
+	public void removeFromLastActivity(String player) {
+		lastActivity.remove(player);
+	}
+	
+	
+	/*
 	 * Double message
 	 */
 	public void setFirstMessage(String player, String message) {
@@ -454,6 +485,40 @@ public class PlayerLogger {
 	
 	public boolean hasMessage(String player) {
 		return doubleMessage.containsKey(player);
+	}
+	
+	/*
+	 * CommandSpy
+	 */
+	public void addCommandSpy(String player) {
+		if (commandSpy.contains(player)) return;
+		commandSpy.add(player);
+		List<String> list = logConfig.getStringList("commandspy");
+		list.add(player);
+		logConfig.set("commandspy", list);
+		save();
+	}
+	
+	public void removeFromCommandSpy(String player) {
+		if (!commandSpy.contains(player)) return;
+		commandSpy.remove(player);
+		List<String> list = logConfig.getStringList("commandspy");
+		list.remove(player);
+		logConfig.set("commandspy", list);
+		save();		
+	}
+	
+	public boolean isCommandSpy(String player) {
+		return commandSpy.contains(player);
+	}
+	
+	public void sendToCommandSpies(String player, String command) {
+		for (String spyname : commandSpy) {
+			Player spy = plugin.getServer().getPlayer(spyname);
+			if (spy != null) {
+				spy.sendMessage(ChatColor.GRAY + "[CS] " + player + ": " + command);
+			}
+		}
 	}
 	
 	

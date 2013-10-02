@@ -1,6 +1,7 @@
 package me.naithantu.SlapHomebrew.Controllers;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
@@ -13,9 +14,12 @@ public class AwayFromKeyboard {
 	private SlapHomebrew plugin;
 	private Map<String, String> afkReasons;
 	
+	private HashSet<String> preventAFK;
+	
 	public AwayFromKeyboard(SlapHomebrew plugin){
 		this.plugin = plugin;
 		afkReasons = new HashMap<String, String>();
+		preventAFK = new HashSet<>();
 	}
 	
     public void goAfk(String player, String reason){
@@ -69,6 +73,18 @@ public class AwayFromKeyboard {
     	if (afkReasons.containsKey(afkPerson)) {
     		afkReasons.remove(afkPerson);
     	}
+    }
+    
+    public void setPreventAFK(String player) {
+    	preventAFK.add(player);
+    }
+    
+    public void removeFromPreventAFK(String player) {
+    	preventAFK.remove(player);
+    }
+    
+    public boolean hasPreventAFK(String player) {
+    	return preventAFK.contains(player);
     }
 	
 

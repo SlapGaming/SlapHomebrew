@@ -10,6 +10,7 @@ import java.util.Random;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Controllers.Book;
 import me.naithantu.SlapHomebrew.Controllers.Lottery;
+import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
 import me.naithantu.SlapHomebrew.Runnables.RainbowTask;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 import me.naithantu.SlapHomebrew.Util.Util;
@@ -45,6 +46,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import com.earth2me.essentials.User;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
@@ -53,7 +55,6 @@ public class SlapCommand extends AbstractCommand {
 	Integer used = 0;
 	HashSet<String> vipItemsList = new HashSet<String>();
 	public static HashSet<String> retroBow = new HashSet<String>();
-	private static HashSet<String> commandSpy = new HashSet<>();
 	private static Lottery lottery;
 
 	public SlapCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
@@ -907,13 +908,70 @@ public class SlapCommand extends AbstractCommand {
 					noPermission(sender);
 					return true;
 				}
-				if (commandSpy.contains(sender.getName())) {
-					commandSpy.remove(sender.getName());
-					sender.sendMessage(Util.getHeader() + "CommandSpy turned off.");
-				} else {
-					commandSpy.add(sender.getName());
-					sender.sendMessage(Util.getHeader() + "CommandSpy turned on.");
+				String playername = player.getName();
+				PlayerLogger pL = plugin.getPlayerLogger();
+				switch (args.length) {
+				case 1:
+					if (pL.isCommandSpy(playername)) sender.sendMessage(Util.getHeader() + "You are currently a CommandSpy!");
+					else sender.sendMessage(Util.getHeader() + "You are currently " + ChatColor.RED + "not " + ChatColor.WHITE + "a CommandSpy!");
+					badMsg(sender, "Usage: /slap commandspy [on/off] | /slap commandspy [player] <on/off>");
+					break;
+				case 2:
+					switch(args[1].toLowerCase()) {
+					case "on":
+						pL.addCommandSpy(playername);
+						sender.sendMessage(Util.getHeader() + "Turned CommandSpy on.");
+						break;
+					case "off":
+						pL.removeFromCommandSpy(playername);
+						sender.sendMessage(Util.getHeader() + "Turned CommandSpy off.");
+						break;
+					default:
+						User u = plugin.getEssentials().getUserMap().getUser(playername);
+						if (u != null) {
+							if (pL.isCommandSpy(u.getName())) sender.sendMessage(Util.getHeader() + u.getName() + " is a CommandSpy.");
+							else sender.sendMessage(Util.getHeader() + u.getName() + "is not a CommandSpy.");
+						} else {
+							badMsg(sender, "Player " + args[1] + " doesn't exist.");
+						}
+					}
+					break;
+				case 3:
+					boolean on = false;
+					switch (args[2].toLowerCase()) {
+					case "on": on = true;	break;
+					case "off":				break;
+					default:
+						badMsg(sender, "Usage: /slap commandspy [player] <on/off>");
+						return true;
+					}
+					User u = plugin.getEssentials().getUserMap().getUser(args[1]);
+					if (u != null) {
+						String enteredPlayer = u.getName();
+						if (on) {
+							if (pL.isCommandSpy(enteredPlayer)) {
+								badMsg(sender, enteredPlayer + " is already a CommandSpy.");
+							} else {
+								pL.addCommandSpy(u.getName());
+								sender.sendMessage(Util.getHeader() + u.getName() + " is now a CommandSpy!");
+							}
+						} else {
+							if (!pL.isCommandSpy(enteredPlayer)) {
+								badMsg(sender, enteredPlayer + " isn't a CommandSpy.");
+							} else {
+								pL.removeFromCommandSpy(u.getName());
+								sender.sendMessage(Util.getHeader() + " Turned off CommandSpy for " + enteredPlayer);
+							}
+							
+						}
+					} else {
+						badMsg(sender, "Player " + args[1] + " doesn't exist.");
+					}
+					break;
+				default:
+					badMsg(sender, "You're doing it wrong.");
 				}
+				
 				break;
 			case "sel": case "select": case "info":
 				if (!testPermission(player, "worldgaurdsc")) {
@@ -991,20 +1049,5 @@ public class SlapCommand extends AbstractCommand {
 		}
 		return returnBool;
 	}
-
-	public static void sendCommand(String player, String command) {
-		try {
-			if (commandSpy.size() > 0) {
-				for (String spy : commandSpy) {
-					Player pSpy = Bukkit.getPlayer(spy);
-					if (pSpy != null) {
-						if (!pSpy.getName().equals(player)) {
-							pSpy.sendMessage(ChatColor.GRAY + "[CS] " + player + ": " + command);
-						}
-					}
-				}
-			}
-		} catch (NullPointerException e) {
-		}
-	}
+	
 }

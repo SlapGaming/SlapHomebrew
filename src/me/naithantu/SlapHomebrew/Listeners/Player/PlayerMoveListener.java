@@ -104,5 +104,8 @@ public class PlayerMoveListener implements Listener {
 			}
 		}
 		
+		//Set last activity
+		playerLogger.setLastActivity(playername);
+		
 	}
 }

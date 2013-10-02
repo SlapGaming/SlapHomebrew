@@ -4,6 +4,7 @@ import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.SlapCommand;
 import me.naithantu.SlapHomebrew.Controllers.Horses;
 import me.naithantu.SlapHomebrew.Controllers.Jails;
+import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.Bukkit;
@@ -23,27 +24,33 @@ import org.bukkit.metadata.FixedMetadataValue;
 
 public class PlayerInteractListener implements Listener {
 	
-	SlapHomebrew plugin;
-	Horses horses;
-	Jails jails;
+	private SlapHomebrew plugin;
+	private Horses horses;
+	private Jails jails;
+	private PlayerLogger playerLogger;
 
-	public PlayerInteractListener(SlapHomebrew plugin, Horses horses, Jails jails) {
+	public PlayerInteractListener(SlapHomebrew plugin, Horses horses, Jails jails, PlayerLogger playerLogger) {
 		this.plugin = plugin;
 		this.horses = horses;
 		this.jails = jails;
+		this.playerLogger = playerLogger;
 	}
 	
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		final Player player = event.getPlayer();
+		final String playername = player.getName();
+		
+		//Set last activity
+		playerLogger.setLastActivity(playername);
 		
 		//Block if in jail
-		if (jails.isInJail(player.getName())) {
+		if (jails.isInJail(playername)) {
 			event.setCancelled(true);
 			return;
 		}
 		
-		if (SlapCommand.retroBow.contains(player.getName())) {
+		if (SlapCommand.retroBow.contains(playername)) {
 			Arrow arrow = player.launchProjectile(Arrow.class);
 			arrow.setMetadata("retrobow", new FixedMetadataValue(plugin, true));
 		}
@@ -72,7 +79,7 @@ public class PlayerInteractListener implements Listener {
 								for (Entity leashFence : player.getWorld().getEntities()) {
 									if (leashFence instanceof CraftHanging) {
 										if (leashFence.getLocation().equals(loc)) {
-											horses.placedLeashOnFence(leashFence.getUniqueId().toString(), player.getName());
+											horses.placedLeashOnFence(leashFence.getUniqueId().toString(), playername);
 										}
 									}
 								}
