@@ -512,11 +512,14 @@ public class PlayerLogger {
 		return commandSpy.contains(player);
 	}
 	
-	public void sendToCommandSpies(String player, String command) {
+	public void sendToCommandSpies(String player, String command, boolean social) {
 		for (String spyname : commandSpy) {
 			Player spy = plugin.getServer().getPlayer(spyname);
 			if (spy != null) {
-				spy.sendMessage(ChatColor.GRAY + "[CS] " + player + ": " + command);
+				if (!spyname.equals(player)) {
+					if (social) spy.sendMessage(ChatColor.GRAY + "[Social] " + player + ": " + command);
+					else spy.sendMessage(ChatColor.GRAY + "[CS] " + player + ": " + command);
+				}
 			}
 		}
 	}

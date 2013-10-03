@@ -45,6 +45,17 @@ public class PlayerCommandListener implements Listener {
 			return;
 		}
 		
+		//Morph Whisper -> M
+		if (commandMessage[0].equals("/w")) {
+			player.chat(event.getMessage().replace("/w", "/m"));
+			event.setCancelled(true);
+			return;
+		} else if (commandMessage[0].equals("/whisper")) {
+			player.chat(event.getMessage().replace("/whisper", "/m"));
+			event.setCancelled(true);
+			return;
+		}
+		
 		//Set last activity
 		playerLogger.setLastActivity(playerName);
 		
@@ -139,7 +150,12 @@ public class PlayerCommandListener implements Listener {
 		if (!event.isCancelled()) {
 			String lCmd = commandMessage[0].toLowerCase();
 			if (!lCmd.equals("/roll") && !lCmd.equals("/afk") && !lCmd.equals("/suicide") && !lCmd.equals("/me") && !lCmd.equals("/j") && !lCmd.equals("/jumpto") && !lCmd.equals("/ac") && !lCmd.equals("/a") && !lCmd.equals("/amsg") && !lCmd.equals("/helpop")) {
-				playerLogger.sendToCommandSpies(playerName, message);
+				switch (lCmd) {
+				case "/r": case "/reply": case "/mail":	case "/tell": case "/t": case "/m": case "/msg":
+					playerLogger.sendToCommandSpies(playerName, message, true); break;
+				default:
+					playerLogger.sendToCommandSpies(playerName, message, false);
+				}
 			}
 		}
 	}
