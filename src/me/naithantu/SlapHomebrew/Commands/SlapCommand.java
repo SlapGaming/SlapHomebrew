@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Random;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
+import me.naithantu.SlapHomebrew.Commands.Basics.SpawnCommand;
 import me.naithantu.SlapHomebrew.Controllers.Book;
 import me.naithantu.SlapHomebrew.Controllers.Lottery;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
@@ -167,6 +168,26 @@ public class SlapCommand extends AbstractCommand {
 			} catch (NumberFormatException ex) {
 				badMsg(sender, args[1] + " is not a valid number.");
 				return true;
+			}
+			break;
+		case "setrw": case "rw": case "resourceworld":
+			if (!testPermission(sender, "setrw")) {
+				noPermission(sender);
+				return true;
+			}
+			if (args.length != 2) {
+				badMsg(sender, "Usage: /slap setrw [worldnumber]");
+				return true;
+			}
+			try {
+				int worldnumber = Integer.parseInt(args[1]);
+				if (worldnumber < 1) throw new NumberFormatException();
+				SpawnCommand.setResourceWorldName("world_resource" + worldnumber);
+				plugin.getConfig().set("resourceworld", "world_resource" + worldnumber);
+				plugin.saveConfig();
+				sender.sendMessage(Util.getHeader() + "/spawn rw has been set to: world_resource" + worldnumber);
+			} catch (NumberFormatException e) {
+				badMsg(sender, args[1] + " is not a valid number.");
 			}
 			break;
 		default:

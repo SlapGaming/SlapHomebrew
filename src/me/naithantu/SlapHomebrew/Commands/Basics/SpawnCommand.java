@@ -4,7 +4,6 @@ import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -14,13 +13,10 @@ public class SpawnCommand extends AbstractCommand {
 	
 	public SpawnCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
 		super(sender, args, plugin);
-		if (resourceWorldName == null) {
-			for (World targetWorld : plugin.getServer().getWorlds()) {
-				if (targetWorld.getName().contains("resource")) {
-					resourceWorldName = targetWorld.getName();
-				}
-			}
-		}
+	}
+	
+	public static void setResourceWorldName(String name) {
+		resourceWorldName = name;
 	}
 
 	@Override
@@ -60,7 +56,7 @@ public class SpawnCommand extends AbstractCommand {
 				teleportToSpawn(targetPlayer, "world_pvp", "the PVP world.", -90F);
 				break;
 			case "resource": case "rw":
-				teleportToSpawn(targetPlayer, "world_resource12", "the resource world.", -90F);
+				teleportToSpawn(targetPlayer, resourceWorldName, "the resource world.", -90F);
 				break;
 			case "sonic":
 				plugin.getSonic().teleportSonic(targetPlayer.getName());

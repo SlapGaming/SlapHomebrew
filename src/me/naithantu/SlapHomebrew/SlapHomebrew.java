@@ -16,6 +16,7 @@ import java.util.Set;
 
 import me.naithantu.SlapHomebrew.Commands.CommandHandler;
 import me.naithantu.SlapHomebrew.Commands.Basics.BlockfaqCommand;
+import me.naithantu.SlapHomebrew.Commands.Basics.SpawnCommand;
 import me.naithantu.SlapHomebrew.Controllers.*;
 import me.naithantu.SlapHomebrew.Listeners.*;
 import me.naithantu.SlapHomebrew.Listeners.Entity.*;
@@ -147,6 +148,15 @@ public class SlapHomebrew extends JavaPlugin {
 		if (vipConfig.getConfigurationSection("vipdays") == null) {
 			vipConfig.createSection("vipdays");
 		}
+		
+		//Set resource world
+		String rwWorld = config.getString("resourceworld");
+		if (rwWorld == null) {
+			config.set("resourceworld", "world_resource13");
+			rwWorld = "world_resource13";
+		}
+		SpawnCommand.setResourceWorldName(rwWorld);
+		
 		saveConfig();
 	}
 
