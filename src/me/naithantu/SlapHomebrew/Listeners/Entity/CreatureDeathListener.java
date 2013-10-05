@@ -6,6 +6,7 @@ import me.naithantu.SlapHomebrew.Controllers.Horses;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.IronGolem;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Wither;
 import org.bukkit.event.EventHandler;
@@ -22,6 +23,7 @@ public class CreatureDeathListener implements Listener {
 		this.horses = horses;
 	}
 
+	@SuppressWarnings("incomplete-switch")
 	@EventHandler
 	public void onWitherDeath(EntityDeathEvent event) {
 		Entity entity = event.getEntity();
@@ -38,15 +40,28 @@ public class CreatureDeathListener implements Listener {
 			}
 		}
 
+		//Mobs spawned with /slap fire get cleared
 		if (entity.hasMetadata("slapFireMob")) {
 			event.setDroppedExp(0);
 			event.getDrops().clear();
 		}
 		
+		//Remove the horse from the horses list
 		if (entity.getType() == EntityType.HORSE) {
 			String entityID = entity.getUniqueId().toString();
 			if (horses.hasOwner(entityID)) {
 				horses.removeHorse(entityID);
+			}
+		}
+		
+		//Nerf iron golem drop
+		if (entity instanceof IronGolem) {
+			for (ItemStack item : event.getDrops()) {
+				Material m = item.getType();
+				switch (m) {
+				case IRON_INGOT: item.setAmount(2);	break;
+				case RED_ROSE:	 item.setAmount(1);	break;
+				}
 			}
 		}
 	}
