@@ -65,7 +65,9 @@ public class StaffListCommand extends AbstractCommand {
 								for (PermissionUser user : pGroup.getUsers()) {
 									User u = uMap.getUser(user.getName());
 									if (u != null) {
-										addToList(user.getPrefix() + u.getName());
+										if (!u.getName().equals("naithantu") && !u.getName().equals("Telluur")) {
+											addToList(user.getPrefix() + u.getName());
+										}
 									}
 								}
 							}
