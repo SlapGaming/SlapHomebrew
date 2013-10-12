@@ -31,6 +31,7 @@ import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
+import me.naithantu.SlapHomebrew.Controllers.TabController.TabGroup;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 import me.naithantu.SlapHomebrew.Util.Util;
 
@@ -524,5 +525,20 @@ public class PlayerLogger {
 		}
 	}
 	
+	/*
+	 * SuperAdmin control
+	 */
+	public boolean setSuperAdminGroup(String player, String group) {
+		TabGroup tGroup = TabController.TabGroup.valueOf(group);
+		if (tGroup == null) return false;
+		logConfig.set("grouptab." + player, tGroup);
+		return true;
+	}
+	
+	public TabGroup getSuperAdminGroup(String player) {
+		String tabGroup = logConfig.getString("grouptab." + player);
+		if (tabGroup == null) return null;
+		return TabGroup.valueOf(tabGroup);
+	}
 	
 }

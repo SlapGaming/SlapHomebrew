@@ -1,6 +1,7 @@
 package me.naithantu.SlapHomebrew.Commands;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -12,6 +13,7 @@ import me.naithantu.SlapHomebrew.Commands.Basics.SpawnCommand;
 import me.naithantu.SlapHomebrew.Controllers.Book;
 import me.naithantu.SlapHomebrew.Controllers.Lottery;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
+import me.naithantu.SlapHomebrew.Controllers.TabController.TabGroup;
 import me.naithantu.SlapHomebrew.Runnables.RainbowTask;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 import me.naithantu.SlapHomebrew.Util.Util;
@@ -46,6 +48,9 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import ru.tehkode.permissions.PermissionUser;
+import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 import com.earth2me.essentials.User;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
@@ -189,6 +194,54 @@ public class SlapCommand extends AbstractCommand {
 			} catch (NumberFormatException e) {
 				badMsg(sender, args[1] + " is not a valid number.");
 			}
+			break;
+		case "tabgroup":
+			if (!testPermission(sender, "tabgroup")) {
+				noPermission(sender); 
+				return true;
+			}
+			switch (args.length) {
+			case 2: case 3:
+				User user = plugin.getEssentials().getUserMap().getUser(args[1]);
+				if (user == null) {
+					badMsg(sender, args[1] + " has never been on the server.");
+					return true;
+				}
+				PermissionUser pexUser = PermissionsEx.getUser(user.getName());
+				if (pexUser.getGroups()[0].getName().equals("SuperAdmin")) {
+					switch (args.length) {
+					case 2: 
+						TabGroup group = plugin.getPlayerLogger().getSuperAdminGroup(user.getName());
+						if (group == null) {
+							badMsg(sender, "This player is in the owners Tab (Not registered)");
+						} else {
+							sender.sendMessage(Util.getHeader() + "This player is in the TabGroup: " + group.toString());
+						}
+						break;
+					case 3:
+						if (plugin.getPlayerLogger().setSuperAdminGroup(user.getName(), args[2])) {
+							sender.sendMessage(Util.getHeader() + "Group has been set.");
+							plugin.getTabController().reEnable();
+						} else {
+							badMsg(sender, "Invalid group. See: /slap tabgroups");
+						}
+						break;
+					}
+				} else {
+					badMsg(sender, "This player is not a SuperAdmin.");
+				}
+				break;
+			default:
+				badMsg(sender, "Usage: /slap tabgroup [Player] <group>");
+				badMsg(sender, "See tabgroups for all the groups: /slap tabgroups");
+			}
+			break;
+		case "tabgroups":
+			if (!testPermission(sender, "tabgroup")) {
+				noPermission(sender);
+				return true;
+			}
+			sender.sendMessage("Tabgroups: " + Arrays.toString(TabGroup.values()));
 			break;
 		default:
 			if (!(sender instanceof Player)) {
@@ -948,7 +1001,7 @@ public class SlapCommand extends AbstractCommand {
 						sender.sendMessage(Util.getHeader() + "Turned CommandSpy off.");
 						break;
 					default:
-						User u = plugin.getEssentials().getUserMap().getUser(playername);
+						User u = plugin.getEssentials().getUserMap().getUser(args[1]);
 						if (u != null) {
 							if (pL.isCommandSpy(u.getName())) sender.sendMessage(Util.getHeader() + u.getName() + " is a CommandSpy.");
 							else sender.sendMessage(Util.getHeader() + u.getName() + "is not a CommandSpy.");

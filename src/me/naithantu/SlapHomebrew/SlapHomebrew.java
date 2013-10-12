@@ -220,7 +220,7 @@ public class SlapHomebrew extends JavaPlugin {
 		 mail = new Mail(this);
 		 playerLogger = new PlayerLogger(this);
 		 sonic = new Sonic(this);
-		 tabController = new TabController(this);
+		 tabController = new TabController(this, playerLogger);
 		 vip = new Vip(this, vipStorage, tabController);
 		 worthList = new WorthList(this);
 		 

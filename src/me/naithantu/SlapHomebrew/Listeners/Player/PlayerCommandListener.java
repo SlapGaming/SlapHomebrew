@@ -56,6 +56,15 @@ public class PlayerCommandListener implements Listener {
 			return;
 		}
 		
+		//Morph plugins -> sPlugins
+		if (commandMessage[0].equals("/plugins")) {
+			if (!Util.testPermission(player, "spluginsoverride")) {
+				player.chat("/splugins");
+				event.setCancelled(true);
+				return;
+			}
+		}
+		
 		//Set last activity
 		playerLogger.setLastActivity(playerName);
 		

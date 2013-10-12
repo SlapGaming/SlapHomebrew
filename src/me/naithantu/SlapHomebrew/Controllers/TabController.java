@@ -15,22 +15,26 @@ import ru.tehkode.permissions.bukkit.PermissionsEx;
 public class TabController {
 	
 	private SlapHomebrew plugin;
+	private PlayerLogger playerLogger;
 	
 	private ArrayList<String> ops;
 	private ArrayList<String> admins;
 	private ArrayList<String> mods;
 	private ArrayList<String> guides;
+	private ArrayList<String> specials;
 	private ArrayList<String> vips;
 	private ArrayList<String> slaps;
 	private ArrayList<String> members;
 	private ArrayList<String> builders;
 	
-	public TabController(SlapHomebrew plugin) {
+	public TabController(SlapHomebrew plugin, PlayerLogger playerLogger) {
 		this.plugin = plugin;
+		this.playerLogger = playerLogger;
 		ops = new ArrayList<>();
 		admins = new ArrayList<>();
 		mods = new ArrayList<>();
 		guides = new ArrayList<>();
+		specials = new ArrayList<>();
 		vips = new ArrayList<>();
 		slaps = new ArrayList<>();
 		members = new ArrayList<>();
@@ -44,6 +48,7 @@ public class TabController {
 		if (admins.size() > 0) tabSize = tabSize + admins.size() + 1;
 		if (mods.size() > 0) tabSize = tabSize + mods.size() + 1;
 		if (guides.size() > 0) tabSize = tabSize + guides.size() + 1;
+		if (specials.size() > 0) tabSize = tabSize + specials.size() + 1;
 		if (vips.size() > 0) tabSize = tabSize + vips.size() + 1;
 		if (slaps.size() > 0) tabSize = tabSize + slaps.size() + 1;
 		if (members.size() > 0) tabSize = tabSize + members.size() + 1;
@@ -53,8 +58,8 @@ public class TabController {
 		int playersOnline = plugin.getServer().getOnlinePlayers().length;
 		int maxPlayers = plugin.getServer().getMaxPlayers();
 		String[] tab = new String[tabSize];
-		boolean fOps; boolean fAdmins; boolean fMods; boolean fGuides; boolean fVips; boolean fSlaps; boolean fMembers; boolean fBuilders;
-		fOps = fAdmins = fMods = fGuides = fVips = fSlaps = fMembers = fBuilders = true;
+		boolean fOps; boolean fAdmins; boolean fMods; boolean fGuides; boolean fSpecials; boolean fVips; boolean fSlaps; boolean fMembers; boolean fBuilders;
+		fOps = fAdmins = fMods = fGuides = fSpecials = fVips = fSlaps = fMembers = fBuilders = true;
 		for (String p : ops) { 
 			if (fOps) { fOps = false; tab[x] = ChatColor.DARK_RED + "-- Owners --"; x++; }
 			tab[x] = ChatColor.DARK_RED + p; x++; 
@@ -70,6 +75,10 @@ public class TabController {
 		for (String p : guides) { 
 			if (fGuides) { fGuides = false; tab[x] = ChatColor.GOLD + "-- Guides --"; x++; }
 			tab[x] = ChatColor.GOLD + p; x++; 
+			}
+		for (String p : specials) {
+			if (fSpecials) { fSpecials = true; tab[x] = ChatColor.DARK_AQUA + "-- Specials --"; x++; }
+			tab[x] = ChatColor.DARK_AQUA + p; x++;
 			}
 		for (String p : vips) { 
 			if (fVips) { fVips = false; tab[x] = ChatColor.BLUE + "-- VIPs --"; x++; }
@@ -118,7 +127,6 @@ public class TabController {
 		String playerName = p.getName();
 		addToGroup(playerName);
 		plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
-			
 			@Override
 			public void run() {
 				createTab();
@@ -130,7 +138,6 @@ public class TabController {
 		String playerName = p.getName();
 		removeFromGroups(playerName);
 		plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
-			
 			@Override
 			public void run() {
 				createTab();
@@ -187,14 +194,22 @@ public class TabController {
 						addToList(admins, playerName);
 						break;
 					case "SuperAdmin":
-						prefix = user.getPrefix();
-						if (prefix != null) {
-							if (prefix.toLowerCase().contains("admin")) {
-								addToList(admins, playerName);
-								added = true;
+						TabGroup group = playerLogger.getSuperAdminGroup(playerName);
+						if (group == null) {
+							addToList(ops, playerName);
+						} else {
+							switch(group) {
+							case builders:	addToList(builders, playerName);	break;
+							case members: 	addToList(members, playerName); 	break;
+							case slaps: 	addToList(slaps, playerName); 		break;
+							case vips: 		addToList(vips, playerName); 		break;
+							case specials: 	addToList(specials, playerName);	break;
+							case guides: 	addToList(guides, playerName);		break;
+							case mods: 		addToList(mods, playerName);		break;
+							case admins:	addToList(admins, playerName);		break;
+							default:		addToList(ops, playerName);
 							}
 						}
-						if (!added) addToList(ops, playerName);
 						break;
 					}
 				}
@@ -216,10 +231,11 @@ public class TabController {
 			case 2:	if (members.remove(playerName)) removed = true; break;
 			case 3:	if (slaps.remove(playerName)) removed = true; break;
 			case 4:	if (vips.remove(playerName)) removed = true; break;
-			case 5:	if (guides.remove(playerName)) removed = true; break;
-			case 6:	if (mods.remove(playerName)) removed = true; break;
-			case 7:	if (admins.remove(playerName)) removed = true; break;
-			case 8:	if (ops.remove(playerName)) removed = true; break;
+			case 5: if (specials.remove(playerName)) removed = true; break;
+			case 6:	if (guides.remove(playerName)) removed = true; break;
+			case 7:	if (mods.remove(playerName)) removed = true; break;
+			case 8:	if (admins.remove(playerName)) removed = true; break;
+			case 9:	if (ops.remove(playerName)) removed = true; break;
 			default: return;
 			}
 			x++;
@@ -237,11 +253,17 @@ public class TabController {
 		members.clear();
 		slaps.clear();
 		vips.clear();
+		specials.clear();
 		guides.clear();
 		mods.clear();
 		admins.clear();
 		ops.clear();
+		
 		onEnable();
+	}
+	
+	public enum TabGroup {
+		builders, members, slaps, vips, specials, guides, mods, admins, ops;
 	}
 
 }
