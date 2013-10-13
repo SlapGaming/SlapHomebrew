@@ -1004,7 +1004,7 @@ public class SlapCommand extends AbstractCommand {
 						User u = plugin.getEssentials().getUserMap().getUser(args[1]);
 						if (u != null) {
 							if (pL.isCommandSpy(u.getName())) sender.sendMessage(Util.getHeader() + u.getName() + " is a CommandSpy.");
-							else sender.sendMessage(Util.getHeader() + u.getName() + "is not a CommandSpy.");
+							else sender.sendMessage(Util.getHeader() + u.getName() + " is not a CommandSpy.");
 						} else {
 							badMsg(sender, "Player " + args[1] + " doesn't exist.");
 						}

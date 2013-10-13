@@ -55,6 +55,9 @@ public class PlayerLogger {
 	
 	private HashSet<String> commandSpy;
 	
+	private HashSet<String> gettingDeaths;
+	private HashSet<String> suicides;
+	
 	private Database db;
 	private boolean reportRTSfound;
 	private HashMap<String, Integer> modreqs;
@@ -85,6 +88,9 @@ public class PlayerLogger {
 		for (String player : list) {
 			commandSpy.add(player);
 		}
+		
+		suicides = new HashSet<>();
+		gettingDeaths = new HashSet<>();
 		
 		onEnable();
 	}
@@ -529,16 +535,103 @@ public class PlayerLogger {
 	 * SuperAdmin control
 	 */
 	public boolean setSuperAdminGroup(String player, String group) {
-		TabGroup tGroup = TabController.TabGroup.valueOf(group);
-		if (tGroup == null) return false;
-		logConfig.set("grouptab." + player, tGroup);
-		return true;
+		try {
+			TabGroup tGroup = TabController.TabGroup.valueOf(group);
+			if (tGroup == null) return false;
+			logConfig.set("grouptab." + player, tGroup.toString());
+			save();
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 	
 	public TabGroup getSuperAdminGroup(String player) {
 		String tabGroup = logConfig.getString("grouptab." + player);
 		if (tabGroup == null) return null;
 		return TabGroup.valueOf(tabGroup);
+	}
+	
+	
+	/*
+	 * Death control
+	 */
+	/**
+	 * Add a death to a player
+	 * @param type Type of death
+	 * @param player The player
+	 */
+	public void addDeath(final DeathType type, final String player) {
+		Util.runASync(plugin, new Runnable() {
+			@Override
+			public void run() {
+				String path = "deaths." + player + "." + type.toString();
+				int deaths = logConfig.getInt(path);
+				deaths++;
+				logConfig.set(path, deaths);
+				save();
+			}
+		});
+	}
+	
+	/**
+	 * Send a player the number of deaths
+	 * @param p The player
+	 */
+	public void getDeaths(final Player p) {
+		final String playername = p.getName();
+		if (gettingDeaths.contains(playername)) { //Check if the player isn't executing getDeaths already
+			Util.badMsg(p, "Your previous command is already running.");
+			return;
+		}
+		gettingDeaths.add(playername);
+		Util.runASync(plugin, new Runnable() {
+			@Override
+			public void run() {
+				String path = "deaths." + playername + ".";
+				int suicide = logConfig.getInt(path + "suicide");
+				int mob = logConfig.getInt(path + "mob");
+				int player = logConfig.getInt(path + "player");
+				int other = logConfig.getInt(path + "other");
+				int totalDeaths = suicide + mob + player + other;
+				if (totalDeaths == 0) {
+					p.sendMessage(Util.getHeader() + "You don't have any deaths yet since this function has been added.");
+				} else {
+					p.sendMessage(Util.getHeader() + "Total Deaths: " + totalDeaths + " | Suicides: " + suicide + " | By Mobs: " + mob + " | By Players: " + player);
+				}
+				gettingDeaths.remove(playername);
+			}
+		});
+	}
+		
+	/**
+	 * DeathTypes
+	 */
+	public enum DeathType {
+		suicide, mob, player, other;
+	}
+	
+	/**
+	 * Check if a player just commited suicide
+	 * @param playername The player
+	 * @return commited suicide
+	 */
+	public boolean hasCommitedSuicide(String playername) {
+		if (suicides.contains(playername)) {
+			suicides.remove(playername);
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	/**
+	 * Add a player to the suicide set
+	 * @param playername The player
+	 */
+	public void commitsSuicide(String playername) {
+		suicides.add(playername);
+		addDeath(DeathType.suicide, playername);
 	}
 	
 }

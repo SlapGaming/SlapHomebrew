@@ -27,6 +27,14 @@ public class AwayFromKeyboard {
     		afkReasons.remove(player);
     	}
     	afkReasons.put(player, reason);
+    	if (!reason.equals("AFK")) {
+    		plugin.getServer().broadcastMessage(ChatColor.WHITE + player + " is now AFK. Reason: " + reason);
+    	} else {
+    		plugin.getServer().broadcastMessage(ChatColor.WHITE + player + " is now AFK.");
+    	}
+    	/*
+    	 * Trying out public AFK reasons. Remove if succes
+    	 * 
     	for (Player targetPlayer : plugin.getServer().getOnlinePlayers()) {
     		if (targetPlayer.hasPermission("slaphomebrew.staff") && !reason.equals("AFK")) {
     			targetPlayer.sendMessage(ChatColor.WHITE + player + " is now AFK. Reason: " + reason);
@@ -34,6 +42,7 @@ public class AwayFromKeyboard {
     			targetPlayer.sendMessage(ChatColor.WHITE + player + " is now AFK");
     		}
     	}
+    	*/
     }
     
     public void leaveAfk(String player){

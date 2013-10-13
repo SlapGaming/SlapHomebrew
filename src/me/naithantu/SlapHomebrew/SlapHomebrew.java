@@ -248,7 +248,7 @@ public class SlapHomebrew extends JavaPlugin {
 		pm.registerEvents(new EntityDamageByEntityListener(this, horses), this);
 		pm.registerEvents(new EntityDamageListener(jails), this);
 		pm.registerEvents(new EntityChangeBlockListener(this), this);
-		pm.registerEvents(new PlayerDeathListener(this), this);
+		pm.registerEvents(new PlayerDeathListener(this, playerLogger), this);
 		pm.registerEvents(new DispenseListener(), this);
 		pm.registerEvents(new FoodLevelChangeListener(), this);
 		pm.registerEvents(new PlayerInteractListener(this, horses, jails, playerLogger), this);

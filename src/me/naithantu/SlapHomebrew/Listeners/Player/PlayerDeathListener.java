@@ -4,6 +4,8 @@ import java.util.Random;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Controllers.Flag;
+import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
+import me.naithantu.SlapHomebrew.Controllers.PlayerLogger.DeathType;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.Bukkit;
@@ -24,9 +26,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
 public class PlayerDeathListener implements Listener {
-	SlapHomebrew plugin;
+	
+	private SlapHomebrew plugin;
+	private PlayerLogger playerLogger;
 
-	public PlayerDeathListener(SlapHomebrew plugin) {
+	public PlayerDeathListener(SlapHomebrew plugin, PlayerLogger playerLogger) {
+		this.playerLogger = playerLogger;
 		this.plugin = plugin;
 	}
 
@@ -35,28 +40,50 @@ public class PlayerDeathListener implements Listener {
 		if (event.getEntity() instanceof Player) {
 			Player player = event.getEntity();
 			World world = player.getWorld();
-			//Only send death messages from pvp world to players in the pvp world.
-			if (event.getDeathMessage() != null && world.getName().equalsIgnoreCase("world_pvp")) {
-				String message = event.getDeathMessage();
+			String playername = player.getName();
+			
+			//Check for suicides
+			if (playerLogger.hasCommitedSuicide(playername)) {
 				event.setDeathMessage(null);
-				for (Player messagePlayer : Bukkit.getServer().getOnlinePlayers()) {
-					if (messagePlayer.getWorld().getName().equalsIgnoreCase("world_pvp"))
-						messagePlayer.sendMessage(message);
+				plugin.getServer().broadcastMessage(playername + " has committed suicide..");
+			}
+			
+			String message = event.getDeathMessage();
+			if (message != null) { 
+				
+				//Deaths logger
+				if (player.getKiller() != null) {
+					playerLogger.addDeath(DeathType.player, playername);
+				} else {
+					if (message.contains("slain by")) {
+						playerLogger.addDeath(DeathType.mob, playername);
+					} else {
+						playerLogger.addDeath(DeathType.other, playername);
+					}
 				}
-				System.out.println(message);
+				
+				//Only send death messages from pvp world to players in the pvp world.
+				if (world.getName().equalsIgnoreCase("world_pvp")) {
+					event.setDeathMessage(null);
+					for (Player messagePlayer : Bukkit.getServer().getOnlinePlayers()) {
+						if (messagePlayer.getWorld().getName().equalsIgnoreCase("world_pvp"))
+							messagePlayer.sendMessage(message);
+					}
+					System.out.println(message);
+				}
 			}
 
 			//Add backdeath location if not in pvp/end world or nobackdeath region.
 			if (player.hasPermission("slaphomebrew.backdeath")) {
 				if (!world.getName().equalsIgnoreCase("world_pvp") && !world.getName().equalsIgnoreCase("world_the_end") && !Util.hasFlag(plugin, player.getLocation(), Flag.NOBACKDEATH)) {
-					plugin.getBackDeathMap().put(player.getName(), player.getLocation());
+					plugin.getBackDeathMap().put(playername, player.getLocation());
 					player.sendMessage(ChatColor.GRAY + "Use the /backdeath command to return to your death point.");
 				}
 			}
 
 			//Print death location to console.
 			Location location = player.getLocation();
-			System.out.println(player.getName() + " died at (" + location.getBlockX() + ", " + location.getBlockY() + ", " + location.getBlockZ() + " in world " + world.getName() + ").");			
+			System.out.println(playername + " died at (" + location.getBlockX() + ", " + location.getBlockY() + ", " + location.getBlockZ() + " in world " + world.getName() + ").");			
 		}
 	}
 	
