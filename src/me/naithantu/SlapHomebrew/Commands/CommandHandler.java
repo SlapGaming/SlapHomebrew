@@ -88,6 +88,7 @@ public class CommandHandler {
 		case "deaths":			commandObj = new DeathsCommand(sender, args, plugin);				break;
 		case "kills":			commandObj = new KillsCommand(sender, args, plugin);				break;
 		case "playtime":		commandObj = new PlaytimeCommand(sender, args, plugin);				break;
+		case "ipcheck":			commandObj = new IPCheckCommand(sender, args, plugin);				break;
 		case "plot":
 			if (args.length == 0) return false;
 			switch (args[0].toLowerCase()) {
