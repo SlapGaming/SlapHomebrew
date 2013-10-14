@@ -55,7 +55,7 @@ public class PlayerLogger {
 	
 	private HashSet<String> commandSpy;
 	
-	private HashSet<String> gettingDeaths;
+	private HashSet<String> doingCommand;
 	private HashSet<String> suicides;
 	
 	private Database db;
@@ -90,7 +90,7 @@ public class PlayerLogger {
 		}
 		
 		suicides = new HashSet<>();
-		gettingDeaths = new HashSet<>();
+		doingCommand = new HashSet<>();
 		
 		onEnable();
 	}
@@ -281,7 +281,7 @@ public class PlayerLogger {
 			public void run() {
 				ConfigurationSection pConfig = logConfig.getConfigurationSection("time");
 				if (pConfig != null) {
-					String msgString = Util.getHeader() + "Checking time";
+					String msgString = Util.getHeader() + "Checking time since 11th of August";
 					if (fromDate != null) {
 						msgString = msgString + " since " + format.format(fromDate);
 					}
@@ -329,6 +329,11 @@ public class PlayerLogger {
 					}
 				} else {
 					Util.badMsg(sender, "No times found.");
+				}
+				
+				//Remove from doingCommand
+				if (doingCommand.contains(sender.getName())) {
+					doingCommand.remove(sender.getName());
 				}
 			}
 		});
@@ -378,6 +383,39 @@ public class PlayerLogger {
 			date = format.parse(dateString);
 		} catch (ParseException e) {}
 		return date;
+	}
+	
+	/*
+	 * Playtime commands
+	 * -Commands can be done by any player
+	 */
+	/**
+	 * Send a player his playtime
+	 * @param p The player
+	 */
+	public void sendPlaytime(final Player p) {
+		if (isRunningCommand(p)) return;
+		final String playername = p.getName();
+		doingCommand.add(playername);
+		Util.runASync(plugin, new Runnable() {
+			@Override
+			public void run() {
+				long timePlayed = getPlayTime(playername, p.isOnline());
+				p.sendMessage(Util.getHeader() + "You have played " + Util.getTimePlayedString(timePlayed) + " since 11th of August.");
+				doingCommand.remove(playername);
+			}
+		});
+	}
+	
+	/**
+	 * Send a list of the top playtimes to the Player
+	 * @param p The player
+	 */
+	public void sendPlaytimeList(final Player p) {
+		if (isRunningCommand(p)) return;
+		final String playername = p.getName();
+		doingCommand.add(playername);
+		getTimeList(p, false, 10, null);
 	}
 	
 	
@@ -580,11 +618,8 @@ public class PlayerLogger {
 	 */
 	public void getDeaths(final Player p) {
 		final String playername = p.getName();
-		if (gettingDeaths.contains(playername)) { //Check if the player isn't executing getDeaths already
-			Util.badMsg(p, "Your previous command is already running.");
-			return;
-		}
-		gettingDeaths.add(playername);
+		if (isRunningCommand(p)) return;
+		doingCommand.add(playername);
 		Util.runASync(plugin, new Runnable() {
 			@Override
 			public void run() {
@@ -599,9 +634,40 @@ public class PlayerLogger {
 				} else {
 					p.sendMessage(Util.getHeader() + "Total Deaths: " + totalDeaths + " | Suicides: " + suicide + " | By Mobs: " + mob + " | By Players: " + player);
 				}
-				gettingDeaths.remove(playername);
+				doingCommand.remove(playername);
 			}
 		});
+	}
+	
+	/**
+	 * Send a player the number of kills
+	 * @param p The player
+	 */
+	public void getKills(final Player p) {
+		if (isRunningCommand(p)) return;
+		final String playername = p.getName();
+		doingCommand.add(playername);
+		Util.runASync(plugin, new Runnable() {
+			@Override
+			public void run() {
+				int kills = logConfig.getInt("kills." + playername);
+				if (kills == 0) {
+					p.sendMessage(Util.getHeader() + "You don't have any kills yet since this function has been added.");
+				} else {
+					p.sendMessage(Util.getHeader() + "Kills: " + kills);
+				}
+				doingCommand.remove(playername);
+			}
+		});
+	}
+	
+	public boolean isRunningCommand(Player p) {
+		if (doingCommand.contains(p.getName())) {
+			Util.badMsg(p, "Your previous command is still running.");
+			return true;
+		} else {
+			return false;
+		}
 	}
 		
 	/**
@@ -632,6 +698,17 @@ public class PlayerLogger {
 	public void commitsSuicide(String playername) {
 		suicides.add(playername);
 		addDeath(DeathType.suicide, playername);
+	}
+	
+	/**
+	 * Add a kill
+	 * @param playername killer
+	 */
+	public void addKill(String playername) {
+		String path = "kills." + playername;
+		int kills = logConfig.getInt(path);
+		kills++;
+		logConfig.set(path, kills);
 	}
 	
 }

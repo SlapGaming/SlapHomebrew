@@ -4,6 +4,9 @@ import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.Staff.*;
 import me.naithantu.SlapHomebrew.Commands.Staff.Plot.*;
 import me.naithantu.SlapHomebrew.Commands.Staff.VIP.*;
+import me.naithantu.SlapHomebrew.Commands.Stats.DeathsCommand;
+import me.naithantu.SlapHomebrew.Commands.Stats.KillsCommand;
+import me.naithantu.SlapHomebrew.Commands.Stats.PlaytimeCommand;
 import me.naithantu.SlapHomebrew.Commands.VIP.*;
 import me.naithantu.SlapHomebrew.Commands.AFK.*;
 import me.naithantu.SlapHomebrew.Commands.Basics.*;
@@ -83,6 +86,8 @@ public class CommandHandler {
 		case "splugins":		commandObj = new PluginsCommand(sender, args, plugin);				break;
 		case "suicide":			commandObj = new SuicideCommand(sender, args, plugin);				break;
 		case "deaths":			commandObj = new DeathsCommand(sender, args, plugin);				break;
+		case "kills":			commandObj = new KillsCommand(sender, args, plugin);				break;
+		case "playtime":		commandObj = new PlaytimeCommand(sender, args, plugin);				break;
 		case "plot":
 			if (args.length == 0) return false;
 			switch (args[0].toLowerCase()) {

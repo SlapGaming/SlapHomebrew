@@ -2,7 +2,7 @@ name: SlapHomebrew
 main: me.naithantu.SlapHomebrew.SlapHomebrew
 depend: [TabAPI, Essentials, Vault, PermissionsEx, ReportRTS]
 authors: [naithantu, Stoux2]
-version: 2.15.2
+version: 2.15.3
 description: SlapHomebrew homemade plugin.
 commands:
   vip:
@@ -169,3 +169,10 @@ commands:
   deaths:
     description: Get the number of deaths
     usage: "Usage: /deaths"
+  kills:
+    description: Get the number of kills
+    usage: "Usage: /kills"
+  playtime:
+    description: Check how much time you have played, or check the top playtime list
+    usage: "Usage: /playtime <list>"
+    aliases: [playedtime, timeplayed]

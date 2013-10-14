@@ -1,4 +1,4 @@
-package me.naithantu.SlapHomebrew.Commands.Basics;
+package me.naithantu.SlapHomebrew.Commands.Stats;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

@@ -53,6 +53,7 @@ public class PlayerDeathListener implements Listener {
 				
 				//Deaths logger
 				if (player.getKiller() != null) {
+					playerLogger.addKill(player.getKiller().getName());
 					playerLogger.addDeath(DeathType.player, playername);
 				} else {
 					if (message.contains("slain by")) {

@@ -1,4 +1,4 @@
-package me.naithantu.SlapHomebrew.Commands.Basics;
+package me.naithantu.SlapHomebrew.Commands.Lists;
 
 import java.util.ArrayList;
 
