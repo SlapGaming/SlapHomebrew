@@ -1,5 +1,8 @@
 package me.naithantu.SlapHomebrew.Commands.Staff;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
@@ -48,6 +51,19 @@ public class IPCheckCommand extends AbstractCommand {
 					}
 				}
 				boolean found = false;
+				try {
+					FileWriter fW = new FileWriter(plugin.getDataFolder() + "ips.txt");
+					PrintWriter out = new PrintWriter(fW);
+					for (Entry<String, String> entry : doubles.entrySet()) {
+						out.println(entry.getKey() + " | Accounts: " + entry.getValue());
+					}
+					out.close();
+				} catch (IOException e) {
+					sender.sendMessage("Failed to write to file.");
+				} finally {
+					sender.sendMessage("Done checking IP's.");
+				}
+				
 				for (Entry<String, String> entry : doubles.entrySet()) {
 					found = true;
 					sender.sendMessage(ChatColor.GRAY + entry.getKey() + " | Accounts: " + entry.getValue());
