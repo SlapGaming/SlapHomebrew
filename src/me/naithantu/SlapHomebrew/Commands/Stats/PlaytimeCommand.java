@@ -36,7 +36,7 @@ public class PlaytimeCommand extends AbstractCommand {
 				badMsg(sender, "Usage: /playtime <list>");
 			}
 		} else {
-			playerLogger.getOnlineTime(p, p.getName(), p.isOnline());
+			playerLogger.sendPlaytime(p);
 		}
 		return true;
 	}

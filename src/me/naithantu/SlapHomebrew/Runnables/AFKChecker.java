@@ -3,6 +3,7 @@ package me.naithantu.SlapHomebrew.Runnables;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Controllers.AwayFromKeyboard;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
+import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -14,13 +15,15 @@ public class AFKChecker extends BukkitRunnable {
 	private PlayerLogger playerLogger;
 	private int allowedMinutes;
 	private long allowedInactive;
+	private long inactiveWarning;
 	
 	public AFKChecker(SlapHomebrew plugin, AwayFromKeyboard afk, PlayerLogger playerLogger, int allowedInactiveMinutes) {
 		this.plugin = plugin;
 		this.afk = afk;
 		this.playerLogger = playerLogger;
 		this.allowedMinutes = allowedInactiveMinutes;
-		this.allowedInactive = (long) allowedInactiveMinutes * 60 * 1000;
+		this.allowedInactive = (long) allowedMinutes * 60 * 1000;
+		this.inactiveWarning = (long) (allowedMinutes - 1) * 60 * 1000;
 	}
 	
 	@Override
@@ -32,9 +35,13 @@ public class AFKChecker extends BukkitRunnable {
 				if (!afk.isAfk(name)) {
 					long lastActive = playerLogger.getLastActivity(name);
 					if (lastActive != 0) {
-						if ((systemTime - lastActive) > allowedInactive) {
+						long lastActiveSeconds = systemTime - lastActive;
+						if (lastActiveSeconds > allowedInactive) {
 							//Go AFK
 							afk.goAfk(name, "Inactive for more than " + allowedMinutes + " minutes.");
+						} else if (lastActiveSeconds > inactiveWarning && lastActiveSeconds < inactiveWarning + 15 * 1000) {
+							//Warn for AFK
+							Util.badMsg(p, "You will Auto-AFK in 1 minute.");
 						}
 					}
 				}

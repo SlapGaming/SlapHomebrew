@@ -590,10 +590,12 @@ public class PlayerLogger {
 		return TabGroup.valueOf(tabGroup);
 	}
 	
-	
 	/*
-	 * Death control
+	 *********************
+	 *   Death control   *
+	 *********************
 	 */
+	
 	/**
 	 * Add a death to a player
 	 * @param type Type of death
@@ -709,6 +711,33 @@ public class PlayerLogger {
 		int kills = logConfig.getInt(path);
 		kills++;
 		logConfig.set(path, kills);
+	}
+	
+	/*
+	 *********************
+	 *    AFK Control    *
+	 *********************
+	 */
+	
+	/**
+	 * Add AFK Time to a players log
+	 * @param player The playername
+	 * @param time The time that the player spent AFK
+	 */
+	public void addAFKTime(final String player, final long time) {
+		Util.runASync(plugin, new Runnable() {
+			
+			@Override
+			public void run() {
+				String path = "time." + player + "." + format.format(new Date()) + ".afk";
+				long foundTime = 0;
+				if (logConfig.contains(path)) {
+					foundTime = logConfig.getLong(path);
+				}
+				logConfig.set(path, time + foundTime);
+				save();
+			}
+		});
 	}
 	
 }

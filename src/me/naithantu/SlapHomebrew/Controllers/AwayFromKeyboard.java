@@ -12,13 +12,18 @@ import org.bukkit.entity.Player;
 public class AwayFromKeyboard {
 
 	private SlapHomebrew plugin;
+	private PlayerLogger playerLogger;
+	
 	private Map<String, String> afkReasons;
+	private Map<String, Long> afkTimes;
 	
 	private HashSet<String> preventAFK;
 	
-	public AwayFromKeyboard(SlapHomebrew plugin){
+	public AwayFromKeyboard(SlapHomebrew plugin, PlayerLogger playerLogger){
 		this.plugin = plugin;
-		afkReasons = new HashMap<String, String>();
+		this.playerLogger = playerLogger;
+		afkReasons = new HashMap<>();
+		afkTimes = new HashMap<>();
 		preventAFK = new HashSet<>();
 	}
 	
@@ -27,26 +32,19 @@ public class AwayFromKeyboard {
     		afkReasons.remove(player);
     	}
     	afkReasons.put(player, reason);
+    	afkTimes.put(player, System.currentTimeMillis());
     	if (!reason.equals("AFK")) {
     		plugin.getServer().broadcastMessage(ChatColor.WHITE + player + " is now AFK. Reason: " + reason);
     	} else {
     		plugin.getServer().broadcastMessage(ChatColor.WHITE + player + " is now AFK.");
     	}
-    	/*
-    	 * Trying out public AFK reasons. Remove if succes
-    	 * 
-    	for (Player targetPlayer : plugin.getServer().getOnlinePlayers()) {
-    		if (targetPlayer.hasPermission("slaphomebrew.staff") && !reason.equals("AFK")) {
-    			targetPlayer.sendMessage(ChatColor.WHITE + player + " is now AFK. Reason: " + reason);
-    		} else {
-    			targetPlayer.sendMessage(ChatColor.WHITE + player + " is now AFK");
-    		}
-    	}
-    	*/
     }
     
     public void leaveAfk(String player){
     	afkReasons.remove(player);
+    	long time = afkTimes.get(player);
+    	playerLogger.addAFKTime(player, System.currentTimeMillis() - time);
+    	afkTimes.remove(player);
     	plugin.getServer().broadcastMessage(ChatColor.WHITE + player + " is no longer AFK");
     }
     

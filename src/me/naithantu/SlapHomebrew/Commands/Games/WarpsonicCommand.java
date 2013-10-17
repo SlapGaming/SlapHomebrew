@@ -35,6 +35,10 @@ public class WarpsonicCommand extends AbstractCommand {
 			}
 			
 			final Player player = (Player) sender;
+			if (player.getVehicle() != null || player.getPassenger() != null) {
+				badMsg(player, "This command doesn't work while in a vehicle.");
+				return true;
+			}
 			plugin.getSonic().teleportSonic(player.getName());
 			this.msg(sender, "You have been teleported to the sonic racetrack!");
 			return true;

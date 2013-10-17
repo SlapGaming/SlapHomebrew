@@ -207,7 +207,6 @@ public class SlapHomebrew extends JavaPlugin {
 	}
 	
 	private void initializeControllers() {
-		 afk = new AwayFromKeyboard(this);
 		 bump = new Bump(this, dataStorage, dataConfig);
 		 changeLog = new ChangeLog(this);
 		 duelArena = new DuelArena(this);
@@ -220,6 +219,7 @@ public class SlapHomebrew extends JavaPlugin {
 		 mail = new Mail(this);
 		 playerLogger = new PlayerLogger(this);
 		 sonic = new Sonic(this);
+		 afk = new AwayFromKeyboard(this, playerLogger);
 		 tabController = new TabController(this, playerLogger);
 		 vip = new Vip(this, vipStorage, tabController);
 		 worthList = new WorthList(this);

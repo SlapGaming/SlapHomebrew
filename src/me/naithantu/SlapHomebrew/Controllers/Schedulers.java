@@ -72,7 +72,7 @@ public class Schedulers {
 	}
 	
 	private void startAFKChecker() {
-		Util.runTimer(plugin, new AFKChecker(plugin, plugin.getAwayFromKeyboard(), plugin.getPlayerLogger(), 5), 300, 6000);
+		Util.runTimer(plugin, new AFKChecker(plugin, plugin.getAwayFromKeyboard(), plugin.getPlayerLogger(), 10), 300, 6000);
 	}
 	
 }

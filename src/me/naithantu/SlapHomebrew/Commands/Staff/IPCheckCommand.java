@@ -6,7 +6,6 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 import com.earth2me.essentials.User;
@@ -39,6 +38,7 @@ public class IPCheckCommand extends AbstractCommand {
 				UserMap uM = plugin.getEssentials().getUserMap();
 				for (String player : uM.getAllUniqueUsers()) {
 					User u = uM.getUser(player);
+					if (u == null) continue;
 					String ip = u.getLastLoginAddress();
 					if (players.containsKey(ip)) {
 						if (doubles.containsKey(ip)) {
@@ -50,7 +50,6 @@ public class IPCheckCommand extends AbstractCommand {
 						players.put(ip, u.getName());
 					}
 				}
-				boolean found = false;
 				try {
 					FileWriter fW = new FileWriter(plugin.getDataFolder() + "ips.txt");
 					PrintWriter out = new PrintWriter(fW);
@@ -62,14 +61,6 @@ public class IPCheckCommand extends AbstractCommand {
 					sender.sendMessage("Failed to write to file.");
 				} finally {
 					sender.sendMessage("Done checking IP's.");
-				}
-				
-				for (Entry<String, String> entry : doubles.entrySet()) {
-					found = true;
-					sender.sendMessage(ChatColor.GRAY + entry.getKey() + " | Accounts: " + entry.getValue());
-				}
-				if (!found) {
-					sender.sendMessage(Util.getHeader() + "Done checking IP's. Nothing found.");
 				}
 			}
 		});
