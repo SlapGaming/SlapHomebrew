@@ -192,6 +192,9 @@ Util.runASync(plugin, new Runnable() {
 		if (rank == PexRank.TrialMod) {
 			user.removePermission("-slaphomebrew.sgm");
 			user.removePermission("-essentials.gamemode");
+			user.removePermission("-myinv.bypass.world.*");
+			user.removePermission("-mv.bypass.gamemode.*");
+			user.removePermission("-slaphomebrew.gamesinventory");
 		}
 	}
 	

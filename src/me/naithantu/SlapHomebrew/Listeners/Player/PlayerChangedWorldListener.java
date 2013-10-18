@@ -2,23 +2,44 @@ package me.naithantu.SlapHomebrew.Listeners.Player;
 
 import me.naithantu.SlapHomebrew.Controllers.Lottery;
 import me.naithantu.SlapHomebrew.Controllers.Mail;
+import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
+import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 
 public class PlayerChangedWorldListener implements Listener {
 
-	Lottery lottery;
-	Mail mail;
+	private Lottery lottery;
+	private Mail mail;
+	private PlayerLogger playerLogger;
 
-	public PlayerChangedWorldListener(Lottery lottery, Mail mail) {
+	public PlayerChangedWorldListener(Lottery lottery, Mail mail, PlayerLogger playerLogger) {
 		this.lottery = lottery;
 		this.mail = mail;
+		this.playerLogger = playerLogger;
 	}
 
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void sonicWorldChange(PlayerChangedWorldEvent event) { 
+		Player player = event.getPlayer(); //Prevent inventory wipe -> Sonic / Sonic|Mini-Games items -> World
+		if (!Util.testPermission(player, "gamesinventory")) {
+			return;
+		}
+		String fromWorld = event.getFrom().getName();
+		String targetWorld = player.getWorld().getName();
+		if (fromWorld.equals("world_sonic") && !targetWorld.equals("world_sonic")) { //Leaving sonic
+			playerLogger.fromSonicWorld(player);
+		} else if (!fromWorld.equals("world_sonic") && targetWorld.equals("world_sonic")) { //Entering sonic
+			playerLogger.toSonicWorld(player);
+		}
+		
+	}
+	
 	@EventHandler
 	public void playerChangedWorld(PlayerChangedWorldEvent event) {
 		Player player = event.getPlayer();

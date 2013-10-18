@@ -263,7 +263,7 @@ public class SlapHomebrew extends JavaPlugin {
 		pm.registerEvents(new VehicleListener(horses), this);
 		pm.registerEvents(new PlayerInteractEntityListener(horses, playerLogger), this);
 		pm.registerEvents(new PlayerRespawnListener(), this);
-		pm.registerEvents(new PlayerChangedWorldListener(lottery, mail), this);
+		pm.registerEvents(new PlayerChangedWorldListener(lottery, mail, playerLogger), this);
 		pm.registerEvents(new PlayerInventoryEvent(lottery, playerLogger), this);
 		pm.registerEvents(new AnimalTameListener(horses), this);
 	}

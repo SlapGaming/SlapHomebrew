@@ -19,6 +19,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 
 import com.earth2me.essentials.User;
 import com.earth2me.essentials.UserMap;
@@ -62,6 +64,8 @@ public class PlayerLogger {
 	private boolean reportRTSfound;
 	private HashMap<String, Integer> modreqs;
 	
+	private HashMap<String, SavedPlayer> modInventories;
+	
 	
 	public PlayerLogger(SlapHomebrew plugin) {
 		this.plugin = plugin;
@@ -91,6 +95,8 @@ public class PlayerLogger {
 		
 		suicides = new HashSet<>();
 		doingCommand = new HashSet<>();
+		
+		modInventories = new HashMap<>();
 		
 		onEnable();
 	}
@@ -738,6 +744,66 @@ public class PlayerLogger {
 				save();
 			}
 		});
+	}
+	
+	
+	/*
+	 *************************************
+	 *    Mod+ Sonic Inventory Control   *
+	 *************************************
+	 */
+	
+	/**
+	 * Save the inventory, wipe the inventory
+	 * @param p the player
+	 */
+	public void toSonicWorld(Player p) {
+		modInventories.put(p.getName(), new SavedPlayer(p));
+	}
+	
+	/**
+	 * Wipe the inventory & all stats, restore old inventory
+	 * @param p the player
+	 */
+	public void fromSonicWorld(Player p) {
+		SavedPlayer sP = modInventories.get(p.getName());
+		if (sP != null) {
+			sP.restorePlayer(p);
+			modInventories.remove(p.getName());
+		} else {
+			p.getInventory().clear();
+			Util.wipeAllPotionEffects(p);
+		}
+	}
+	
+	/**
+	 * Stores information about a Mod (Inventory & XP)
+	 * @author Stoux
+	 */
+	private class SavedPlayer {
+		
+		private ItemStack[] inventoryContent;
+		private ItemStack[] armorContent;
+		private int xpLevel;
+		
+		public SavedPlayer(Player p) {
+			//Inventory
+			PlayerInventory inv = p.getInventory();
+			inventoryContent = inv.getContents().clone();
+			armorContent = inv.getArmorContents().clone();
+			inv.clear();
+			xpLevel = p.getLevel();
+			Util.wipeAllPotionEffects(p);
+		}
+		
+		public void restorePlayer(Player p) {
+			PlayerInventory inv = p.getInventory();
+			inv.setArmorContents(armorContent);
+			inv.setContents(inventoryContent);
+			p.setLevel(xpLevel);
+			Util.wipeAllPotionEffects(p);
+		}
+		
 	}
 	
 }

@@ -117,6 +117,9 @@ public class SPromoteCommand extends AbstractCommand {
 						user.setGroups(new PermissionGroup[] {PermissionsEx.getPermissionManager().getGroup("Mod")});
 						user.addPermission("-slaphomebrew.sgm");
 						user.addPermission("-essentials.gamemode");
+						user.addPermission("-myinv.bypass.world.*");
+						user.addPermission("-mv.bypass.gamemode.*");
+						user.addPermission("-slaphomebrew.gamesinventory");
 						user.setPrefix(ChatColor.AQUA + "[Trial-Mod] ", null);
 						break;
 					default:
@@ -130,6 +133,9 @@ public class SPromoteCommand extends AbstractCommand {
 						resetPrefix(user, userRank);
 						user.removePermission("-slaphomebrew.sgm");
 						user.removePermission("-essentials.gamemode");
+						user.removePermission("-myinv.bypass.world.*");
+						user.removePermission("-mv.bypass.gamemode.*");
+						user.removePermission("-slaphomebrew.gamesinventory");
 						break;
 					default:
 						cannotPromoteToRank();

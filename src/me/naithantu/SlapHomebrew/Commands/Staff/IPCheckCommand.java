@@ -1,5 +1,6 @@
 package me.naithantu.SlapHomebrew.Commands.Staff;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -51,7 +52,7 @@ public class IPCheckCommand extends AbstractCommand {
 					}
 				}
 				try {
-					FileWriter fW = new FileWriter(plugin.getDataFolder() + "ips.txt");
+					FileWriter fW = new FileWriter(plugin.getDataFolder() + File.separator + "ips.txt");
 					PrintWriter out = new PrintWriter(fW);
 					for (Entry<String, String> entry : doubles.entrySet()) {
 						out.println(entry.getKey() + " | Accounts: " + entry.getValue());

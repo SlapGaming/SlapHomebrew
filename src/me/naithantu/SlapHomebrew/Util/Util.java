@@ -2,6 +2,7 @@ package me.naithantu.SlapHomebrew.Util;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.HashSet;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Controllers.Flag;
@@ -219,6 +220,17 @@ public class Util {
     		returnString = "Unkown";
     	}
     	return returnString;
+    }
+    
+    /**
+     * Remove all PotionEffects from a player
+     * @param p the player
+     */
+    public static void wipeAllPotionEffects(Player p) {
+    	HashSet<PotionEffect> effects = new HashSet<>(p.getActivePotionEffects());
+    	for (PotionEffect effect : effects) {
+    		p.removePotionEffect(effect.getType());
+    	}
     }
     
     public static BukkitTask runASync(SlapHomebrew plugin, Runnable runnable) {
