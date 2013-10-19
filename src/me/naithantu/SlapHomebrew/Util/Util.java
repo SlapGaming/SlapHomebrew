@@ -1,8 +1,10 @@
 package me.naithantu.SlapHomebrew.Util;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
+import java.util.List;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Controllers.Flag;
@@ -65,6 +67,26 @@ public class Util {
 		}
 		return null;
 	}
+	
+	public static List<Flag> getFlags(SlapHomebrew plugin, Location location) {
+		List<Flag> flags = new ArrayList<Flag>();
+		RegionManager regionManager = plugin.getworldGuard().getRegionManager(location.getWorld());
+		ApplicableRegionSet regions = regionManager.getApplicableRegions(location);
+		for (ProtectedRegion region : regions) {
+			for (String string : region.getMembers().getPlayers()) {
+				if (string.startsWith("flag:")) {
+					String flagName = string.replaceFirst("flag:", "");
+					try {
+						Flag flag = Flag.valueOf(flagName.toLowerCase());
+						flags.add(flag);
+					} catch (IllegalArgumentException e) {
+					}
+				}
+			}
+		}
+		return flags;
+	}
+
 
 	public static boolean hasEmptyInventory(Player player) {
 		Boolean emptyInv = true;

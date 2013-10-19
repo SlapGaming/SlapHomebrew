@@ -19,7 +19,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 public class PlayerMoveListener implements Listener {
-	
+
 	private SlapHomebrew plugin;
 	private Extras extras;
 	private AwayFromKeyboard afk;
@@ -36,76 +36,82 @@ public class PlayerMoveListener implements Listener {
 	public void onPlayerMove(PlayerMoveEvent event) {
 		Player player = event.getPlayer();
 		String playername = player.getName();
-		Location location = player.getLocation();
-		if(player.getWorld().getName().equals("world_start")){
-			if(extras.getHasJumped().contains(playername)){
-				Entity playerEntity = (Entity) player;
-				if(playerEntity.isOnGround()){
-					List<String> hasJumped = extras.getHasJumped();
-					hasJumped.remove(playername);
-					player.setAllowFlight(true);
-				}
-			}
-		}
-		
-		//Teleport players to location defined in the member flag upon entering a region.
-		if (Util.hasFlag(plugin, location, Flag.TELEPORT)) {
-			String flag = Util.getFlag(plugin, location, Flag.TELEPORT);
-			String flagCoordinates = flag.replace("flag:teleport(", "").replace(")", "");
-			String[] flagLocation = flagCoordinates.split(":");
-			if(flagLocation.length < 3){
-				plugin.getLogger().log(Level.SEVERE, "Improperly defined teleport flag! " + location.getX() + ":" + location.getY() + ":" + location.getZ());
-				return;
-			}
-			try{
-				Location teleportLocation = new Location(location.getWorld(), Double.parseDouble(flagLocation[0]), Double.parseDouble(flagLocation[1]), Double.parseDouble(flagLocation[2]));
-				if(flagLocation.length > 3){
-					teleportLocation.setYaw(Float.parseFloat(flagLocation[3]));
-					if(flagLocation.length > 4){
-						teleportLocation.setPitch(Float.parseFloat(flagLocation[4]));
+
+		Location from = event.getFrom();
+		Location to = event.getTo();
+		// Check if player actually moved (not just looking around)
+		if (from.getX() != to.getX() || from.getY() != to.getY() || from.getZ() != to.getZ()) {
+
+			// Allow next double jump if player hit the ground.
+			if (player.getWorld().getName().equals("world_start")) {
+				if (extras.getHasJumped().contains(playername)) {
+					Entity playerEntity = (Entity) player;
+					if (playerEntity.isOnGround()) {
+						List<String> hasJumped = extras.getHasJumped();
+						hasJumped.remove(playername);
+						player.setAllowFlight(true);
 					}
 				}
-				player.teleport(teleportLocation);
-			}catch(NumberFormatException e){
-				plugin.getLogger().log(Level.SEVERE, "Improperly defined teleport flag! " + location.getX() + ":" + location.getY() + ":" + location.getZ());
-				return;
 			}
-		}
-		
-		if(Util.hasFlag(plugin, event.getTo(), Flag.COMMAND) && !Util.hasFlag(plugin, event.getFrom(), Flag.COMMAND)) {
-			String flag = Util.getFlag(plugin, event.getTo(), Flag.COMMAND);
-			String flagCommand = flag.replace("flag:command(", "").replace(")", "");
-			String command = flagCommand.replaceAll("_", " ");
-			//Add proper player names to command.
-			command = command.replaceAll("<player>", playername);
-			System.out.println(command);
-			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
-		} else if (Util.hasFlag(plugin, event.getFrom(), Flag.COMMAND_LEAVE) && !Util.hasFlag(plugin, event.getTo(), Flag.COMMAND_LEAVE)) {
-			String flag = Util.getFlag(plugin, event.getFrom(), Flag.COMMAND_LEAVE);
-			String flagCommand = flag.replace("flag:command_leave(", "").replace(")", "");
-			String command = flagCommand.replaceAll("_", " ");
-			//Add proper player names to command.
-			command = command.replaceAll("<player>", playername);
-			System.out.println(command);
-			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
-		}
-		
-		//Remove AFK
-		if (afk.isAfk(playername)) {
-			if (event.getFrom().getBlockX() != event.getTo().getBlockX() || event.getFrom().getBlockZ() != event.getTo().getBlockZ() || event.getFrom().getBlockY() != event.getTo().getBlockY()) {
+
+			// Handle custom flags that were defined in the member area.
+			List<Flag> fromFlags = Util.getFlags(plugin, from);
+			List<Flag> toFlags = Util.getFlags(plugin, to);
+			if (toFlags.contains(Flag.TELEPORT)) {
+				String flag = Util.getFlag(plugin, to, Flag.TELEPORT);
+				String flagCoordinates = flag.replace("flag:teleport(", "").replace(")", "");
+				String[] flagLocation = flagCoordinates.split(":");
+				if (flagLocation.length < 3) {
+					plugin.getLogger().log(Level.SEVERE, "Improperly defined teleport flag! " + to.getX() + ":" + to.getY() + ":" + to.getZ());
+					return;
+				}
+				try {
+					Location teleportLocation = new Location(to.getWorld(), Double.parseDouble(flagLocation[0]), Double.parseDouble(flagLocation[1]), Double.parseDouble(flagLocation[2]));
+					if (flagLocation.length > 3) {
+						teleportLocation.setYaw(Float.parseFloat(flagLocation[3]));
+						if (flagLocation.length > 4) {
+							teleportLocation.setPitch(Float.parseFloat(flagLocation[4]));
+						}
+					}
+					player.teleport(teleportLocation);
+				} catch (NumberFormatException e) {
+					plugin.getLogger().log(Level.SEVERE, "Improperly defined teleport flag! " + to.getX() + ":" + to.getY() + ":" + to.getZ());
+					return;
+				}
+			}
+
+			if (toFlags.contains(Flag.COMMAND) && !fromFlags.contains(Flag.COMMAND)) {
+				String flag = Util.getFlag(plugin, event.getTo(), Flag.COMMAND);
+				String flagCommand = flag.replace("flag:command(", "").replace(")", "");
+				String command = flagCommand.replaceAll("_", " ");
+				// Add proper player names to command.
+				command = command.replaceAll("<player>", playername);
+				plugin.getLogger().log(Level.INFO, command);
+				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+			} else if (fromFlags.contains(Flag.COMMAND_LEAVE) && !toFlags.contains(Flag.COMMAND_LEAVE)) {
+				String flag = Util.getFlag(plugin, event.getFrom(), Flag.COMMAND_LEAVE);
+				String flagCommand = flag.replace("flag:command_leave(", "").replace(")", "");
+				String command = flagCommand.replaceAll("_", " ");
+				// Add proper player names to command.
+				command = command.replaceAll("<player>", playername);
+				plugin.getLogger().log(Level.INFO, command);
+				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+			}
+
+			// Remove AFK
+			if (afk.isAfk(playername)) {
 				afk.leaveAfk(playername);
 			}
 		}
-		
-		//Set moved if moved
+
+		// Set moved if moved
 		if (playerLogger.inMovedHashMap(playername)) {
 			if (!playerLogger.hasMoved(playername)) {
 				playerLogger.setMoved(playername, true);
 			}
 		}
-		
-		//Set last activity
+
+		// Set last activity
 		playerLogger.setLastActivity(playername);
-		
 	}
 }
