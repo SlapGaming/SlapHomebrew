@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.Set;
 
 import me.naithantu.SlapHomebrew.Commands.CommandHandler;
-import me.naithantu.SlapHomebrew.Commands.Basics.BlockfaqCommand;
 import me.naithantu.SlapHomebrew.Commands.Basics.SpawnCommand;
 import me.naithantu.SlapHomebrew.Controllers.*;
 import me.naithantu.SlapHomebrew.Listeners.*;
@@ -137,9 +136,6 @@ public class SlapHomebrew extends JavaPlugin {
 		initializeControllers();
 		initializeListeners();
 		
-		//Setup ChatBot
-		setupChatBot();
-		
 		//Create Schedulers -> Runnables & Make the commandHandler
 		new Schedulers(this);
 		commandHandler = new CommandHandler(this);
@@ -229,7 +225,6 @@ public class SlapHomebrew extends JavaPlugin {
 	
 	private void initializeLoaders() {
 		tpBlocks = loadHashSet("tpblocks");
-		BlockfaqCommand.chatBotBlocks = loadHashSet("chatbotblocks");		
 		loadworldGuard();
 		loadPlots();
 		loadUnfinishedForumVip();
@@ -278,7 +273,6 @@ public class SlapHomebrew extends JavaPlugin {
 	private void disableSavers() {
 		saveworldGuard();
 		saveHashSet(tpBlocks, "tpblocks");
-		saveHashSet(BlockfaqCommand.chatBotBlocks, "chatbotblocks");
 		saveUnfinishedPlots();
 		savePlots();
 		saveForumVip();
@@ -594,37 +588,5 @@ public class SlapHomebrew extends JavaPlugin {
 	public void setAllowCakeTp(boolean allowCakeTp) {
 		this.allowCakeTp = allowCakeTp;
 	}
-
-	private void setupChatBot() {
-		if (!config.contains("chatmessages.member")) {
-			config.set("chatmessages.member", "&c[FAQ] &3Go to &bwww.slap-gaming.com/apply &3to apply for member!");
-		}
-		if (!config.contains("chatmessages.vip")) {
-			config.set("chatmessages.vip", "&c[FAQ] &3Go to www.slap-gaming.com/vip for more information about VIP!");
-		}
-		if (!config.contains("chatmessages.build")) {
-			config.set("chatmessages.build", "&c[FAQ] &3Find an empty plot, then ask a mod/admin for a worldguard! Take the teleport pad at spawn or use the online dynamap (slap-gaming.com/map) to go to empty plots!");
-		}
-		if (!config.contains("chatmessages.worldguard")) {
-			config.set("chatmessages.worldguard", "&c[FAQ] &3Ask a mod/admin for a worldguard! This also protects chests!");
-		}
-		if (!config.contains("chatmessages.lockette")) {
-			config.set("chatmessages.lockette", "&c[FAQ] &3We don't use lockette, worldguard also protects your chests!");
-		}
-		if (!config.contains("chatmessages.shop")) {
-			config.set("chatmessages.shop", "&c[FAQ] &3You need to be a member to use the shop! Right click for an item, shift + right click for a stack of items!");
-		}
-		if (!config.contains("chatmessages.money")) {
-			config.set("chatmessages.money", "&c[FAQ] &3Type /sell hand with an item you want to sell in your hand, or go to www.slap-gaming.com/money to get money!");
-		}
-		if (!config.contains("chatmessages.checkwg")) {
-			config.set("chatmessages.checkwg", "&c[FAQ] &3Right click the ground with string to see zones!");
-		}
-		if (!config.contains("chatmessages.pay")) {
-			config.set("chatmessages.pay", "&c[FAQ] &3Type /money pay [name] [amount]!");
-		}
-		this.saveConfig();
-	}
-	
 	//TODO Use WGCustomFlags instead of crappy member flags.
 }

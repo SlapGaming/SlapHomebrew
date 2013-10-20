@@ -31,7 +31,6 @@ public class CommandHandler {
 		AbstractCommand commandObj = null;
 		switch (command) {
 		case "backdeath": 		commandObj = new BackdeathCommand(sender, args, plugin); 			break;
-		case "blockfaq":		commandObj = new BlockfaqCommand(sender, args, plugin);				break;
 		case "boat":			commandObj = new BoatCommand(sender, args, plugin);					break;
 		case "bumpdone":		commandObj = new BumpdoneCommand(sender, args, plugin);				break;
 		case "cakedefence":		commandObj = new CakedefenceCommand(sender, args, plugin);			break;

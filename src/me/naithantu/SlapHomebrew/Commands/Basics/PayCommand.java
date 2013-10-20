@@ -1,7 +1,5 @@
 package me.naithantu.SlapHomebrew.Commands.Basics;
 
-import java.util.HashSet;
-
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import net.milkbowl.vault.economy.Economy;
@@ -10,7 +8,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 public class PayCommand extends AbstractCommand {
-	static HashSet<String> chatBotBlocks = new HashSet<String>();
 
 	public PayCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
 		super(sender, args, plugin);
