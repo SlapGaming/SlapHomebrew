@@ -75,9 +75,10 @@ public class Util {
 		for (ProtectedRegion region : regions) {
 			for (String string : region.getMembers().getPlayers()) {
 				if (string.startsWith("flag:")) {
-					String flagName = string.replaceFirst("flag:", "");
+					String flagWithoutPrefix = string.replaceFirst("flag:", "");
+					String flagName = flagWithoutPrefix.split("\\(")[0];
 					try {
-						Flag flag = Flag.valueOf(flagName.toLowerCase());
+						Flag flag = Flag.valueOf(flagName.toUpperCase());
 						flags.add(flag);
 					} catch (IllegalArgumentException e) {
 					}
