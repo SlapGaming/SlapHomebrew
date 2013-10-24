@@ -161,9 +161,9 @@ public class PlayerCommandListener implements Listener {
 			if (!lCmd.equals("/roll") && !lCmd.equals("/afk") && !lCmd.equals("/suicide") && !lCmd.equals("/me") && !lCmd.equals("/j") && !lCmd.equals("/jumpto") && !lCmd.equals("/ac") && !lCmd.equals("/a") && !lCmd.equals("/amsg") && !lCmd.equals("/helpop")) {
 				switch (lCmd) {
 				case "/r": case "/reply": case "/mail":	case "/tell": case "/t": case "/m": case "/msg":
-					playerLogger.sendToCommandSpies(playerName, message, true); break;
+					playerLogger.sendToCommandSpies(playerName, event.getMessage(), true); break;
 				default:
-					playerLogger.sendToCommandSpies(playerName, message, false);
+					playerLogger.sendToCommandSpies(playerName, event.getMessage(), false);
 				}
 			}
 		}
