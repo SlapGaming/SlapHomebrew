@@ -23,8 +23,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-import com.earth2me.essentials.User;
-
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
@@ -42,6 +40,10 @@ public class PlayerJoinListener implements Listener {
 	private Jails jails;
 	private PlayerLogger playerLogger;
 	private TabController tabController;
+	
+	private DateFormat checkDay;
+	private DateFormat checkMonth;
+	private DateFormat checkYear;
 
 	public PlayerJoinListener(SlapHomebrew plugin, YamlStorage timeStorage, YamlStorage dataStorage, YamlStorage vipStorage, Mail mail, Jails jails, PlayerLogger playerLogger, TabController tabController) {
 		this.plugin = plugin;
@@ -55,6 +57,11 @@ public class PlayerJoinListener implements Listener {
 		this.jails = jails;
 		this.playerLogger = playerLogger;
 		this.tabController = tabController;
+		
+		//Date format
+		checkDay = new SimpleDateFormat("dd");
+		checkMonth = new SimpleDateFormat("MM");
+		checkYear = new SimpleDateFormat("yyyy");
 	}
 
 	@EventHandler
@@ -89,9 +96,6 @@ public class PlayerJoinListener implements Listener {
 		}
 
 		//Vip grant reset
-		DateFormat checkDay = new SimpleDateFormat("dd");
-		DateFormat checkMonth = new SimpleDateFormat("MM");
-		DateFormat checkYear = new SimpleDateFormat("yyyy");
 		Date date = new Date();
 		int vipDay = Integer.valueOf(checkDay.format(date));
 		int vipMonth = Integer.valueOf(checkMonth.format(date));
@@ -141,17 +145,22 @@ public class PlayerJoinListener implements Listener {
 		tabController.playerJoin(player);
 		
 		//First time join?
-		User u = plugin.getEssentials().getUserMap().getUser(player.getName());
-		boolean firstTime = false;
-		if (u == null) {
-			firstTime = true;
-		}
-		final boolean fFirstTime = firstTime;
+		final boolean firstTime = !player.hasPlayedBefore();
 		
 		Util.runLater(plugin, new Runnable() {
 			
 			@Override
 			public void run() {
+				//First time broadcast
+				if (firstTime) {
+					plugin.getServer().broadcastMessage(Util.getHeader() + "Welcome " + ChatColor.GREEN + player.getName() + ChatColor.WHITE + " to the SlapGaming Minecraft Server. If you need help please contact a " + ChatColor.GOLD + "Guide" + ChatColor.WHITE + ", " +
+							ChatColor.AQUA + "Mod" + ChatColor.WHITE + " or " + ChatColor.RED + "Admin" + ChatColor.WHITE +
+							" by typing " + ChatColor.RED + "/modreq [message]" + ChatColor.WHITE + "!");
+				}
+				
+				//Abort if the player went offline already
+				if (!player.isOnline()) return;
+				
 				//Minechat prevention
 				playerLogger.joinedMinechatChecker(player);
 				
@@ -162,13 +171,6 @@ public class PlayerJoinListener implements Listener {
 				
 				//Check mails
 				mail.hasNewMail(player);
-				
-				//First time broadcast
-				if (fFirstTime) {
-					plugin.getServer().broadcastMessage(Util.getHeader() + "Welcome " + ChatColor.GREEN + player.getName() + ChatColor.WHITE + " to the SlapGaming Minecraft Server. If you need help please contact a " + ChatColor.GOLD + "Guide" + ChatColor.WHITE + ", " +
-							ChatColor.AQUA + "Mod" + ChatColor.WHITE + " or " + ChatColor.RED + "Admin" + ChatColor.WHITE +
-							" by typing " + ChatColor.RED + "/modreq [message]" + ChatColor.WHITE + "!");
-				}
 				
 			}
 		}, 10);
