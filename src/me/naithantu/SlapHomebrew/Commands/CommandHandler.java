@@ -54,14 +54,12 @@ public class CommandHandler {
 		case "searchregion":	commandObj = new SearchregionCommand(sender, args, plugin);			break;
 		case "sgm":				commandObj = new SgmCommand(sender, args, plugin);					break;
 		case "slap":			commandObj = new SlapCommand(sender, args, plugin);					break;
-		case "sonic":			commandObj = new SonicCommand(sender, args, plugin);				break;
 		case "sparta":			commandObj = new SpartaCommand(sender, args, plugin);				break;
 		case "te":				commandObj = new TeCommand(sender, args, plugin);					break;
 		case "tpallow":			commandObj = new TpallowCommand(sender, args, plugin);				break;
 		case "tpblock":			commandObj = new TpBlockCommand(sender, args, plugin);				break;
 		case "warpcakedefence":	commandObj = new WarpcakedefenceCommand(sender, args, plugin);		break;
 		case "warppvp":			commandObj = new WarppvpCommand(sender, args, plugin);				break;
-		case "warpsonic":		commandObj = new WarpsonicCommand(sender, args, plugin);			break;
 		case "world":			commandObj = new WorldCommand(sender, args, plugin);				break;
 		case "afk":				commandObj = new AfkCommand(sender, args, plugin);					break;
 		case "afkreset":		commandObj = new AfkResetCommand(sender, args, plugin);				break;

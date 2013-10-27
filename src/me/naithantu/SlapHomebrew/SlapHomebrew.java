@@ -98,7 +98,6 @@ public class SlapHomebrew extends JavaPlugin {
 	private Lottery lottery;
 	private Mail mail;
 	private PlayerLogger playerLogger;
-	private Sonic sonic;
 	private TabController tabController;
 	private Vip vip;
 	private WorthList worthList;
@@ -214,7 +213,6 @@ public class SlapHomebrew extends JavaPlugin {
 		 lottery = new Lottery(this);
 		 mail = new Mail(this);
 		 playerLogger = new PlayerLogger(this);
-		 sonic = new Sonic(this);
 		 afk = new AwayFromKeyboard(this, playerLogger);
 		 tabController = new TabController(this, playerLogger);
 		 vip = new Vip(this, vipStorage, tabController);
@@ -466,10 +464,6 @@ public class SlapHomebrew extends JavaPlugin {
 
 	public Bump getBump() {
 		return bump;
-	}
-
-	public Sonic getSonic() {
-		return sonic;
 	}
 
 	public Extras getExtras() {

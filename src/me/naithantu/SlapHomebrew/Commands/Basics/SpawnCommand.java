@@ -58,9 +58,8 @@ public class SpawnCommand extends AbstractCommand {
 			case "resource": case "rw":
 				teleportToSpawn(targetPlayer, resourceWorldName, "the resource world.", -90F);
 				break;
-			case "sonic":
-				plugin.getSonic().teleportSonic(targetPlayer.getName());
-				this.msg(targetPlayer, "You have been teleported to the sonic racetrack!");
+			case "games": case "sonic": case "game":
+				teleportToSpawn(targetPlayer, "world_sonic", "the games world.", 0F);
 				break;
 			default:
 				teleportToSpawn(targetPlayer, "world_start", "the lobby world", -180F);

@@ -65,6 +65,15 @@ public class PlayerCommandListener implements Listener {
 			}
 		}
 		
+		//Morph leave -> gleave
+		if (commandMessage[0].equals("/leave")) {
+			if (player.getWorld().getName().equals("world_sonic")) {
+				event.setCancelled(true);
+				player.chat("/gleave");
+				return;
+			}
+		}
+		
 		//Set last activity
 		playerLogger.setLastActivity(playerName);
 		
