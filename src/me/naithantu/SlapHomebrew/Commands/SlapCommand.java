@@ -256,15 +256,21 @@ public class SlapCommand extends AbstractCommand {
 				
 				@Override
 				public void run() {
-					Server server = plugin.getServer();
+					final Server server = plugin.getServer();
 					Plugin foundPlugin = server.getPluginManager().getPlugin("NTheEndAgain");
 					if (foundPlugin != null && foundPlugin instanceof NTheEndAgain) {
 						NTheEndAgain theEnd = (NTheEndAgain) foundPlugin;
 						try {
 							int x = theEnd.getWorldHandlers().get("worldTheEnd").getNumberOfAliveEnderDragons();
 							if (x == 0) {
-								server.broadcastMessage(Util.getHeader() + "The EnderDragon has been respawned!");
-								server.dispatchCommand(server.getConsoleSender(), "nend respawnED world_the_end");
+								server.dispatchCommand(server.getConsoleSender(), "nend regen world_the_end");
+								Util.runLater(plugin, new Runnable() {
+									
+									@Override
+									public void run() {
+										server.dispatchCommand(server.getConsoleSender(), "nend respawnED world_the_end");
+									}
+								}, 30 * 20);
 							}
 						} catch (NullPointerException e) {
 							badMsg(sender, "Something went wrong.. Exception: " + e.getMessage());
@@ -274,6 +280,7 @@ public class SlapCommand extends AbstractCommand {
 					}
 				}
 			});
+			break;
 		default:
 			if (!(sender instanceof Player)) {
 				this.badMsg(sender, "You need to be in-game to do that!");
