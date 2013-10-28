@@ -98,7 +98,6 @@ public class SlapHomebrew extends JavaPlugin {
 	private Lottery lottery;
 	private Mail mail;
 	private PlayerLogger playerLogger;
-	private Sonic sonic;
 	private TabController tabController;
 	private Vip vip;
 	private WorthList worthList;
@@ -214,7 +213,6 @@ public class SlapHomebrew extends JavaPlugin {
 		 lottery = new Lottery(this);
 		 mail = new Mail(this);
 		 playerLogger = new PlayerLogger(this);
-		 sonic = new Sonic(this);
 		 afk = new AwayFromKeyboard(this, playerLogger);
 		 tabController = new TabController(this, playerLogger);
 		 vip = new Vip(this, vipStorage, tabController);
@@ -245,7 +243,6 @@ public class SlapHomebrew extends JavaPlugin {
 		pm.registerEvents(new EntityChangeBlockListener(this), this);
 		pm.registerEvents(new PlayerDeathListener(this, playerLogger), this);
 		pm.registerEvents(new DispenseListener(), this);
-		pm.registerEvents(new FoodLevelChangeListener(), this);
 		pm.registerEvents(new PlayerInteractListener(this, horses, jails, playerLogger), this);
 		pm.registerEvents(new PlayerJoinListener(this, timeStorage, dataStorage, vipStorage, mail, jails, playerLogger, tabController), this);
 		pm.registerEvents(new PlayerMoveListener(this, extras, afk, playerLogger), this);
@@ -259,7 +256,7 @@ public class SlapHomebrew extends JavaPlugin {
 		pm.registerEvents(new VehicleListener(horses), this);
 		pm.registerEvents(new PlayerInteractEntityListener(horses, playerLogger), this);
 		pm.registerEvents(new PlayerRespawnListener(), this);
-		pm.registerEvents(new PlayerChangedWorldListener(lottery, mail, playerLogger), this);
+		pm.registerEvents(new PlayerChangedWorldListener(this, lottery, mail, playerLogger), this);
 		pm.registerEvents(new PlayerInventoryEvent(lottery, playerLogger), this);
 		pm.registerEvents(new AnimalTameListener(horses), this);
 	}
@@ -467,10 +464,6 @@ public class SlapHomebrew extends JavaPlugin {
 
 	public Bump getBump() {
 		return bump;
-	}
-
-	public Sonic getSonic() {
-		return sonic;
 	}
 
 	public Extras getExtras() {

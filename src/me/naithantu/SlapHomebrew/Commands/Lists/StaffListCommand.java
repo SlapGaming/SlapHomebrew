@@ -93,6 +93,9 @@ public class StaffListCommand extends AbstractCommand {
 		
 		for (Player player : plugin.getServer().getOnlinePlayers()) {
 			if (player.hasPermission("reportrts.mod")) {
+				if (player.getName().equals("naithantu") || player.getName().equals("Telluur")) {
+					continue; //Skip if Telluur or Naith
+				}
 				PermissionUser user =  PermissionsEx.getUser(player);
 				if (afk.isAfk(player.getName())) {
 					addToList(user.getPrefix() + player.getName() + afkString);

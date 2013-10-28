@@ -36,7 +36,7 @@ public class PluginsCommand extends AbstractCommand {
 			plugins.add("ReportRTS");
 			plugins.add("ShowCase");
 			plugins.add("SlapHomebrew");
-			plugins.add("SpleefBuilder");
+			plugins.add("StouxGames");
 			plugins.add("StarterKit");
 			plugins.add("Vault");
 			plugins.add("WorldBorder");

@@ -77,7 +77,7 @@ public class TabController {
 			tab[x] = ChatColor.GOLD + p; x++; 
 			}
 		for (String p : specials) {
-			if (fSpecials) { fSpecials = true; tab[x] = ChatColor.DARK_AQUA + "-- Specials --"; x++; }
+			if (fSpecials) { fSpecials = false; tab[x] = ChatColor.DARK_AQUA + "-- Specials --"; x++; }
 			tab[x] = ChatColor.DARK_AQUA + p; x++;
 			}
 		for (String p : vips) { 

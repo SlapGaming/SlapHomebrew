@@ -54,7 +54,7 @@ public class WorldCommand extends AbstractCommand {
 			this.msg(sender, "You are in the creative world.");
 			break;
 		case "sonic":
-			this.msg(sender, "You are at the Sonic the Hedgehog racetrack.");
+			this.msg(sender, "You are in the mini-games world.");
 			break;
 		default:
 			this.msg(sender, "You are in an undefined world!");
