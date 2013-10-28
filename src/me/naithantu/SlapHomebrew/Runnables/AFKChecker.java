@@ -16,6 +16,7 @@ public class AFKChecker extends BukkitRunnable {
 	private int allowedMinutes;
 	private long allowedInactive;
 	private long inactiveWarning;
+	private long kickedTime;
 	
 	public AFKChecker(SlapHomebrew plugin, AwayFromKeyboard afk, PlayerLogger playerLogger, int allowedInactiveMinutes) {
 		this.plugin = plugin;
@@ -24,6 +25,7 @@ public class AFKChecker extends BukkitRunnable {
 		this.allowedMinutes = allowedInactiveMinutes;
 		this.allowedInactive = (long) allowedMinutes * 60 * 1000;
 		this.inactiveWarning = (long) (allowedMinutes - 1) * 60 * 1000;
+		this.kickedTime = 45 * 60 * 1000; //45 Minutes before kick
 	}
 	
 	@Override
@@ -32,8 +34,8 @@ public class AFKChecker extends BukkitRunnable {
 		for (Player p :plugin.getServer().getOnlinePlayers()) {
 			String name = p.getName();
 			if (!afk.hasPreventAFK(name)) {
+				long lastActive = playerLogger.getLastActivity(name);
 				if (!afk.isAfk(name)) {
-					long lastActive = playerLogger.getLastActivity(name);
 					if (lastActive != 0) {
 						long lastActiveSeconds = systemTime - lastActive;
 						if (lastActiveSeconds > allowedInactive) {
@@ -43,6 +45,10 @@ public class AFKChecker extends BukkitRunnable {
 							//Warn for AFK
 							Util.badMsg(p, "You will Auto-AFK in 1 minute.");
 						}
+					}
+				} else {
+					if (lastActive > kickedTime) {
+						p.kickPlayer("AFK for more then 45 minutes.");
 					}
 				}
 			}
