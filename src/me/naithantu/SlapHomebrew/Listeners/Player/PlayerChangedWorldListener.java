@@ -1,5 +1,6 @@
 package me.naithantu.SlapHomebrew.Listeners.Player;
 
+import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Controllers.Lottery;
 import me.naithantu.SlapHomebrew.Controllers.Mail;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
@@ -14,26 +15,34 @@ import org.bukkit.event.player.PlayerChangedWorldEvent;
 
 public class PlayerChangedWorldListener implements Listener {
 
+	private SlapHomebrew plugin;
 	private Lottery lottery;
 	private Mail mail;
 	private PlayerLogger playerLogger;
 
-	public PlayerChangedWorldListener(Lottery lottery, Mail mail, PlayerLogger playerLogger) {
+	public PlayerChangedWorldListener(SlapHomebrew plugin, Lottery lottery, Mail mail, PlayerLogger playerLogger) {
 		this.lottery = lottery;
 		this.mail = mail;
 		this.playerLogger = playerLogger;
+		this.plugin = plugin;
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void sonicWorldChange(PlayerChangedWorldEvent event) { 
-		Player player = event.getPlayer(); //Prevent inventory wipe -> Sonic / Sonic|Mini-Games items -> World
+		final Player player = event.getPlayer(); //Prevent inventory wipe -> Sonic / Sonic|Mini-Games items -> World
 		if (!Util.testPermission(player, "gamesinventory")) {
 			return;
 		}
 		String fromWorld = event.getFrom().getName();
 		String targetWorld = player.getWorld().getName();
 		if (fromWorld.equals("world_sonic") && !targetWorld.equals("world_sonic")) { //Leaving sonic
-			playerLogger.fromSonicWorld(player);
+			Util.runLater(plugin, new Runnable() {
+				
+				@Override
+				public void run() {
+					playerLogger.fromSonicWorld(player);
+				}
+			}, 1);
 		} else if (!fromWorld.equals("world_sonic") && targetWorld.equals("world_sonic")) { //Entering sonic
 			playerLogger.toSonicWorld(player);
 		}

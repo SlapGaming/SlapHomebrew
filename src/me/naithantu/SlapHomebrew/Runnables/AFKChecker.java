@@ -41,13 +41,13 @@ public class AFKChecker extends BukkitRunnable {
 						if (lastActiveSeconds > allowedInactive) {
 							//Go AFK
 							afk.goAfk(name, "Inactive for more than " + allowedMinutes + " minutes.");
-						} else if (lastActiveSeconds > inactiveWarning && lastActiveSeconds < (inactiveWarning + (20 * 1000))) {
+						} else if (lastActiveSeconds > inactiveWarning && lastActiveSeconds < (inactiveWarning + (15 * 1000))) {
 							//Warn for AFK
 							Util.badMsg(p, "You will Auto-AFK in 1 minute.");
 						}
 					}
 				} else {
-					if (lastActive > kickedTime) {
+					if ((systemTime - lastActive) > kickedTime) {
 						p.kickPlayer("AFK for more then 45 minutes.");
 					}
 				}
