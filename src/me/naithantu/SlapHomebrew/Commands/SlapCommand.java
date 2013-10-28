@@ -25,6 +25,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Server;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -45,6 +46,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -55,6 +57,8 @@ import ru.tehkode.permissions.bukkit.PermissionsEx;
 import com.earth2me.essentials.User;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+
+import fr.ribesg.bukkit.ntheendagain.NTheEndAgain;
 
 public class SlapCommand extends AbstractCommand {
 
@@ -243,6 +247,33 @@ public class SlapCommand extends AbstractCommand {
 			}
 			sender.sendMessage("Tabgroups: " + Arrays.toString(TabGroup.values()));
 			break;
+		case "spawnenderdragon":
+			if (!testPermission(sender, "spawnenderdragon")) {
+				noPermission(sender);
+				return true;
+			}
+			Util.runASync(plugin, new Runnable() {
+				
+				@Override
+				public void run() {
+					Server server = plugin.getServer();
+					Plugin foundPlugin = server.getPluginManager().getPlugin("NTheEndAgain");
+					if (foundPlugin != null && foundPlugin instanceof NTheEndAgain) {
+						NTheEndAgain theEnd = (NTheEndAgain) foundPlugin;
+						try {
+							int x = theEnd.getWorldHandlers().get("worldTheEnd").getNumberOfAliveEnderDragons();
+							if (x == 0) {
+								server.broadcastMessage(Util.getHeader() + "The EnderDragon has been respawned!");
+								server.dispatchCommand(server.getConsoleSender(), "nend respawnED world_the_end");
+							}
+						} catch (NullPointerException e) {
+							badMsg(sender, "Something went wrong.. Exception: " + e.getMessage());
+						}
+					} else {
+						badMsg(sender, "Couldn't find the EndAgain plugin.");
+					}
+				}
+			});
 		default:
 			if (!(sender instanceof Player)) {
 				this.badMsg(sender, "You need to be in-game to do that!");

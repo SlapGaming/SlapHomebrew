@@ -51,7 +51,7 @@ public class TeCommand extends AbstractCommand {
 			if (targetWorld.equalsIgnoreCase("world_pvp")) {
 				this.badMsg(sender, "You may not tp to that player at the moment, he/she is in a pvp world!");
 			} else if (targetWorld.equalsIgnoreCase("world_sonic")) {
-				this.badMsg(sender, "You may not tp to that player at the moment, he/she is in the sonic world!");
+				this.badMsg(sender, "You may not tp to that player at the moment, he/she is in the mini-games world!");
 			} else {
 				double yLocation = 0;
 				Location tpLocation = null;
