@@ -48,7 +48,7 @@ public class AFKChecker extends BukkitRunnable {
 					}
 				} else {
 					if ((systemTime - lastActive) > kickedTime) {
-						p.kickPlayer("AFK for more then 45 minutes.");
+						p.kickPlayer("AFK for more than 45 minutes.");
 					}
 				}
 			}
