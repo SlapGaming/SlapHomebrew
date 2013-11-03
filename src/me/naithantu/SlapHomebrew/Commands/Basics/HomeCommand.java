@@ -8,6 +8,7 @@ import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import com.earth2me.essentials.User;
 
@@ -84,7 +85,7 @@ public class HomeCommand extends AbstractCommand {
 		
 	public static void teleportToHome(User targetPlayer, String home){
 		try {
-			targetPlayer.getTeleport().home(targetPlayer.getHome(home), null);
+			targetPlayer.getTeleport().teleport(targetPlayer.getHome(home), null, TeleportCause.COMMAND);
 		} catch (Exception e) {
 			targetPlayer.sendMessage(ChatColor.RED + "Error: Invalid world.");
 		}

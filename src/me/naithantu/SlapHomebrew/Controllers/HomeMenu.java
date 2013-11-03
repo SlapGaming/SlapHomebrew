@@ -88,7 +88,7 @@ public class HomeMenu {
 		mainMenu.setOption("world_nether-" + netherHomes, 6, new ItemStack(Material.NETHER_BRICK, 0), "The Nether", netherHomes + " home(s)");
 		mainMenu.setOption("world_resource10-" + resourceHomes, 8, new ItemStack(Material.COBBLESTONE, 0), "Resource World", resourceHomes + " home(s)");
 
-		mainMenu.open(essentialsUser);
+		mainMenu.open(essentialsUser.getPlayer());
 
 	}
 
@@ -218,7 +218,7 @@ public class HomeMenu {
 			}
 		}
 
-		homeMenu.open(essentialsUser);
+		homeMenu.open(essentialsUser.getPlayer());
 
 	}
 
@@ -228,7 +228,7 @@ public class HomeMenu {
 
 			@Override
 			public void run() {
-				mainMenu.open(essentialsUser);
+				mainMenu.open(essentialsUser.getPlayer());
 			}
 
 		}, 2);

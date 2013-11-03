@@ -149,7 +149,7 @@ public class SPromoteCommand extends AbstractCommand {
 				promotedMsg(u.getName(), userRank, toPexRank);
 				//Update tab
 				if (u.isOnline()) {
-					plugin.getTabController().playerSwitchGroup(u);
+					plugin.getTabController().playerSwitchGroup(u.getPlayer());
 				}
 				
 				//Log event

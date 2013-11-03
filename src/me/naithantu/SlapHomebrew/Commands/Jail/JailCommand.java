@@ -118,7 +118,7 @@ public class JailCommand extends AbstractCommand {
 					badMsg(sender, "Player already jailed.");
 					return true;
 				}
-				if (testPermission(u, "jail.except")) {
+				if (testPermission(u.getPlayer(), "jail.except")) {
 					badMsg(sender, "This player cannot be jailed.");
 					return true;
 				}
