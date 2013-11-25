@@ -33,14 +33,12 @@ public class CommandHandler {
 		case "backdeath": 		commandObj = new BackdeathCommand(sender, args, plugin); 			break;
 		case "boat":			commandObj = new BoatCommand(sender, args, plugin);					break;
 		case "bumpdone":		commandObj = new BumpdoneCommand(sender, args, plugin);				break;
-		case "cakedefence":		commandObj = new CakedefenceCommand(sender, args, plugin);			break;
 		case "creativeextra":	commandObj = new CreativeextraCommand(sender, args, plugin);		break;
 		case "ghostfix":		commandObj = new GhostfixCommand(sender, args, plugin);				break;
 		case "group":			commandObj = new GroupCommand(sender, args, plugin);				break;
 		case "home":			commandObj = new HomeCommand(sender, args, plugin);					break;
 		case "homemenu":		commandObj = new HomeMenuCommand(sender, args, plugin);				break;
 		case "lag":				commandObj = new LagCommand(sender, args, plugin);					break;
-		case "leavecake":		commandObj = new LeavecakeCommand(sender, args, plugin);			break;
 		case "leave":			commandObj = new LeaveCommand(sender, args, plugin);				break;
 		case "message":			commandObj = new MessageCommand(sender, args, plugin);				break;
 		case "minecart":		commandObj = new MinecartCommand(sender, args, plugin);				break;
@@ -58,7 +56,6 @@ public class CommandHandler {
 		case "te":				commandObj = new TeCommand(sender, args, plugin);					break;
 		case "tpallow":			commandObj = new TpallowCommand(sender, args, plugin);				break;
 		case "tpblock":			commandObj = new TpBlockCommand(sender, args, plugin);				break;
-		case "warpcakedefence":	commandObj = new WarpcakedefenceCommand(sender, args, plugin);		break;
 		case "warppvp":			commandObj = new WarppvpCommand(sender, args, plugin);				break;
 		case "world":			commandObj = new WorldCommand(sender, args, plugin);				break;
 		case "afk":				commandObj = new AfkCommand(sender, args, plugin);					break;

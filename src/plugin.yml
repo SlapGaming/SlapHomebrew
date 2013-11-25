@@ -2,7 +2,7 @@ name: SlapHomebrew
 main: me.naithantu.SlapHomebrew.SlapHomebrew
 depend: [TabAPI, Essentials, Vault, PermissionsEx, ReportRTS]
 authors: [naithantu, Stoux2]
-version: 2.16.1
+version: 2.16.2
 description: SlapHomebrew homemade plugin.
 commands:
   vip:
@@ -30,13 +30,6 @@ commands:
     aliases: [cextra]
   warppvp:
     description: Warps you to the pvp arena.
-  warpcakedefence:
-    description: Warps you to cake defence if your inventory is empty.  
-    aliases: [warpcake]
-  cakedefence:
-    description: Cake defence commands for staff.
-    usage: "Usage:/cakedefence <toggle/startround>"
-    aliases: [cake]
   message:
     description: Allows quicker access to default messages.
     usage: "Usage: /message [name] or /message create [name] or /message list or /message show [message]"
@@ -52,8 +45,6 @@ commands:
     usage: "Usage: /note [octave] [tone]"
   mobcheck:
     description: Searches all mobs nearby online players.
-  leavecake:
-    description: Teleports you back to spawn and clears your inventory.
   sgm:
     description: Quickly switch between survival and creative gamemodes.
   group:
