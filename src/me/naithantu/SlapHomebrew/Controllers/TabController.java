@@ -288,6 +288,7 @@ public class TabController {
 	public void setMaxPlayers(int players) {
 		maxPlayers = players;
 		config.set("maxplayers", players);
+		yaml.saveConfig();
 	}
 	
 	/**
