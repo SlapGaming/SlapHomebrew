@@ -3,8 +3,10 @@ package me.naithantu.SlapHomebrew.Controllers;
 import java.util.ArrayList;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
+import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.mcsg.double0negative.tabapi.TabAPI;
 
@@ -27,9 +29,21 @@ public class TabController {
 	private ArrayList<String> members;
 	private ArrayList<String> builders;
 	
+	private int maxPlayers;
+	
+	private YamlStorage yaml;
+	private FileConfiguration config;
+	
 	public TabController(SlapHomebrew plugin, PlayerLogger playerLogger) {
 		this.plugin = plugin;
 		this.playerLogger = playerLogger;
+		
+		//Get the max players
+		yaml = new YamlStorage(plugin, "tabsettings");
+		config = yaml.getConfig();
+		maxPlayers = config.getInt("maxplayers");
+		
+		//Create the lists
 		ops = new ArrayList<>();
 		admins = new ArrayList<>();
 		mods = new ArrayList<>();
@@ -39,6 +53,8 @@ public class TabController {
 		slaps = new ArrayList<>();
 		members = new ArrayList<>();
 		builders = new ArrayList<>();
+		
+		//Check for players
 		onEnable();
 	}
 	
@@ -56,7 +72,6 @@ public class TabController {
 		if (tabSize == 0) return;
 		int x = 0;
 		int playersOnline = plugin.getServer().getOnlinePlayers().length;
-		int maxPlayers = plugin.getServer().getMaxPlayers();
 		String[] tab = new String[tabSize];
 		boolean fOps; boolean fAdmins; boolean fMods; boolean fGuides; boolean fSpecials; boolean fVips; boolean fSlaps; boolean fMembers; boolean fBuilders;
 		fOps = fAdmins = fMods = fGuides = fSpecials = fVips = fSlaps = fMembers = fBuilders = true;
@@ -265,5 +280,23 @@ public class TabController {
 	public enum TabGroup {
 		builders, members, slaps, vips, specials, guides, mods, admins, ops;
 	}
+	
+	/**
+	 * Set the max number of players in TAB & /List
+	 * @param players The number of players
+	 */
+	public void setMaxPlayers(int players) {
+		maxPlayers = players;
+		config.set("maxplayers", players);
+	}
+	
+	/**
+	 * Get the max amount of players
+	 * @return the number of players
+	 */
+	public int getMaxPlayers() {
+		return maxPlayers;
+	}
+	
 
 }

@@ -38,7 +38,7 @@ public class ListCommand extends AbstractCommand {
 			return true;
 		}
 		
-		int maxPlayers = plugin.getServer().getMaxPlayers();
+		int maxPlayers = plugin.getTabController().getMaxPlayers();
 		int nrOfOnlinePlayers = 0;
 		
 		for (Player onlinePlayer : plugin.getServer().getOnlinePlayers()) {

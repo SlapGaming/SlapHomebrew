@@ -133,11 +133,23 @@ public class SlapCommand extends AbstractCommand {
 				noPermission(sender);
 				return true;
 			}
-			if (args.length < 1) {
-				badMsg(sender, "Usage: /slap cleartab");
+			plugin.getTabController().reEnable();
+			break;
+		case "maxplayers": case "setmaxplayers":
+			if (!testPermission(sender, "setmaxplayers")) {
+				noPermission(sender);
 				return true;
 			}
-			plugin.getTabController().reEnable();
+			if (args.length != 2) {
+				badMsg(sender, "Usage: /slap SetMaxPlayers [Number of Players]");
+				return true;
+			}
+			try {
+				int maxPlayers = Integer.parseInt(args[1]);
+				plugin.getTabController().setMaxPlayers(maxPlayers);
+			} catch (NumberFormatException e) {
+				badMsg(sender, args[1] + " is not a valid number!");
+			}
 			break;
 		case "header":
 			if (!testPermission(sender, "header")) {
