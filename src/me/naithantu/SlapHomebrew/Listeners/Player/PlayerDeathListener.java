@@ -76,7 +76,7 @@ public class PlayerDeathListener implements Listener {
 
 			//Add backdeath location if not in pvp/end world or nobackdeath region.
 			if (player.hasPermission("slaphomebrew.backdeath")) {
-				if (!world.getName().equalsIgnoreCase("world_pvp") && !world.getName().equalsIgnoreCase("world_the_end") && !Util.hasFlag(plugin, player.getLocation(), Flag.NOBACKDEATH)) {
+				if (!world.getName().equalsIgnoreCase("world_pvp") && !world.getName().equalsIgnoreCase("world_the_end") && !world.getName().equalsIgnoreCase("world_sonic") && !Util.hasFlag(plugin, player.getLocation(), Flag.NOBACKDEATH)) {
 					plugin.getBackDeathMap().put(playername, player.getLocation());
 					player.sendMessage(ChatColor.GRAY + "Use the /backdeath command to return to your death point.");
 				}
