@@ -56,7 +56,7 @@ public class StaffListCommand extends AbstractCommand {
 					
 					@Override
 					public void run() {
-						String[] groups = new String[]{"SuperAdmin", "Admin", "VIPGuide", "Guide", "Mod"};
+						String[] groups = new String[]{"SuperAdmin", "Admin", "Mod"};
 						PermissionManager pManager = PermissionsEx.getPermissionManager();
 						UserMap uMap = plugin.getEssentials().getUserMap();
 						for (String group : groups) {
@@ -65,9 +65,12 @@ public class StaffListCommand extends AbstractCommand {
 								for (PermissionUser user : pGroup.getUsers()) {
 									User u = uMap.getUser(user.getName());
 									if (u != null) {
-										if (!u.getName().equals("naithantu") && !u.getName().equals("Telluur")) {
-											addToList(user.getPrefix() + u.getName());
+										String userName = u.getName();
+										switch (userName.toLowerCase()) {
+										case "naithantu": case "telluur": case "hungryhomer":
+											continue;
 										}
+										addToList(user.getPrefix() + userName);
 									}
 								}
 							}
@@ -92,9 +95,10 @@ public class StaffListCommand extends AbstractCommand {
 		first = true;
 		
 		for (Player player : plugin.getServer().getOnlinePlayers()) {
-			if (player.hasPermission("reportrts.mod")) {
-				if (player.getName().equals("naithantu") || player.getName().equals("Telluur")) {
-					continue; //Skip if Telluur or Naith
+			if (testPermission(player, "staff")) {
+				switch (player.getName().toLowerCase()) {
+				case "naithantu": case "telluur": case "hungryhomer":
+					continue;
 				}
 				PermissionUser user =  PermissionsEx.getUser(player);
 				if (afk.isAfk(player.getName())) {
