@@ -374,6 +374,7 @@ public class PlayerLogger {
 	public void onEnable(){
 		for (Player onlinePlayer : plugin.getServer().getOnlinePlayers()) {
 			setLoginTime(onlinePlayer.getName());
+			setMoved(onlinePlayer.getName(), true);
 		}
 	}
 
