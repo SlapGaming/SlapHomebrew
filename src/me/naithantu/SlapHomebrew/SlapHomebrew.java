@@ -101,6 +101,8 @@ public class SlapHomebrew extends JavaPlugin {
 	private TabController tabController;
 	private Vip vip;
 	private WorthList worthList;
+	
+	private MidiController midiController;
 
 	/**
 	 * External
@@ -217,6 +219,8 @@ public class SlapHomebrew extends JavaPlugin {
 		 tabController = new TabController(this, playerLogger);
 		 vip = new Vip(this, vipStorage, tabController);
 		 worthList = new WorthList(this);
+		 
+		 midiController = new MidiController(this);
 		 
 		 new ApplyChecker(this, essentials, tabController);
 	}
@@ -516,6 +520,10 @@ public class SlapHomebrew extends JavaPlugin {
 	
 	public WorthList getWorthList() {
 		return worthList;
+	}
+	
+	public MidiController getMidiController() {
+		return midiController;
 	}
 	
 	

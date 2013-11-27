@@ -135,6 +135,41 @@ public class SlapCommand extends AbstractCommand {
 			}
 			plugin.getTabController().reEnable();
 			break;
+		case "startlove": case "love": case "haddaway": case "whatislove":
+			if (!testPermission(sender, "startlove")) {
+				noPermission(sender);
+				return true;
+			}
+			if (plugin.getMidiController().playSong("Haddaway-What_Is_Love.mid")) {
+				msg(sender, "Playing!");
+			} else {
+				badMsg(sender, "Something is wrong.");
+			}
+			break;
+		case "playmidi":
+			if (!testPermission(sender, "playmidi")) {
+				noPermission(sender);
+				return true;
+			}
+			if (args.length != 2) {
+				badMsg(sender, "Usage: /Slap playmidi [midiname]");
+				return true;
+			}
+			
+			if (plugin.getMidiController().playSong(args[1])) {
+				msg(sender, "Playing!");
+			} else {
+				badMsg(sender, "Something is wrong.");
+			}
+			break;
+		case "stopmidi": case "stoplove":
+			if (!testPermission(sender, "stopmidi")) {
+				noPermission(sender);
+				return true;
+			}
+			
+			plugin.getMidiController().stopSong();
+			break;
 		case "maxplayers": case "setmaxplayers":
 			if (!testPermission(sender, "setmaxplayers")) {
 				noPermission(sender);
