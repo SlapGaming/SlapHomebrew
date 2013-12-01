@@ -34,14 +34,25 @@ public class TabController {
 	private YamlStorage yaml;
 	private FileConfiguration config;
 	
+	private boolean tabApiSetup;
+	
 	public TabController(SlapHomebrew plugin, PlayerLogger playerLogger) {
 		this.plugin = plugin;
 		this.playerLogger = playerLogger;
-		
+				
 		//Get the max players
 		yaml = new YamlStorage(plugin, "tabsettings");
 		config = yaml.getConfig();
 		maxPlayers = config.getInt("maxplayers");
+		
+		//Check if TabAPI up & Running
+		tabApiSetup = false;
+		TabAPI tabApi = (TabAPI) plugin.getServer().getPluginManager().getPlugin("TabAPI");
+		if (tabApi != null) {
+			tabApiSetup = tabApi.isEnabled();
+		}
+		
+		if (!tabApiSetup) return;
 		
 		//Create the lists
 		ops = new ArrayList<>();
@@ -139,6 +150,7 @@ public class TabController {
 	}
 	
 	public void playerJoin(Player p) {
+		if (!tabApiSetup) return; //Return if not setup
 		String playerName = p.getName();
 		addToGroup(playerName);
 		plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
@@ -150,6 +162,7 @@ public class TabController {
 	}
 	
 	public void playerQuit(Player p) {
+		if (!tabApiSetup) return; //Return if not setup
 		String playerName = p.getName();
 		removeFromGroups(playerName);
 		plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
@@ -264,6 +277,7 @@ public class TabController {
 	}
 	
 	public void reEnable() {
+		if (!tabApiSetup) return; //Return if not setup
 		builders.clear();
 		members.clear();
 		slaps.clear();

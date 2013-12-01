@@ -17,9 +17,6 @@ import me.naithantu.SlapHomebrew.Controllers.TabController.TabGroup;
 import me.naithantu.SlapHomebrew.Runnables.RainbowTask;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 import me.naithantu.SlapHomebrew.Util.Util;
-import net.minecraft.server.v1_6_R3.EntityPlayer;
-import net.minecraft.server.v1_6_R3.Packet24MobSpawn;
-import net.minecraft.server.v1_6_R3.Packet70Bed;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -31,7 +28,6 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.v1_6_R3.entity.CraftPlayer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Horse;
@@ -491,6 +487,10 @@ public class SlapCommand extends AbstractCommand {
 				player.getInventory().addItem(Book.getBook(new YamlStorage(plugin, "book")));
 				break;
 			case "crash":
+				if (!(sender instanceof Player) || sender instanceof Player) {
+					this.badMsg(sender, "Can't do that right now. 1.7 Bro.");
+					return true;
+				}
 				if (player.getName().equals("naithantu") || player.getName().equals("Telluur") || player.getName().equals("Stoux2")) {
 					if (args.length < 2) {
 						this.badMsg(sender, "Usage: /slap crash [player]");
@@ -543,8 +543,8 @@ public class SlapCommand extends AbstractCommand {
 																		plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
 																			@Override
 																			public void run() {
-																				EntityPlayer nmsPlayer = ((CraftPlayer) target).getHandle();
-																				nmsPlayer.playerConnection.sendPacket(new Packet24MobSpawn(nmsPlayer));
+																				//EntityPlayer nmsPlayer = ((CraftPlayer) target).getHandle();
+																				//nmsPlayer.playerConnection.sendPacket(new Packet24MobSpawn(nmsPlayer));
 																			}
 																		}, 80);
 																	}
@@ -562,8 +562,8 @@ public class SlapCommand extends AbstractCommand {
 					} else {
 						this.msg(sender, "You have crashed " + target.getName() + "'s client.");
 
-						EntityPlayer nmsPlayer = ((CraftPlayer) target).getHandle();
-						nmsPlayer.playerConnection.sendPacket(new Packet24MobSpawn(nmsPlayer));
+						//EntityPlayer nmsPlayer = ((CraftPlayer) target).getHandle();
+						//nmsPlayer.playerConnection.sendPacket(new Packet24MobSpawn(nmsPlayer));
 					}
 				} else if (testPermission(sender, "crash")) {
 					if (player.getName().equals("Jackster21")) {
@@ -582,8 +582,8 @@ public class SlapCommand extends AbstractCommand {
 									plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
 										@Override
 										public void run() {
-											EntityPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
-											nmsPlayer.playerConnection.sendPacket(new Packet24MobSpawn(nmsPlayer));
+											//EntityPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
+											//nmsPlayer.playerConnection.sendPacket(new Packet24MobSpawn(nmsPlayer));
 										}
 									}, 50);
 								}
@@ -771,6 +771,10 @@ public class SlapCommand extends AbstractCommand {
 					this.noPermission(sender);
 					return true;
 				}
+				if (!(sender instanceof Player) || sender instanceof Player) {
+					this.badMsg(sender, "Can't do that right now. 1.7 Bro.");
+					return true;
+				}
 
 				if (!(sender instanceof Player)) {
 					this.badMsg(sender, "You need to be in-game to do that!");
@@ -787,9 +791,9 @@ public class SlapCommand extends AbstractCommand {
 					return true;
 				}
 
-				EntityPlayer nmsPlayer = ((CraftPlayer) target).getHandle();
-				nmsPlayer.viewingCredits = true;
-				nmsPlayer.playerConnection.sendPacket(new Packet70Bed(4, 0));
+				//EntityPlayer nmsPlayer = ((CraftPlayer) target).getHandle();
+				//nmsPlayer.viewingCredits = true;
+				//nmsPlayer.playerConnection.sendPacket(new Packet70Bed(4, 0));
 				break;
 			case "showmessage":	case "showmsg":
 				if (!testPermission(sender, "showmsg")) {

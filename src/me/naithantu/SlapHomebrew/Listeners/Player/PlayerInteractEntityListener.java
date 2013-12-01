@@ -6,10 +6,10 @@ import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_6_R3.entity.CraftHanging;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
+import org.bukkit.entity.LeashHitch;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Horse.Variant;
@@ -70,7 +70,7 @@ public class PlayerInteractEntityListener implements Listener {
 		if (!player.hasPermission("slaphomebrew.staff")) {
 			
 			//Leash on Fence -- Warning: Dirty fix -- Will probably break on update
-			if (clickedEntity instanceof CraftHanging) {
+			if (clickedEntity instanceof LeashHitch) {
 				if (!horses.isOwnerOfLeash(clickedEntity.getUniqueId().toString(), playername)) {
 					player.sendMessage(ChatColor.RED + "You are not the owner of that leash.");
 					event.setCancelled(true);

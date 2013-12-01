@@ -10,10 +10,10 @@ import me.naithantu.SlapHomebrew.Util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_6_R3.entity.CraftHanging;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LeashHitch;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -77,7 +77,7 @@ public class PlayerInteractListener implements Listener {
 							@Override
 							public void run() {
 								for (Entity leashFence : player.getWorld().getEntities()) {
-									if (leashFence instanceof CraftHanging) {
+									if (leashFence instanceof LeashHitch) {
 										if (leashFence.getLocation().equals(loc)) {
 											horses.placedLeashOnFence(leashFence.getUniqueId().toString(), playername);
 										}

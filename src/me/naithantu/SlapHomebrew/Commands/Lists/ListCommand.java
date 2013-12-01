@@ -52,8 +52,8 @@ public class ListCommand extends AbstractCommand {
 				if (prefix != null);
 				colorPrefix = ChatColor.translateAlternateColorCodes('&', prefix.substring(0, 2));
 			}
-			String afkString = ChatColor.WHITE + "";
-			if (afk.isAfk(playerName)) afkString = ChatColor.WHITE + " [AFK]";
+			String afkString = "";
+			if (afk.isAfk(playerName)) afkString = ChatColor.WHITE + "[AFK]";
 			fullName.put(playerNameL, colorPrefix + playerName + afkString);
 			set.add(playerNameL);
 		}
@@ -74,7 +74,7 @@ public class ListCommand extends AbstractCommand {
 					first = false;
 					secondLine = secondLine + fullName.get(playerName);
 				} else {
-					secondLine = secondLine + ", " + fullName.get(playerName);
+					secondLine = secondLine + ChatColor.WHITE +  ", " + fullName.get(playerName);
 				}
 			}
 			sender.sendMessage(new String[] {firstline, secondLine});
