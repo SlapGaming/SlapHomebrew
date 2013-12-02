@@ -64,7 +64,7 @@ public class PlayerChangedWorldListener implements Listener {
 
 		//Allow flight for double jumping in start world.
 		if (player.getWorld().getName().equals("world_start")) {
-			player.setAllowFlight(true);
+			player.setAllowFlight(false);
 		} else if (event.getFrom().getName().equals("world_start") && !player.getWorld().getName().equals("world_start") && player.getGameMode() != GameMode.CREATIVE) {
 			player.setAllowFlight(false);
 		}

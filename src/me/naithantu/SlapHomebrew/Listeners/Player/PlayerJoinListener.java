@@ -71,7 +71,7 @@ public class PlayerJoinListener implements Listener {
 		plugin.getExtras().getGhostTeam().addPlayer(player);
 
 		if (player.getWorld().getName().equals("world_start"))
-			player.setAllowFlight(true);
+			player.setAllowFlight(false);
 
 		if (player.hasPermission("slaphomebrew.staff")) {
 			String date = new SimpleDateFormat("MMM-d HH:mm:ss z").format(new Date());
