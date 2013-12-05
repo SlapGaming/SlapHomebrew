@@ -26,18 +26,18 @@ public class LagCommand extends AbstractCommand {
 		
 		double tps = lag.getTPS();
 		StringBuilder builder = new StringBuilder();
-		builder.append(ChatColor.YELLOW).append("Ticks per second: ");
+		builder.append(ChatColor.YELLOW).append("Server Status: ");
 		if (tps >= 17 && tps <= 23) {
-			builder.append(ChatColor.GREEN);
+			builder.append(ChatColor.GREEN + "All Good!");
 		} else if (tps >= 14 && tps <= 26) {
-			builder.append(ChatColor.GOLD);
+			builder.append(ChatColor.GOLD + "Small Hiccup.");
 		} else {
-			builder.append(ChatColor.RED);
+			builder.append(ChatColor.RED + "Struggling.");
 		}
 		
-		builder.append((double) Math.round(tps * 10) / 10).append(" [");
-		builder.append(Math.round(tps * 5));
-		builder.append("%]");
+		builder.append(" (");
+		builder.append((double) Math.round(tps * 10) / 10);
+		builder.append(" Ticks)");
 
 		sender.sendMessage(builder.toString());
 		return true;
