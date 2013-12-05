@@ -33,7 +33,10 @@ public class WorldCommand extends AbstractCommand {
 			this.msg(sender, "You are in the pre-1.6 (old) survival world.");
 			break;
 		case "survival2":
-			this.msg(sender, "You are in the new survival world.");
+			this.msg(sender, "You are in the disabled 1.6 survival world.");
+			break;
+		case "survival3":
+			this.msg(sender, "You are in the new 1.7 survival world!");
 			break;
 		case "start":
 			this.msg(sender, "You are in the lobby world.");

@@ -40,8 +40,11 @@ public class SpawnCommand extends AbstractCommand {
 			case "old": case "oldsurvival":
 				teleportToSpawn(targetPlayer, "world", "the old survival world.", -90F);
 				break;
-			case "new": case "newsurvival":
-				teleportToSpawn(targetPlayer, "world_survival2", "the new survival world.", -90F);
+			case "new": case "newsurvival": case "1.7": case "7":
+				teleportToSpawn(targetPlayer, "world_survival3", "the new 1.7 survival world.", -90F);
+				break;
+			case "disabled": case "locked": case "blocked": case "6": case "1.6": case "lockedsurvival":
+				teleportToSpawn(targetPlayer, "world_survival2", "the disabled 1.6 survival world.", -90F);
 				break;
 			case "creative": case "c":
 				teleportToSpawn(targetPlayer, "world_creative", "the creative world.", 90F);
@@ -55,10 +58,10 @@ public class SpawnCommand extends AbstractCommand {
 			case "pvp":
 				teleportToSpawn(targetPlayer, "world_pvp", "the PVP world.", -90F);
 				break;
-			case "resource": case "rw":
+			case "resource": case "rw": case "resourceworld":
 				teleportToSpawn(targetPlayer, resourceWorldName, "the resource world.", -90F);
 				break;
-			case "games": case "sonic": case "game":
+			case "games": case "sonic": case "game": case "mini": case "mini-games": case "minigames":
 				teleportToSpawn(targetPlayer, "world_sonic", "the games world.", 0F);
 				break;
 			default:
@@ -69,10 +72,14 @@ public class SpawnCommand extends AbstractCommand {
 	}
 	
 	private void teleportToSpawn(Player targetPlayer, String worldname, String teleportString, Float yaw) {
-		Location loc = plugin.getServer().getWorld(worldname).getSpawnLocation();
-		loc.setYaw(yaw);
-		targetPlayer.teleport(loc);
-		msg(targetPlayer, "You have been teleported to " + teleportString);
+		try {
+			Location loc = plugin.getServer().getWorld(worldname).getSpawnLocation();
+			loc.setYaw(yaw);
+			targetPlayer.teleport(loc);
+			msg(targetPlayer, "You have been teleported to " + teleportString);
+		} catch (NullPointerException e) {
+			badMsg(targetPlayer, "Sorry! Teleporting to that world is currently disabled.");
+		}
 	}
 
 }
