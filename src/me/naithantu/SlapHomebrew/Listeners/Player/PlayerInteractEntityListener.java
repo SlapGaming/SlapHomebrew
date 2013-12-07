@@ -1,9 +1,12 @@
 package me.naithantu.SlapHomebrew.Listeners.Player;
 
 import me.naithantu.SlapHomebrew.Commands.Fun.RideCommand;
+import me.naithantu.SlapHomebrew.Commands.Staff.TeleportMobCommand;
 import me.naithantu.SlapHomebrew.Controllers.Horses;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
+import me.naithantu.SlapHomebrew.Util.Util;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -46,7 +49,7 @@ public class PlayerInteractEntityListener implements Listener {
 			event.setCancelled(true);
 			return;
 		}
-		
+				
 		//Entity Ride Click
 		if (RideCommand.rightClick(playername)) {
 			if (player.isInsideVehicle()) {
@@ -57,6 +60,27 @@ public class PlayerInteractEntityListener implements Listener {
 			}
 			return;
 		}
+		
+		//Singlemove Teleport mob
+		if (TeleportMobCommand.isInMap(playername)) {
+			event.setCancelled(true);
+			Player toPlayer = Bukkit.getPlayerExact(TeleportMobCommand.getToPlayerName(playername));
+			if (toPlayer == null || !toPlayer.isOnline()) {
+				TeleportMobCommand.toPlayerWentOffline(playername);
+				Util.badMsg(player, "The player to teleport to is offline! Single Move disabled.");
+				return;
+			}
+			
+			if (clickedEntity instanceof LivingEntity && !(clickedEntity instanceof Player)) {
+				LivingEntity le = (LivingEntity) clickedEntity;
+				le.teleport(toPlayer.getLocation());
+			} else {
+				Util.badMsg(player, "This entity cannot be teleported!");
+			}
+			return;
+		}
+		
+		
 				
 		//Item frame map block
 		if(clickedEntity.getType() == EntityType.ITEM_FRAME){
