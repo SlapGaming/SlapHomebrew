@@ -2,10 +2,12 @@ package me.naithantu.SlapHomebrew.Commands.Fun;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
+import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.Material;
 import org.bukkit.Note;
 import org.bukkit.Note.Tone;
+import org.bukkit.block.Block;
 import org.bukkit.block.NoteBlock;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -27,54 +29,42 @@ public class NoteCommand extends AbstractCommand {
 		}
 
 		Player player = (Player) sender;
+		Block targetBlock = Util.getTargetBlock(player, 15);
+		if (targetBlock == null) {
+			badMsg(sender, "You're too far away from any blocks!");
+			return true;
+		}
+		if (targetBlock.getType() != Material.NOTE_BLOCK) {
+			badMsg(sender, "You're not looking at a NoteBlock!");
+			return true;
+		}
+		NoteBlock noteBlock = (NoteBlock) targetBlock.getState();
 		if (args.length == 0) {
-			if (player.getTargetBlock(null, 20).getType().equals(Material.NOTE_BLOCK)) {
-				NoteBlock noteBlock = (NoteBlock) player.getTargetBlock(null, 20).getState();
-				this.msg(sender, noteBlock.getNote().toString() + " Octave: " + noteBlock.getNote().getOctave());
-			} else {
-				this.badMsg(sender, "Error: That is not a noteblock!");
-			}
+			this.msg(sender, noteBlock.getNote().toString() + " Octave: " + noteBlock.getNote().getOctave());
 		} else if (args.length > 1) {
-			if (player.getTargetBlock(null, 20).getType().equals(Material.NOTE_BLOCK)) {
-				Tone tone;
-				int octave;
-				boolean sharp = false;
-				try {
-					octave = Integer.parseInt(args[0]);
-				} catch (NumberFormatException e) {
-					return false;
-				}
-				if (octave == 0 || octave == 1 || octave == 2 && args[1].equalsIgnoreCase("F#")) {
-					try {
-						tone = Tone.valueOf(args[1]);
-					} catch (IllegalArgumentException e) {
-						if (args[1].contains("#")) {
-							args[1] = args[1].replace("#", "");
-							sharp = true;
-							try {
-								tone = Tone.valueOf(args[1]);
-							} catch (IllegalArgumentException e2) {
-								return false;
-							}
-						} else {
-							return false;
-						}
+			Tone tone;
+			boolean sharp = false;
+			try {
+				int octave = Integer.parseInt(args[0]);
+				if (octave == 0 || octave == 1 || (octave == 2 && args[1].equalsIgnoreCase("F#"))) {
+					if (args[1].contains("#")) {
+						sharp = true;
+						args[1] = args[1].replace("#", "");
 					}
-					NoteBlock noteBlock = (NoteBlock) player.getTargetBlock(null, 20).getState();
+					tone = Tone.valueOf(args[1]);
+					
 					if (sharp == false) {
 						noteBlock.setNote(Note.natural(octave, tone));
-						this.msg(sender, "Set note to octave: " + octave + " Note: " + tone);
+						msg(sender, "Set note to octave: " + octave + " Note: " + tone);
 					} else {
 						noteBlock.setNote(Note.sharp(octave, tone));
-						this.msg(sender, "Set note to octave: " + octave + " Note: " + tone + "#");
+						msg(sender, "Set note to octave: " + octave + " Note: " + tone + "#");
 					}
 				} else {
-					this.badMsg(sender, "Error: Octave must be 0, 1 or 2 (only F#)!");
-					return true;
+					badMsg(sender, "Error: Octave must be 0, 1 or 2 (only F#)!");
 				}
-
-			} else {
-				this.badMsg(sender, "Error: That is not a noteblock!");
+			} catch (IllegalArgumentException e) {
+				return false;
 			}
 		} else {
 			return false;

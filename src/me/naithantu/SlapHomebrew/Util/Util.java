@@ -14,8 +14,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -23,6 +25,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.util.BlockIterator;
 
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.managers.RegionManager;
@@ -243,6 +246,38 @@ public class Util {
     		returnString = "Unkown";
     	}
     	return returnString;
+    }
+    
+    /**
+     * Get the target block that is NOT air in the line of sight of a player
+     * @param entity The entity
+     * @param maxDistance Max distance to block
+     * @return The block or null
+     */
+    public static Block getTargetBlock(LivingEntity entity, int maxDistance) {
+    	BlockIterator iterator = new BlockIterator(entity, maxDistance);
+    	while (iterator.hasNext()) {
+    		Block foundBlock = iterator.next();
+    		if (foundBlock.getType() != Material.AIR) {
+    			return foundBlock;
+    		}
+    	}
+    	return null;
+    }
+    
+    /**
+     * Get all blocks in the line of sight of an entity
+     * @param entity The entity
+     * @param maxDistance The max distance line
+     * @return The list with all the blocks
+     */
+    public static ArrayList<Block> getBlocksInLineOfSight(LivingEntity entity, int maxDistance) {
+    	BlockIterator iterator = new BlockIterator(entity, maxDistance);
+    	ArrayList<Block> blocks = new ArrayList<>();
+    	while (iterator.hasNext()) {
+    		blocks.add(iterator.next());
+    	}
+    	return blocks;
     }
     
     /**

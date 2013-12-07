@@ -633,14 +633,19 @@ public class SlapCommand extends AbstractCommand {
 					return true;
 				}
 
-				Location location = player.getTargetBlock(null, 20).getLocation().add(0, 1, 0);
-				world = player.getWorld();
-				i = 0;
-				while (i < mobs) {
+				Block targetBlock = Util.getTargetBlock(player, 25);
+				if (targetBlock == null) {
+					badMsg(player, "You aren't looking at a block (or out of range)");
+					return true;
+				}
+				
+				Location location = targetBlock.getLocation().add(0, 1, 0);
+				world = location.getWorld();
+				
+				for (i = 0; i < mobs; i++) {
 					Entity burningMob = world.spawnEntity(location, mobType);
-					burningMob.setFireTicks(9999999);
+					burningMob.setFireTicks(Integer.MAX_VALUE);
 					burningMob.setMetadata("slapFireMob", new FixedMetadataValue(plugin, true));
-					i++;
 				}
 				break;
 			case "fly":
@@ -670,16 +675,21 @@ public class SlapCommand extends AbstractCommand {
 						return true;
 					}
 				}
+				
+				targetBlock = Util.getTargetBlock(player, 25);
+				if (targetBlock == null) {
+					badMsg(player, "You aren't looking at a block (or out of range)");
+					return true;
+				}
 
-				location = player.getTargetBlock(null, 20).getLocation().add(0, 1, 0);
+				location = targetBlock.getLocation().add(0, 1, 0);
 				world = player.getWorld();
-				i = 0;
-				while (i < mobs) {
+				
+				for (i = 0; i < mobs; i++) {
 					LivingEntity bat = (LivingEntity) world.spawnEntity(location, EntityType.BAT);
-					bat.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 9999999, 1));
-					Entity creeper = world.spawnEntity(location, mobType);
-					bat.setPassenger(creeper);
-					i++;
+					bat.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1));
+					Entity passengerMob = world.spawnEntity(location, mobType);
+					bat.setPassenger(passengerMob);
 				}
 				break;
 			case "stackmob": case "mobstack":
@@ -705,12 +715,19 @@ public class SlapCommand extends AbstractCommand {
 					}
 					mobsList.add(mobType);
 				}
+				
+				targetBlock = Util.getTargetBlock(player, 25);
+				if (targetBlock == null) {
+					badMsg(player, "You aren't looking at a block (or out of range)");
+					return true;
+				}
 
-				location = player.getTargetBlock(null, 20).getLocation().add(0, 1, 0);
+				location = targetBlock.getLocation().add(0, 1, 0);
 				world = player.getWorld();
-				i = 0;
+				
 				Entity previousEntity = null;
-				while (i < mobsList.size()) {
+				int mobsListSize = mobsList.size();
+				for (i = 0; i < mobsListSize; i++) {
 					Entity newEntity = world.spawnEntity(location, mobsList.get(i));
 					if (newEntity.getType() == EntityType.BAT) {
 						((LivingEntity) newEntity).addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 9999999, 1));
@@ -719,7 +736,6 @@ public class SlapCommand extends AbstractCommand {
 						newEntity.setPassenger(previousEntity);
 					}
 					previousEntity = newEntity;
-					i++;
 				}
 				break;
 			case "rainbow":
@@ -883,9 +899,16 @@ public class SlapCommand extends AbstractCommand {
 					badMsg(sender, "Not a valid horse type. [zombie/skeleton/mule/donkey/horse]");
 					return false;
 				}
+				
+				targetBlock = Util.getTargetBlock(player, 25);
+				if (targetBlock == null) {
+					badMsg(player, "You aren't looking at a block (or out of range)");
+					return true;
+				}
 
-				location = player.getTargetBlock(null, 20).getLocation().add(0, 1, 0);
+				location = targetBlock.getLocation().add(0, 1, 0);
 				world = player.getWorld();
+
 				Horse horse = (Horse) world.spawnEntity(location, EntityType.HORSE);
 				horse.setJumpStrength(2D);
 				horse.setVariant(variant);
@@ -945,10 +968,10 @@ public class SlapCommand extends AbstractCommand {
 				}
 				LivingEntity targetEntity = null;
 				if (args.length == 2) {
-					List<Block> lineOfSightBlocks = player.getLineOfSight(null, 10);
+					List<Block> lineOfSightBlocks = Util.getBlocksInLineOfSight(player, 10);
 					for (Entity ent : player.getNearbyEntities(10, 10, 10)) {
 						if (ent instanceof LivingEntity) {
-							Block targetBlock = ent.getLocation().getBlock();
+							targetBlock = ent.getLocation().getBlock();
 							if (containsBlockRelatives(lineOfSightBlocks, targetBlock)) {
 								targetEntity = (LivingEntity) ent;
 								break;
@@ -1001,10 +1024,10 @@ public class SlapCommand extends AbstractCommand {
 						player.getPassenger().leaveVehicle();
 					}
 				} else if (args.length == 2) {
-					List<Block> lineOfSightBlocks = player.getLineOfSight(null, 10);
+					List<Block> lineOfSightBlocks = Util.getBlocksInLineOfSight(player, 10);
 					for (Entity ent : player.getNearbyEntities(10, 10, 10)) {
 						if (ent instanceof LivingEntity) {
-							Block targetBlock = ent.getLocation().getBlock();
+							targetBlock = ent.getLocation().getBlock();
 							if (containsBlockRelatives(lineOfSightBlocks, targetBlock)) {
 								if (ent.getPassenger() != null) {
 									ent.getPassenger().leaveVehicle();

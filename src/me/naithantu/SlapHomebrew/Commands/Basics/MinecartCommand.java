@@ -3,6 +3,7 @@ package me.naithantu.SlapHomebrew.Commands.Basics;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Minecart;
@@ -34,8 +35,8 @@ public class MinecartCommand extends AbstractCommand {
 		}
 
 		World w = player.getWorld();
-		int railBlock = w.getBlockTypeIdAt(player.getLocation());
-		if (railBlock == 66 || railBlock == 27 || railBlock == 28) {
+		Material blockType = player.getLocation().getBlock().getType();
+		if (blockType == Material.ACTIVATOR_RAIL || blockType == Material.POWERED_RAIL || blockType == Material.RAILS || blockType == Material.DETECTOR_RAIL) {
 			Minecart minecart = w.spawn(player.getLocation(), Minecart.class);
 			minecart.setPassenger(player);
 			minecart.setMetadata("slapVehicle", new FixedMetadataValue(plugin, true));
