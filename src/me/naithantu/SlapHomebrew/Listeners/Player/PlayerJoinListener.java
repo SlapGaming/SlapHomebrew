@@ -164,6 +164,9 @@ public class PlayerJoinListener implements Listener {
 				//Minechat prevention
 				playerLogger.joinedMinechatChecker(player);
 				
+				//Sudo /list
+				player.chat("/list");
+				
 				//Throw in jail
 				if (jails.isInJail(player.getName())) {
 					jails.switchToOnlineJail(player);
