@@ -56,7 +56,7 @@ public class HomeMenu {
 				case "world":
 					oldSurvivalHomes++;
 					break;
-				case "world_survival2":
+				case "world_survival3":
 					newSurvivalHomes++;
 					break;
 				case "world_creative":
@@ -83,7 +83,7 @@ public class HomeMenu {
 		}, plugin, playerName);
 
 		mainMenu.setOption("world-" + oldSurvivalHomes, 0, new ItemStack(Material.DIRT, 0), "Old Survival World", oldSurvivalHomes + " home(s)");
-		mainMenu.setOption("world_survival2-" + newSurvivalHomes, 2, new ItemStack(Material.GRASS, 0), "New Survival World", newSurvivalHomes + " home(s)");
+		mainMenu.setOption("world_survival3-" + newSurvivalHomes, 2, new ItemStack(Material.GRASS, 0), "1.7 Survival World", newSurvivalHomes + " home(s)");
 		mainMenu.setOption("world_creative-" + creativeHomes, 4, new ItemStack(Material.DIAMOND_BLOCK, 0), "Creative World", creativeHomes + " home(s)");
 		mainMenu.setOption("world_nether-" + netherHomes, 6, new ItemStack(Material.NETHER_BRICK, 0), "The Nether", netherHomes + " home(s)");
 		mainMenu.setOption("world_resource10-" + resourceHomes, 8, new ItemStack(Material.COBBLESTONE, 0), "Resource World", resourceHomes + " home(s)");
@@ -116,8 +116,8 @@ public class HomeMenu {
 			menuMaterial = Material.DIRT;
 			nrOfHomes = oldSurvivalHomes;
 			break;
-		case "world_survival2":
-			menuName = "New Survival World Menu";
+		case "world_survival3":
+			menuName = "1.7 Survival World Menu";
 			menuMaterial = Material.GRASS;
 			nrOfHomes = newSurvivalHomes;
 			break;
