@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.v1_7_R1.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -77,7 +78,7 @@ public class TeleportMobCommand extends AbstractCommand {
 			for (Entity e : foundEntities) {
 				if (e instanceof LivingEntity && !(e instanceof Player)) {
 					LivingEntity le = (LivingEntity) e;
-					le.teleport(toLocation);
+					teleportMob(le, toLocation);
 					teleportedEntities++;
 				}
 			}
@@ -138,5 +139,21 @@ public class TeleportMobCommand extends AbstractCommand {
 			if (msg) p.sendMessage(Util.getHeader() + "Singlemove mobs has been disabled.");
 		}
 	}
+	
+	/**
+	 * Teleport a mob to the given location
+	 * @param e The mob
+	 * @param toLocation The location
+	 */
+	public static void teleportMob(LivingEntity e, Location toLocation) {
+		if (e.getWorld() == toLocation.getWorld()) {
+			e.teleport(toLocation);
+		} else {
+			CraftEntity craftEntity = (CraftEntity) e;
+			craftEntity.getHandle().teleportTo(toLocation, false);
+		}
+	}
+	
+	
 	
 }

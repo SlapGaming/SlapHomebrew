@@ -72,8 +72,7 @@ public class PlayerInteractEntityListener implements Listener {
 			}
 			
 			if (clickedEntity instanceof LivingEntity && !(clickedEntity instanceof Player)) {
-				LivingEntity le = (LivingEntity) clickedEntity;
-				le.teleport(toPlayer.getLocation());
+				TeleportMobCommand.teleportMob((LivingEntity) clickedEntity, toPlayer.getLocation());
 			} else {
 				Util.badMsg(player, "This entity cannot be teleported!");
 			}
