@@ -24,7 +24,7 @@ public class PlayerToggleFlightListener implements Listener {
 	public void setFlyOnJump(PlayerToggleFlightEvent event) {
 		Player player = event.getPlayer();
 		if (player.getWorld().getName().equals("world_start")) {
-			if (event.isFlying() && event.getPlayer().getGameMode() != GameMode.CREATIVE) {
+			if (event.getPlayer().getGameMode() != GameMode.CREATIVE) {
 				if(!extras.getHasJumped().contains(player.getName())){
 					player.setFlying(false);
 					player.playSound(player.getLocation(), Sound.SHOOT_ARROW , 5, -500);
