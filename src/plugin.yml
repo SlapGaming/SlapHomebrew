@@ -3,7 +3,7 @@ main: me.naithantu.SlapHomebrew.SlapHomebrew
 depend: [Essentials, Vault, PermissionsEx, ReportRTS]
 softdepend: [TabAPI]
 authors: [naithantu, Stoux2]
-version: 2.16.5
+version: 2.17.0
 description: SlapHomebrew homemade plugin.
 commands:
   vip:

@@ -17,11 +17,14 @@ import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
@@ -161,6 +164,18 @@ public class PlayerJoinListener implements Listener {
 				//Abort if the player went offline already
 				if (!player.isOnline()) return;
 				
+				if (firstTime) {
+					//Starter kit
+					PlayerInventory pi = player.getInventory();
+					pi.setItem(0, new ItemStack(Material.STONE_SWORD));
+					pi.setItem(1, new ItemStack(Material.STONE_PICKAXE));
+					pi.setItem(2, new ItemStack(Material.STONE_AXE));
+					pi.setItem(3, new ItemStack(Material.STONE_SPADE));
+					pi.setItem(7, new ItemStack(Material.FEATHER));
+					pi.setItem(8, new ItemStack(Material.COOKIE, 5));
+						//TODO Add a new Starter Book
+				}
+				
 				//Minechat prevention
 				playerLogger.joinedMinechatChecker(player);
 				
@@ -205,4 +220,5 @@ public class PlayerJoinListener implements Listener {
 		}
 		vipStorage.saveConfig();
 	}
+	
 }
