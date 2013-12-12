@@ -2,10 +2,13 @@ package me.naithantu.SlapHomebrew.Controllers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -43,7 +46,7 @@ public class DuelArena {
 	private Location gameLoc;
 	
 	//Signs
-	private ArrayList<Sign> signs;
+	private ArrayList<Block> signs;
 	private String[] newGame;
 	private String noPlayer;
 	
@@ -57,12 +60,23 @@ public class DuelArena {
 		arenaLoc2 = new Location(pvpWorld, 949.5, 29, -635.5, 180, 0);
 		gameLoc = new Location(pvpWorld, 949.5, 29, -628.5, 180, 0);
 		signs = new ArrayList<>();
-		signs.add((Sign) pvpWorld.getBlockAt(932, 32, -654).getState());
-		signs.add((Sign) pvpWorld.getBlockAt(966, 32, -654).getState());
-		signs.add((Sign) pvpWorld.getBlockAt(949, 30, -631).getState());
+		try {
+			addSignBlock(pvpWorld.getBlockAt(932, 32, -654));
+			addSignBlock(pvpWorld.getBlockAt(966, 32, -654));
+			addSignBlock(pvpWorld.getBlockAt(949, 30, -631));
+		} catch (Exception e) {
+			plugin.getLogger().log(Level.WARNING, "One or more DuelArena signs haven't been found.");
+		}
 		noPlayer = ChatColor.DARK_GRAY + "Available";
 		newGame = new String[] {"-- Pad 1 --", noPlayer, "-- Pad 2 --", noPlayer};
 		setLines(newGame);
+	}
+	
+	private void addSignBlock(Block b) {
+		Material blockType = b.getType();
+		if (blockType == Material.WALL_SIGN || blockType == Material.SIGN || blockType == Material.SIGN_POST) {
+			signs.add(b);
+		}
 	}
 	
 	//Game methods
@@ -142,7 +156,8 @@ public class DuelArena {
 	 */
 	
 	private void setLines(String[] lines) {
-		for (Sign sign : signs) {
+		for (Block bSign : signs) {
+			Sign sign = (Sign) bSign.getState();
 			int x = 0;
 			for (String line : lines) {
 				sign.setLine(x, line);
@@ -153,7 +168,8 @@ public class DuelArena {
 	}
 	
 	private void setLine(int index, String line) {
-		for (Sign sign : signs) {
+		for (Block bSign : signs) {
+			Sign sign = (Sign) bSign.getState();
 			sign.setLine(index, line);
 			sign.update();
 		}
