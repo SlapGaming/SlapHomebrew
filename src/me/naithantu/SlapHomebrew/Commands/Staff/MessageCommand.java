@@ -1,18 +1,26 @@
 package me.naithantu.SlapHomebrew.Commands.Staff;
 
+import me.naithantu.SlapHomebrew.Controllers.MessageFactory;
+import me.naithantu.SlapHomebrew.Controllers.Messages;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 
+import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.MemorySection;
+import org.bukkit.configuration.file.FileConfiguration;
 
 public class MessageCommand extends AbstractCommand {
 	boolean allowMessage = true;
-	public static String messageName;
+
+    private YamlStorage messageStorage;
+    private FileConfiguration messageConfig;
 	
 	public MessageCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
 		super(sender, args, plugin);
+        messageStorage = plugin.getMessageStorage();
+        messageConfig = messageStorage.getConfig();
 	}
 
 	public boolean handle() {
@@ -28,19 +36,19 @@ public class MessageCommand extends AbstractCommand {
 				String message;
 				if (args.length == 2) {
 					arg = args[1];
-					if (!plugin.getConfig().contains("messages." + arg)) {
+					if (!messageConfig.contains("messages." + arg)) {
 						this.badMsg(sender, "That message does not exist...");
 						return true;
 					}
-					message = plugin.getConfig().getString("messages." + arg);
+					message = messageConfig.getString("messages." + arg);
 					message = ChatColor.translateAlternateColorCodes('&', message);
 					sender.sendMessage(message);
 				} else {
 					this.badMsg(sender, "Usage: /message show [message]");
 				}
 			} else if (arg.equalsIgnoreCase("list")) {
-				if (plugin.getConfig().contains("messages")) {
-					this.msg(sender, "Messages: " + ((MemorySection) plugin.getConfig().get("messages")).getKeys(true).toString());
+				if (messageConfig.contains("messages")) {
+					this.msg(sender, "Messages: " + ((MemorySection) messageConfig.get("messages")).getKeys(true).toString());
 				} else {
 					this.badMsg(sender, "There are no messages! Type /message create [messagename] to create one!");
 					return true;
@@ -53,8 +61,7 @@ public class MessageCommand extends AbstractCommand {
 
 				if (args.length == 2) {
 					arg = args[1];
-					plugin.getMessages().add(sender.getName());
-					messageName = arg;
+                    plugin.getMessages().getMessagePlayers().put(sender.getName(), new MessageFactory(args[1]));
 					this.msg(sender, "Type the message now, the name of this message is going to be: " + arg);
 				} else {
 					this.badMsg(sender, "Usage: /message create [message]");
@@ -68,8 +75,8 @@ public class MessageCommand extends AbstractCommand {
 
 				if (args.length == 2) {
 					arg = args[1];
-					if (plugin.getConfig().getString("messages." + arg) != null) {
-						plugin.getConfig().set("messages." + arg, null);
+					if (messageConfig.getString("messages." + arg) != null) {
+						messageConfig.set("messages." + arg, null);
 						this.msg(sender, "Succesfully removed message " + arg);
 						return true;
 					} else {
@@ -80,14 +87,22 @@ public class MessageCommand extends AbstractCommand {
 					this.badMsg(sender, "Usage: /message remove [message]");
 					return true;
 				}
-			} else {
+			} else if (arg.equalsIgnoreCase("reload")) {
+                if (!testPermission(sender, "message.admin")) {
+                    this.noPermission(sender);
+                    return true;
+                }
+
+                messageStorage.reloadConfig();
+                this.msg(sender, "Reloaded message config!");
+            } else {
 				String message;
-				if (!plugin.getConfig().contains("messages." + arg)) {
+				if (!messageConfig.contains("messages." + arg)) {
 					this.badMsg(sender, "That message does not exist...");
 					return true;
 				}
 
-				message = plugin.getConfig().getString("messages." + arg);
+				message = messageConfig.getString("messages." + arg);
 				if (allowMessage == false) {
 					this.badMsg(sender, "Error: You are not allowed to use a message now. Try again in a second.");
 					return true;

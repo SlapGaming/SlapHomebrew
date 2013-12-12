@@ -1,10 +1,8 @@
 package me.naithantu.SlapHomebrew.Listeners.Player;
 
+import me.naithantu.SlapHomebrew.Controllers.*;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.Staff.MessageCommand;
-import me.naithantu.SlapHomebrew.Controllers.AwayFromKeyboard;
-import me.naithantu.SlapHomebrew.Controllers.Jails;
-import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -12,17 +10,21 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
+import java.util.HashMap;
+
 public class PlayerChatListener implements Listener {
 	private SlapHomebrew plugin;
 	private AwayFromKeyboard afk;
 	private Jails jails;
 	private PlayerLogger playerLogger;
+    private HashMap<String, MessageFactory> messagePlayers;
 	
 	public PlayerChatListener(SlapHomebrew plugin, AwayFromKeyboard afk, Jails jails, PlayerLogger playerLogger){
 		this.plugin = plugin;
 		this.afk = afk;
 		this.jails = jails;
 		this.playerLogger = playerLogger;
+        this.messagePlayers = plugin.getMessages().getMessagePlayers();
 	}
 	@EventHandler
 	public void onPlayerChat(AsyncPlayerChatEvent event) {
@@ -62,13 +64,19 @@ public class PlayerChatListener implements Listener {
 			return;
 		}
 		
-		if (plugin.getMessages().contains(player.getName())) {
+		if (messagePlayers.containsKey(player.getName())) {
+            MessageFactory messageFactory = messagePlayers.get(player.getName());
 			message = event.getMessage();
-			player.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + "The new message has " + MessageCommand.messageName + " as name and " + message + " as message.");
-			plugin.getMessages().remove(player.getName());
-			plugin.getConfig().set("messages." + MessageCommand.messageName, message);
-			event.setCancelled(true);
-			plugin.saveConfig();
+            event.setCancelled(true);
+            if(message.equals("*")){
+                player.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + "The new message has " + messageFactory.getMessageName() + " as name and " + messageFactory.getMessage() + " as message.");
+                messagePlayers.remove(player.getName());
+                plugin.getMessageStorage().getConfig().set("messages." + messageFactory.getMessageName(), messageFactory.getMessage());
+                plugin.getMessageStorage().saveConfig();
+            } else {
+                messageFactory.addMessage(message);
+                player.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + "Added text to message, type '*' to save message!");
+            }
 		}
 		
 		//Check for AFK

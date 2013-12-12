@@ -63,10 +63,8 @@ public class SlapHomebrew extends JavaPlugin {
 	private List<Integer> unfinishedForumVip = new ArrayList<Integer>();
 
 	/**
-	 * messages HashSet - Contains all messages
 	 * tpBlocks HashSet - Contains all tpBlocks
 	 */
-	private HashSet<String> messages = new HashSet<String>();
 	private HashSet<String> tpBlocks = new HashSet<String>();
 	
 	/**
@@ -79,6 +77,7 @@ public class SlapHomebrew extends JavaPlugin {
 	private YamlStorage sonicStorage;
 	private YamlStorage vipGrantStorage;
 	private YamlStorage applyThreadStorage;
+    private YamlStorage messageStorage;
 	private FileConfiguration dataConfig;
 	private FileConfiguration vipConfig;
 	private Configuration config;
@@ -97,6 +96,7 @@ public class SlapHomebrew extends JavaPlugin {
 	private Lag lag;
 	private Lottery lottery;
 	private Mail mail;
+    private Messages messages;
 	private PlayerLogger playerLogger;
 	private TabController tabController;
 	private Vip vip;
@@ -118,7 +118,6 @@ public class SlapHomebrew extends JavaPlugin {
 	 * The CommandHandler
 	 */
 	private CommandHandler commandHandler;
-
 	
 	/*
 	 **************************************
@@ -197,6 +196,7 @@ public class SlapHomebrew extends JavaPlugin {
 		sonicStorage = new YamlStorage(this, "sonic");
 		vipGrantStorage = new YamlStorage(this, "vipgrant");
 		applyThreadStorage = new YamlStorage(this, "ApplyThreads");
+        messageStorage = new YamlStorage(this, "messages");
 		dataConfig = dataStorage.getConfig();
 		vipConfig = vipStorage.getConfig();
 	}
@@ -212,6 +212,7 @@ public class SlapHomebrew extends JavaPlugin {
 		 lag = new Lag(this);
 		 lottery = new Lottery(this);
 		 mail = new Mail(this);
+         messages = new Messages();
 		 playerLogger = new PlayerLogger(this);
 		 afk = new AwayFromKeyboard(this, playerLogger);
 		 tabController = new TabController(this, playerLogger);
@@ -430,10 +431,6 @@ public class SlapHomebrew extends JavaPlugin {
 		return regionMap;
 	}
 
-	public HashSet<String> getMessages() {
-		return messages;
-	}
-	
 	public HashSet<String> getTpBlocks() {
 		return tpBlocks;
 	}
@@ -493,6 +490,10 @@ public class SlapHomebrew extends JavaPlugin {
 	public Mail getMail() {
 		return mail;
 	}
+
+    public Messages getMessages() {
+        return messages;
+    }
 	
 	public Jails getJails() {
 		return jails;
@@ -548,8 +549,11 @@ public class SlapHomebrew extends JavaPlugin {
 	public YamlStorage getApplyThreadStorage() {
 		return applyThreadStorage;
 	}
-	
-	
+
+    public YamlStorage getMessageStorage() {
+        return messageStorage;
+    }
+
 	/*
 	 **************************************
 	 * External getters
