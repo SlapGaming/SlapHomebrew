@@ -157,21 +157,29 @@ public class DuelArena {
 	
 	private void setLines(String[] lines) {
 		for (Block bSign : signs) {
-			Sign sign = (Sign) bSign.getState();
-			int x = 0;
-			for (String line : lines) {
-				sign.setLine(x, line);
-				x++;
+			try {
+				Sign sign = (Sign) bSign.getState();
+				int x = 0;
+				for (String line : lines) {
+					sign.setLine(x, line);
+					x++;
+				}
+				sign.update();
+			} catch (Exception e) {
+				//Safeguard
 			}
-			sign.update();
 		}
 	}
 	
 	private void setLine(int index, String line) {
 		for (Block bSign : signs) {
-			Sign sign = (Sign) bSign.getState();
-			sign.setLine(index, line);
-			sign.update();
+			try {
+				Sign sign = (Sign) bSign.getState();
+				sign.setLine(index, line);
+				sign.update();
+			} catch (Exception e) {
+				//Safeguard
+			}
 		}
 	}
 	
