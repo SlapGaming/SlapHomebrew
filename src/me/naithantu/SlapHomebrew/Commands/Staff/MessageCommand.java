@@ -1,11 +1,10 @@
 package me.naithantu.SlapHomebrew.Commands.Staff;
 
-import me.naithantu.SlapHomebrew.Controllers.MessageFactory;
-import me.naithantu.SlapHomebrew.Controllers.Messages;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
-
+import me.naithantu.SlapHomebrew.Controllers.MessageFactory;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.MemorySection;

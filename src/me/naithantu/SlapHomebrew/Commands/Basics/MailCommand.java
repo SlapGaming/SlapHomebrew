@@ -36,8 +36,23 @@ public class MailCommand extends AbstractCommand {
 
 	@Override
 	public boolean handle() {
-		if (!(sender instanceof Player)) {
-			this.badMsg(sender, "You need to be in-game to do that!");
+		if (!(sender instanceof Player)) { //Can only send mails
+ 			if (args.length < 3) { //Check correct usage
+				badMsg(sender, "Usage: /mail send [player] [Text]");
+				return true;
+			}
+ 			
+ 			if (!args[0].equalsIgnoreCase("send")) { //Only send
+ 				badMsg(sender, "Console can only send mails!");
+ 				return true;
+ 			}
+ 			
+			User u = ess.getUserMap().getUser(args[1]);
+			if (u != null) {
+				mail.sendConsoleMail(sender, u.getName(), createMailMessage(args));
+			} else {
+				badMsg(sender, "This player has never been on the server.");
+			}
 			return true;
 		}
 
@@ -63,9 +78,13 @@ public class MailCommand extends AbstractCommand {
 				return true;
 			}
 			if (args.length > 2) {
+				if (args[1].equalsIgnoreCase("server") || args[1].equalsIgnoreCase("console")) {
+					badMsg(sender, "You cannot send mails to the server!");
+					return true;
+				}
 				User u = ess.getUserMap().getUser(args[1]);
 				if (u != null) {
-					mail.SendMail((Player)sender, args[1], createMailMessage(args));
+					mail.sendMail((Player)sender, args[1], createMailMessage(args));
 				} else {
 					badMsg(sender, "This player has never been on the server.");
 				}
@@ -134,12 +153,16 @@ public class MailCommand extends AbstractCommand {
 					//Set all mail to read
 					mail.setAllToRead((Player)sender);
 				} else {
-					//Probably a name
-					User u = ess.getUserMap().getUser(args[1]);
-					if (u != null) {
-						mail.readMail((Player)sender, u.getName());
+					if (args[1].equalsIgnoreCase("console")) {
+						mail.readMail((Player) sender, "CONSOLE");
 					} else {
-						badMsg(sender, "This player has never been on the server.");
+						//Probably a name
+						User u = ess.getUserMap().getUser(args[1]);
+						if (u != null) {
+							mail.readMail((Player)sender, u.getName());
+						} else {
+							badMsg(sender, "This player has never been on the server.");
+						}
 					}
 				}
 			} else {

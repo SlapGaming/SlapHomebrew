@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
@@ -64,12 +65,12 @@ public class Mail {
 	}
 
 	/* SEND */
-	public void SendMail(final Player sender, final String reciever, final String mail) {
+	public void sendMail(final Player sender, final String reciever, final String mail) {
 		if (!sqlConnected(sender))
 			return;
 		if (isCrunching(sender))
 			return;
-		if (isBlocked(sender, reciever))
+		if (isBlocked(sender, reciever) || isSendingToConsole(sender, reciever))
 			return;
 
 		crunchData(sender.getName());
@@ -82,6 +83,20 @@ public class Mail {
 				boolean succes = mailSQL.sendMail(sender.getName(), reciever, mail, null, null);
 				sendMailDoneMessage(sender, succes);
 				doneCrunching(sender.getName());
+			}
+		});
+	}
+	
+	public void sendConsoleMail(final CommandSender console, final String player, final String mail) {
+		if (!sqlConnected(console))
+			return;
+		
+		runAsync(new Runnable() {
+			
+			@Override
+			public void run() {
+				boolean succes = mailSQL.sendMail(console.getName(), player, mail, null, null);
+				sendMailDoneMessage(console, succes);
 			}
 		});
 	}
@@ -101,8 +116,11 @@ public class Mail {
 			public void run() {
 				Object[] objects = mailSQL.getPlayerFromIDRecieved(sender.getName(), replyID);
 				if (objects != null) {
-					if (isBlocked(sender, (String) objects[0]))
+					if (isSendingToConsole(sender, (String) objects[0]) || isBlocked(sender, (String) objects[0])) { 
+						doneCrunching(sender.getName());
 						return;
+					}
+					
 					int recieverID = mailSQL.getIdForReciever(sender.getName(), (String) objects[0], (int) objects[1]);
 					boolean succes = mailSQL.sendMail(sender.getName(), (String) objects[0], mail, String.valueOf(replyID), String.valueOf(recieverID));
 					sendMailDoneMessage(sender, succes);
@@ -120,6 +138,8 @@ public class Mail {
 		if (isCrunching(sender))
 			return;
 		if (isBlocked(sender, reciever))
+			return;
+		if (isSendingToConsole(sender, reciever))
 			return;
 
 		crunchData(sender.getName());
@@ -202,11 +222,18 @@ public class Mail {
 			extraFirstLine = extraFirstLine + " | " + ChatColor.BLUE + "Marked" + ChatColor.WHITE;
 		if ((String) mail[5] != null)
 			extraFirstLine = extraFirstLine + " | Response to " + ChatColor.GREEN + "#S" + mail[5] + ChatColor.WHITE;
-		PermissionUser user = PermissionsEx.getUser((String) mail[0]);
+		String fromName; boolean fromConsole; PermissionUser user = null;
+		if (fromConsole = ((String) mail[0]).equalsIgnoreCase("console")) {
+			fromName = ChatColor.DARK_RED + "Server";
+		} else {
+			user = PermissionsEx.getUser((String) mail[0]);
+			fromName = Util.colorize(user.getPrefix() + user.getName());
+		}
 		sender.sendMessage(new String[] {
 				ChatColor.GOLD + "[INFO] " + ChatColor.WHITE + "Mail " + ChatColor.GREEN + "#" + mailID + ChatColor.WHITE + " sent on " + ChatColor.GREEN + dateFormat.format((Date) mail[1])
-						+ ChatColor.WHITE + " by " + Util.colorize(user.getPrefix() + user.getName()) + ChatColor.WHITE + extraFirstLine + ".",
-				ChatColor.GOLD + "[MAIL] " + ChatColor.ITALIC + ChatColor.WHITE + colorizeMail(user, (String) mail[7]) });
+						+ ChatColor.WHITE + " by " + fromName + ChatColor.WHITE + extraFirstLine + ".",
+				ChatColor.GOLD + "[MAIL] " + ChatColor.ITALIC + ChatColor.WHITE + (fromConsole ? Util.colorize((String) mail[7]) : colorizeMail(user, (String) mail[7]))
+				});
 	}
 
 	public void readSendMail(final Player sender, final int ID) {
@@ -307,12 +334,20 @@ public class Mail {
 							for (Object[] mail : mails) {
 								if (mail[0] != null && mail[3] != null) {
 									String formattedDate = monthFormat.format((Date) mail[2]);
-									PermissionUser pexUser = PermissionsEx.getUser((String) mail[1]);
-									String prefixColor = "";
-									if (pexUser.getPrefix().length() > 1) {
-										prefixColor = pexUser.getPrefix().substring(0, 2);
+									
+									String fromName; PermissionUser pexUser = null; boolean fromConsole;
+									if (fromConsole = ((String) mail[1]).equalsIgnoreCase("console")) {
+										fromName = ChatColor.DARK_RED + "Server";
+									} else {
+										pexUser = PermissionsEx.getUser((String) mail[1]);
+										String prefixColor = "";
+										if (pexUser.getPrefix().length() > 1) {
+											prefixColor = pexUser.getPrefix().substring(0, 2);
+										}
+										fromName = prefixColor + mail[1];
 									}
-									String line = Util.colorize("ID:&a#" + mail[0] + " &fon &a" + formattedDate + " &f" + toBy + " " + prefixColor + mail[1] + "&f: ");
+									
+									String line = Util.colorize("ID:&a#" + mail[0] + " &fon &a" + formattedDate + " &f" + toBy + " " + fromName + "&f: ");
 									int allowedChars = 53 - 4 - String.valueOf(mail[0]).length() - 4 - formattedDate.length() - 2 - toBy.length() - String.valueOf(mail[1]).length() - 2;
 									String mailString;
 									String mailMessage = String.valueOf(mail[3]);
@@ -323,10 +358,14 @@ public class Mail {
 										usedUser = pexUser;
 									}
 									int decolorizedLenght = decolorizeMail(usedUser, mailMessage).length();
-									if (allowedChars >= decolorizedLenght) {
-										mailString = colorizeMail(usedUser, mailMessage);
+									if (fromConsole) {
+										mailString = Util.colorize(mailMessage);
 									} else {
-										mailString = colorizeMail(usedUser, mailMessage.substring(0, allowedChars + (mailMessage.length() - decolorizedLenght)) + ChatColor.GRAY + "..");
+										if (allowedChars >= decolorizedLenght) {
+											mailString = colorizeMail(usedUser, mailMessage);
+										} else {
+											mailString = colorizeMail(usedUser, mailMessage.substring(0, allowedChars + (mailMessage.length() - decolorizedLenght)) + ChatColor.GRAY + "..");
+										}
 									}
 									sender.sendMessage(line + mailString);
 								}
@@ -830,7 +869,7 @@ public class Mail {
 	
 	
 	/* OTHER STUFF */
-	private boolean sqlConnected(Player sender) {
+	private boolean sqlConnected(CommandSender sender) {
 		if (mailSQL.isConnected()) {
 			return true;
 		} else {
@@ -842,6 +881,15 @@ public class Mail {
 	private boolean isCrunching(Player sender) {
 		if (crunchingData.containsKey(sender.getName())) {
 			sender.sendMessage(ChatColor.RED + "A previous command is still running, please wait...");
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	private boolean isSendingToConsole(CommandSender sender, String player) {
+		if (player.equalsIgnoreCase("CONSOLE")) {
+			Util.badMsg(sender, "You cannot mail the server!");
 			return true;
 		} else {
 			return false;
@@ -862,7 +910,7 @@ public class Mail {
 
 	/* MESSAGERS */
 
-	private void sendMailDoneMessage(Player sender, boolean succes) {
+	private void sendMailDoneMessage(CommandSender sender, boolean succes) {
 		if (succes) {
 			sender.sendMessage(ChatColor.GRAY + "Mail sent!");
 		} else {
