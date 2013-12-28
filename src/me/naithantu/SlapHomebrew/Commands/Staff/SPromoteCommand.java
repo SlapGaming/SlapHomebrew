@@ -1,5 +1,11 @@
 package me.naithantu.SlapHomebrew.Commands.Staff;
 
+import me.naithantu.SlapHomebrew.SlapHomebrew;
+import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
+import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
+import me.naithantu.SlapHomebrew.Util.Util;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -8,12 +14,6 @@ import ru.tehkode.permissions.PermissionGroup;
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
-import com.earth2me.essentials.User;
-
-import me.naithantu.SlapHomebrew.SlapHomebrew;
-import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
-import me.naithantu.SlapHomebrew.Util.Util;
-
 public class SPromoteCommand extends AbstractCommand {
 
 	public SPromoteCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
@@ -21,29 +21,19 @@ public class SPromoteCommand extends AbstractCommand {
 	}
 
 	@Override
-	public boolean handle() {
-		if (!testPermission(sender, "promote") || !testPermission(sender, "staff")) {
-			noPermission(sender);
-			return true;
-		}
-		// /sPromote [Player] [Rank]
-		if (args.length != 2) {
-			badMsg(sender, "Usage: /sPromote [Player] [Rank]");
-			return true;
-		}
+	public boolean handle() throws CommandException {
+		testPermission("promote"); //Test permissions
+		testPermission("staff");
+		
+		if (args.length != 2) throw new UsageException("sPromote [Player] [Rank]"); //Check usage
+		
+		final String playername = getOfflinePlayer(args[0]).getName(); //Get playername
 		
 		Util.runASync(plugin, new Runnable() {
 			
 			@Override
-			public void run() {
-				
-				User u = plugin.getEssentials().getUserMap().getUser(args[0]);
-				if (u == null) {
-					badMsg(sender, "This player hasn't been on the server.");
-					return;
-				}
-				
-				PermissionUser user = PermissionsEx.getUser(u.getName());
+			public void run() {				
+				PermissionUser user = PermissionsEx.getUser(playername);
 				PexRank userRank = null;
 				System.out.println(user.getGroupsNames()[0]);
 				switch (user.getGroupsNames()[0]) {
@@ -58,7 +48,7 @@ public class SPromoteCommand extends AbstractCommand {
 						break;
 					}
 				default:
-					badMsg(sender, "This user cannot be promoted (any futher this way).");
+					Util.badMsg(sender, "This user cannot be promoted (any futher this way).");
 					return;
 				}
 				
@@ -66,7 +56,7 @@ public class SPromoteCommand extends AbstractCommand {
 				
 				switch(args[1].toLowerCase()) {
 				case "guide": case "vipguide":
-					if (testPermission(sender, "promote.guide")) {
+					if (Util.testPermission(sender, "promote.guide")) {
 						toPexRank = PexRank.Guide;
 					} else {
 						noPermForRank();
@@ -74,7 +64,7 @@ public class SPromoteCommand extends AbstractCommand {
 					}
 					break;
 				case "trial": case "trial-mod": case "trialmod": case "trial-moderator": case "trialmoderator":
-					if (testPermission(sender, "promote.trialmod")) {
+					if (Util.testPermission(sender, "promote.trialmod")) {
 						toPexRank = PexRank.TrialMod;
 					} else {
 						noPermForRank();
@@ -82,7 +72,7 @@ public class SPromoteCommand extends AbstractCommand {
 					}
 					break;
 				case "mod": case "moderator":
-					if (testPermission(sender, "promote.mod")) {
+					if (Util.testPermission(sender, "promote.mod")) {
 						toPexRank = PexRank.Mod;
 					} else {
 						noPermForRank();
@@ -90,7 +80,7 @@ public class SPromoteCommand extends AbstractCommand {
 					}
 					break;
 				default:
-					badMsg(sender, "This is not a valid rank.");
+					Util.badMsg(sender, "This is not a valid rank.");
 					return;
 				}
 				
@@ -146,18 +136,16 @@ public class SPromoteCommand extends AbstractCommand {
 					cannotPromoteToRank();
 					return;
 				}
-				promotedMsg(u.getName(), userRank, toPexRank);
+				promotedMsg(playername, userRank, toPexRank);
+				
 				//Update tab
-				if (u.isOnline()) {
-					plugin.getTabController().playerSwitchGroup(u.getPlayer());
+				Player fPlayer = plugin.getServer().getPlayer(playername);
+				if (fPlayer != null) {
+					plugin.getTabController().playerSwitchGroup(fPlayer);
 				}
 				
 				//Log event
-				String senderName = "Console";
-				if (sender instanceof Player) {
-					senderName = ((Player)sender).getName();
-				}
-				plugin.getPlayerLogger().logPromotion(senderName, u.getName(), userRank.toString(), toPexRank.toString(), true);
+				plugin.getPlayerLogger().logPromotion(sender.getName(), playername, userRank.toString(), toPexRank.toString(), true);
 				return;
 				
 			}
@@ -183,16 +171,16 @@ public class SPromoteCommand extends AbstractCommand {
 	}
 	
 	private void noPermForRank() {
-		badMsg(sender, "You are not allowed to promote people to this rank.");
+		Util.badMsg(sender, "You are not allowed to promote people to this rank.");
 	}
 	
 	private void cannotPromoteToRank() {
-		badMsg(sender, "Cannot promote player to this rank/from players rank.");
+		Util.badMsg(sender, "Cannot promote player to this rank/from players rank.");
 	}
 	
 	
 	protected void promotedMsg(String playername, PexRank oldRank, PexRank newRank) {
-		msg(sender, playername + " has been promoted from " + oldRank.toString() + " to " + newRank.toString());
+		hMsg(playername + " has been promoted from " + oldRank.toString() + " to " + newRank.toString());
 	}
 
 	protected enum PexRank {

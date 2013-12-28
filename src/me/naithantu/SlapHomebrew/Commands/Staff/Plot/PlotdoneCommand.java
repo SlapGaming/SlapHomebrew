@@ -6,6 +6,8 @@ import java.util.List;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
+import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -17,53 +19,37 @@ public class PlotdoneCommand extends AbstractCommand {
 		super(sender, args, plugin);
 	}
 
-	public boolean handle() {
-
-		if (!testPermission(sender, "plot.admin")) {
-			this.noPermission(sender);
-			return true;
-		}
-
-		if (args.length == 1) {
-			sender.sendMessage(ChatColor.RED + "Usage: /plot done [number] <comment>");
-		}
-		int plotNumber;
-
-		try {
-			plotNumber = Integer.parseInt(args[1]);
-		} catch (NumberFormatException e) {
-			sender.sendMessage(ChatColor.RED + "Usage: /plot done [number] <comment>");
-			return true;
-		}
-
-		if (plugin.getUnfinishedPlots().contains(plotNumber)) {
-			HashMap<Integer, String> plots = plugin.getPlots();
-			String plotsInfo = plots.get(plotNumber);
-			List<String> message = new ArrayList<String>();
-			for (int i = 2; i < args.length; i++) {
-				message.add(args[i]);
-			}
-			String comment = " - ";
-			if (!message.isEmpty())
-				comment = Joiner.on(" ").join(message);
-			plugin.getPlots().put(plotNumber, plotsInfo + "<:>" + "Handled by " + sender.getName() + "<:>" + comment);
-		} else {
-			sender.sendMessage(ChatColor.RED + "You can not finish that request!");
-			return true;
-		}
+	public boolean handle() throws CommandException {
+		testPermission("plot.admin"); //Test perm
+		if (args.length == 1) throw new UsageException("plot done [number] <comment>"); //Check usage
 		
+		int plotNumber = parseInt(args[1]);
+		
+		List<Integer> unfinished = plugin.getUnfinishedPlots();
+		if (!unfinished.contains(plotNumber)) throw new CommandException("This ID is not a unfinished plot mark."); //Check if unfinished plot mark
+		
+		HashMap<Integer, String> plots = plugin.getPlots(); //Get plots
+		
+		String plotsInfo = plots.get(plotNumber); //Some wierd parsing stuff
+		List<String> message = new ArrayList<String>();
+		for (int i = 2; i < args.length; i++) {
+			message.add(args[i]);
+		}
+		String comment = " - ";
+		if (!message.isEmpty())
+			comment = Joiner.on(" ").join(message);
+		plots.put(plotNumber, plotsInfo + "<:>" + "Handled by " + sender.getName() + "<:>" + comment); //Add to done plots
+				
 		//Remove plot from unfinished plots list.
-		List<Integer> unfinishedPlots = plugin.getUnfinishedPlots();
 		int index = 0;
-		int indexToRemove = 0;
-		for (int i : unfinishedPlots) {
-			if (i == plotNumber) {
-				indexToRemove = index;
+		for (int i : unfinished) { //Loop thru list
+			if (i == plotNumber) { //If found
+				unfinished.remove(index); //Remove from list
+				break; //And stop looping
 			}
 			index++;
 		}
-		unfinishedPlots.remove(indexToRemove);
-		sender.sendMessage(ChatColor.GOLD + "Plot Request #" + plotNumber + " was completed by " + sender.getName() + "!");
+		msg(ChatColor.GOLD + "Plot Request #" + plotNumber + " was completed by " + sender.getName() + "!");
 		return true;
 	}
 }

@@ -2,8 +2,9 @@ package me.naithantu.SlapHomebrew.Commands.Staff.Plot;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
+import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -14,35 +15,15 @@ public class PlottpCommand extends AbstractCommand {
 		super(sender, args, plugin);
 	}
 
-	public boolean handle() {
-		if(!(sender instanceof Player)){
-			this.badMsg(sender, "You need to be in-game to do that.");
-			return true;
-		}
+	public boolean handle() throws CommandException {
+		Player player = getPlayer(); //Cast to player
+		testPermission("plot.mod"); //Test perm
+		if (args.length < 2) throw new UsageException("plot tp <number>"); //Check usage
 		
-		Player player = (Player) sender;
-		if (!testPermission(player, "plot.mod")) {
-			this.noPermission(sender);
-			return true;
-		}
-
-
-		if (args.length < 2) {
-			player.sendMessage(ChatColor.RED + "Usage: /plot tp <number>");
-			return true;
-		}
-		int plotNumber;
-		try {
-			plotNumber = Integer.parseInt(args[1]);
-		} catch (NumberFormatException e) {
-			player.sendMessage(ChatColor.RED + "Usage: /plot tp [number]");
-			return true;
-		}
-		if (plugin.getPlots().size() + 1 > plotNumber) {
-			player.teleport(stringToLocation(plotNumber));
-		} else {
-			player.sendMessage(ChatColor.RED + "Plot request not found!");
-		}
+		int plotNumber = parseInt(args[1]);
+		if (plugin.getPlots().size() < plotNumber || plotNumber < 1) throw new CommandException("No plot mark found with this ID."); //Check if correct ID
+		
+		player.teleport(stringToLocation(plotNumber)); //TP player
 		return true;
 	}
 	

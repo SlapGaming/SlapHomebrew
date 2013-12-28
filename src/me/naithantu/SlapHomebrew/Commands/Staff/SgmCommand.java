@@ -2,6 +2,7 @@ package me.naithantu.SlapHomebrew.Commands.Staff;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 
 import org.bukkit.GameMode;
 import org.bukkit.command.CommandSender;
@@ -12,18 +13,10 @@ public class SgmCommand extends AbstractCommand {
 		super(sender, args, plugin);
 	}
 
-	public boolean handle() {
-		if (!(sender instanceof Player)) {
-			this.badMsg(sender, "You need to be in-game to do that!");
-			return true;
-		}
+	public boolean handle() throws CommandException {
+		Player player = getPlayer(); //Get player
+		testPermission("sgm"); //Test perm
 
-		if (!testPermission(sender, "sgm")) {
-			this.noPermission(sender);
-			return true;
-		}
-
-		Player player = (Player) sender;
 		if (player.getGameMode() == GameMode.SURVIVAL || player.getGameMode() == GameMode.ADVENTURE) {
 			player.setGameMode(GameMode.CREATIVE);
 		} else if (player.getGameMode() == GameMode.CREATIVE) {

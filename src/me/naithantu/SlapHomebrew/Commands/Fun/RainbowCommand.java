@@ -3,7 +3,9 @@ package me.naithantu.SlapHomebrew.Commands.Fun;
 import java.util.HashMap;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Runnables.RainbowTask;
+import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -17,43 +19,47 @@ public class RainbowCommand extends AbstractCommand {
 		super(sender, args, plugin);
 	}
 
-	public boolean handle() {
-		if (!testPermission(sender, "rainbow")) {
-			this.noPermission(sender);
-			return true;
-		}
+	public boolean handle() throws CommandException {
+		Player player = getPlayer(); //Cast & Test permission
+		testPermission("rainbow");
 
-		if (!(sender instanceof Player)) {
-			this.badMsg(sender, "You need to be in-game to do that!");
-			return true;
-		}
-
-		Player player = (Player) sender;
-		if (!checkLeatherArmor(player.getInventory())) {
-			this.badMsg(sender, "You must be wearing leather armour!");
-			return true;
-		}
+		if (!checkLeatherArmor(player.getInventory())) throw new CommandException("You must be wearing leather armour!"); //Check if wearing leather armor
 
 		HashMap<String, Integer> rainbow = plugin.getExtras().getRainbow();
-
-		if (rainbow.containsKey(sender.getName())) {
-			Bukkit.getServer().getScheduler().cancelTask(rainbow.get(sender.getName()));
-			rainbow.remove(sender.getName());
-			this.msg(sender, "Your armour will no longer change colour!");
-		} else {
-			RainbowTask rainbowTask = new RainbowTask(plugin, player, false);
-			rainbowTask.runTaskTimer(plugin, 0, 1);
-			rainbow.put(sender.getName(), rainbowTask.getTaskId());
-			this.msg(sender, "Your armour will now have rainbow colours!");
+		
+		boolean fast = false;
+		if (args.length == 1) { //Check if fast rainbow
+			if (args[0].equals("fast") && Util.testPermission(player, "rainbow.fast")) {
+				fast = true;
+			}
 		}
-		plugin.getExtras().setRainbow(rainbow);
+
+		String playername = player.getName();
+		if (rainbow.containsKey(playername)) { //Already got /rainbow enabled -> Cancel
+			Bukkit.getServer().getScheduler().cancelTask(rainbow.get(playername));
+			rainbow.remove(playername);
+			hMsg("Your armour will no longer change colour!");
+		} else { //Start rainbow
+			RainbowTask rainbowTask = new RainbowTask(plugin, player, fast);
+			rainbowTask.runTaskTimer(plugin, 0, 1);
+			rainbow.put(playername, rainbowTask.getTaskId());
+			hMsg("Your armour will now have rainbow colours!");
+		}
 		return true;
 	}
 
+	/**
+	 * Check if a player is wearing full leather armor
+	 * @param inventory The player's inventory
+	 * @return wearing leather armor
+	 */
 	public boolean checkLeatherArmor(PlayerInventory inventory) {
-		if (inventory.getBoots() == null || inventory.getLeggings() == null || inventory.getChestplate() == null || inventory.getHelmet() == null)
-			return false;
-		return inventory.getBoots().getType() == Material.LEATHER_BOOTS && inventory.getLeggings().getType() == Material.LEATHER_LEGGINGS
-				&& inventory.getChestplate().getType() == Material.LEATHER_CHESTPLATE && inventory.getHelmet().getType() == Material.LEATHER_HELMET;
+		if (inventory.getBoots() == null ||	inventory.getLeggings() == null || inventory.getChestplate() == null ||	inventory.getHelmet() == null) return false; //Check if wearing armor
+		return ( //Check if all armor is correct leather armor
+			inventory.getBoots().getType() == Material.LEATHER_BOOTS && 
+			inventory.getLeggings().getType() == Material.LEATHER_LEGGINGS && 
+			inventory.getChestplate().getType() == Material.LEATHER_CHESTPLATE && 
+			inventory.getHelmet().getType() == Material.LEATHER_HELMET
+		);
 	}
 }

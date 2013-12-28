@@ -2,8 +2,9 @@ package me.naithantu.SlapHomebrew.Commands.Fun;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
+import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
 import me.naithantu.SlapHomebrew.Controllers.FireworkShow;
-import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -21,47 +22,32 @@ public class FireworkCommand extends AbstractCommand {
 	}
 
 	@Override
-	public boolean handle() {
-		if (!testPermission(sender, "fireworkshow")) {
-			noPermission(sender);
-			return true;
-		}
-		
-		if (!(sender instanceof Player)) {
-			badMsg(sender, "You need to be in-game to do that.");
-		}
-		
-		Player player = (Player) sender;
+	public boolean handle() throws CommandException {
+		Player player = getPlayer();
+		testPermission("fireworkshow");
 		
 		if (args.length < 1) {
 			if (show.isTeleportAllowed()) {
 				player.teleport(new Location(plugin.getServer().getWorld("world_survival2"), -4700, 65, -4608));
 			} else {
-				badMsg(player, "There is no firework show running.");
+				throw new CommandException("here is no firework show running.");
 			}
-			return true;
 		} else {
-			if (!testPermission(sender, "fireworkshowcontroller")) {
-				noPermission(sender);
-				return true;
-			}			
+			testPermission("fireworkshowcontroller");		
 			switch (args[0].toLowerCase()) {
 			case "run":
 				if (show.isShowRunning()) {
-					badMsg(sender, "Show is already running.");
+					throw new CommandException("Show is already running.");
 				} else {
 					show.launch();
 				}
 				break;
+				
 			case "toggle":
-				if (show.toggleTeleportAllowed()) {
-					sender.sendMessage(Util.getHeader() + "Teleport to fireworkshow allowed.");
-				} else {
-					sender.sendMessage(Util.getHeader() + "Teleport to fireworkshow not allowed.");
-				}
+				hMsg("Teleport to fireworkshow " + (show.toggleTeleportAllowed() ? "allowed." : "not allowed."));
 				break;
 			default:
-				return false;
+				throw new UsageException("fireworkshow toggle/run");
 			}
 		}
 		return true;

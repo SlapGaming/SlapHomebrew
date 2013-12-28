@@ -5,6 +5,8 @@ import org.bukkit.entity.Player;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
+import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
 
 public class PlaytimeCommand extends AbstractCommand {
@@ -19,22 +21,13 @@ public class PlaytimeCommand extends AbstractCommand {
 	}
 
 	@Override
-	public boolean handle() {
-		if (!testPermission(sender, "playtime")) {
-			noPermission(sender);
-			return true;
-		}
-		if (!(sender instanceof Player)) {
-			badMsg(sender, "You need to be ingame to do that.");
-			return true;
-		}
-		Player p = (Player) sender;
+	public boolean handle() throws CommandException {
+		Player p = getPlayer();
+		testPermission("playtime");
+		
 		if (args.length > 0) {
-			if (args[0].toLowerCase().equals("list")) {
-				playerLogger.sendPlaytimeList(p);
-			} else {
-				badMsg(sender, "Usage: /playtime <list>");
-			}
+			if (!args[0].toLowerCase().equals("list")) throw new UsageException("playtime <list>");
+			playerLogger.sendPlaytimeList(p);
 		} else {
 			playerLogger.sendPlaytime(p);
 		}

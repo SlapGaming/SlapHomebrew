@@ -2,7 +2,6 @@ package me.naithantu.SlapHomebrew.Commands;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -10,47 +9,49 @@ import java.util.Random;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.Basics.SpawnCommand;
-import me.naithantu.SlapHomebrew.Controllers.Book;
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
+import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
 import me.naithantu.SlapHomebrew.Controllers.Lottery;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
 import me.naithantu.SlapHomebrew.Controllers.TabController.TabGroup;
-import me.naithantu.SlapHomebrew.Runnables.RainbowTask;
-import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 import me.naithantu.SlapHomebrew.Util.Util;
+import net.minecraft.server.v1_7_R1.EntityPlayer;
+import net.minecraft.server.v1_7_R1.PacketPlayOutBed;
+import net.minecraft.server.v1_7_R1.PacketPlayOutSpawnEntityLiving;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.EntityType;
+import org.bukkit.craftbukkit.v1_7_R1.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Horse.Variant;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Ocelot;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Tameable;
-import org.bukkit.entity.Wolf;
 import org.bukkit.entity.Ocelot.Type;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Wolf;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
-import com.earth2me.essentials.User;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
@@ -61,358 +62,256 @@ public class SlapCommand extends AbstractCommand {
 	Integer used = 0;
 	HashSet<String> vipItemsList = new HashSet<String>();
 	public static HashSet<String> retroBow = new HashSet<String>();
-	private static Lottery lottery;
+	
+	private BukkitTask cancelableTask;
 
 	public SlapCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
 		super(sender, args, plugin);
-		if (lottery == null) {
-			lottery = plugin.getLottery();
-		}
 	}
 
-	public boolean handle() {
-		String arg;
-		try {
-			arg = args[0];
-		} catch (ArrayIndexOutOfBoundsException e) {
-			this.msg(sender, "SlapHomebrew is a plugin which adds extra commands to the SlapGaming Server.");
-			this.msg(sender, "Current SlapHomebrew Version: " + plugin.getDescription().getVersion());
+	public boolean handle() throws CommandException {
+		if (args.length == 0) {
+			hMsg("SlapHomebrew is a plugin which adds extra commands to the SlapGaming Server.");
+			hMsg("Current SlapHomebrew Version: " + plugin.getDescription().getVersion());
 			return true;
 		}
-
-		if (arg.equalsIgnoreCase("reload")) {
-			if (this.testPermission(sender, "manage")) {
-				Bukkit.getPluginManager().disablePlugin(plugin);
-				Bukkit.getPluginManager().enablePlugin(plugin);
-				sender.sendMessage(ChatColor.GRAY + "SlapHomebrew has been reloaded...");
-			}
-		}
-
-		switch (arg.toLowerCase()) {
-		case "removeocelots":
-			if (!testPermission(sender, "removeocelots")) {
-				noPermission(sender);
-				return true;
-			}
+		
+		//Values
+		OfflinePlayer offPlayer; EntityPlayer nmsPlayer; Player targetPlayer;
+		
+		switch (args[0].toLowerCase()) {
+		case "reload": //Reload the plugin
+			testPermission("manage");
+			Bukkit.getPluginManager().disablePlugin(plugin);
+			Bukkit.getPluginManager().enablePlugin(plugin);
+			msg(ChatColor.GRAY + "SlapHomebrew has been reloaded...");
+			break;
+			
+		case "removeocelots": //Remove all the untamed ocelots
+			testPermission("removeocelots");
 			int ocelotsRemoved = 0;
-			for (World serverWorld : Bukkit.getWorlds()) {
-				for (Entity entity : serverWorld.getEntities()) {
-					if (entity instanceof Ocelot) {
+			for (World serverWorld : Bukkit.getWorlds()) { //Loop thru worlds
+				for (Entity entity : serverWorld.getEntities()) { //Loop thru entities of the world
+					if (entity instanceof Ocelot) { //See if ocelot
 						Ocelot ocelot = (Ocelot) entity;
-						if(ocelot.getOwner() == null){
+						if(ocelot.getOwner() == null){ //Check if they don't have an owner
 							entity.remove();
 							ocelotsRemoved++;
 						}
 					}
 				}
 			}
-			Util.msg(sender, "You have removed " + ocelotsRemoved + " ocelots!");
+			hMsg("You have removed " + ocelotsRemoved + " ocelots!");
 			break;
-		case "tabupdate": case "updatetab":
-			if (!testPermission(sender, "updatetab")) {
-				noPermission(sender);
-				return true;
-			}
-			if (args.length < 2) {
-				badMsg(sender, "Usage: /slap updatetab [player]");
-				return true;
-			}
-			Player updateTabPlayer = plugin.getServer().getPlayer(args[1]);
-			if (updateTabPlayer == null) {
-				badMsg(sender, "This player is not online.");
-			} else {
-				plugin.getTabController().playerSwitchGroup(updateTabPlayer);
-			}
+			
+		case "tabupdate": case "updatetab": //Force update a player's tab group
+			testPermission("updatetab");
+			if (args.length != 2) throw new UsageException("slap updatetab [player]");
+			Player updateTabPlayer = getOnlinePlayer(args[1], false);
+			plugin.getTabController().playerSwitchGroup(updateTabPlayer);
 			break;
-		case "cleartab":
-			if (!testPermission(sender, "updatetab")) {
-				noPermission(sender);
-				return true;
-			}
+			
+		case "cleartab": //Force reset the tab.
+			testPermission("updatetab");
 			plugin.getTabController().reEnable();
 			break;
-		case "maxplayers": case "setmaxplayers":
-			if (!testPermission(sender, "setmaxplayers")) {
-				noPermission(sender);
-				return true;
-			}
-			if (args.length != 2) {
-				badMsg(sender, "Usage: /slap SetMaxPlayers [Number of Players]");
-				return true;
-			}
-			try {
-				int maxPlayers = Integer.parseInt(args[1]);
-				plugin.getTabController().setMaxPlayers(maxPlayers);
-			} catch (NumberFormatException e) {
-				badMsg(sender, args[1] + " is not a valid number!");
-			}
+			
+		case "maxplayers": case "setmaxplayers": //Set max players (in tab & list)
+			testPermission("setmaxplayers");
+			if (args.length != 2) throw new UsageException("slap setmaxplayers [number]");
+			int maxPlayers = parseIntPositive(args[1]);
+			plugin.getTabController().setMaxPlayers(maxPlayers);
 			break;
-		case "header":
-			if (!testPermission(sender, "header")) {
-				noPermission(sender);
-				return true;
-			}
-			if (args.length < 2) {
-				badMsg(sender, "Usage: /slap header [msg..]");
-				return true;
-			}
-			String msg = args[1]; int xCount = 2;
-			while (xCount < args.length) {
-				msg = msg + " " + args[xCount];
-				xCount++;
-			}
-			plugin.getServer().broadcastMessage(Util.getHeader() + msg);
+			
+		case "header": //Broadcast a message with the [SLAP] header
+			testPermission("header");
+			if (args.length < 2) throw new UsageException("slap header [msg...]");
+			String msg = Util.buildString(args, " ", 1);
+			Util.broadcast(ChatColor.translateAlternateColorCodes('&', msg));
 			break;
-		case "promotions":
-			if (!testPermission(sender, "promotions")) {
-				noPermission(sender);
-				return true;
-			}
-			if (args.length != 2) {
-				badMsg(sender, "Usage: /slap promotions [number of promotions]");
-				return true;
-			}
-			try {
-				final int nrOfPromtions = Integer.parseInt(args[1]);
-				if (nrOfPromtions < 1) throw new NumberFormatException();
-				Util.runASync(plugin, new Runnable() {
-					
-					@Override
-					public void run() {
-						plugin.getPlayerLogger().getPromotions(sender, nrOfPromtions);
-					}
-				});
-			} catch (NumberFormatException ex) {
-				badMsg(sender, args[1] + " is not a valid number.");
-				return true;
-			}
+			
+		case "showmessage": case "showmsg": case "sendmsg": //Send a message to a player
+			testPermission("showmessage");
+			if (args.length < 3) throw new UsageException("slap showmessage [player] [message].."); //Usage
+			targetPlayer = getOnlinePlayer(args[1], false);
+			targetPlayer.sendMessage(ChatColor.translateAlternateColorCodes('&', Util.buildString(args, " ", 2))); //Send message
 			break;
-		case "setrw": case "rw": case "resourceworld":
-			if (!testPermission(sender, "setrw")) {
-				noPermission(sender);
-				return true;
-			}
-			if (args.length != 2) {
-				badMsg(sender, "Usage: /slap setrw [worldnumber]");
-				return true;
-			}
-			try {
-				int worldnumber = Integer.parseInt(args[1]);
-				if (worldnumber < 1) throw new NumberFormatException();
-				SpawnCommand.setResourceWorldName("world_resource" + worldnumber);
-				plugin.getConfig().set("resourceworld", "world_resource" + worldnumber);
-				plugin.saveConfig();
-				sender.sendMessage(Util.getHeader() + "/spawn rw has been set to: world_resource" + worldnumber);
-			} catch (NumberFormatException e) {
-				badMsg(sender, args[1] + " is not a valid number.");
-			}
-			break;
-		case "tabgroup":
-			if (!testPermission(sender, "tabgroup")) {
-				noPermission(sender); 
-				return true;
-			}
-			switch (args.length) {
-			case 2: case 3:
-				User user = plugin.getEssentials().getUserMap().getUser(args[1]);
-				if (user == null) {
-					badMsg(sender, args[1] + " has never been on the server.");
-					return true;
+			
+		case "promotions": //Get a list of all the recent promotions
+			testPermission("promotions");
+			if (args.length != 2) throw new UsageException("slap promotions [number of promotions]");
+			final int nrOfPromotions = parseIntPositive(args[1]);
+			Util.runASync(plugin, new Runnable() {
+				@Override
+				public void run() {
+					plugin.getPlayerLogger().getPromotions(sender, nrOfPromotions);
 				}
-				PermissionUser pexUser = PermissionsEx.getUser(user.getName());
-				if (pexUser.getGroups()[0].getName().equals("SuperAdmin")) {
-					switch (args.length) {
-					case 2: 
-						TabGroup group = plugin.getPlayerLogger().getSuperAdminGroup(user.getName());
-						if (group == null) {
-							badMsg(sender, "This player is in the owners Tab (Not registered)");
-						} else {
-							sender.sendMessage(Util.getHeader() + "This player is in the TabGroup: " + group.toString());
-						}
-						break;
-					case 3:
-						if (plugin.getPlayerLogger().setSuperAdminGroup(user.getName(), args[2])) {
-							sender.sendMessage(Util.getHeader() + "Group has been set.");
-							plugin.getTabController().reEnable();
-						} else {
-							badMsg(sender, "Invalid group. See: /slap tabgroups");
-						}
-						break;
-					}
-				} else {
-					badMsg(sender, "This player is not a SuperAdmin.");
-				}
-				break;
-			default:
-				badMsg(sender, "Usage: /slap tabgroup [Player] <group>");
-				badMsg(sender, "See tabgroups for all the groups: /slap tabgroups");
+			});
+			break;
+			
+		case "setrw": case "rw": case "resourceworld": //Set resource world number
+			testPermission("setrw");
+			if (args.length != 2) throw new UsageException("slap setrw [world number]");
+			int worldnumber = parseIntPositive(args[1]);
+			SpawnCommand.setResourceWorldName("world_resource" + worldnumber); //Set in command
+			plugin.getConfig().set("resourceworld", "world_resource" + worldnumber); //Set in config
+			plugin.saveConfig();
+			hMsg("/spawn rw has been set to: world_resource" + worldnumber);
+			break;
+			
+		case "tabgroup": //Set|Check the TabGroup of a SuperAdmin
+			testPermission("tabgroup");
+			if (args.length != 2 && args.length != 3) throw new UsageException("slap tabgroup [Player] <group> " + ChatColor.GRAY + "(See /slap tabgroups for groups)");
+			offPlayer = getOfflinePlayer(args[1]);
+			PermissionUser pexUser = PermissionsEx.getUser(offPlayer.getName());
+			if (pexUser == null || !pexUser.getGroups()[0].equals("SuperAdmin")) throw new CommandException("This player is not a SuperAdmin.");
+			if (args.length == 2) { //Checking tabgroup
+				TabGroup group = plugin.getPlayerLogger().getSuperAdminGroup(offPlayer.getName());
+				if (group == null) throw new CommandException("This player is in the owners Tab (Not registered)");
+				hMsg("This player is in the TabGroup: " + group.toString());
+			} else { //Seting tabgroup
+				if (!plugin.getPlayerLogger().setSuperAdminGroup(offPlayer.getName(), args[2])) throw new CommandException("nvalid group. See: /slap tabgroups");
+				hMsg("Group has been set.");
+				if (offPlayer.getPlayer() != null) plugin.getTabController().playerSwitchGroup(offPlayer.getPlayer()); //Refresh Tab if player is online
 			}
 			break;
-		case "tabgroups":
-			if (!testPermission(sender, "tabgroup")) {
-				noPermission(sender);
-				return true;
-			}
-			sender.sendMessage("Tabgroups: " + Arrays.toString(TabGroup.values()));
+			
+		case "tabgroups": //Get a list of all the tabgroups
+			testPermission("tabgroup");
+			hMsg("Tabgroups: " + Arrays.toString(TabGroup.values()));
 			break;
-		case "spawnenderdragon":
-			if (!testPermission(sender, "spawnenderdragon")) {
-				noPermission(sender);
-				return true;
-			}
+			
+		case "spawnenderdragon": //Spawn a new enderdragon
+			testPermission("spawnenderdragon");
 			Util.runASync(plugin, new Runnable() {
 				
 				@Override
 				public void run() {
-					final Server server = plugin.getServer();
-					Plugin foundPlugin = server.getPluginManager().getPlugin("NTheEndAgain");
-					if (foundPlugin != null && foundPlugin instanceof NTheEndAgain) {
+					try {
+						final Server server = plugin.getServer();
+						Plugin foundPlugin = server.getPluginManager().getPlugin("NTheEndAgain"); //Find NTheEndAgain
+						if (foundPlugin == null || !(foundPlugin instanceof NTheEndAgain) || !foundPlugin.isEnabled()) throw new CommandException("NTheEndAgain plugin was not found.");
 						NTheEndAgain theEnd = (NTheEndAgain) foundPlugin;
-						try {
-							int x = theEnd.getWorldHandlers().get("worldTheEnd").getNumberOfAliveEnderDragons();
-							if (x == 0) {
-								server.dispatchCommand(server.getConsoleSender(), "nend regen world_the_end");
-								Util.runLater(plugin, new Runnable() {
-									
-									@Override
-									public void run() {
-										server.dispatchCommand(server.getConsoleSender(), "nend respawnED world_the_end");
-									}
-								}, 30 * 20);
-							}
-						} catch (NullPointerException e) {
-							badMsg(sender, "Something went wrong.. Exception: " + e.getMessage());
+						int x = theEnd.getWorldHandlers().get("worldTheEnd").getNumberOfAliveEnderDragons(); //Get number of alive enderdragons
+						if (x == 0) { //If 0 then spawn a new one
+							Util.broadcast("Regenerating the end.. Possible lag incoming.");
+							server.dispatchCommand(server.getConsoleSender(), "nend regen world_the_end");
+							Util.runLater(plugin, new Runnable() {
+								@Override
+								public void run() {
+									server.dispatchCommand(server.getConsoleSender(), "nend respawnED world_the_end"); //Spawn a new Enderdragon 30 secs after regenerating the end
+								}
+							}, 30 * 20);
 						}
-					} else {
-						badMsg(sender, "Couldn't find the EndAgain plugin.");
+					} catch (CommandException e) {
+						Util.badMsg(sender, e.getMessage());
+					} catch (NullPointerException e) {
+						Util.badMsg(sender, "Something went wrong. Exception: " + e.getMessage());
 					}
 				}
 			});
 			break;
-		default:
-			if (!(sender instanceof Player)) {
-				this.badMsg(sender, "You need to be in-game to do that!");
-				return true;
+			
+		case "crash": //Crash a client
+			testPermission("crash");
+			if (args.length < 2) throw new UsageException("slap crash [player] <portal>"); //Usage
+			final Player crashPlayer = getOnlinePlayer(args[1], false);
+			String targetName = crashPlayer.getName();
+			if (targetName.equals("Stoux2") || targetName.equals("Telluur") || targetName.equals("naithantu")) throw new UsageException("That would be a no."); //Can't use on us.
+			
+			boolean portal = (args.length == 3 && args[2].equalsIgnoreCase("portal")); //Check if portal
+			
+			if (portal) { //Portal Story
+				cancelableTask = Util.runTimer(plugin, new Runnable() {
+					private int x = 0;
+					@Override
+					public void run() {
+						if (!crashPlayer.isOnline()) x = 9001; //Will call default -> Cancel the timer.
+						switch (x) {
+						case 0: Util.badMsg(crashPlayer, "This was a triumph."); break;
+						case 1: Util.badMsg(crashPlayer, "I'm making a note here: HUGE SUCCESS."); break;
+						case 2: Util.badMsg(crashPlayer, "It's hard to overstate my satisfaction."); break;
+						case 3: Util.badMsg(crashPlayer, "Aperture science:"); break;
+						case 4: Util.badMsg(crashPlayer, "We do what we must because we can"); break;
+						case 5: Util.badMsg(crashPlayer, "For the good of all of us"); break;
+						case 6: Util.badMsg(crashPlayer, "Except the ones who are CRASHED"); break;
+						case 7:
+							EntityPlayer nmsPlayer = ((CraftPlayer) crashPlayer).getHandle(); //Get ServerPlayer
+							nmsPlayer.playerConnection.sendPacket(new PacketPlayOutSpawnEntityLiving(nmsPlayer)); //Send to the player that they spawned.
+							break;
+						default:
+							cancelableTask.cancel();
+						}
+						x++;
+					}
+				}, 0, 80);
+			} else { //Just crash.
+				nmsPlayer = ((CraftPlayer) crashPlayer).getHandle(); //Get ServerPlayer
+				nmsPlayer.playerConnection.sendPacket(new PacketPlayOutSpawnEntityLiving(nmsPlayer)); //Send to the player that they spawned.
 			}
+			hMsg("You've crashed " + targetName + (portal ? " with a very special portal story." : "."));
+			break;
+			
+		case "end": case "showend": case "theend": //Show the player the end credits
+			testPermission("end");
+			if (args.length != 2)  throw new UsageException("slap end [Player]"); //Usage
+			targetPlayer = getOnlinePlayer(args[1], false); //Get targetplayer
+			nmsPlayer = ((CraftPlayer) targetPlayer).getHandle(); //-> ServerPlayer
+			nmsPlayer.viewingCredits = true;
+			nmsPlayer.playerConnection.sendPacket(new PacketPlayOutBed());
+			break;
+		
+		default: //Player issued commands
+			final Player player = getPlayer();
+			final String playername = player.getName();
 
-			final Player player = (Player) sender;
-			World world;
-			Location spawnLocation;
-			int x;
-			int i;
-			int mobs;
-			EntityType mobType;
-			String mob;
-
-			switch (arg.toLowerCase()) {
-			case "retrobow":
-				if (!testPermission(player, "fun")) {
-					this.noPermission(sender);
-					return true;
-				}
-				if (!retroBow.contains(player.getName())) {
-					retroBow.add(player.getName());
-					this.msg(sender, "Retrobow mode has been turned on!");
-				} else {
-					retroBow.remove(player.getName());
-					this.msg(sender, "Retrobow mode has been turned off!");
-				}
+			//Variables
+			World world; Location spawnLocation; int x, i, mobs; EntityType mobType; boolean bool; Block targetBlock;
+			switch(args[0].toLowerCase()) {
+			case "retrobow": //Shoot arrows from your hand on interact event
+				testPermission("retrobow");
+				if (bool = retroBow.contains(playername)) retroBow.remove(playername); //Turn retrobow off
+				else retroBow.add(playername); //Turn retrobow on
+				hMsg("Retrobow mode has been turned " + (bool ? "off!" : "on!"));
 				break;
-			case "wolf":
-				world = player.getWorld();
-				if (!testPermission(player, "fun")) {
-					this.noPermission(sender);
-					return true;
-				}
-				try {
-					arg = args[1];
-				} catch (ArrayIndexOutOfBoundsException e) {
-					// e.printStackTrace();
-				}
+				
+			case "wolf": case "wolfs": //Spawn a horde of wolf pets
+				testPermission("wolfhorde");
+				if (args.length != 2) throw new UsageException("slap wolf [amount]");
+				mobs = parseIntPositive(args[1]);
+				if (mobs > 20) throw new CommandException("You can only spawn max 20 wolfs at once.");
 				spawnLocation = player.getEyeLocation();
-				try {
-					Integer.valueOf(arg);
-				} catch (NumberFormatException e) {
+				world = spawnLocation.getWorld();
+				for (x = 0; x < mobs; x++) { //Spawn wolfs
 					world.spawn(spawnLocation, Wolf.class).setOwner(player);
-					return true;
-				}
-				if (Integer.valueOf(arg) <= 20) {
-					for (x = 0; x < Integer.valueOf(arg); x++) {
-						world.spawn(spawnLocation, Wolf.class).setOwner(player);
-					}
-				} else {
-					player.sendMessage(ChatColor.RED + "You are not allowed to spawn more then 20 wolves at the same time!");
 				}
 				break;
-			case "cat":
-				world = player.getWorld();
-				Type type = null;
-				if (!testPermission(player, "fun")) {
-					this.noPermission(sender);
-					return true;
+				
+			case "cat": case "cats": //Spawn a horde of cat pets
+				testPermission("cathorde");
+				if (args.length != 3) throw new UsageException("slap cat [siamesecat|blackcat|redcat|wildocelot] [amount]");
+				mobs = parseInt(args[2]);
+				if (mobs > 20) throw new CommandException("You can only spawn max 20 cats at once.");
+				Type type;
+				switch (args[1].toLowerCase()) { //Parse type of cat
+				case "siamesecat": 	case "siamese":	type = Type.SIAMESE_CAT; 	break;
+				case "blackcat":	case "black":	type = Type.BLACK_CAT;		break;
+				case "redcat":		case "red":		type = Type.RED_CAT;		break;
+				case "wildocelot":	case "wild":	type = Type.WILD_OCELOT;	break;
+				default: throw new CommandException("Type not recognized. Types: siamesecat, blackcat, redcat, wildocelot");
 				}
-				try {
-					arg = args[1];
-				} catch (ArrayIndexOutOfBoundsException e) {
-					return true;
-				}
-				if (arg.equalsIgnoreCase("siamesecat")) {
-					type = Type.SIAMESE_CAT;
-				} else if (arg.equalsIgnoreCase("blackcat")) {
-					type = Type.BLACK_CAT;
-				} else if (arg.equalsIgnoreCase("redcat")) {
-					type = Type.RED_CAT;
-				} else if (arg.equalsIgnoreCase("wildocelot")) {
-					type = Type.WILD_OCELOT;
-				} else {
-					player.sendMessage(ChatColor.RED + "Type not recognized. Only siamesecat, blackcat, wildocelot and redcat are allowed!");
-				}
-				if (type != null) {
-					spawnLocation = player.getEyeLocation();
-					try {
-						arg = args[2];
-					} catch (ArrayIndexOutOfBoundsException e) {
-						world.spawn(spawnLocation, Ocelot.class);
-						for (Entity entity : player.getNearbyEntities(1, 1, 1)) {
-							if (entity instanceof Ocelot) {
-								((Tameable) entity).setOwner(player);
-								((Ocelot) entity).setCatType(type);
-							}
-						}
-						return true;
-					}
-					try {
-						Integer.valueOf(arg);
-					} catch (NumberFormatException e) {
-						world.spawn(spawnLocation, Ocelot.class);
-						for (Entity entity : player.getNearbyEntities(1, 1, 1)) {
-							if (entity instanceof Ocelot) {
-								((Tameable) entity).setOwner(player);
-								((Ocelot) entity).setCatType(type);
-							}
-						}
-						return true;
-					}
-					if (Integer.valueOf(arg) <= 20) {
-						for (x = 0; x < Integer.valueOf(arg); x++) {
-							world.spawn(spawnLocation, Ocelot.class);
-							for (Entity entity : player.getNearbyEntities(1, 1, 1)) {
-								if (entity instanceof Ocelot) {
-									((Tameable) entity).setOwner(player);
-									((Ocelot) entity).setCatType(type);
-								}
-							}
-						}
-					} else {
-						player.sendMessage(ChatColor.RED + "You are not allowed to spawn more then 20 cats at the same time!");
-					}
+				
+				spawnLocation = player.getEyeLocation();
+				world = spawnLocation.getWorld();
+				for (x = 0; x < mobs; x++) { //Spawn cats
+					Ocelot cat = (Ocelot) world.spawn(spawnLocation, Ocelot.class);
+					cat.setOwner(player);
+					cat.setCatType(type);
 				}
 				break;
-			case "removewolf":
-				if (!testPermission(player, "fun")) {
-					this.noPermission(sender);
-					return true;
-				}
+				
+			case "removewolf": //Remove all wolfs spawned by wolfs command
+				testPermission("removewolf");
 				for (Entity entity : player.getNearbyEntities(50, 50, 50)) {
 					if (entity instanceof Wolf) {
 						Wolf wolf = (Wolf) entity;
@@ -422,11 +321,9 @@ public class SlapCommand extends AbstractCommand {
 					}
 				}
 				break;
-			case "removecat":
-				if (!testPermission(player, "fun")) {
-					this.noPermission(sender);
-					return true;
-				}
+				
+			case "removecat": //Remove all cats spawned by cats command
+				testPermission("removecat");
 				for (Entity entity : player.getNearbyEntities(50, 50, 50)) {
 					if (entity instanceof Ocelot) {
 						Ocelot ocelot = (Ocelot) entity;
@@ -436,705 +333,213 @@ public class SlapCommand extends AbstractCommand {
 					}
 				}
 				break;
-			case "notify":
-				if (!testPermission(player, "notify")) {
-					this.noPermission(sender);
-					return true;
-				}
-				player.playSound(player.getLocation(), Sound.NOTE_PIANO, 1, 1);
-				plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-					public void run() {
-						player.playSound(player.getLocation(), Sound.NOTE_PIANO, 1, 2);
-						plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-							public void run() {
-								player.playSound(player.getLocation(), Sound.NOTE_PIANO, 1, 1);
-								plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-									public void run() {
-										player.playSound(player.getLocation(), Sound.NOTE_PIANO, 2000, 2);
-									}
-								}, 5);
-							}
-						}, 5);
-					}
-				}, 5);
-				break;
-			case "savebook":
-				if (!testPermission(sender, "savebook")) {
-					this.noPermission(sender);
-					return true;
-				}
-
-				PlayerInventory inventory = player.getInventory();
-				if (!inventory.contains(Material.WRITTEN_BOOK)) {
-					this.badMsg(sender, "You do not have a book in your inventory.");
-					return true;
-				}
-
-				ItemStack itemStack = player.getItemInHand();
-				if (itemStack == null || itemStack.getType() != Material.WRITTEN_BOOK) {
-					this.badMsg(sender, "You are not holding a written book!");
-					return true;
-				}
-				Book.saveBook((BookMeta) itemStack.getItemMeta(), new YamlStorage(plugin, "book"));
-				this.msg(sender, "Saved book.");
-				break;
-			case "getbook":
-				//Tagged as needs to be removed?
-				if (!testPermission(sender, "getbook")) {
-					this.noPermission(sender);
-					return true;
-				}
-				player.getInventory().addItem(Book.getBook(new YamlStorage(plugin, "book")));
-				break;
-			case "crash":
-				if (!(sender instanceof Player) || sender instanceof Player) {
-					this.badMsg(sender, "Can't do that right now. 1.7 Bro.");
-					return true;
-				}
-				if (player.getName().equals("naithantu") || player.getName().equals("Telluur") || player.getName().equals("Stoux2")) {
-					if (args.length < 2) {
-						this.badMsg(sender, "Usage: /slap crash [player]");
-						return true;
-					}
-					final Player target = Bukkit.getServer().getPlayer(args[1]);
-					if (target == null) {
-						this.badMsg(sender, "That player is not online!");
-						return true;
-					}
-					if (target.getName().equals("naithantu") || target.getName().equals("Telluur") || target.getName().equals("Stoux2")) {
-						this.badMsg(sender, "That would be a...");
-						plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-
-							@Override
-							public void run() {
-								badMsg(sender, "No.");
-							}
-						}, 40);
-						return true;
-					}
-
-					if (args.length == 3 && args[2].equalsIgnoreCase("portal")) {
-						this.msg(sender, "You have crashed " + target.getName() + "'s client with a very special portal story.");
-						target.sendMessage(ChatColor.RED + "This was a triumph.");
-						plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-							@Override
-							public void run() {
-								target.sendMessage(ChatColor.RED + "I'm making a note here: HUGE SUCCESS.");
-								plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-									@Override
-									public void run() {
-										target.sendMessage(ChatColor.RED + "It's hard to overstate my satisfaction.");
-										plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-											@Override
-											public void run() {
-												target.sendMessage(ChatColor.RED + "Aperture science:");
-												plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-													@Override
-													public void run() {
-														target.sendMessage(ChatColor.RED + "We do what we must because we can");
-														plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-															@Override
-															public void run() {
-																target.sendMessage(ChatColor.RED + "For the good of all of us");
-																plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-																	@Override
-																	public void run() {
-																		target.sendMessage(ChatColor.RED + "Except the ones who are CRASHED");
-																		plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-																			@Override
-																			public void run() {
-																				//EntityPlayer nmsPlayer = ((CraftPlayer) target).getHandle();
-																				//nmsPlayer.playerConnection.sendPacket(new Packet24MobSpawn(nmsPlayer));
-																			}
-																		}, 80);
-																	}
-																}, 80);
-															}
-														}, 80);
-													}
-												}, 80);
-											}
-										}, 80);
-									}
-								}, 100);
-							}
-						}, 60);
-					} else {
-						this.msg(sender, "You have crashed " + target.getName() + "'s client.");
-
-						//EntityPlayer nmsPlayer = ((CraftPlayer) target).getHandle();
-						//nmsPlayer.playerConnection.sendPacket(new Packet24MobSpawn(nmsPlayer));
-					}
-				} else if (testPermission(sender, "crash")) {
-					if (player.getName().equals("Jackster21")) {
-						this.badMsg(sender, "No... no... jack no crash client....");
-					} else if (player.getName().equals("Daloria")) {
-						this.badMsg(sender, "BAD DAL DAL. SEND ME CAKE AND YOU CAN HAZ COMMAND. :D");
-					}
-					plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-						@Override
-						public void run() {
-							player.sendMessage(ChatColor.RED + "You should not crash clients... that is bad... mmmmkay?");
-							plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-								@Override
-								public void run() {
-									player.sendMessage(ChatColor.RED + "Bai bai. :3");
-									plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-										@Override
-										public void run() {
-											//EntityPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
-											//nmsPlayer.playerConnection.sendPacket(new Packet24MobSpawn(nmsPlayer));
-										}
-									}, 50);
-								}
-							}, 50);
-						}
-					}, 50);
-				}
-				break;
-			case "moo":
-				if (!testPermission(player, "fun")) {
-					this.noPermission(sender);
-					return true;
-				}
-				Player[] onlineTargets = plugin.getServer().getOnlinePlayers();
-				for (Player target : onlineTargets) {
+								
+			case "moo": //An extension of /ess moo 
+				testPermission("moo");
+				Player[] onlinePlayers = Util.getOnlinePlayers(); //Get players
+				if (onlinePlayers.length == 0) throw new CommandException("There are no players online."); //Check for players
+				for (Player target : onlinePlayers) { //Loop thru players & Send stuff
 					target.sendMessage(new String[] { "            (__)", "            (oo)", "   /------\\/", "  /  |      | |", " *  /\\---/\\", "    ~~    ~~", "....\"Have you mooed today?\"..." });
 					target.playSound(target.getLocation(), Sound.COW_HURT, 1, 1.0f);
 				}
-				onlineTargets[new Random().nextInt(onlineTargets.length)].chat("Moooooo!");
+				onlinePlayers[new Random().nextInt(onlinePlayers.length)].chat("Moooooo!"); //Pick a random user & sudo it 'moo'
 				break;
-			case "firemob":
-				if (!testPermission(sender, "firemob")) {
-					this.noPermission(sender);
-					return true;
-				}
-
-				if (args.length < 2) {
-					this.badMsg(sender, "/slap firemob [mob] [amount]");
-					return true;
-				}
-
-				mobs = 1;
-				if (args.length == 3) {
-					try {
-						mobs = Integer.parseInt(args[2]);
-					} catch (NumberFormatException e) {
-						this.badMsg(sender, "Invalid amount!");
-						return true;
-					}
-				}
-
-				mob = args[1];
-				try {
-					mobType = EntityType.valueOf(mob.toUpperCase());
-				} catch (IllegalArgumentException e) {
-					this.badMsg(sender, "That's not a mob!");
-					return true;
-				}
-
-				Block targetBlock = Util.getTargetBlock(player, 25);
-				if (targetBlock == null) {
-					badMsg(player, "You aren't looking at a block (or out of range)");
-					return true;
-				}
 				
-				Location location = targetBlock.getLocation().add(0, 1, 0);
-				world = location.getWorld();
-				
-				for (i = 0; i < mobs; i++) {
-					Entity burningMob = world.spawnEntity(location, mobType);
+			case "firemob": //Spawn a horde of entities that are on fire
+				testPermission("firemob");
+				if (args.length != 3) throw new UsageException("slap firemob [mob] [amount]"); //Check usage
+				mobs = parseIntPositive(args[2]); //Get the amount of mobs
+				mobType = parseEntityType(args[1].toUpperCase()); //Parse MobType
+				targetBlock = Util.getTargetBlock(player, 25); //Get targetBlock
+				spawnLocation = targetBlock.getLocation().add(0, 1, 0); //Spawn Loc & World
+				world = spawnLocation.getWorld();
+				for (i = 0; i < mobs; i++) { //Spawn the mobs
+					Entity burningMob = world.spawnEntity(spawnLocation, mobType);
 					burningMob.setFireTicks(Integer.MAX_VALUE);
 					burningMob.setMetadata("slapFireMob", new FixedMetadataValue(plugin, true));
 				}
 				break;
-			case "fly":
-				if (!testPermission(sender, "fly")) {
-					this.noPermission(sender);
-					return true;
-				}
-
-				if (args.length < 2) {
-					this.badMsg(sender, "/slap fly [mob] [amount]");
-					return true;
-				}
-
-				try {
-					mobType = EntityType.valueOf(args[1].toUpperCase());
-				} catch (IllegalArgumentException e) {
-					this.badMsg(sender, "That's not a mob!");
-					return true;
-				}
-
-				mobs = 1;
-				if (args.length > 2) {
-					try {
-						mobs = Integer.parseInt(args[2]);
-					} catch (NumberFormatException e) {
-						this.badMsg(sender, "Invalid amount!");
-						return true;
-					}
-				}
 				
-				targetBlock = Util.getTargetBlock(player, 25);
-				if (targetBlock == null) {
-					badMsg(player, "You aren't looking at a block (or out of range)");
-					return true;
-				}
-
-				location = targetBlock.getLocation().add(0, 1, 0);
-				world = player.getWorld();
-				
-				for (i = 0; i < mobs; i++) {
-					LivingEntity bat = (LivingEntity) world.spawnEntity(location, EntityType.BAT);
+			case "fly": case "flymob": //Spawn 'flying' mobs (Actually riding bats).
+				testPermission("flymob");
+				if (args.length != 3) throw new UsageException("slap flymob [mob] [amount]"); //Check usage
+				mobs = parseIntPositive(args[2]); //Get the amount of mobs
+				mobType = parseEntityType(args[1].toUpperCase()); //Parse MobType
+				targetBlock = Util.getTargetBlock(player, 25); //Get targetBlock
+				spawnLocation = targetBlock.getLocation().add(0, 1, 0); //Spawn Loc & World
+				world = spawnLocation.getWorld();
+				for (i = 0; i < mobs; i++) { //Spawn the mobs
+					LivingEntity bat = (LivingEntity) world.spawnEntity(spawnLocation, EntityType.BAT);
 					bat.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1));
-					Entity passengerMob = world.spawnEntity(location, mobType);
+					Entity passengerMob = world.spawnEntity(spawnLocation, mobType);
 					bat.setPassenger(passengerMob);
 				}
 				break;
-			case "stackmob": case "mobstack":
-				if (!testPermission(sender, "stackmob")) {
-					this.noPermission(sender);
-					return true;
-				}
-
-				if (args.length < 2) {
-					this.badMsg(sender, "/slap stackmob [mobs ...]");
-					return true;
-				}
-
-				List<EntityType> mobsList = new ArrayList<EntityType>();
-
-				for (i = 1; i < args.length; i++) {
-					mob = args[i];
-					try {
-						mobType = EntityType.valueOf(mob.toUpperCase());
-					} catch (IllegalArgumentException e) {
-						this.badMsg(sender, "That's not a mob!");
-						return true;
-					}
-					mobsList.add(mobType);
-				}
 				
-				targetBlock = Util.getTargetBlock(player, 25);
-				if (targetBlock == null) {
-					badMsg(player, "You aren't looking at a block (or out of range)");
-					return true;
+			case "stackmob": case "mobstack": //Spawn a stack of mobs
+				testPermission("stackmob");
+				if (args.length < 3) throw new UsageException("slap stackmob [Bottom Mob] ..<Mobs>.. [Top Mob]"); //Usage
+				List<EntityType> entityList = new ArrayList<EntityType>();
+				for (i = 1; i < args.length; i++) { //Loop thru arguments
+					mobType = parseEntityType(args[i].toUpperCase()); //Parse MobType
+					entityList.add(mobType); //Add to list
 				}
-
-				location = targetBlock.getLocation().add(0, 1, 0);
+				targetBlock = Util.getTargetBlock(player, 25); //Get block
+				spawnLocation = targetBlock.getLocation().add(0, 1, 0); //SpawnLocation & World
 				world = player.getWorld();
 				
 				Entity previousEntity = null;
-				int mobsListSize = mobsList.size();
-				for (i = 0; i < mobsListSize; i++) {
-					Entity newEntity = world.spawnEntity(location, mobsList.get(i));
-					if (newEntity.getType() == EntityType.BAT) {
-						((LivingEntity) newEntity).addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 9999999, 1));
+				for (EntityType entityType : entityList) { //Loop thru EntityTypes
+					Entity newEntity = world.spawnEntity(spawnLocation, entityType);
+					if (newEntity.getType() == EntityType.BAT) { //If a bat -> Make invisable
+						((LivingEntity) newEntity).addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1));
 					}
-					if (previousEntity != null) {
-						newEntity.setPassenger(previousEntity);
+					if (previousEntity != null) { //If not the first mob, setPassenger of previous one
+						previousEntity.setPassenger(newEntity);
 					}
 					previousEntity = newEntity;
 				}
 				break;
-			case "rainbow":
-				if (!testPermission(sender, "rainbow.extra")) {
-					this.noPermission(sender);
-					//TODO Remove this next update.
-					this.msg(sender, "This command has moved, use /rainbow instead!");
-					return true;
+				
+			case "ghost": //Go invisible
+				testPermission("ghost");
+				HashSet<String> ghosts = plugin.getExtras().getGhosts();
+				boolean isGhost = ghosts.contains(playername); //Check if already a ghost
+				if (!isGhost) { //Create ghost 
+					ghosts.add(playername);
+					player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1));
+				} else { //Remove ghost
+					ghosts.remove(playername);
+					player.removePotionEffect(PotionEffectType.INVISIBILITY);
 				}
-
-				if (!(sender instanceof Player)) {
-					this.badMsg(sender, "You need to be in-game to do that!");
-					return true;
-				}
-
-				if (!checkLeatherArmor(player.getInventory())) {
-					player.getInventory().setBoots(new ItemStack(Material.LEATHER_BOOTS, 1));
-					player.getInventory().setLeggings(new ItemStack(Material.LEATHER_LEGGINGS, 1));
-					player.getInventory().setChestplate(new ItemStack(Material.LEATHER_CHESTPLATE, 1));
-					player.getInventory().setHelmet(new ItemStack(Material.LEATHER_HELMET, 1));
-				}
-
-				HashMap<String, Integer> rainbow = plugin.getExtras().getRainbow();
-
-				if (rainbow.containsKey(sender.getName())) {
-					Bukkit.getServer().getScheduler().cancelTask(rainbow.get(sender.getName()));
-					rainbow.remove(sender.getName());
-					this.msg(sender, "Your armour will no longer change colour!");
-				} else {
-					boolean fast = false;
-					if (args.length > 1) {
-						String speed = args[1];
-						if (speed.equalsIgnoreCase("fast")) {
-							fast = true;
-						}
-					}
-					RainbowTask rainbowTask = new RainbowTask(plugin, player, fast);
-					rainbowTask.runTaskTimer(plugin, 0, 1);
-					rainbow.put(sender.getName(), rainbowTask.getTaskId());
-					if (fast)
-						this.msg(sender, "Your armour will change rainbow colours at a high speed!");
-					else
-						this.msg(sender, "Your armour will now have rainbow colours!");
-				}
-				plugin.getExtras().setRainbow(rainbow);
+				hMsg("You are " + (isGhost ? "no longer" : "now") + " a ghosts!");
 				break;
-			case "end":
-				if (!testPermission(sender, "end")) {
-					this.noPermission(sender);
-					return true;
+				
+			case "fakelottery": case "fakeroll": //Start a fake lottery
+				testPermission("fakelottery");
+				Lottery lottery = plugin.getLottery(); //Get lottery
+				if (lottery.getPlaying() || lottery.isFakeLotteryPlaying()) throw new CommandException("There is already a lottery running."); //Check if running
+				targetPlayer = player;
+				if (args.length > 1) { //Check if target given
+					targetPlayer = getOnlinePlayer(args[1], false);
 				}
-				if (!(sender instanceof Player) || sender instanceof Player) {
-					this.badMsg(sender, "Can't do that right now. 1.7 Bro.");
-					return true;
-				}
-
-				if (!(sender instanceof Player)) {
-					this.badMsg(sender, "You need to be in-game to do that!");
-					return true;
-				}
-
-				if (args.length < 2) {
-					this.badMsg(sender, "Usage: /slap end [player]");
-					return true;
-				}
-				final Player target = Bukkit.getServer().getPlayer(args[1]);
-				if (target == null) {
-					this.badMsg(sender, "That player is not online!");
-					return true;
-				}
-
-				//EntityPlayer nmsPlayer = ((CraftPlayer) target).getHandle();
-				//nmsPlayer.viewingCredits = true;
-				//nmsPlayer.playerConnection.sendPacket(new Packet70Bed(4, 0));
+				lottery.startFakeLottery(targetPlayer.getName()); //Start fake lottery with target as winner
 				break;
-			case "showmessage":	case "showmsg":
-				if (!testPermission(sender, "showmsg")) {
-					this.noPermission(sender);
-					return true;
-				}
-
-				if (args.length < 3) {
-					this.badMsg(sender, "Usage: /slap showmessage [player] [message]");
-					return true;
-				}
-
-				Player targetPlayer = Bukkit.getServer().getPlayer(args[1]);
-
-				if (targetPlayer == null) {
-					this.badMsg(sender, "That player is not online!");
-					return true;
-				}
-
-				final StringBuilder message = new StringBuilder();
-				for (i = 2; i < args.length; i++) {
-					if (i != 2) {
-						message.append(" ");
-					}
-					message.append(args[i]);
-				}
-
-				targetPlayer.sendMessage(ChatColor.translateAlternateColorCodes('&', message.toString()));
-				break;
-			case "ghost":
-				if (!testPermission(sender, "ghost")) {
-					this.noPermission(sender);
-					return true;
-				}
-
-				List<String> ghosts = plugin.getExtras().getGhosts();
-
-				if (args.length == 1) {
-					if (!ghosts.contains(player.getName())) {
-						this.msg(sender, "You are now a ghost!");
-						ghosts.add(player.getName());
-						player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 99999999, 1));
-					} else {
-						this.msg(sender, "You are no longer a ghost!");
-						ghosts.remove(player.getName());
-						player.removePotionEffect(PotionEffectType.INVISIBILITY);
-					}
-				}
-				break;
-			case "fakelottery":
-				if (!testPermission(sender, "fakelottery")) {
-					this.noPermission(sender);
-					return true;
-				}
-
-				if (!lottery.getPlaying() && !lottery.isFakeLotteryPlaying()) {
-					lottery.startFakeLottery(sender.getName());
-				}
-				break;
-			case "horse":
-				if (!testPermission(sender, "spawnhorse")) {
-					this.noPermission(sender);
-					return true;
-				}
-				if (args.length < 2) {
-					return false;
-				}
-
+				
+			case "spawnhorse": case "horse": //Spawn a maxed-out horse
+				testPermission("spawnhorse");
+				if (args.length != 2) throw new UsageException("slap spawnhorse [horse|mule|donkey|skeleton|zombie]"); //Usage
 				Variant variant;
 				switch (args[1].toLowerCase()) {
-				case "zombie":
-					variant = Variant.UNDEAD_HORSE;
-					break;
-				case "skeleton":
-					variant = Variant.SKELETON_HORSE;
-					break;
-				case "mule":
-					variant = Variant.MULE;
-					break;
-				case "donkey":
-					variant = Variant.DONKEY;
-					break;
-				case "horse":
-					variant = Variant.HORSE;
-					break;
+				case "zombie":		variant = Variant.UNDEAD_HORSE;		break;
+				case "skeleton":	variant = Variant.SKELETON_HORSE;	break;
+				case "mule":		variant = Variant.MULE;				break;
+				case "donkey":		variant = Variant.DONKEY;			break;
+				case "horse":		variant = Variant.HORSE;			break;
 				default:
-					badMsg(sender, "Not a valid horse type. [zombie/skeleton/mule/donkey/horse]");
-					return false;
+					throw new CommandException(args[1] + " is not a valid horsetype. '/slap spawnhorse' for usage help.");
 				}
-				
-				targetBlock = Util.getTargetBlock(player, 25);
-				if (targetBlock == null) {
-					badMsg(player, "You aren't looking at a block (or out of range)");
-					return true;
-				}
-
-				location = targetBlock.getLocation().add(0, 1, 0);
+				targetBlock = Util.getTargetBlock(player, 25); //Get targetblock, loc & spawn
+				spawnLocation = targetBlock.getLocation().add(0, 1, 0);
 				world = player.getWorld();
 
-				Horse horse = (Horse) world.spawnEntity(location, EntityType.HORSE);
-				horse.setJumpStrength(2D);
+				Horse horse = (Horse) world.spawnEntity(spawnLocation, EntityType.HORSE); //Spawn horse
+				horse.setJumpStrength(2D); //Set horse attributes
 				horse.setVariant(variant);
 				horse.setTamed(true);
-				horse.setPassenger(player);
 				horse.getInventory().setSaddle(new ItemStack(Material.SADDLE));
-				this.msg(sender, "Spawned a " + variant.toString() + " horse!");
+				horse.setPassenger(player); //Set player as rider
+				hMsg("Spawned a " + (variant == Variant.HORSE ? "horse!" : args[1] + " horse!"));
 				break;
-			case "tableflip":
-				if (!testPermission(sender, "tableflip")) {
-					this.noPermission(sender);
-					return true;
-				}
-				player.chat("(Ã¢â€¢Â¯Ã‚Â°Ã¢â€“Â¡Ã‚Â°Ã¯Â¼â€°Ã¢â€¢Â¯Ã¯Â¸Âµ Ã¢â€�Â»Ã¢â€�ï¿½Ã¢â€�Â» Table flip!");
-				Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-
-					@Override
-					public void run() {
-						Player[] onlinePlayers = plugin.getServer().getOnlinePlayers();
-						Player target = onlinePlayers[new Random().nextInt(onlinePlayers.length)];
-						if (target.getName().equals(player.getName())) {
-							target.chat("Ã¢â€�Â¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�Â¬ Ã¯Â¾â€°(Ã‚Â° _Ã‚Â°Ã¯Â¾â€°) Sorry 'bout that guys..");
-						} else {
-							target.chat("Ã¢â€�Â¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�Â¬ Ã¯Â¾â€°(Ã‚Â° _Ã‚Â°Ã¯Â¾â€°) I fix");
-						}
-					}
-				}, 100);
-				break;
-			case "forcerider":
-				if (!testPermission(sender, "forcerider")) {
-					this.noPermission(sender);
-					return true;
-				}
-				if (args.length == 1) {
-					badMsg(sender, "You're doing it wrong.");
-					return true;
-				}
-				Player rider = plugin.getServer().getPlayer(args[1]);
-				if (rider == null) {
-					badMsg(sender, "This player doesn't exist.");
-					return true;
-				}
-				if (rider.getPassenger() != null || rider.getVehicle() != null) {
-					badMsg(sender, "The rider already has a passenenger or is riding a vehicle.");
-					return true;
-				}
-				boolean sameWorld = false;
-				if (player.getWorld().getName().equals(rider.getWorld().getName())) {
-					sameWorld = true;
-				}
-				boolean reversed = false;
-				if (args.length == 3) {
-					if (args[2].toLowerCase().equals("reverse")) {
-						reversed = true;
-						args = new String[] { "", args[1] };
-					}
-				}
-				LivingEntity targetEntity = null;
-				if (args.length == 2) {
-					List<Block> lineOfSightBlocks = Util.getBlocksInLineOfSight(player, 10);
-					for (Entity ent : player.getNearbyEntities(10, 10, 10)) {
-						if (ent instanceof LivingEntity) {
+				
+			case "forcerider": case "stackplayers": case "stackplayer": case "forceriders": //Stack players
+				testPermission("forcerider");
+				String usage = "slap forcerider [Reverse] | [Player1] [Player 2] <Player 3>";
+				if (args.length == 1) throw new UsageException(usage); //Usage
+				if (args.length == 2) { //Player is trying to force a entity on their own head
+					if (!args[1].equalsIgnoreCase("reverse")) throw new UsageException(usage); //Usage 
+					LivingEntity targetEntity = null;
+					
+					List<Block> lineOfSightBlocks = Util.getBlocksInLineOfSight(player, 10); //Get blocks in line of sight
+					for (Entity ent : player.getNearbyEntities(10, 10, 10)) { //Get entities
+						if (ent instanceof LivingEntity) { //Check if Living
 							targetBlock = ent.getLocation().getBlock();
-							if (containsBlockRelatives(lineOfSightBlocks, targetBlock)) {
+							if (containsBlockRelatives(lineOfSightBlocks, targetBlock)) { //Check if the location is in the line of sight of the player
 								targetEntity = (LivingEntity) ent;
 								break;
 							}
 						}
 					}
-					if (targetEntity != null) {
-						if (targetEntity.getPassenger() == null) {
-							if (!sameWorld)
-								rider.teleport(targetEntity.getLocation());
-							if (!reversed) {
-								if (!ride(rider, targetEntity))
-									rider.sendMessage(ChatColor.RED + "Trying to break the server huh?");
-							} else {
-								if (!ride(targetEntity, rider))
-									rider.sendMessage(ChatColor.RED + "Trying to break the server huh?");
-							}
-						} else
-							badMsg(sender, "Target already has a passenger.");
-					} else
-						badMsg(sender, "No LivingEntity found in line of sight");
-				} else if (args.length == 3) {
-					targetEntity = plugin.getServer().getPlayer(args[2]);
-					if (targetEntity != null) {
-						boolean sameWorld2 = false;
-						if (rider.getWorld().getName().equals(targetEntity.getWorld().getName()))
-							sameWorld2 = true;
-						if (targetEntity.getPassenger() == null) {
-							if (!sameWorld2)
-								rider.teleport(targetEntity.getLocation());
-							if (!ride(rider, targetEntity))
-								rider.sendMessage(ChatColor.RED + "Trying to break the server huh?");
-						} else {
-							badMsg(sender, "Target already has a passenger.");
-						}
-					} else
-						badMsg(sender, "Second player not found.");
+					if (targetEntity == null) throw new CommandException("No entities found in line of sight!"); //No entities found
+					ride(targetEntity, player);
 				} else {
-					badMsg(sender, "You're doing it wrong.");
-					return true;
-				}
-				break;
-			case "kickrider":
-				if (!testPermission(sender, "kickrider")) {
-					noPermission(sender);
-					return true;
-				}
-				if (args.length == 1) {
-					if (player.getPassenger() != null) {
-						player.getPassenger().leaveVehicle();
+					world = player.getWorld();
+					ArrayList<Player> stacking = new ArrayList<Player>();
+					for (x = 1; x < args.length; x++) { //Loop thru arguments
+						Player stackPlayer = getOnlinePlayer(args[x], false); //Get the player
+						if (stacking.contains(stackPlayer)) throw new CommandException("You've entered the same name twice!"); //Check if not same name
+						checkRider(stackPlayer); //Check if free
+						if (stackPlayer.getWorld() != world) throw new CommandException(stackPlayer.getName() + " is in a different world."); //Check world
+						stacking.add(stackPlayer); //Add to stack
 					}
-				} else if (args.length == 2) {
-					List<Block> lineOfSightBlocks = Util.getBlocksInLineOfSight(player, 10);
-					for (Entity ent : player.getNearbyEntities(10, 10, 10)) {
-						if (ent instanceof LivingEntity) {
-							targetBlock = ent.getLocation().getBlock();
-							if (containsBlockRelatives(lineOfSightBlocks, targetBlock)) {
-								if (ent.getPassenger() != null) {
-									ent.getPassenger().leaveVehicle();
-								}
-								break;
-							}
+					Player previousStackPlayer = null;
+					for (Player stackPlayer : stacking) { //Start stacking players
+						if (previousStackPlayer != null) {
+							previousStackPlayer.setPassenger(stackPlayer);
 						}
-					}
-				} else if (args.length == 3) {
-					Player targetRider = plugin.getServer().getPlayer(args[1]);
-
-					if (targetRider != null) {
-						if (args[2].toLowerCase().equals("p")) {
-							//Kick passenger
-							if (targetRider.getPassenger() != null) {
-								targetRider.getPassenger().leaveVehicle();
-							}
-						} else if (args[2].toLowerCase().equals("v")) {
-							//Kick out vehicle
-							if (targetRider.getVehicle() != null) {
-								targetRider.leaveVehicle();
-							}
-						}
+						previousStackPlayer = stackPlayer;
 					}
 				}
 				break;
-			case "commandspy":
-				if (!testPermission(sender, "commandspy")) {
-					noPermission(sender);
-					return true;
-				}
-				String playername = player.getName();
-				PlayerLogger pL = plugin.getPlayerLogger();
-				switch (args.length) {
-				case 1:
-					if (pL.isCommandSpy(playername)) sender.sendMessage(Util.getHeader() + "You are currently a CommandSpy!");
-					else sender.sendMessage(Util.getHeader() + "You are currently " + ChatColor.RED + "not " + ChatColor.WHITE + "a CommandSpy!");
-					badMsg(sender, "Usage: /slap commandspy [on/off] | /slap commandspy [player] <on/off>");
-					break;
-				case 2:
-					switch(args[1].toLowerCase()) {
-					case "on":
-						pL.addCommandSpy(playername);
-						sender.sendMessage(Util.getHeader() + "Turned CommandSpy on.");
-						break;
-					case "off":
-						pL.removeFromCommandSpy(playername);
-						sender.sendMessage(Util.getHeader() + "Turned CommandSpy off.");
-						break;
-					default:
-						User u = plugin.getEssentials().getUserMap().getUser(args[1]);
-						if (u != null) {
-							if (pL.isCommandSpy(u.getName())) sender.sendMessage(Util.getHeader() + u.getName() + " is a CommandSpy.");
-							else sender.sendMessage(Util.getHeader() + u.getName() + " is not a CommandSpy.");
-						} else {
-							badMsg(sender, "Player " + args[1] + " doesn't exist.");
-						}
-					}
-					break;
-				case 3:
-					boolean on = false;
-					switch (args[2].toLowerCase()) {
-					case "on": on = true;	break;
-					case "off":				break;
-					default:
-						badMsg(sender, "Usage: /slap commandspy [player] <on/off>");
-						return true;
-					}
-					User u = plugin.getEssentials().getUserMap().getUser(args[1]);
-					if (u != null) {
-						String enteredPlayer = u.getName();
-						if (on) {
-							if (pL.isCommandSpy(enteredPlayer)) {
-								badMsg(sender, enteredPlayer + " is already a CommandSpy.");
-							} else {
-								pL.addCommandSpy(u.getName());
-								sender.sendMessage(Util.getHeader() + u.getName() + " is now a CommandSpy!");
-							}
-						} else {
-							if (!pL.isCommandSpy(enteredPlayer)) {
-								badMsg(sender, enteredPlayer + " isn't a CommandSpy.");
-							} else {
-								pL.removeFromCommandSpy(u.getName());
-								sender.sendMessage(Util.getHeader() + " Turned off CommandSpy for " + enteredPlayer);
-							}
-							
-						}
-					} else {
-						badMsg(sender, "Player " + args[1] + " doesn't exist.");
-					}
-					break;
-				default:
-					badMsg(sender, "You're doing it wrong.");
-				}
 				
-				break;
-			case "sel": case "select": case "info":
-				if (!testPermission(player, "worldgaurdsc")) {
-					noPermission(player);
-					return true;
+			case "kickrider": //Kick a rider/vehicle 
+				testPermission("kickrider");
+				if (args.length == 1) { //Kick passenger & Vehicle of this player
+					player.leaveVehicle();
+					player.eject();
+				} else if (args.length == 2) { //Else clear a player
+					targetPlayer = getOnlinePlayer(args[1], false);
+					targetPlayer.eject();
+					targetPlayer.leaveVehicle();
 				}
-				final String rgCommand = arg.toLowerCase();
+				break;
+				
+			case "commandspy": //Enable/Disable spying on player commands.
+				testPermission("commandspy");
+				if (args.length == 1) throw new UsageException("slap commandspy [Player] <on|off>"); //Usage
+				offPlayer = getOfflinePlayer(args[1]);
+				String targetname = offPlayer.getName();
+				PlayerLogger pl = plugin.getPlayerLogger(); //Get PL
+				boolean isCS = pl.isCommandSpy(targetname);
+				if (args.length == 2) {
+					hMsg(targetname + " is currently " + (isCS ? ChatColor.GREEN + "a" : ChatColor.RED + "not a") + ChatColor.WHITE + " CommandSpy!");
+				} else {
+					switch (args[2].toLowerCase()) {
+					case "on": //Turn CommandSpy for player on
+						if (isCS) throw new CommandException(targetname + " is already a CommandSpy!");
+						pl.addCommandSpy(targetname);
+						break;
+					case "off": //Turn CommandSpy for player off
+						if (!isCS) throw new CommandException(targetname + "'s CommandSpy is already disabled.");
+						pl.removeFromCommandSpy(targetname);
+						break;
+					default: //Doing it wrong -> Usage
+						throw new UsageException("slap commandspy [Player] <on|off>");
+					}
+					hMsg("Turned CommandSpy for player " + targetname + ": " + ((isCS) ? ChatColor.RED + "Off." : ChatColor.GREEN + "On.")); //Msg
+				}
+				break;
+				
+			case "sel": case "select": case "info": //Going to be replaced by /irg
+				testPermission("worldguardsc");
+				final String rgCommand = args[0].toLowerCase();
+				final World rgWorld = player.getWorld();
+				final Location rgLoc = player.getLocation(); 
 				plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new BukkitRunnable() {
 					
 					@Override
 					public void run() {
-						ApplicableRegionSet s = plugin.getworldGuard().getRegionManager(player.getWorld()).getApplicableRegions(player.getLocation());
+						ApplicableRegionSet s = plugin.getworldGuard().getRegionManager(rgWorld).getApplicableRegions(rgLoc);
 						Iterator<ProtectedRegion> iterator = s.iterator();
 						ArrayList<ProtectedRegion> regions = new ArrayList<>();
 						int highestPriority = -9001;
@@ -1153,32 +558,48 @@ public class SlapCommand extends AbstractCommand {
 						if (regionsSize == 1) {
 							player.chat("/rg " + rgCommand + " " + regions.get(0).getId());
 						} else if (regionsSize == 0) {
-							badMsg(player, "No regions found.");
+							Util.badMsg(player, "No regions found.");
 						} else {
-							badMsg(player, "Multiple regions with highest priority found.");
+							Util.badMsg(player, "Multiple regions with highest priority found.");
 							player.chat("/rg " + rgCommand);
 						}
 					}
 				});	
 				break;
-			default:
-				return false;
-			}
+				
+			default: 
+				hMsg("SlapHomebrew is a plugin which adds extra commands to the SlapGaming Server.");
+				hMsg("Current SlapHomebrew Version: " + plugin.getDescription().getVersion());
+			}			
 		}
 		return true;
 	}
 	
-	private boolean ride(LivingEntity a, LivingEntity b) {
-		if (a.getEntityId() == b.getEntityId())
-			return false;
-		if (a.getPassenger() != null || a.getVehicle() != null)
-			return false;
-		if (b.getPassenger() != null || b.getVehicle() != null)
-			return false;
+	/**
+	 * Let entity A ride entity B
+	 * @param a First entity
+	 * @param b Second Entity
+	 * @throws CommandException if cannot ride
+	 */
+	private void ride(LivingEntity a, LivingEntity b) throws CommandException {
+		if (a.getEntityId() == b.getEntityId() || a.getPassenger() != null || a.getVehicle() != null || b.getPassenger() != null || b.getVehicle() != null) {
+			throw new CommandException("This entity cannot ride the other one.");
+		}
 		b.setPassenger(a);
-		return true;
+	}
+	
+	/**
+	 * Check if a rider has no passenger & no vehicle.
+	 * @param a The entity
+	 * @throws CommandException if passenger/vehicle
+	 */
+	private void checkRider(LivingEntity a) throws CommandException {
+		if (a.getPassenger() != null || a.getVehicle() != null) {
+			throw new CommandException("This entity cannot ride the other one.");
+		}
 	}
 
+	
 	public boolean checkLeatherArmor(PlayerInventory inventory) {
 		if (inventory.getBoots() == null || inventory.getLeggings() == null || inventory.getChestplate() == null || inventory.getHelmet() == null)
 			return false;

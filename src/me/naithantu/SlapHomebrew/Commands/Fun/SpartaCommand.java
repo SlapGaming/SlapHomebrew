@@ -2,64 +2,72 @@ package me.naithantu.SlapHomebrew.Commands.Fun;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
+import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
+import me.naithantu.SlapHomebrew.Util.Util;
 
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
 public class SpartaCommand extends AbstractCommand {
 
+	private BukkitTask task;
+	
 	public SpartaCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
 		super(sender, args, plugin);
 	}
 
-	public boolean handle() {
-		if (!testPermission(sender, "sparta")) {
-			this.noPermission(sender);
-			return true;
-		}
+	public boolean handle() throws CommandException {
+		testPermission("sparta"); //Test Permission
+		if (args.length == 0) return false; //Check usage
 
-		if (args.length == 0)
-			return false;
+		final Player target = getOnlinePlayer(args[0], true);
 
-		final Player player = plugin.getServer().getPlayer(args[0]);
-		if (player == null) {
-			this.badMsg(sender, "Player not found.");
-			return true;
-		}
+		final int multiplier;
 
-		int multiplier = -2;
-
-		if (args.length > 1) {
+		if (args.length > 1) { //Check if multiplier specified
 			try {
-				multiplier = -Integer.parseInt(args[1]);
+				multiplier = -Integer.parseInt(args[1]); //Parse number
 			} catch (NumberFormatException e) {
+				throw new CommandException(ErrorMsg.notANumber);
 			}
+		} else {
+			multiplier = -2;
 		}
 
-		this.msg(sender, "Sparta'd " + player.getName());
+		hMsg("Sparta'd " + target.getName());
 		
-		final int finalMultiplier = multiplier;
-		
-		player.sendMessage(ChatColor.RED + "THIS");
-		plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+		task = Util.runTimer(plugin, new Runnable() {
+			private int sec = 1;
 			@Override
 			public void run() {
-				player.sendMessage(ChatColor.RED + "IS");
-				plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-					@Override
-					public void run() {
-						player.sendMessage(ChatColor.RED + "SPARTA!!!");
-						double yaw = ((player.getLocation().getYaw() + 90) * Math.PI) / 180;
-						double x = Math.cos(yaw);
-						double z = Math.sin(yaw);
-						Vector vector = new Vector(x, -0.2, z).multiply(finalMultiplier);
-						player.setVelocity(vector);
-					}
-				}, 20);
+				if (!target.isOnline()) sec = 10; //Check if still online
+				
+				switch (sec) { //Do stuff based on second
+				case 1:
+					Util.badMsg(target, "THIS");
+					break;
+				case 2:
+					Util.badMsg(target, "IS");
+					break;
+				case 3:
+					Util.badMsg(target, "SPARTA!!!");
+					
+					double yaw = ((target.getLocation().getYaw() + 90) * Math.PI) / 180; //Calculate stuff
+					double x = Math.cos(yaw);
+					double z = Math.sin(yaw);
+					Vector vector = new Vector(x, -0.2, z).multiply(multiplier);
+					target.setVelocity(vector);
+					break;
+				default:
+					task.cancel();
+				}
+				sec++;
 			}
-		}, 20);
+		}, 0, 20);
+
 		return true;
 	}
 }

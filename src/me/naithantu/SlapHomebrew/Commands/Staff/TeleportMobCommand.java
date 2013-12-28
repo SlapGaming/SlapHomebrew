@@ -12,6 +12,8 @@ import org.bukkit.entity.Player;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
+import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 public class TeleportMobCommand extends AbstractCommand {
@@ -26,82 +28,51 @@ public class TeleportMobCommand extends AbstractCommand {
 	}
 
 	@Override
-	public boolean handle() {
-		if (!testPermission(sender, "teleportmob")) {
-			noPermission(sender);
-			return true;
-		}
+	public boolean handle() throws CommandException {
+		Player p = getPlayer(); //Check for player & Test perm
+		testPermission("teleportmob");
 		
-		if (!(sender instanceof Player)) {
-			badMsg(sender, "You need to be in-game to do that!");
-			return true;
-		}
-		
-		Player p = (Player) sender;
-		
-		if (args.length == 0) {
-			badMsg(sender, "Usage: /teleportmob <MassMove [to Player] [Radius] | SingleMove [to Player] | StopSingleMove>");
-			return true;
-		}
+		String fullUsage = "teleportmob <MassMove [to Player] [Radius] | SingleMove [to Player] | StopSingleMove>";
+		if (args.length == 0) throw new UsageException(fullUsage); //Show usage
 		
 		Player toPlayer;
 		
 		switch (args[0].toLowerCase()) {
 		case "massmove": case "mm":
-			if (args.length != 3) {
-				badMsg(sender, "Usage: /teleportmob massmove [to Player] [Radius]");
-				return true;
-			}
-			
+			if (args.length != 3) throw new UsageException("teleportmob massmove [to Player] [Radius]"); //Check usage
 			removeIfContains(p, true);
+			toPlayer = getOnlinePlayer(args[1], false); //Get player to teleport to
+			Location toLocation = toPlayer.getLocation().add(0, 0.2, 0); //Get to location
+			
+			int radius = parseInt(args[2]); //Parse radius
+			if (radius <= 0 || radius > 25) throw new CommandException("Invalid radius! (Max 25)");
 						
-			toPlayer = plugin.getServer().getPlayer(args[1]);
-			if (toPlayer == null) {
-				badMsg(sender, "Player not found!");
-			}
-			Location toLocation = toPlayer.getLocation().add(0, 0.2, 0);
-			
-			int radius;
-			try {
-				radius = Integer.parseInt(args[2]);
-				if (radius < 1 || radius > 25) {
-					throw new NumberFormatException();
-				}
-			} catch (NumberFormatException e) {
-				badMsg(sender, "Invalid radius! (Max 25)");
-				return true;
-			}
-			
 			int teleportedEntities = 0;
 			double dRadius = (double) radius;
-			List<Entity> foundEntities = p.getNearbyEntities(dRadius, dRadius, dRadius);
-			for (Entity e : foundEntities) {
-				if (e instanceof LivingEntity && !(e instanceof Player)) {
-					LivingEntity le = (LivingEntity) e;
-					teleportMob(le, toLocation);
+			List<Entity> foundEntities = p.getNearbyEntities(dRadius, dRadius, dRadius); //Find entities
+			for (Entity e : foundEntities) { //loop thru found Entities
+				if (e instanceof LivingEntity && !(e instanceof Player)) { //Check if not an entity or a player
+					teleportMob((LivingEntity) e, toLocation); //Teleport mob
 					teleportedEntities++;
 				}
 			}
-			
-			p.sendMessage(Util.getHeader() + "Teleported " + teleportedEntities + " livingEntities.");
+			hMsg("Teleported " + teleportedEntities + " livingEntities.");
 			break;
+			
 		case "singlemove": case "sm":
+			if (args.length != 2) throw new UsageException("teleportmob singlemove [to Player]"); //Check usage
 			removeIfContains(p, false);
-			
-			toPlayer = plugin.getServer().getPlayer(args[1]);
-			if (toPlayer == null) {
-				badMsg(sender, "Player not found!");
-			}
-			
-			teleportMap.put(p.getName(), toPlayer.getName());
-			p.sendMessage(Util.getHeader() + "Click the LivingEntities you want to move. Disable with: /teleportmob StopSingleMove");
+			toPlayer = getOnlinePlayer(args[1], false); //Get player
+			teleportMap.put(p.getName(), toPlayer.getName()); //Add to teleporter map
+			hMsg("Click the LivingEntities you want to move. Disable with: /teleportmob StopSingleMove");
 			break;
+			
 		case "stopsinglemove": case "ssm":
 			removeIfContains(p, true);
 			break;
 			
 		default:
-			badMsg(sender, "Usage: /teleportmob <MassMove [to Player] [Radius] | SingleMove [to Player] | StopSingleMove>");
+			throw new UsageException(fullUsage);
 		}
 		return true;
 	}

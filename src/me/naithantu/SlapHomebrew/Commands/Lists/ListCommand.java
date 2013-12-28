@@ -1,12 +1,12 @@
 package me.naithantu.SlapHomebrew.Commands.Lists;
 
-import java.util.HashMap;
-import java.util.SortedSet;
 import java.util.TreeSet;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Controllers.AwayFromKeyboard;
+import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -16,69 +16,57 @@ import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 public class ListCommand extends AbstractCommand {
-
-	private static AwayFromKeyboard afk = null;
-	
-	private SortedSet<String> set;
-	private HashMap<String, String> fullName;
 	
 	public ListCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
 		super(sender, args, plugin);
-		set = new TreeSet<String>();
-		fullName = new HashMap<>();
-		if (afk == null) {
-			afk = plugin.getAwayFromKeyboard();
-		}
 	}
 
 	@Override
-	public boolean handle() {
-		if (!testPermission(sender, "list")) {
-			noPermission(sender);
-			return true;
-		}
-		
-		int maxPlayers = plugin.getTabController().getMaxPlayers();
+	public boolean handle() throws CommandException {
+		testPermission("list"); //Test permission
+				
+		int maxPlayers = plugin.getTabController().getMaxPlayers(); //Get max players
 		int nrOfOnlinePlayers = 0;
+		TreeSet<String> sortedNames = new TreeSet<>(String.CASE_INSENSITIVE_ORDER); //Create new Sorted List
 		
-		for (Player onlinePlayer : plugin.getServer().getOnlinePlayers()) {
+		AwayFromKeyboard afk = plugin.getAwayFromKeyboard(); //Get AFK Controller
+		
+		for (Player onlinePlayer : plugin.getServer().getOnlinePlayers()) { //Loop thru players & add to sortedset
 			nrOfOnlinePlayers++;
-			String playerName = onlinePlayer.getName();
-			String playerNameL = onlinePlayer.getName().toLowerCase();
-			PermissionUser pexUser = PermissionsEx.getUser(playerName);
-			String colorPrefix = "";
-			if (pexUser != null) {
-				String prefix = pexUser.getPrefix();
-				if (prefix != null);
-				colorPrefix = ChatColor.translateAlternateColorCodes('&', prefix.substring(0, 2));
-			}
-			String afkString = "";
-			if (afk.isAfk(playerName)) afkString = ChatColor.WHITE + "[AFK]";
-			fullName.put(playerNameL, colorPrefix + playerName + afkString);
-			set.add(playerNameL);
+			sortedNames.add(onlinePlayer.getName());			
 		}
 		
-		if (nrOfOnlinePlayers == 0) {
-			sender.sendMessage(ChatColor.RED + "There are no players online.");
-		} else {
-			String firstline;
-			if (nrOfOnlinePlayers == 1) {
-				firstline = "There is " + ChatColor.GOLD + "1" + ChatColor.WHITE + " out of maximum " + ChatColor.GOLD + maxPlayers + ChatColor.WHITE + " players online.";
-			} else {
-				firstline = "There are " + ChatColor.GOLD + nrOfOnlinePlayers + ChatColor.WHITE + " out of maximum " + ChatColor.GOLD + maxPlayers + ChatColor.WHITE + " players online.";
+		if (nrOfOnlinePlayers == 0) { //No players online -> Console
+			throw new CommandException("There are no players online.");
+		} else if (nrOfOnlinePlayers == 1) { //Only 1 player online
+			if (sender.getName().equals(sortedNames.first())) { //Check if that player is the one executing the command
+				hMsg("You are the only person online at the moment!");
+				return true;
 			}
-			boolean first = true;
-			String secondLine = "Players: ";
-			for (String playerName : set) {
-				if (first) {
-					first = false;
-					secondLine = secondLine + fullName.get(playerName);
-				} else {
-					secondLine = secondLine + ChatColor.WHITE +  ", " + fullName.get(playerName);
+		}
+		
+		String[] coloredNames = new String[nrOfOnlinePlayers];
+		int x = 0;
+		for (String player : sortedNames) { //Loop thru players -> Sorted
+			String colorPrefix = "", afkString = ChatColor.WHITE + ""; //Set strings
+			PermissionUser user = PermissionsEx.getUser(player); //Get PEX user
+			if (user != null) { //Check if exists
+				String prefix = user.getPrefix();
+				if (prefix != null && prefix.length() > 1) { //Check if has prefix
+					colorPrefix = prefix.substring(0, 2);
 				}
 			}
-			sender.sendMessage(new String[] {firstline, secondLine});
+			
+			if (afk.isAfk(player)) afkString += " [AFK]"; //Check if AFK
+			coloredNames[x++] = colorPrefix + player + afkString;
 		}
+				
+		sender.sendMessage(new String[]{ //Send messages
+			"There " + (nrOfOnlinePlayers == 1 ? "is " : "are ") + 	
+				ChatColor.GOLD + nrOfOnlinePlayers + ChatColor.WHITE + " out of maximum " + ChatColor.GOLD + maxPlayers + ChatColor.WHITE + " players online.",
+			"Players: " + ChatColor.translateAlternateColorCodes('&', Util.buildString(coloredNames, ", ", 0))
+		});
+	
 		return true;
 	}
 

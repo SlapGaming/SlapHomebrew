@@ -7,6 +7,8 @@ import org.bukkit.command.CommandSender;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
+import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
 
 public class PluginsCommand extends AbstractCommand {
 	
@@ -37,7 +39,6 @@ public class PluginsCommand extends AbstractCommand {
 			plugins.add("ShowCase");
 			plugins.add("SlapHomebrew");
 			plugins.add("StouxGames");
-			plugins.add("StarterKit");
 			plugins.add("Vault");
 			plugins.add("WorldBorder");
 			plugins.add("WorldEdit");
@@ -47,7 +48,7 @@ public class PluginsCommand extends AbstractCommand {
 	}
 
 	@Override
-	public boolean handle() {
+	public boolean handle() throws CommandException {
 		if (sender.hasPermission("bukkit.command.plugins")) {
 			String pS = "Plugins (" + nrOfPlugins + "): ";
 			boolean first = true;
@@ -59,9 +60,9 @@ public class PluginsCommand extends AbstractCommand {
 					pS = pS + ChatColor.WHITE + ", " + ChatColor.GREEN + plugin;
 				}
 			}
-			sender.sendMessage(pS);
+			msg(pS);
 		} else {
-			noPermission(sender);
+			throw new CommandException(ErrorMsg.noPermission);
 		}
 		return true;
 	}

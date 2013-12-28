@@ -2,6 +2,7 @@ package me.naithantu.SlapHomebrew.Commands.AFK;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Controllers.AwayFromKeyboard;
 import me.naithantu.SlapHomebrew.Util.Util;
 
@@ -19,60 +20,21 @@ public class AfkCommand extends AbstractCommand {
 		}
 	}
 
-	public boolean handle() {
-	//Get AFK info of person | Command: /afk -p [player]
-	if (args.length == 2) {
-			if (args[0].equals("-p")) {
-				if (Util.testPermission(sender, "afk.info")) {
-					Player p = plugin.getServer().getPlayer(args[1]);
-					if (p != null) {
-						String foundPlayer = p.getName();
-						if (afk.isAfk(foundPlayer)) {
-							long lastActive = plugin.getPlayerLogger().getLastActivity(foundPlayer);
-							String lastActiveMsg;
-							if (lastActive != 0) {
-								long totalSeconds = (System.currentTimeMillis() - lastActive) / 1000;
-								int minutes = (int) Math.floor(totalSeconds / (double) 60);
-								int seconds = (int) totalSeconds - minutes * 60;
-								lastActiveMsg = minutes + " minutes & " + seconds + " seconds ago.";
-							} else {
-								lastActiveMsg = "Unknown.";
-							}
-							sender.sendMessage(new String[] {Util.getHeader() + "Player: " + foundPlayer, Util.getHeader() + "AFK Reason: " + afk.getAfkReason(foundPlayer), Util.getHeader() + "Last Activity: " + lastActiveMsg});
-							return true;
-						} else {
-							badMsg(sender, "Player is not afk.");
-							return true;
-						}
-					} else {
-						badMsg(sender, "Player doesn't exist.");
-						return true;
-					}
-				}
-			}
-		}
-		
-		if (!(sender instanceof Player)) {
-			badMsg(sender, "You need to be ingame");
-			return true;
-		}
-		
-		String playername = sender.getName();
+	public boolean handle() throws CommandException {
+		Player p = getPlayer(); //Cast to player
+		String playername = p.getName();
 		
 		//Prevent auto AFK | command: /afk -prevent
 		if (args.length == 1) {
 			if (args[0].equals("-prevent")) {
-				if (Util.testPermission(sender, "afk.prevent")) {
-					if (afk.hasPreventAFK(playername)) {
-						afk.removeFromPreventAFK(playername);
-						sender.sendMessage(Util.getHeader() + "Prevent AFK is off.");
-						return true;
-					} else {
-						afk.setPreventAFK(playername);
-						sender.sendMessage(Util.getHeader() + "Prevent AFK is on.");
-						return true;
-					}
-				}
+				testPermission("afk.prevent"); //Check if correct permssion
+				boolean preventAfk = afk.hasPreventAFK(playername); //Check if prevent AFK is on 
+				
+				//Change current AFK Prevent state
+				if (preventAfk) afk.removeFromPreventAFK(playername);
+				else afk.setPreventAFK(playername);
+				
+				hMsg("Prevent AFK is " + (preventAfk ? "off." : "on.")); //Send current status message
 			}
 		}
 		
@@ -82,16 +44,7 @@ public class AfkCommand extends AbstractCommand {
 				//No reason
 				afk.goAfk(playername, "AFK");
 			} else if (args.length > 0) {				
-				//With reason
-				String reason = null;
-				for (String arg : args) {
-					if (reason == null) {
-						reason = arg;
-					} else {
-						reason = reason + " " + arg;
-					}
-				}
-				afk.goAfk(playername, reason);
+				afk.goAfk(playername, Util.buildString(args, " ", 0));
 			}
 		} else {
 			//Player AFK -> Leave AFK

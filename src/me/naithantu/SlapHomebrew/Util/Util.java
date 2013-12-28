@@ -3,10 +3,12 @@ package me.naithantu.SlapHomebrew.Util;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Controllers.Flag;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 
@@ -14,6 +16,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -26,6 +29,9 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.BlockIterator;
+
+import ru.tehkode.permissions.PermissionUser;
+import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.managers.RegionManager;
@@ -130,50 +136,58 @@ public class Util {
 		return timeString;
 	}
 	
+	/**
+	 * Create a potion effect
+	 * 
+	 * @param name The name of the potion
+	 * @param time The time it lasts in seconds
+	 * @param power The power it has
+	 * @return The potioneffect or null if invalid name
+	 */
 	public static PotionEffect getPotionEffect(String name, int time, int power) {
-		name = name.toLowerCase();
 		time = time * 20;
-		PotionEffect effect = null;
-		if (name.equals("nightvision")) {
-			effect = new PotionEffect(PotionEffectType.NIGHT_VISION, time, power);
-		} else if (name.equals("blindness")) {
-			effect = new PotionEffect(PotionEffectType.BLINDNESS, time, power);
-		} else if (name.equals("confusion")) {
-			effect = new PotionEffect(PotionEffectType.CONFUSION, time, power);
-		} else if (name.equals("jump")) {
-			effect = new PotionEffect(PotionEffectType.JUMP, time, power);
-		} else if (name.equals("slowdig")) {
-			effect = new PotionEffect(PotionEffectType.SLOW_DIGGING, time, power);
-		} else if (name.equals("damageresist")) {
-			effect = new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, time, power);
-		} else if (name.equals("fastdig")) {
-			effect = new PotionEffect(PotionEffectType.FAST_DIGGING, time, power);
-		} else if (name.equals("fireresist")) {
-			effect = new PotionEffect(PotionEffectType.FIRE_RESISTANCE, time, power);
-		} else if (name.equals("harm")) {
-			effect = new PotionEffect(PotionEffectType.HARM, time, power);
-		} else if (name.equals("heal")) {
-			effect = new PotionEffect(PotionEffectType.HEAL, time, power);
-		} else if (name.equals("hunger")) {
-			effect = new PotionEffect(PotionEffectType.HUNGER, time, power);
-		} else if (name.equals("strength")) {
-			effect = new PotionEffect(PotionEffectType.INCREASE_DAMAGE, time, power);
-		} else if (name.equals("invisibility")) {
-			effect = new PotionEffect(PotionEffectType.INVISIBILITY, time, power);
-		} else if (name.equals("poison")) {
-			effect = new PotionEffect(PotionEffectType.POISON, time, power);
-		} else if (name.equals("regeneration")) {
-			effect = new PotionEffect(PotionEffectType.REGENERATION, time, power);
-		} else if (name.equals("slow")) {
-			effect = new PotionEffect(PotionEffectType.SLOW, time, power);
-		} else if (name.equals("speed")) {
-			effect = new PotionEffect(PotionEffectType.SPEED, time, power);
-		} else if (name.equals("waterbreathing")) {
-			effect = new PotionEffect(PotionEffectType.WATER_BREATHING, time, power);
-		} else if (name.equals("weakness")) {
-			effect = new PotionEffect(PotionEffectType.WEAKNESS, time, power);
+		switch (name.toLowerCase()) {
+		case "nightvision": case "night-vision":
+			return new PotionEffect(PotionEffectType.NIGHT_VISION, time, power);
+		case "blindness": case "blind":
+			return new PotionEffect(PotionEffectType.BLINDNESS, time, power);
+		case "confusion": case "nausea": case "confus":
+			return new PotionEffect(PotionEffectType.CONFUSION, time, power);
+		case "jump":
+			return new PotionEffect(PotionEffectType.JUMP, time, power);
+		case "slowdig": case "slow-digging": case "slowdigging":
+			return new PotionEffect(PotionEffectType.SLOW_DIGGING, time, power);
+		case "damageresist": case "damage-resist": case "damageresistance": case "damage-resistance":
+			return new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, time, power);
+		case "fastdig": case "fast-digging": case "fastdigging":
+			return new PotionEffect(PotionEffectType.FAST_DIGGING, time, power);
+		case "fireresist": case "fire-resist": case "fireresistance":
+			return new PotionEffect(PotionEffectType.FIRE_RESISTANCE, time, power);
+		case "harm":
+			return new PotionEffect(PotionEffectType.HARM, time, power);
+		case "heal":
+			return new PotionEffect(PotionEffectType.HEAL, time, power);
+		case "hunger":
+			return new PotionEffect(PotionEffectType.HUNGER, time, power);
+		case "strength": case "power":
+			return new PotionEffect(PotionEffectType.INCREASE_DAMAGE, time, power);
+		case "invisibility": case "invis":
+			return new PotionEffect(PotionEffectType.INVISIBILITY, time, power);
+		case "poison":
+			return new PotionEffect(PotionEffectType.POISON, time, power);
+		case "regeneration": case "regen":
+			return new PotionEffect(PotionEffectType.REGENERATION, time, power);
+		case "slow": case "slowness":
+			return new PotionEffect(PotionEffectType.SLOW, time, power);
+		case "speed":
+			return new PotionEffect(PotionEffectType.SPEED, time, power);
+		case "waterbreathing":
+			return new PotionEffect(PotionEffectType.WATER_BREATHING, time, power);
+		case "weakness": case "weak":
+			return new PotionEffect(PotionEffectType.WEAKNESS, time, power);
+		default:
+			return null;
 		}
-		return effect;
 	}
 	
     public static String colorize(String s){
@@ -187,11 +201,7 @@ public class Util {
     }
     
     public static void msg(CommandSender sender, String msg) {
-		if (sender instanceof Player) {
-			sender.sendMessage(Util.getHeader() + msg);
-		} else {
-			sender.sendMessage("[SLAP] " + msg);
-		}
+    	sender.sendMessage(Util.getHeader() + msg);
 	}
 
     public static void badMsg(CommandSender sender, String msg) {
@@ -206,12 +216,28 @@ public class Util {
 		sender.sendMessage(ChatColor.RED + "You do not have access to that command.");
 	}
 
+    /**
+     * Test if a CommandSender has a certain permission. Prepend slaphomebrew.[perm]
+     * @param sender The sender
+     * @param perm The permission prepended with slaphomebrew.
+     * @return has permission
+     */
     public static boolean testPermission(CommandSender sender, String perm) {
-		String permission = "slaphomebrew." + perm;
-		if (!(sender instanceof Player) || sender.hasPermission(permission))
-			return true;
+		if (!(sender instanceof Player) || sender.hasPermission("slaphomebrew." + perm)) return true;
 		return false;
 	}
+    
+    /**
+     * Test if an offline player has a certain permission
+     * @param offPlayer The offlineplayer
+     * @param perm The permission perpended with slaphomebrew.
+     * @return has permission
+     */
+    public static boolean checkPermission(OfflinePlayer offPlayer, String perm) {
+    	PermissionUser user = PermissionsEx.getUser(offPlayer.getName());
+    	if (user == null) return false;
+    	return (user.has("slaphomebrew." + perm));
+    }
     
     public static String getTimePlayedString(long l) {
     	String returnString = "";
@@ -248,13 +274,62 @@ public class Util {
     	return returnString;
     }
     
+	/**
+	 * Build a string from a string array.
+	 * @param split The String array
+	 * @param splitChar The string that should be added between each String from the array
+	 * @param begin The index it should start on
+	 * @return The combined string
+	 */
+	public static String buildString(String[] split, String splitChar, int begin) {
+		return buildString(split, splitChar, begin, 9001);
+	}
+    
+	/**
+	 * Build a string from a string array.
+	 * @param split The String array
+	 * @param splitChar The string that will be added between each String from the array
+	 * @param begin The index it should start on
+	 * @param end The index it should end with
+	 * @return The combined string
+	 */
+	public static String buildString(String[] split, String splitChar, int begin, int end) {
+		String combined = "";
+		while (begin <= end && begin < split.length) {
+			if (!combined.isEmpty()) {
+				combined += splitChar;
+			}
+			combined += split[begin];
+			begin++;
+		}
+		return combined;
+	}
+	
+	/**
+	 * Build a string from a string collection
+	 * @param strings The collection of strings
+	 * @param splitChar The string that will be added between each string from the list
+	 * @return The combined string
+	 */
+	public static String buildString(Collection<String> strings, String splitChar) {
+		String combined = "";
+		for (String s : strings) {
+			if (!combined.isEmpty()) {
+				combined += splitChar;
+			}
+			combined += s;
+		}
+		return combined;
+	}
+    
     /**
      * Get the target block that is NOT air in the line of sight of a player
      * @param entity The entity
      * @param maxDistance Max distance to block
      * @return The block or null
+     * @throws CommandException if no block found
      */
-    public static Block getTargetBlock(LivingEntity entity, int maxDistance) {
+    public static Block getTargetBlock(LivingEntity entity, int maxDistance) throws CommandException {
     	BlockIterator iterator = new BlockIterator(entity, maxDistance);
     	while (iterator.hasNext()) {
     		Block foundBlock = iterator.next();
@@ -262,7 +337,15 @@ public class Util {
     			return foundBlock;
     		}
     	}
-    	return null;
+    	throw new CommandException("You aren't looking at a block (or out of range)");
+    }
+    
+    /**
+     * Broadcast a message to all players. Prepend [SLAP] header.
+     * @param message The message
+     */
+    public static void broadcast(String message) {
+    	Bukkit.broadcastMessage(getHeader() + message);
     }
     
     /**
@@ -289,6 +372,14 @@ public class Util {
     	for (PotionEffect effect : effects) {
     		p.removePotionEffect(effect.getType());
     	}
+    }
+        
+    /**
+     * Get all the online players
+     * @return player array
+     */
+    public static Player[] getOnlinePlayers() {
+    	return Bukkit.getServer().getOnlinePlayers();
     }
     
     public static BukkitTask runASync(SlapHomebrew plugin, Runnable runnable) {

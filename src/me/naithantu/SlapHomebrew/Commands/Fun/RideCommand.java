@@ -1,73 +1,50 @@
 package me.naithantu.SlapHomebrew.Commands.Fun;
 
-import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
+import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 public class RideCommand extends AbstractCommand {
 
-	private static HashMap<String, Boolean> rightClicks = new HashMap<>();
+	private static HashSet<String> rightClicks = new HashSet<>();
 	
 	public RideCommand(CommandSender sender, String[] args, SlapHomebrew plugin){
 		super(sender, args, plugin);
 	}
 
 	@Override
-	public boolean handle() {
-		if (!(sender instanceof Player)) {
-			this.badMsg(sender, "You need to be in-game to do that!");
-			return true;
-		}
-
-		if (!testPermission(sender, "ride")) {
-			this.noPermission(sender);
-			return true;
-		}
+	public boolean handle() throws CommandException {
+		Player player = getPlayer();
+		testPermission("ride");
 		
-		Player player = (Player) sender;
+		if (player.isInsideVehicle()) player.getVehicle().eject(); //Check if in a vehicle
+		if (args.length != 1) return false; //Check usage
 		
-		if(player.isInsideVehicle()){
-			player.getVehicle().eject();
-		}
-		
-		if (args.length == 1) {
-			if (args[0].equalsIgnoreCase("click")) {
-				player.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + "Right-click an entity to ride it.");
-				rightClicks.put(player.getName(), true);
-				return true;
-			}
-			String targetName = args[0];
-			Player target = Bukkit.getServer().getPlayer(targetName);
-			if (target != null) {
-				if (target.getName().equals(player.getName())) {
-					badMsg(sender, "You trying to break the server m8?");
-					return true;
-				}
-				target.setPassenger(player);
-			}else{
-				this.badMsg(sender, "Error: That player is not online!");
-			}
-		} else {
-			List<Entity> entities = player.getNearbyEntities(10.0, 10.0, 10.0);
-			if (entities.size() > 0) {
-				if (player.getPassenger() != null) {
-					entities.get(0).setPassenger(player);
-				}
-			}
+		if (args[0].equalsIgnoreCase("click")) { //Click modus
+			rightClicks.add(player.getName());
+			hMsg("Right-click an entity to ride it.");
+		} else { //Playername
+			Player targetPlayer = getOnlinePlayer(args[0], false);
+			if (targetPlayer.getName().equals(player.getName())) throw new CommandException(ErrorMsg.breakingServer); //Trying to ride itself
+			targetPlayer.setPassenger(player);
+			
 		}
 		return true;
 	}
 	
+	/**
+	 * Get if player has rightClick to ride entity enabled
+	 * @param player The player
+	 * @return rightClick to ride
+	 */
 	public static boolean rightClick(String player){
-		if (rightClicks.containsKey(player)) {
+		if (rightClicks.contains(player)) {
 			rightClicks.remove(player);
 			return true;
 		}

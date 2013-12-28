@@ -5,20 +5,19 @@ import java.util.List;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
+import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
+import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
 import me.naithantu.SlapHomebrew.Controllers.Jails;
 import me.naithantu.SlapHomebrew.Util.Util;
 
-import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import com.earth2me.essentials.Essentials;
-import com.earth2me.essentials.User;
 
 public class JailCommand extends AbstractCommand {
 
 	private static Jails jails = null;
-	private static Essentials ess = null;
 	
 	
 	public JailCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
@@ -26,139 +25,100 @@ public class JailCommand extends AbstractCommand {
 		if (jails == null) {
 			jails = plugin.getJails();
 		}
-		if (ess == null) {
-			ess = plugin.getEssentials();
-		}
 	}
 
 	@Override
-	public boolean handle() {
-		if (!testPermission(sender, "jail")) {
-			noPermission(sender);
-			return true;
-		}
+	public boolean handle() throws CommandException {
+		testPermission("jail"); //Test permission
+		if (args.length == 0) return false; //Check usage
 		
-		if (args.length == 0) {
-			return false;
-		}
+		OfflinePlayer offPlayer;
 		
 		switch (args[0].toLowerCase()) {
-		case "list":
+		case "list": //Send list of jails
 			List<String> jailList = jails.getJailList();
 			if (jailList.size() == 1) {
-				sender.sendMessage(Util.getHeader() + "There is 1 jail: " + jailList.get(0));
+				hMsg("There is 1 jail: " + jailList.get(0));
 			} else if (jailList.size() > 1) {
-				sender.sendMessage(Util.getHeader() + "There are " + jailList.size() + " jails: " + Arrays.toString(jailList.toArray()) + ".");
+				hMsg("There are " + jailList.size() + " jails: " + Arrays.toString(jailList.toArray()) + ".");
 			} else {
-				sender.sendMessage(ChatColor.RED + "There are no jails yet.");
+				throw new CommandException("There are no jails yet.");
 			}
 			break;
-		case "create":
-			//Jail create [name] <chat allowed> <msg commands allowed>
-			if (!testPermission(sender, "jail.create")) {
-				noPermission(sender);
-				return true;
+			
+		case "create": //Create a new jail -> /Jail create [name] <chat allowed> <msg commands allowed>
+			Player player = getPlayer();
+			testPermission("jail.create");
+			if (args.length <= 1) throw new UsageException("jail create [name] <chat allowed: true/false> <msg commands allowed: true/false>"); //Check usage
+			
+			boolean chatAllowed = false, msgAllowed = false; //Standard settings
+			switch (args.length) { //Parse chat settings
+			case 4: msgAllowed = Boolean.parseBoolean(args[3]);
+			case 3:	chatAllowed = Boolean.parseBoolean(args[2]);
 			}
-			if (!(sender instanceof Player)) {
-				badMsg(sender, "You need to be ingame to do that.");
-				return true;
-			}
-			Player player = (Player) sender;
-			if (args.length <= 1) { badMsg(sender, ChatColor.RED + "/jail create [name] <chat allowed: true/false> <msg commands allowed: true/false>"); return true; }
-			boolean chatAllowed = false; boolean msgAllowed = false;
-			if (args.length > 2) {
-				chatAllowed = Boolean.parseBoolean(args[2]);
-				if (args.length > 2) msgAllowed = Boolean.parseBoolean(args[3]);
-			}
-			if (jails.jailExists(args[1].toLowerCase())) {
-				badMsg(sender, "Jail already exists.");
-				return true;
-			}
-			jails.createJail(args[1].toLowerCase(), player.getLocation(), chatAllowed, msgAllowed);
-			player.sendMessage(Util.getHeader() + "Jail created.");
+			
+			if (jails.jailExists(args[1].toLowerCase())) throw new CommandException("This jail already exists."); //Check if jail already exists
+			
+			jails.createJail(args[1].toLowerCase(), player.getLocation(), chatAllowed, msgAllowed); //Create the jail
+			hMsg("Created a jail with name: " + args[1] + " | Chat: " + chatAllowed + " | Msg: " + msgAllowed);
 			break;
-		case "remove":
-			//jail remove [name]
-			if (!testPermission(sender, "jail.remove")) {
-				noPermission(sender);
-				return true;
-			}
-			if (args.length <= 1) {
-				badMsg(sender, ChatColor.RED + "/jail remove [name]");
+			
+		case "remove": //Remove a jail -> /jail remove [name]
+			testPermission("jail.remove");
+			if (args.length <= 1) throw new UsageException("jail remove [name]"); //Check usage
+			
+			if (jails.jailExists(args[1].toLowerCase())) { //Check if jail exists
+				jails.deleteJail(args[1].toLowerCase()); //Remove jail
+				hMsg("Jail removed.");
 			} else {
-				if (jails.jailExists(args[1].toLowerCase())) {
-					jails.deleteJail(args[1].toLowerCase());
-					sender.sendMessage(Util.getHeader() + "Jail removed.");
-				} else {
-					badMsg(sender, "This jail doesn't exist.");
-				}
+				throw new CommandException(ErrorMsg.invalidJail);
 			}
 			break;
-		case "info":
-			if (args.length == 2) {
-				User u = ess.getUserMap().getUser(args[1]);
-				if (u != null) {
-					if (jails.isInJail(u.getName())) {
-						jails.getJailInfo(sender, u.getName());
-					} else badMsg(sender, "Player not in jail.");
-				} else badMsg(sender, "This player doesn't exist.");
+			
+		case "info": //Get info about a jail sentence. Players who are able to jail are also able to get info -> /jail info [player]
+			if (args.length != 2) throw new UsageException("jail info [player"); //Check usage
+			offPlayer = getOfflinePlayer(args[1]); //Get player
+			if (jails.isInJail(offPlayer.getName())) {
+				jails.getJailInfo(sender, offPlayer.getName());
 			} else {
-				badMsg(sender, "/jail info [player]");
+				throw new CommandException(ErrorMsg.notInJail);
 			}
 			break;
-		default:
-			//Jail [player] [jail] [time] [h/m/s] [reason]
-			if (args.length > 4) {
-				User u = ess.getUserMap().getUser(args[0]);
-				if (u == null) {
-					badMsg(sender, "Player doesn't exist.");
-					return true;
-				}
-				if (jails.isInJail(u.getName())) {
-					badMsg(sender, "Player already jailed.");
-					return true;
-				}
-				if (testPermission(u.getPlayer(), "jail.except")) {
-					badMsg(sender, "This player cannot be jailed.");
-					return true;
-				}
-				if (!jails.jailExists(args[1].toLowerCase())) {
-					badMsg(sender, "Jail doesn't exist.");
-					return true;
-				}
-				int time = -1;
-				try {
-					time = Integer.parseInt(args[2]);
-				} catch (NumberFormatException e) { badMsg(sender, "This is not a valid time."); return true; }
-				Long timeInJail = (long) 0;
-				switch (args[3].toLowerCase()) {
-				case "h": case "hour": case "hours":
-					timeInJail = (long) (time * 1000 * 60 * 60); break;
-				case "m": case "minute": case "min": case "minutes":
-					timeInJail = (long) (time * 1000 * 60); break;
-				case "s": case "seconds": case "sec": case "second":
-					timeInJail = (long) (time * 1000); break;
-				default:
-					badMsg(sender, "Not a valid time type. Types: h/m/s");
-					return true;
-				}
-				if (timeInJail > 10800000) {
-					badMsg(sender, "You can't jail someone for that long."); return true;
-				}
-				String reason = null; boolean first = true; int xCount = 4;
-				while (xCount < args.length) {
-					if (first) { reason = args[xCount]; first = false;}
-					else { reason = reason + " " + args[xCount]; }
-					xCount++;
-				}
-				Player targetPlayer = plugin.getServer().getPlayer(u.getName());
-				if (targetPlayer == null) {
-					jails.putOfflinePlayerInJail(u.getName(), reason, args[1], timeInJail);
-				} else {
-					jails.putOnlinePlayerInJail(targetPlayer, reason, args[1], timeInJail);
-				}
-			} else {
-				return false;
+			
+		default: //Default = Jailing people -> /Jail [player] [jail] [time] [h/m/s] [reason]
+			if (args.length <= 4) return false;
+			
+			offPlayer = getOfflinePlayer(args[0]); //Get the player
+			String playername = offPlayer.getName();
+			String jail = args[1].toLowerCase();
+			
+			if (jails.isInJail(playername)) throw new CommandException("Player is already jailed."); //Check if jailed
+			if (Util.checkPermission(offPlayer, "jail.exempt")) throw new CommandException("This player cannot be jailed."); //Check if can be jailed
+			if (!jails.jailExists(jail)) throw new CommandException(ErrorMsg.invalidJail); //Check if jail exists
+			
+			int time = parseInt(args[2]); //Parse the time
+			long timeInJail;
+			
+			switch (args[3].toLowerCase()) { //Parse the format
+			case "h": case "hour": case "hours":
+				timeInJail = (long) (time * 1000 * 60 * 60); break;
+			case "m": case "minute": case "min": case "minutes":
+				timeInJail = (long) (time * 1000 * 60); break;
+			case "s": case "seconds": case "sec": case "second":
+				timeInJail = (long) (time * 1000); break;
+			default:
+				throw new CommandException("This is not a valid time type. Use: hours/minutes/seconds (h/m/s)");
+			}
+			if (timeInJail > 10800000) throw new CommandException("You cannot jail someone for so long."); //Max jail time = 3 hours
+			
+			String reason = Util.buildString(args, " ", 4); //Parse reason
+			
+			Player targetPlayer = plugin.getServer().getPlayer(playername);
+			if (targetPlayer == null) { //Throw in offline jail
+				jails.putOfflinePlayerInJail(playername, reason, jail, timeInJail);
+				hMsg(playername + " will be jailed when he/she logs in.");
+			} else { //Throw in online jail
+				jails.putOnlinePlayerInJail(targetPlayer, reason, jail, timeInJail);
 			}
 		}
 		return true;

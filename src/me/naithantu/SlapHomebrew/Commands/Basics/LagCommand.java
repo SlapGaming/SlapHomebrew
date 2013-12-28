@@ -2,6 +2,7 @@ package me.naithantu.SlapHomebrew.Commands.Basics;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Controllers.Lag;
 
 import org.bukkit.ChatColor;
@@ -18,28 +19,23 @@ public class LagCommand extends AbstractCommand {
 		}
 	}
 
-	public boolean handle() {
-		if (!testPermission(sender, "lag")) {
-			this.noPermission(sender);
-			return true;
-		}
+	public boolean handle() throws CommandException {
+		testPermission("lag");
 		
 		double tps = lag.getTPS();
-		StringBuilder builder = new StringBuilder();
-		builder.append(ChatColor.YELLOW).append("Server Status: ");
+		String status = ChatColor.YELLOW + "Server Status: ";
+		
 		if (tps >= 17 && tps <= 23) {
-			builder.append(ChatColor.GREEN + "All Good!");
+			status += ChatColor.GREEN + "All Good!";
 		} else if (tps >= 14 && tps <= 26) {
-			builder.append(ChatColor.GOLD + "Small Hiccup.");
+			status += ChatColor.GOLD + "Small Hiccup.";
 		} else {
-			builder.append(ChatColor.RED + "Struggling.");
+			status += ChatColor.RED + "Struggling.";
 		}
 		
-		builder.append(" (");
-		builder.append((double) Math.round(tps * 10) / 10);
-		builder.append(" Ticks)");
-
-		sender.sendMessage(builder.toString());
+		status += " (" + ((double) Math.round(tps * 10) / 10) + " Ticks)";
+		
+		msg(status);
 		return true;
 	}
 }

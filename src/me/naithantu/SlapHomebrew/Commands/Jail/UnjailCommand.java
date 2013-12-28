@@ -2,13 +2,14 @@ package me.naithantu.SlapHomebrew.Commands.Jail;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
+import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
 import me.naithantu.SlapHomebrew.Controllers.Jails;
-import me.naithantu.SlapHomebrew.Util.Util;
 
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 
 import com.earth2me.essentials.Essentials;
-import com.earth2me.essentials.User;
 
 public class UnjailCommand extends AbstractCommand {
 
@@ -26,24 +27,16 @@ public class UnjailCommand extends AbstractCommand {
 	}
 
 	@Override
-	public boolean handle() {
-		if (!testPermission(sender, "jail")) {
-			noPermission(sender);
-			return true;
-		}
-		if (args.length < 1) {
-			return false;
-		}
-		User u = ess.getUserMap().getUser(args[0]);
-		if (u != null) {
-			if (jails.isInJail(u.getName())) {
-				jails.releasePlayerFromJail(u.getName());
-				sender.sendMessage(Util.getHeader() + "Player unjailed.");
-			} else {
-				badMsg(sender, "This player is not in jail.");
-			}
+	public boolean handle() throws CommandException {
+		testPermission("jail"); //Test perm
+		if (args.length != 1) return false; //Check usage
+		
+		OfflinePlayer offPlayer = getOfflinePlayer(args[0]); //Get player
+		if (jails.isInJail(offPlayer.getName())) { //Check if in jail
+			jails.releasePlayerFromJail(offPlayer.getName()); //Unjail
+			hMsg("Player " + offPlayer.getName() + " unjailed.");
 		} else {
-			badMsg(sender, "This player doesn't exist.");
+			throw new CommandException(ErrorMsg.notInJail);
 		}
 		return true;
 	}

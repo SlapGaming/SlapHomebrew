@@ -430,6 +430,7 @@ public class PlayerLogger {
 	 * Minechat prevention
 	 */
 	public boolean hasMoved(String playername) {
+		if (minechatMoved == null || playername == null) return false;
 		return minechatMoved.get(playername);
 	}
 	

@@ -7,6 +7,7 @@ import java.util.List;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -19,11 +20,8 @@ public class VipForumMarkCommand extends AbstractCommand {
 		super(sender, args, plugin);
 	}
 
-	public boolean handle() {
-		if (!testPermission(sender, "vip.check")) {
-			this.noPermission(sender);
-			return true;
-		}
+	public boolean handle() throws CommandException {
+		testPermission("vip.check");
 		
 		HashMap<Integer, String> forumVip = plugin.getForumVip();
 		int amount = forumVip.size() + 1;

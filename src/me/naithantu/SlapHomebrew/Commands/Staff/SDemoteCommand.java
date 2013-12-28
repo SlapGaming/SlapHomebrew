@@ -1,18 +1,18 @@
 package me.naithantu.SlapHomebrew.Commands.Staff;
 
+import me.naithantu.SlapHomebrew.SlapHomebrew;
+import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
+import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
+import me.naithantu.SlapHomebrew.Commands.Staff.SPromoteCommand.PexRank;
+import me.naithantu.SlapHomebrew.Util.Util;
+
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import ru.tehkode.permissions.PermissionGroup;
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
-
-import com.earth2me.essentials.User;
-
-import me.naithantu.SlapHomebrew.SlapHomebrew;
-import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
-import me.naithantu.SlapHomebrew.Commands.Staff.SPromoteCommand.PexRank;
-import me.naithantu.SlapHomebrew.Util.Util;
 
 public class SDemoteCommand extends AbstractCommand {
 
@@ -21,34 +21,22 @@ public class SDemoteCommand extends AbstractCommand {
 	}
 	
 	@Override
-	public boolean handle() {
-		if (!testPermission(sender, "demote") || !testPermission(sender, "staff")) {
-			noPermission(sender);
-			return true;
-		}
+	public boolean handle() throws CommandException {
+		testPermission("demote"); //Test permissions
+		testPermission("staff");
 		
-		// /sDemote [Player] [Rank]
-		if (args.length != 2) {
-			badMsg(sender, "Usage: /sDemote [Player] [Rank]");
-			return true;
-		}
+		if (args.length != 2) throw new UsageException("sDemote [Player] [Rank]"); //Check usage
 		
-Util.runASync(plugin, new Runnable() {
-			
+		final String playername = getOfflinePlayer(args[0]).getName(); //Get playername
+		
+		Util.runASync(plugin, new Runnable() {	
 			@Override
-			public void run() {
-				
-				User u = plugin.getEssentials().getUserMap().getUser(args[0]);
-				if (u == null) {
-					badMsg(sender, "This player hasn't been on the server.");
-					return;
-				}
-				
-				PermissionUser user = PermissionsEx.getUser(u.getName());
+			public void run() {				
+				PermissionUser user = PermissionsEx.getUser(playername);
 				PexRank userRank = null;
 				switch (user.getGroupsNames()[0]) {
 				case "VIPGuide": 
-					if (testPermission(sender, "demote.guide")) {
+					if (Util.testPermission(sender, "demote.guide")) {
 						userRank = PexRank.VIPGuide; 
 					} else {
 						noPermForRank();
@@ -56,7 +44,7 @@ Util.runASync(plugin, new Runnable() {
 					}
 					break;
 				case "Guide": 
-					if (testPermission(sender, "demote.guide")) {
+					if (Util.testPermission(sender, "demote.guide")) {
 						userRank = PexRank.Guide; 
 					} else {
 						noPermForRank();
@@ -65,14 +53,14 @@ Util.runASync(plugin, new Runnable() {
 					break;
 				case "Mod": 
 					if (user.getPrefix().toLowerCase().contains("trial")) {
-						if (testPermission(sender, "demote.trialmod")) {
+						if (Util.testPermission(sender, "demote.trialmod")) {
 							userRank = PexRank.TrialMod;
 						} else {
 							noPermForRank();
 							return;
 						}
 					} else {
-						if (testPermission(sender, "demote.mod")) {
+						if (Util.testPermission(sender, "demote.mod")) {
 							userRank = PexRank.Mod;
 						} else {
 							noPermForRank();
@@ -81,12 +69,12 @@ Util.runASync(plugin, new Runnable() {
 					}
 					break;
 				default:
-					badMsg(sender, "This user cannot be demoted (any futher this way).");
+					Util.badMsg(sender, "This user cannot be demoted (any futher this way).");
 					return;
 				}
 								
 				PexRank toPexRank = null;
-				int vipDays = plugin.getVip().getVipDays(u.getName());
+				int vipDays = plugin.getVip().getVipDays(playername);
 				
 				switch(args[1].toLowerCase()) {
 				case "member": case "vip":
@@ -97,7 +85,7 @@ Util.runASync(plugin, new Runnable() {
 					}
 					break;
 				case "guide": case "vipguide":
-					if (testPermission(sender, "promote.guide")) {
+					if (Util.testPermission(sender, "promote.guide")) {
 						if (vipDays > 0 || vipDays == -1) {
 							toPexRank = PexRank.VIPGuide;
 						} else {
@@ -109,7 +97,7 @@ Util.runASync(plugin, new Runnable() {
 					}
 					break;
 				default:
-					badMsg(sender, "This is not a valid rank/cannot demote to this rank.");
+					Util.badMsg(sender, "This is not a valid rank/cannot demote to this rank.");
 					return;
 				}
 				
@@ -152,18 +140,16 @@ Util.runASync(plugin, new Runnable() {
 					cannotDemoteToRank();
 					return;
 				}
-				demotedMsg(u.getName(), userRank, toPexRank);
+				demotedMsg(playername, userRank, toPexRank);
+				
 				//Update tab
-				if (u.isOnline()) {
-					plugin.getTabController().playerSwitchGroup(u.getPlayer());
+				Player fPlayer = plugin.getServer().getPlayer(playername);
+				if (fPlayer != null) {
+					plugin.getTabController().playerSwitchGroup(fPlayer);
 				}
 				
 				//Log event
-				String senderName = "Console";
-				if (sender instanceof Player) {
-					senderName = ((Player)sender).getName();
-				}
-				plugin.getPlayerLogger().logPromotion(senderName, u.getName(), userRank.toString(), toPexRank.toString(), true);
+				plugin.getPlayerLogger().logPromotion(sender.getName(), playername, userRank.toString(), toPexRank.toString(), true);
 				return;
 				
 			}
@@ -172,7 +158,7 @@ Util.runASync(plugin, new Runnable() {
 	}
 	
 	private void noPermForRank() {
-		badMsg(sender, "You are not allowed to demote people to this rank.");
+		Util.badMsg(sender, "You are not allowed to demote people to this rank.");
 	}
 	
 	private void resetPrefix(PermissionUser user, PexRank userRank) {
@@ -181,11 +167,11 @@ Util.runASync(plugin, new Runnable() {
 	
 	
 	protected void demotedMsg(String playername, PexRank oldRank, PexRank newRank) {
-		msg(sender, playername + " has been promoted from " + oldRank.toString() + " to " + newRank.toString());
+		hMsg(playername + " has been promoted from " + oldRank.toString() + " to " + newRank.toString());
 	}
 	
 	private void cannotDemoteToRank() {
-		badMsg(sender, "Cannot demote player to this rank/from players rank.");
+		Util.badMsg(sender, "Cannot demote player to this rank/from players rank.");
 	}
 	
 	private void demoteTrial(PermissionUser user, PexRank rank) {

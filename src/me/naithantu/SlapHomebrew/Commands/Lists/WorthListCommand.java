@@ -4,40 +4,27 @@ import org.bukkit.command.CommandSender;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
+import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
 import me.naithantu.SlapHomebrew.Controllers.WorthList;
 
 public class WorthListCommand extends AbstractCommand {
-
-	private static WorthList worthList;
 	
 	public WorthListCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
 		super(sender, args, plugin);
-		if (worthList == null) {
-			worthList = plugin.getWorthList();
-		}
 	}
 
 	@Override
-	public boolean handle() {
-		if (!testPermission(sender, "worthlist")) {
-			noPermission(sender);
-			return true;
+	public boolean handle() throws CommandException {
+		testPermission("worthlist"); //Test permission
+		int page = 1; 
+		if (args.length > 0) { //If page number given
+			page = parseInt(args[0]); //Parse page
+			if (page < 1) throw new CommandException(ErrorMsg.notANumber);
 		}
-		int page = 1;
-		if (args.length > 0) {
-			try {
-				page = Integer.parseInt(args[0]);
-				if (page < 1) throw new NumberFormatException();
-			} catch (NumberFormatException e) {
-				badMsg(sender, "This is not a valid page number.");
-				return true;
-			}
-		}
-		if (page > worthList.getPages()) {
-			badMsg(sender, "There are only " + worthList.getPages() + " pages.");
-			return true;
-		}
-		worthList.sendPage(sender, page);
+		WorthList worthList = plugin.getWorthList(); //Get WorthList
+		if (page > worthList.getPages()) throw new CommandException("There are only " + worthList.getPages() + " pages.");
+		worthList.sendPage(sender, page); //Send worthlist page
 		return true;
 	}
 

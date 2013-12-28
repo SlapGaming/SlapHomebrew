@@ -42,7 +42,6 @@ public class RainbowTask extends BukkitRunnable {
 			Extras extras = plugin.getExtras();
 			HashMap<String, Integer> rainbow = extras.getRainbow();
 			rainbow.remove(player.getName());
-			extras.setRainbow(rainbow);
 			player.sendMessage(ChatColor.RED + "You must be wearing leather armour!");
 			this.cancel();
 			return;

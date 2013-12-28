@@ -2,10 +2,10 @@ package me.naithantu.SlapHomebrew.Commands.Lists;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Controllers.ChangeLog;
 import me.naithantu.SlapHomebrew.Util.Util;
 
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 public class ChangeLogCommand extends AbstractCommand {
@@ -20,38 +20,25 @@ public class ChangeLogCommand extends AbstractCommand {
 	}
 
 	@Override
-	public boolean handle() {
-		if (args.length == 0) {
-			//get Latest
+	public boolean handle() throws CommandException {
+		if (args.length == 0) { //get Latest changes
 			changeLog.showPage(sender, 1);
 		} else {
-			if (testPermission(sender, "addchangelog")) {
-				if (args.length > 2 && args[0].equalsIgnoreCase("add")) {
-					//Args[0] = add | args[1] = date | The rest = change
-					String change = args[2]; int x = 3;
-					while (x < args.length) {
-						change = change + " " + args[x];
-						x++;
-					}
-					changeLog.addToChangelog(args[1], change);
-					sender.sendMessage(Util.getHeader() + "Added.");
-					return true;
-				} else if (args[0].equals("reload")) {
-					changeLog.reload();
-					sender.sendMessage(Util.getHeader() + "Changelog reloaded.");
-					return true;
-				}
+			if (args.length > 2 && args[0].equalsIgnoreCase("add")) { //Adding to changelog
+				testPermission("addchangelog");
+				if (!args[1].matches("\\d{2}/\\d{2}/\\d{4}")) throw new CommandException("Invalid date. Format: DD-MM-YYYY"); //Check if date given
+				String change = Util.buildString(args, " ", 2); //Parse change
+				changeLog.addToChangelog(args[1], change); //Add
+				hMsg("Added to changelog: " + change);
+				return true;
+			} else if (args[0].equals("reload")) { //Reload changelog
+				changeLog.reload();
+				hMsg("Changelog reloaded.");
+				return true;
 			}
-			try {
-				int page = Integer.parseInt(args[0]);
-				if (page > 0) {
-					changeLog.showPage(sender, page);
-				} else {
-					sender.sendMessage(ChatColor.RED + "The page number has to be 1 or greater.");
-				}
-			} catch (NumberFormatException e) {
-				return false;
-			}
+			
+			//Wants a certain page of the changelog
+			changeLog.showPage(sender, parseInt(args[0])); //Parse page & Send changelog
 		}
 		return true;
 	}

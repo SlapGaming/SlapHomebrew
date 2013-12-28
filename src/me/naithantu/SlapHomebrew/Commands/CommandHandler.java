@@ -10,11 +10,14 @@ import me.naithantu.SlapHomebrew.Commands.Stats.PlaytimeCommand;
 import me.naithantu.SlapHomebrew.Commands.VIP.*;
 import me.naithantu.SlapHomebrew.Commands.AFK.*;
 import me.naithantu.SlapHomebrew.Commands.Basics.*;
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Fun.*;
 import me.naithantu.SlapHomebrew.Commands.Games.*;
 import me.naithantu.SlapHomebrew.Commands.Jail.*;
 import me.naithantu.SlapHomebrew.Commands.Lists.*;
+import me.naithantu.SlapHomebrew.Util.Util;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
@@ -34,7 +37,6 @@ public class CommandHandler {
 		case "boat":			commandObj = new BoatCommand(sender, args, plugin);					break;
 		case "bumpdone":		commandObj = new BumpdoneCommand(sender, args, plugin);				break;
 		case "creativeextra":	commandObj = new CreativeextraCommand(sender, args, plugin);		break;
-		case "ghostfix":		commandObj = new GhostfixCommand(sender, args, plugin);				break;
 		case "group":			commandObj = new GroupCommand(sender, args, plugin);				break;
 		case "home":			commandObj = new HomeCommand(sender, args, plugin);					break;
 		case "homemenu":		commandObj = new HomeMenuCommand(sender, args, plugin);				break;
@@ -56,10 +58,9 @@ public class CommandHandler {
 		case "te":				commandObj = new TeCommand(sender, args, plugin);					break;
 		case "tpallow":			commandObj = new TpallowCommand(sender, args, plugin);				break;
 		case "tpblock":			commandObj = new TpBlockCommand(sender, args, plugin);				break;
-		case "warppvp":			commandObj = new WarppvpCommand(sender, args, plugin);				break;
 		case "world":			commandObj = new WorldCommand(sender, args, plugin);				break;
 		case "afk":				commandObj = new AfkCommand(sender, args, plugin);					break;
-		case "afkreset":		commandObj = new AfkResetCommand(sender, args, plugin);				break;
+		case "afkinfo":			commandObj = new AfkInfoCommand(sender, args, plugin);				break;
 		case "spawn":			commandObj = new SpawnCommand(sender, args, plugin);				break;
 		case "horse":			commandObj = new HorseCommand(sender, args, plugin);				break;
 		case "changelog":		commandObj = new ChangeLogCommand(sender, args, plugin);			break;
@@ -82,7 +83,6 @@ public class CommandHandler {
 		case "deaths":			commandObj = new DeathsCommand(sender, args, plugin);				break;
 		case "kills":			commandObj = new KillsCommand(sender, args, plugin);				break;
 		case "playtime":		commandObj = new PlaytimeCommand(sender, args, plugin);				break;
-		case "ipcheck":			commandObj = new IPCheckCommand(sender, args, plugin);				break;
 		case "teleportmob":		commandObj = new TeleportMobCommand(sender, args, plugin);			break;
 		case "plot":
 			if (args.length == 0) return false;
@@ -108,9 +108,13 @@ public class CommandHandler {
 		}
 
 		if (commandObj != null) {
-			boolean handled = commandObj.handle();
-			if (!handled) {
-				commandObj.badMsg(sender, cmd.getUsage());
+			try {
+				boolean handled = commandObj.handle();
+				if (!handled) {
+					Util.badMsg(sender, cmd.getUsage());
+				}
+			} catch (CommandException e) {
+				Util.badMsg(sender, ChatColor.RED + e.getMessage());
 			}
 		}
 		return true;

@@ -4,43 +4,30 @@ import java.util.Date;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
 
-import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 
-import com.earth2me.essentials.Essentials;
-import com.earth2me.essentials.User;
-
 public class TimecheckCommand extends AbstractCommand {
-
-	private static PlayerLogger logger = null;
-	private static Essentials ess = null;
 	
 	public TimecheckCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
-		super(sender, args, plugin);
-		if (logger == null) {
-			logger = plugin.getPlayerLogger();
-		}		
-		if (ess == null) {
-			ess = plugin.getEssentials();
-		}
+		super(sender, args, plugin);		
 	}
 
 	@Override
-	public boolean handle() {
-		if (!testPermission(sender, "timecheck")) {
-			noPermission(sender);
-			return true;
-		}
-		if (args.length < 1) {
-			return false;
-		}
+	public boolean handle() throws CommandException {
+		testPermission("timecheck"); //Test perm
+		if (args.length < 1) return false; //Check usage
+		
+		Date fromDate = null; //The date
+		PlayerLogger logger = plugin.getPlayerLogger(); //Get logger
+		
 		if (args[0].equalsIgnoreCase("list")) {
-			if (args.length < 2) return false;
-			Date fromDate = null;
+			if (args.length < 2) return false; //Check usage
 			if (args.length == 3) {
-				fromDate = logger.parseDate(args[2]);
+				fromDate = logger.parseDate(args[2]); //Parse date if given
 			}
 			try {
 				int nr = Integer.parseInt(args[1]);
@@ -50,25 +37,22 @@ public class TimecheckCommand extends AbstractCommand {
 			}
 			return true;
 		}
-		User u = ess.getUserMap().getUser(args[0]);
-		if (u == null) {
-			badMsg(sender, "This player has never been on the server.");
-		} else {
-			Date fromDate = null;
-			switch (args.length) {
-			case 1:
-				logger.getOnlineTime(sender, u.getName(), u.isOnline());
-				break;
-			case 2:
-				fromDate = logger.parseDate(args[1]);
-				if (fromDate == null) {
-					sender.sendMessage(ChatColor.RED + args[1] + " is not a valid date. Format: dd-mm-yyyy");
-				} else {
-					logger.getOnlineTime(sender, u.getName(), u.isOnline(), fromDate);
-				}
-				break;
-			}
-		}		
+		
+		OfflinePlayer offPlayer = getOfflinePlayer(args[0]); //Get player
+		String playername = offPlayer.getName(); //Get it's name
+		boolean isOnline = (offPlayer.getPlayer() != null); //Check if online
+		switch (args.length) {
+		case 1:
+			logger.getOnlineTime(sender, playername, isOnline); //Send onlinetime
+			break;
+		case 2:
+			fromDate = logger.parseDate(args[1]); //Parse the date
+			if (fromDate == null) throw new CommandException("Invalid date. Format: DD-MM-YYYY"); 
+			logger.getOnlineTime(sender, playername, isOnline, fromDate);
+			break;
+		default:
+			return false;
+		}
 		return true;
 	}
 }

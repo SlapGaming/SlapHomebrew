@@ -4,6 +4,9 @@ import java.util.List;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
+import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
+import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -17,43 +20,37 @@ public class HomeCommand extends AbstractCommand {
 		super(sender, args, plugin);
 	}
 
-	public boolean handle() {
-		if (!testPermission(sender, "home")) {
-			this.noPermission(sender);
-			return true;
-		}
+	public boolean handle() throws CommandException {
+		Player p = getPlayer();
+		testPermission("home");
 
-		if (!(sender instanceof Player)) {
-			this.badMsg(sender, "You need to be in-game to do that.");
-			return true;
-		}
 		
 		if (args.length == 3) {
-			if (testPermission(sender, "home.other")) {
-				// /home other [player] [home/list]
-				if (args[0].toLowerCase().equals("other")) {
-					User u = plugin.getEssentials().getUserMap().getUser(args[1]);
-					if (u != null) {
-						try {
-							if (args[2].toLowerCase().equals("list")) {
-								sendHomes(u.getHomes());
+			if (args[0].toLowerCase().equals("other")) { //Check if /home other [name] [X]
+				testPermission("home.other"); //Test permission
+				User u = plugin.getEssentials().getUserMap().getUser(args[1]);
+				if (u != null) { //Check if player found with that name
+					try {
+						if (args[2].toLowerCase().equals("list")) { //If list -> Send all homes of that player
+							sendHomes(u.getHomes());
+						} else { //Probably trying to teleport to a home
+							if (u.getHomes().contains(args[2].toLowerCase())) {
+								p.teleport(u.getHome(args[2].toLowerCase()));
 							} else {
-								if (u.getHomes().contains(args[2].toLowerCase())) {
-									Player player = (Player)sender;
-									player.teleport(u.getHome(args[2].toLowerCase()));
-								}
+								throw new CommandException("No home with this name found.");
 							}
-							return true;
-						} catch (Exception e) {
-							sender.sendMessage(ChatColor.RED + "Something went wrong.");
-							return true;
 						}
+						return true;
+					} catch (Exception e) {
+						throw new CommandException(ErrorMsg.somethingWrong);
 					}
+				} else {
+					throw new CommandException(ErrorMsg.playerNotFound);
 				}
 			}
 		}
 		
-		User targetPlayer = plugin.getEssentials().getUserMap().getUser(sender.getName()); //Fetch Essentials User (which extends Player)
+		User targetPlayer = plugin.getEssentials().getUserMap().getUser(p.getName());
 		List<String> homes = targetPlayer.getHomes();
 		if (args.length > 0) {
 			if (homes.contains(args[0])) {
@@ -66,28 +63,22 @@ public class HomeCommand extends AbstractCommand {
 		} else {
 			sendHomes(homes);
 		}
-
 		return true;
 	}
 
+	/**
+	 * Send a list of all the homes to the CommandSender
+	 * @param homes The homes
+	 */
 	private void sendHomes(List<String> homes) {
-		StringBuilder homeBuilder = new StringBuilder();
-		int i = 0;
-		for (String string : homes) {
-			homeBuilder.append(string);
-			i++;
-			if (i != homes.size()) {
-				homeBuilder.append(", ");
-			}
-		}
-		sender.sendMessage("Homes (" + (homes.size()) + "): " + homeBuilder.toString());
+		sender.sendMessage("Homes (" + (homes.size()) + "): " + Util.buildString(homes, ", "));
 	}
 		
 	public static void teleportToHome(User targetPlayer, String home){
 		try {
 			targetPlayer.getTeleport().teleport(targetPlayer.getHome(home), null, TeleportCause.COMMAND);
 		} catch (Exception e) {
-			targetPlayer.sendMessage(ChatColor.RED + "Error: Invalid world.");
+			targetPlayer.sendMessage(ChatColor.RED + "Error: " + e.getMessage());
 		}
 	}
 	

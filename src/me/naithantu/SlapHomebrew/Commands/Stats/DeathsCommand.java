@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
 
 public class DeathsCommand extends AbstractCommand {
@@ -19,16 +20,9 @@ public class DeathsCommand extends AbstractCommand {
 	}
 
 	@Override
-	public boolean handle() {
-		if (!testPermission(sender, "deaths")) {
-			noPermission(sender);
-			return true;
-		}
-		if (!(sender instanceof Player)) {
-			badMsg(sender, "You need to be ingame to do that!");
-			return true;
-		}
-		Player p = (Player) sender;
+	public boolean handle() throws CommandException {
+		Player p = getPlayer();
+		testPermission("deaths");
 		playerLogger.getDeaths(p);
 		return true;
 	}

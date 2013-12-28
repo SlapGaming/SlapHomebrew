@@ -7,6 +7,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
+import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
 
 public class VipForumDoneCommand extends AbstractCommand{
 	
@@ -14,44 +16,29 @@ public class VipForumDoneCommand extends AbstractCommand{
 		super(sender, args, plugin);
 	}
 
-	public boolean handle() {
-		if (!this.testPermission(sender, "vip.check")) {
-			this.noPermission(sender);
-			return true;
-		}
-		if (args.length == 1) {
-			this.badMsg(sender, "Usage: /vip done [number] <comment>");
-			return true;
-		}
-		int vipNumber;
+	public boolean handle() throws CommandException {
+		testPermission("vip.check"); //Test perm
+		if (args.length == 1) throw new UsageException("vip done [number] <comment>"); //Check usage
 
-		try {
-			vipNumber = Integer.parseInt(args[1]);
-		} catch (NumberFormatException e) {
-			this.badMsg(sender, "Usage: /vip done [number] <comment>");
-			return true;
-		}
-
-		if (plugin.getUnfinishedForumVip().contains(vipNumber)) {
-			HashMap<Integer, String> forumVip = plugin.getForumVip();
-			String vipInfo = forumVip.get(vipNumber);
-			forumVip.put(vipNumber, vipInfo + "<:>" + "Handled by " + sender.getName());
-		} else {
-			this.badMsg(sender, "You can not finish that request!");
-			return true;
-		}
+		int vipNumber = parseInt(args[1]);
+		List<Integer> unfinishedForumVip = plugin.getUnfinishedForumVip();
+		if (!unfinishedForumVip.contains(vipNumber)) throw new CommandException("This ID is not valid."); //Check if ID is valid (and still pending) 
+		
+		HashMap<Integer, String> forumVip = plugin.getForumVip();
+		String vipInfo = forumVip.get(vipNumber);
+		forumVip.put(vipNumber, vipInfo + "<:>" + "Handled by " + sender.getName());
+		
+		
 
 		//Remove vip from unfinished vips list.
-		List<Integer> unfinishedForumVip = plugin.getUnfinishedForumVip();
 		int index = 0;
-		int indexToRemove = 0;
-		for (int i : unfinishedForumVip) {
-			if (i == vipNumber) {
-				indexToRemove = index;
+		for (int i : unfinishedForumVip) { //Loop thru list
+			if (i == vipNumber) { //If found
+				unfinishedForumVip.remove(index); //Remove from list
+				break; //And stop looping
 			}
 			index++;
 		}
-		unfinishedForumVip.remove(indexToRemove);
 		sender.sendMessage(ChatColor.GOLD + "Forum promotion/demotion #" + vipNumber + " was completed by " + sender.getName() + "!");
 		return true;
 	}

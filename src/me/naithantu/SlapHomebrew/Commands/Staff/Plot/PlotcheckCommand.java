@@ -4,6 +4,8 @@ import java.util.List;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
+import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -14,43 +16,34 @@ public class PlotcheckCommand extends AbstractCommand {
 		super(sender, args, plugin);
 	}
 
-	public boolean handle() {
-		if (!testPermission(sender, "plot.mod")) {
-			this.noPermission(sender);
-			return true;
-		}
-
-
-		if (args.length == 1) {
+	public boolean handle() throws CommandException {
+		testPermission("plot.mod"); //Test perm
+		switch (args.length) {
+		case 1: //Get plots waiting to be cleared
 			List<Integer> unfinishedPlots = plugin.getUnfinishedPlots();
-			sender.sendMessage(ChatColor.AQUA + "--------- " + unfinishedPlots.size() + " Plots Waiting To Be Cleared ---------");
+			if (unfinishedPlots.isEmpty()) throw new CommandException("There are no plots that need to be cleared!"); //Check if empty
+			msg(ChatColor.AQUA + "--------- " + unfinishedPlots.size() + " Plots Waiting To Be Cleared ---------"); //Send waiting plot marks
 			for (int plotNumber : unfinishedPlots) {
-				sender.sendMessage(sendPlotInfo(plotNumber));
+				msg(sendPlotInfo(plotNumber));
 			}
-		} else if (args.length == 2) {
-			int plotNumber;
-			try {
-				plotNumber = Integer.parseInt(args[1]);
-			} catch (NumberFormatException e) {
-				sender.sendMessage(ChatColor.RED + "Usage: /plot check [number]");
-				return true;
+			break;
+		case 2: //Get one with a certain number
+			int plotNumber = parseInt(args[1]);
+			if (plugin.getUnfinishedPlots().contains(plotNumber)) { //If unfinished send info
+				msg(sendPlotInfo(plotNumber));
+			} else { //Get info from done list
+				if (plugin.getPlots().size() + 1 < plotNumber || plotNumber < 1) throw new CommandException("No plot mark found with this ID."); //Check if Valid ID
+				
+				String[] plotMessages = sendPlotInfo(plotNumber).split("\\{:\\}");
+				msg(plotMessages[0]);
+				msg(plotMessages[1]);
+				if (!plotMessages[2].equals(" - ")) {
+					msg(ChatColor.YELLOW + "Comment: " + ChatColor.DARK_GREEN + plotMessages[2]);
+				}	
 			}
-			if (plugin.getUnfinishedPlots().contains(plotNumber)) {
-				sender.sendMessage(sendPlotInfo(plotNumber));
-			} else {
-				if (plugin.getPlots().size() + 1 > plotNumber) {
-					String[] plotMessages = sendPlotInfo(plotNumber).split("\\{:\\}");
-					sender.sendMessage(plotMessages[0]);
-					sender.sendMessage(plotMessages[1]);
-					if (!plotMessages[2].equalsIgnoreCase(" - ")) {
-						sender.sendMessage(ChatColor.YELLOW + "Comment: " + ChatColor.DARK_GREEN + plotMessages[2]);
-					}
-				} else {
-					sender.sendMessage(ChatColor.RED + "Plot request not found!");
-				}
-			}
-		} else {
-			sender.sendMessage(ChatColor.RED + "Usage: /plot check <number>");
+			break;
+		default:
+			throw new UsageException("plot check <number>");
 		}
 		return true;
 	}

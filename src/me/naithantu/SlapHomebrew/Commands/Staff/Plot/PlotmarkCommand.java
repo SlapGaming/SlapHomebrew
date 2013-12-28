@@ -8,6 +8,7 @@ import java.util.List;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -21,17 +22,9 @@ public class PlotmarkCommand extends AbstractCommand {
 		super(sender, args, plugin);
 	}
 
-	public boolean handle() {
-		if (!(sender instanceof Player)) {
-			this.badMsg(sender, "You need to be in-game to do that.");
-			return true;
-		}
-
-		Player player = (Player) sender;
-		if (!testPermission(player, "plot.mod")) {
-			this.noPermission(sender);
-			return true;
-		}
+	public boolean handle() throws CommandException {
+		Player player = getPlayer(); //Check if player
+		testPermission("plot.mod"); //Test perm
 
 		String reason = " - ";
 		//Add reason.

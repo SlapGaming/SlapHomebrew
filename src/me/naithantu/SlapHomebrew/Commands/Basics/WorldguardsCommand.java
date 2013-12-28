@@ -13,6 +13,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 
 public class WorldguardsCommand extends AbstractCommand {
 
@@ -21,25 +22,20 @@ public class WorldguardsCommand extends AbstractCommand {
 	}
 	
 	@Override
-	public boolean handle() {
-		if (!testPermission(sender, "worldguards")) {
-			noPermission(sender);
-			return true;
-		}
-		if (!(sender instanceof Player)) {
-			badMsg(sender, "You need to be in-game to do that!");
-			return true;
-		}
+	public boolean handle() throws CommandException {
+		Player player = getPlayer(); //Cast to player
+		testPermission("worldguards"); //Test permission
+		
 		try {
-			Player player = (Player) sender;
 			WorldGuardPlugin wg = plugin.getworldGuard();
 			ApplicableRegionSet regions = wg.getRegionManager(player.getWorld()).getApplicableRegions(player.getLocation());
-			LocalPlayer localPlayer = wg.wrapPlayer(player);
+			LocalPlayer localPlayer = wg.wrapPlayer(player); //Make a WorldGuard player
+			
 			String[] messages = new String[2];
 			messages[0] = ChatColor.YELLOW + "Can you build? " + (regions.canBuild(localPlayer) ? "Yes" : "No");
 			Iterator<ProtectedRegion> it = regions.iterator();
 			boolean first = true;
-			while (it.hasNext()) {
+			while (it.hasNext()) { //Loop thru found regions
 				if (first) {
 					first = false;
 					messages[1] = ChatColor.YELLOW + "Regions: " + it.next().getId();
@@ -47,13 +43,13 @@ public class WorldguardsCommand extends AbstractCommand {
 					messages[1] = messages[1] + ", " + it.next().getId();
 				}
 			}
-			if (first) {
+			if (first) { //If no regions found
 				player.sendMessage(ChatColor.YELLOW + "No defined regions here!");
 			} else {
 				player.sendMessage(messages);
 			}
 		} catch (Exception e) {
-			badMsg(sender, "Failed to get regions.");
+			throw new CommandException("Failed to get regions.");
 		}
 		return true;
 	}

@@ -2,9 +2,11 @@ package me.naithantu.SlapHomebrew.Commands.Basics;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
+import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
@@ -17,27 +19,16 @@ public class MinecartCommand extends AbstractCommand {
 		super(sender, args, plugin);
 	}
 
-	public boolean handle() {
-		if(!(sender instanceof Player)){
-			this.badMsg(sender, "You need to be in-game to do that.");
-			return true;
-		}
+	public boolean handle() throws CommandException {
+		Player player = getPlayer(); //Cast to player
+		testPermission("minecart"); //Test permission
 		
-		Player player = (Player) sender;
-		if (!testPermission(player, "minecart")) {
-			this.noPermission(sender);
-			return true;
-		}
-		
-		if(player.isInsideVehicle()){
-			this.badMsg(sender, "You are already in a vehicle.");
-			return true;
-		}
+		if(player.isInsideVehicle()) throw new CommandException(ErrorMsg.alreadyInVehicle); //Check if in vehcile
 
-		World w = player.getWorld();
-		Material blockType = player.getLocation().getBlock().getType();
+		Location loc = player.getLocation();
+		Material blockType = loc.getBlock().getType();
 		if (blockType == Material.ACTIVATOR_RAIL || blockType == Material.POWERED_RAIL || blockType == Material.RAILS || blockType == Material.DETECTOR_RAIL) {
-			Minecart minecart = w.spawn(player.getLocation(), Minecart.class);
+			Minecart minecart = loc.getWorld().spawn(loc, Minecart.class);
 			minecart.setPassenger(player);
 			minecart.setMetadata("slapVehicle", new FixedMetadataValue(plugin, true));
 			Vector v = minecart.getVelocity();
@@ -58,6 +49,8 @@ public class MinecartCommand extends AbstractCommand {
 				v.setZ(7);
 			}
 			minecart.setVelocity(v);
+		} else {
+			throw new CommandException(ErrorMsg.cannotUseHere);
 		}
 		return true;
 	}

@@ -2,6 +2,7 @@ package me.naithantu.SlapHomebrew.Commands.Basics;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -11,18 +12,9 @@ public class WorldCommand extends AbstractCommand {
 		super(sender, args, plugin);
 	}
 
-	public boolean handle() {
-		if (!(sender instanceof Player)) {
-			this.badMsg(sender, "You need to be in-game to do that!");
-			return true;
-		}
-
-		if (!testPermission(sender, "world")) {
-			this.noPermission(sender);
-			return true;
-		}
-
-		Player player = (Player) sender;
+	public boolean handle() throws CommandException {
+		Player player = getPlayer();
+		testPermission("world");
 
 		String worldName = player.getWorld().getName();
 		worldName = worldName.replace("world_", "");
@@ -30,37 +22,37 @@ public class WorldCommand extends AbstractCommand {
 			worldName = "resource";
 		switch (worldName) {
 		case "world":
-			this.msg(sender, "You are in the pre-1.6 (old) survival world.");
+			hMsg("You are in the pre-1.6 (old) survival world.");
 			break;
 		case "survival2":
-			this.msg(sender, "You are in the disabled 1.6 survival world.");
+			hMsg("You are in the disabled 1.6 survival world.");
 			break;
 		case "survival3":
-			this.msg(sender, "You are in the new 1.7 survival world!");
+			hMsg("You are in the new 1.7 survival world!");
 			break;
 		case "start":
-			this.msg(sender, "You are in the lobby world.");
+			hMsg("You are in the lobby world.");
 			break;
 		case "resource":
-			this.msg(sender, "You are in the resource world.");
+			hMsg("You are in the resource world.");
 			break;
 		case "pvp":
-			this.msg(sender, "You are in the PvP world.");
+			hMsg("You are in the PvP world.");
 			break;
 		case "the_end":
-			this.msg(sender, "You are in the end.");
+			hMsg("You are in the end.");
 			break;
 		case "nether":
-			this.msg(sender, "You are in the nether.");
+			hMsg("You are in the nether.");
 			break;
 		case "creative":
-			this.msg(sender, "You are in the creative world.");
+			hMsg("You are in the creative world.");
 			break;
 		case "sonic":
-			this.msg(sender, "You are in the mini-games world.");
+			hMsg("You are in the mini-games world.");
 			break;
 		default:
-			this.msg(sender, "You are in an undefined world!");
+			hMsg("You are in an undefined world!");
 			break;
 		}
 		return true;

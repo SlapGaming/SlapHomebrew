@@ -5,6 +5,8 @@ import org.bukkit.entity.Player;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
+import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 public class SKickCommand extends AbstractCommand {
@@ -14,33 +16,15 @@ public class SKickCommand extends AbstractCommand {
 	}
 
 	@Override
-	public boolean handle() {
-		if (!testPermission(sender, "skick")) {
-			noPermission(sender);
-			return true;
-		}
-		if (args.length < 1) {
-			badMsg(sender, "Usage: /sKick [player] <Reason>");
-			return true;
-		}
-		Player player = plugin.getServer().getPlayer(args[0]);
-		if (player == null) {
-			badMsg(sender, "No player found with the name: " + args[0]);
-			return true;
-		}
-		String reason;
-		if (args.length == 1) {
-			reason = "You have been kicked!";
-		} else {
-			reason = args[1];
-			int x = 2;
-			while (x < args.length) {
-				reason = reason + " " + args[x];
-				x++;
-			}
-		}
-		sender.sendMessage(Util.getHeader() + player.getName() + " has been kicked");
-		player.kickPlayer(reason);
+	public boolean handle() throws CommandException {
+		testPermission("skick"); //Test perm
+		if (args.length < 1) throw new UsageException("sKick [player] <Reason>"); //Usage
+		
+		Player player = getOnlinePlayer(args[0], false); //Get the player to be kicked
+		String reason = (args.length == 1 ? "You have been kicked!" : Util.buildString(args, " ", 1)); //Build reason (if reason given)
+		
+		player.kickPlayer(reason); //Kick player
+		hMsg(player.getName() + " has been kicked"); 
 		return true;
 	}
 	

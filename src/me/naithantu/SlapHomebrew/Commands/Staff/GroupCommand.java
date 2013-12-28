@@ -2,6 +2,7 @@ package me.naithantu.SlapHomebrew.Commands.Staff;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 
 import org.bukkit.command.CommandSender;
 import ru.tehkode.permissions.PermissionUser;
@@ -12,19 +13,14 @@ public class GroupCommand extends AbstractCommand {
 		super(sender, args, plugin);
 	}
 
-	public boolean handle() {
-		if (!testPermission(sender, "group")) {
-			this.noPermission(sender);
-			return true;
-		}
-
-		if (args.length != 1) {
-			return false;
-		}
+	public boolean handle() throws CommandException {
+		testPermission("group"); //Test permission
+		if (args.length != 1) return false; //Check usage
 		
-		PermissionUser user = PermissionsEx.getUser(args[0]);
-		String[] groupNames = user.getGroupsNames();
-		this.msg(sender, user.getName() + " is in group " + groupNames[0]);
+		getOfflinePlayer(args[0]); //Get offline player
+		
+		PermissionUser user = PermissionsEx.getUser(args[0]); //Get PEX User
+		hMsg(user.getName() + " is in group " + user.getGroupsNames()[0]);
 		return true;
 	}
 }

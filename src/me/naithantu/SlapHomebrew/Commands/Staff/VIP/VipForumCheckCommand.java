@@ -4,6 +4,7 @@ import java.util.List;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -14,16 +15,14 @@ public class VipForumCheckCommand extends AbstractCommand {
 		super(sender, args, plugin);
 	}
 
-	public boolean handle() {
-		if (!testPermission(sender, "vip.check")) {
-			this.noPermission(sender);
-			return true;
-		}
+	public boolean handle() throws CommandException {
+		testPermission("vip.check");
 
 		List<Integer> unfinishedForumVip = plugin.getUnfinishedForumVip();
-		sender.sendMessage(ChatColor.AQUA + "----- " + unfinishedForumVip.size() + " Vips Waiting To Be Promoted/Demoted On Forums -----");
+		if (unfinishedForumVip.isEmpty()) throw new CommandException("There are no pending VIPs promotions/demotions.");
+		msg(ChatColor.AQUA + "----- " + unfinishedForumVip.size() + " Vips Waiting To Be Promoted/Demoted On Forums -----");
 		for (int vipNumber : unfinishedForumVip) {
-			sender.sendMessage(sendVipInfo(vipNumber));
+			msg(sendVipInfo(vipNumber));
 		}
 
 		return true;

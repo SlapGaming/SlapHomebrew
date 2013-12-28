@@ -2,9 +2,11 @@ package me.naithantu.SlapHomebrew.Commands.Staff;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Controllers.Bump;
+import me.naithantu.SlapHomebrew.Util.Util;
 
-import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -18,22 +20,16 @@ public class BumpdoneCommand extends AbstractCommand {
 		bump = plugin.getBump();
 	}
 
-	public boolean handle() {
-		if (!testPermission(sender, "bump")) {
-			this.noPermission(sender);
-			return true;
-		}
-
-		if (!bump.getBumpIsDone()) {
-			bump.bump(sender.getName());
-			this.msg(sender, "Thanks for bumping! :)");
-			for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-				if (!onlinePlayer.getName().equals(sender.getName()) && onlinePlayer.hasPermission("slaphomebrew.bump")) {
-					this.msg(onlinePlayer, sender.getName() + " has bumped!");
-				}
+	public boolean handle() throws CommandException {
+		testPermission("bump"); //Test perm
+		if (bump.getBumpIsDone()) throw new CommandException("Someone else has already bumped."); //Check if someone already bumped
+		
+		bump.bump(sender.getName());
+		String bumpString = ChatColor.GREEN + "[Bump] " + ChatColor.WHITE + sender.getName() + " is going to bump! :D";
+		for (Player onlinePlayer : plugin.getServer().getOnlinePlayers()) {
+			if (Util.testPermission(onlinePlayer, "bump")) {
+				onlinePlayer.sendMessage(bumpString);
 			}
-		} else {
-			this.badMsg(sender, "Someone else is already bumping!");
 		}
 		return true;
 	}

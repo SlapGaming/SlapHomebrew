@@ -1,23 +1,22 @@
 package me.naithantu.SlapHomebrew.Commands.Basics;
 
-import java.util.Arrays;
-
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
+import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
+import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
 import me.naithantu.SlapHomebrew.Controllers.Mail;
 import me.naithantu.SlapHomebrew.Controllers.Mail.MailGroups;
 import me.naithantu.SlapHomebrew.Storage.MailSQL;
 import me.naithantu.SlapHomebrew.Storage.MailSQL.CheckType;
+import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import ru.tehkode.permissions.PermissionUser;
-import ru.tehkode.permissions.bukkit.PermissionsEx;
-
 import com.earth2me.essentials.Essentials;
-import com.earth2me.essentials.User;
 
 public class MailCommand extends AbstractCommand {
 
@@ -35,499 +34,268 @@ public class MailCommand extends AbstractCommand {
 	}
 
 	@Override
-	public boolean handle() {
-		if (!(sender instanceof Player)) { //Can only send mails
- 			if (args.length < 3) { //Check correct usage
-				badMsg(sender, "Usage: /mail send [player] [Text]");
-				return true;
-			}
+	public boolean handle() throws CommandException {
+		if (!(sender instanceof Player)) { //Console can send mails
+ 			if (args.length < 3 || !args[0].equalsIgnoreCase("send")) throw new UsageException("/mail send [player] [mail..]"); //Check usage
  			
- 			if (!args[0].equalsIgnoreCase("send")) { //Only send
- 				badMsg(sender, "Console can only send mails!");
- 				return true;
- 			}
- 			
-			User u = ess.getUserMap().getUser(args[1]);
-			if (u != null) {
-				mail.sendConsoleMail(sender, u.getName(), createMailMessage(args));
-			} else {
-				badMsg(sender, "This player has never been on the server.");
-			}
+ 			OfflinePlayer offPlayer = getOfflinePlayer(args[1]); //Get player
+ 			mail.sendConsoleMail(sender, offPlayer.getName(), createMailMessage()); //Send mail
 			return true;
 		}
 
-		if (!testPermission(sender, "mail")) {
-			this.noPermission(sender);
-			return true;
-		}
+		Player p = getPlayer();
+		testPermission("mail");
 		
-		if (mail.isDevServer()) {
-			badMsg(sender, "Running a dev server, mail is disabled.");
-			return true;
-		}
+		OfflinePlayer offPlayer; int mailID, page;
+				
+		if (mail.isDevServer()) throw new CommandException(ErrorMsg.runningDev); //Check for Dev server
+		if (args.length == 0) return false; //Usage
 		
-		if (args.length == 0) {
-			//-> check new
-			args = new String[]{"check"};
-		}
-		
-		switch(args[0].toLowerCase()) {
+		switch(args[0].toLowerCase()) { 
 		case "send": case "s":
-			if (!testPermission(sender, "mail.send")) {
-				this.noPermission(sender);
-				return true;
-			}
-			if (args.length > 2) {
-				if (args[1].equalsIgnoreCase("server") || args[1].equalsIgnoreCase("console")) {
-					badMsg(sender, "You cannot send mails to the server!");
-					return true;
-				}
-				User u = ess.getUserMap().getUser(args[1]);
-				if (u != null) {
-					mail.sendMail((Player)sender, args[1], createMailMessage(args));
-				} else {
-					badMsg(sender, "This player has never been on the server.");
-				}
-			} else {
-				sendUsageMessage(UsageType.SEND);
-			}
+			testPermission("mail.send"); //Test perm
+			if (args.length <= 2) throwUsage(UsageType.SEND); //Usage
+			if (args[1].equalsIgnoreCase("server") || args[1].equalsIgnoreCase("console")) throw new CommandException(ErrorMsg.mailServer); //Cannot mail server
+			
+			offPlayer = getOfflinePlayer(args[1]);
+			mail.sendMail(p, offPlayer.getName(), createMailMessage());
 			break;
 		case "reply":
-			if (!testPermission(sender, "mail.send")) {
-				this.noPermission(sender);
-				return true;
-			}
-			if (args.length > 2) {
-				if (args[1].matches("[0-9]*")) {
-					//Probably an #ID
-					int mailID = -1;
-					try {
-						mailID = Integer.parseInt(args[1]);
-						if (mailID > 0) {
-							mail.replyToMailID((Player)sender, mailID, createMailMessage(args));
-						} else throw new NumberFormatException();
-					} catch (NumberFormatException e) {
-						badMsg(sender, args[1] + " is not a valid mail number/ID.");
-					}					
-				} else {
-					//Contains non numbers
-					User u = ess.getUserMap().getUser(args[1]);
-					if (u != null) {
-						mail.replyToPlayer((Player)sender, u.getName(), createMailMessage(args));
-					} else {
-						badMsg(sender, "This player has never been on the server.");
-					}
-				}
-			} else {
-				sendUsageMessage(UsageType.REPLY);
+			testPermission("mail.send"); //Test perm
+			if (args.length <= 2) throwUsage(UsageType.REPLY); //Usage
+			
+			if (args[1].matches("#?\\d+")) { //Looks like an ID
+				mailID = parseIntPositive(args[1].replace("#", ""));
+				mail.replyToMailID(p, mailID, createMailMessage());
+			} else { //Contains non numbers -> Assuming Player
+				offPlayer = getOfflinePlayer(args[1]);
+				mail.replyToPlayer(p, offPlayer.getName(), createMailMessage());
 			}
 			break;	
 		case "read":
-			if (args.length > 1) {
-				if (args[1].startsWith("#")) {
-					args[1] = args[1].replaceFirst("#", "");
-				}
-				if (args[1].toLowerCase().matches("[0-9]*")) {
-					//Probably an #ID
-					int mailID = -1;
-					try {
-						mailID = Integer.parseInt(args[1]);
-						if (mailID > 0) {
-							mail.readMail((Player)sender, mailID);
-						} else throw new NumberFormatException();
-					} catch (NumberFormatException e) {
-						badMsg(sender, args[1] + " is not a valid mail number/ID.");
-					}
-				} else if (args[1].toLowerCase().matches("s[0-9]*")) {
-					//Probably a SendMail ID
-					int mailID = -1;
-					try {
-						mailID = Integer.parseInt(args[1].substring(1));
-						if (mailID > 0) {
-							mail.readSendMail((Player)sender, mailID);
-						} else throw new NumberFormatException();
-					} catch (NumberFormatException e) {
-						badMsg(sender, args[1] + " is not a valid mail number/ID.");
-					}
-				} else if (args[1].toLowerCase().matches("all")) {
-					//Set all mail to read
-					mail.setAllToRead((Player)sender);
+			if (args.length == 1) throwUsage(UsageType.READ); //Usage
+			if (args[1].matches("#?\\d+")) { //Looks like an ID
+				mailID = parseIntPositive(args[1].replace("#", ""));
+				mail.readMail(p, mailID);
+			} else if (args[1].toLowerCase().matches("s#?\\d+")) { //Looks like an SendMail ID
+				mailID = parseIntPositive(args[1].replace("s", "").replace("#", ""));
+				mail.readSendMail(p, mailID);
+			} else if (args[1].equalsIgnoreCase("all")) { //Mark all as read
+				mail.setAllToRead(p); //TODO: CHange to show all unread mails & mark.
+			} else { //Contains non numbers -> Assuming Player
+				if (args[1].equalsIgnoreCase("server") || args[1].equalsIgnoreCase("console")) {
+					mail.readMail(p, "CONSOLE");
 				} else {
-					if (args[1].equalsIgnoreCase("console")) {
-						mail.readMail((Player) sender, "CONSOLE");
-					} else {
-						//Probably a name
-						User u = ess.getUserMap().getUser(args[1]);
-						if (u != null) {
-							mail.readMail((Player)sender, u.getName());
-						} else {
-							badMsg(sender, "This player has never been on the server.");
-						}
-					}
+					offPlayer = getOfflinePlayer(args[1]);
+					mail.readMail(p, offPlayer.getName());
 				}
-			} else {
-				sendUsageMessage(UsageType.READ);
 			}
 			break;
 		case "check": case "c":
-			if (args.length > 1) {
-				if (args[1].matches("[0-9]*")) {
-					//Page number
-					try {
-						int page = Integer.parseInt(args[1]);
-						if (page > 0) {
-							mail.checkMailPage((Player)sender, MailSQL.CheckType.NEW, page);
-						} else throw new NumberFormatException();
-					} catch (NumberFormatException e) {
-						badMsg(sender, "This is not a valid page number.");
-					}
-				} else {
-					int page = 1;
-					if (args.length > 2) {
-						//Page
-						try {
-							page = Integer.parseInt(args[2]);
-							if (page < 1) {
-								throw new NumberFormatException();
-							}
-						} catch (NumberFormatException e) {
-							badMsg(sender, "This is not a valid page number.");
-							return true;
-						}
+			if (args.length == 1) { //No extra parameters given. Check new mail.
+				mail.checkMailPage(p, CheckType.NEW, 1);
+			} else {
+				if (args[1].matches("\\d+")) { //Looks like page number.
+					page = parseIntPositive(args[1]);
+					mail.checkMailPage(p, CheckType.NEW, page);
+				} else { //A type of mail has probably been specified
+					page = 1;
+					if (args.length > 2) { //If page number given
+						page = parseIntPositive(args[2]);
 					}
 					switch(args[1].toLowerCase()) {
 					case "send": case "s":
-						mail.checkMailPage((Player)sender, MailSQL.CheckType.SEND, page);
+						mail.checkMailPage(p, MailSQL.CheckType.SEND, page);
 						break;
 					case "received": case "r":
-						mail.checkMailPage((Player)sender, MailSQL.CheckType.RECIEVED, page);
+						mail.checkMailPage(p, MailSQL.CheckType.RECIEVED, page);
 						break;
 					case "new": case "n":
-						mail.checkMailPage((Player)sender, MailSQL.CheckType.NEW, page);
+						mail.checkMailPage(p, MailSQL.CheckType.NEW, page);
 						break;
 					case "deleted": case "removed": case "d":
-						mail.checkMailPage((Player)sender, MailSQL.CheckType.DELETED, page);
+						mail.checkMailPage(p, MailSQL.CheckType.DELETED, page);
 						break;
 					case "special": case "marked": case "m":
-						mail.checkMailPage((Player)sender, MailSQL.CheckType.MARKED, page);
+						mail.checkMailPage(p, MailSQL.CheckType.MARKED, page);
 						break;
 					default:
-						sendUsageMessage(UsageType.CHECK);
+						throwUsage(UsageType.CHECK);
 					}
 				}
-			} else {
-				//No extra arguments -> Check new mail
-				mail.checkMailPage((Player)sender, MailSQL.CheckType.NEW, 1);
 			}
 			break;
 		case "delete": case "remove": case "del":
-			if (args.length > 1) {
-				if (args[1].startsWith("#")) {
-					args[1] = args[1].replaceFirst("#", "");
-				}
-				if (args[1].toLowerCase().matches("[0-9]*")) {
-					try {
-						int mailID = Integer.parseInt(args[1]);
-						if (mailID > 0) {
-							mail.deleteMail((Player)sender, mailID);
-						} else throw new NumberFormatException();
-					} catch (NumberFormatException e) {
-						badMsg(sender, args[1] + " is not a valid mail number/ID.");
-					} 
-				} else {
-					badMsg(sender, args[1] + " is not a valid mail number/ID.");
-				}
-			} else {
-				sendUsageMessage(UsageType.DELETE);
-			}
+			mailID = parseMailID(UsageType.DELETE);
+			mail.deleteMail(p, mailID);
 			break;
 		case "undelete":
-			if (args.length > 1) {
-				if (args[1].startsWith("#")) {
-					args[1] = args[1].replaceFirst("#", "");
-				}
-				if (args[1].toLowerCase().matches("[0-9]*")) {
-					try {
-						int mailID = Integer.parseInt(args[1]);
-						if (mailID > 0) {
-							mail.undeleteMail((Player)sender, mailID);
-						} else throw new NumberFormatException();
-					} catch (NumberFormatException e) {
-						badMsg(sender, args[1] + " is not a valid mail number/ID.");
-					} 
-				} else {
-					badMsg(sender, args[1] + " is not a valid mail number/ID.");
-				}
-			} else {
-				sendUsageMessage(UsageType.UNDELETE);
-			}
+			mailID = parseMailID(UsageType.UNDELETE);
+			mail.undeleteMail(p, mailID);
 			break;
 		case "search": case "searchplayer": case "player": case "check-conversation": case "conversation": case "con": case "conv":
-			if (args.length > 1) {
-				int page = 1;
-				if (args.length > 2) {
-					try {
-						page = Integer.parseInt(args[2]);
-						if (page < 1) throw new NumberFormatException();
-					} catch (NumberFormatException e) {
-						sender.sendMessage(ChatColor.RED + "This is not a valid page number.");
-						return true;
-					}
-				}
-				User u = ess.getUserMap().getUser(args[1]);
-				if (u != null) {
-					mail.searchPlayerConversation((Player)sender, u.getName(), page);
-				} else {
-					badMsg(sender, "This player has never been on the server.");
-				}
-			} else {
-				sendUsageMessage(UsageType.SEARCH);
+			if (args.length == 1) throwUsage(UsageType.SEARCH); //Usage
+			page = 1;
+			if (args.length > 2) { //If page is given
+				page = parseIntPositive(args[2]);
 			}
+			offPlayer = getOfflinePlayer(args[1]); //Get player
+			mail.searchPlayerConversation(p, offPlayer.getName(), page);
 			break;
 		case "mark":
-			if (args.length > 1) {
-				if (args[1].startsWith("#")) {
-					args[1] = args[1].replaceFirst("#", "");
-				}
-				if (args[1].toLowerCase().matches("[0-9]*")) {
-					try {
-						int mailID = Integer.parseInt(args[1]);
-						if (mailID > 0) {
-							mail.markMail((Player)sender, mailID);
-						} else throw new NumberFormatException();
-					} catch (NumberFormatException e) {
-						badMsg(sender, args[1] + " is not a valid mail number/ID.");
-					} 
-				} else {
-					badMsg(sender, args[1] + " is not a valid mail number/ID.");
-				}
-			} else {
-				sendUsageMessage(UsageType.MARK);
-			}
+			mailID = parseMailID(UsageType.MARK);
+			mail.markMail(p, mailID);
 			break;
-		case "unmark": 
-			if (args.length > 1) {
-				if (args[1].startsWith("#")) {
-					args[1] = args[1].replaceFirst("#", "");
-				}
-				if (args[1].toLowerCase().matches("[0-9]*")) {
-					try {
-						int mailID = Integer.parseInt(args[1]);
-						if (mailID > 0) {
-							mail.unmarkMail((Player)sender, mailID);
-						} else throw new NumberFormatException();
-					} catch (NumberFormatException e) {
-						badMsg(sender, args[1] + " is not a valid mail number/ID.");
-					} 
-				} else {
-					badMsg(sender, args[1] + " is not a valid mail number/ID.");
-				}
-			} else {
-				sendUsageMessage(UsageType.UNMARK);
-			}
+		case "unmark":
+			mailID = parseMailID(UsageType.UNMARK);
+			mail.unmarkMail(p, mailID);
 			break;
 		case "block":
-			if (!testPermission(sender, "mail.block")) {
-				noPermission(sender);
-				return true;
-			}
-			if (args.length > 1) {
-				PermissionUser user = PermissionsEx.getUser(args[1]);
-				if (user != null) {
-					mail.blockPlayer((Player)sender, user.getName());
-				} else {
-					badMsg(sender, "This player has never been on the server.");
-				}
-			} else {
-				sendUsageMessage(UsageType.BLOCK);
-			}
+			testPermission("mail.block");
+			if (args.length == 1) throwUsage(UsageType.BLOCK);
+			offPlayer = getOfflinePlayer(args[1]);
+			mail.blockPlayer(p, offPlayer.getName());
 			break;
 		case "unblock":
-			if (!testPermission(sender, "mail.block")) {
-				noPermission(sender);
-				return true;
-			}
-			if (args.length > 1) {
-				PermissionUser user = PermissionsEx.getUser(args[1]);
-				if (user != null) {
-					mail.blockPlayer((Player)sender, user.getName());
-				} else {
-					badMsg(sender, "This player has never been on the server.");
-				}
-			} else {
-				sendUsageMessage(UsageType.UNBLOCK);
-			}
+			testPermission("mail.block");
+			if (args.length == 1) throwUsage(UsageType.UNBLOCK);
+			offPlayer = getOfflinePlayer(args[1]);
+			mail.unblockPlayer(p, offPlayer.getName());
 			break;
 		case "blocklist":
-			if (!testPermission(sender, "mail.block")) {
-				noPermission(sender);
-				return true;
-			}
-			mail.getBlockList((Player)sender);
+			testPermission("mail.block");
+			mail.getBlockList(p);
 			break;
-		case "group":
-			//This command is way to dangerous..
-			if (!testPermission(sender, "mail.group")) {
-				noPermission(sender);
-				return true;
-			}
-			if (args.length > 2) {
-				try {
-					MailGroups group = MailGroups.valueOf(args[1].toUpperCase());
-					mail.mailGroup((Player)sender, group, createMailMessage(args));
-				} catch (Exception e) {
-					String[] groups = new String[MailGroups.values().length];
-					int xCount = 0;
-					for (MailGroups a : MailGroups.values()) {
-						groups[xCount] = a.toString().toLowerCase();
-						xCount++;
-					}
-					sender.sendMessage(ChatColor.RED + "Incorrect group. Try: " + Arrays.toString(groups));
+		case "group": //This command is way to dangerous..
+			testPermission("mail.group");
+			if (args.length <= 2) throwUsage(UsageType.GROUP);
+			try {
+				MailGroups group = MailGroups.valueOf(args[1].toUpperCase()); //Try to parse group
+				mail.mailGroup(p, group, createMailMessage());
+			} catch (Exception e) {
+				String[] groups = new String[MailGroups.values().length]; //Make a new String array
+				int xCount = 0;
+				for (MailGroups a : MailGroups.values()) { //Fill array with available groups
+					groups[xCount] = a.toString().toLowerCase();
+					xCount++;
 				}
-			} else {
-				sendUsageMessage(UsageType.GROUP);
+				throw new CommandException("Incorrect group. Try: " + ChatColor.AQUA + Util.buildString(groups, ChatColor.WHITE + ", " + ChatColor.AQUA, 0));
 			}
 			break;
 		case "help":
-			int page = 1;
+			page = 1;
 			if (args.length > 1) {
-				try {
-					page = Integer.parseInt(args[1]);
-					if (page < 1) throw new NumberFormatException();
-				} catch (NumberFormatException e) {
-					badMsg(sender, args[1] + " is not a valid page number. There are only 3 pages.");
-					return true;
-				}
+				page = parseIntPositive(args[1]);
 			}
-			if (page > 0 && page < 4)  {
-				String is = ChatColor.YELLOW + "===================="; //16 Left
-				sender.sendMessage(ChatColor.GRAY + "Check the forums for more detailed information!");
-				sender.sendMessage(is + "= " + ChatColor.GOLD + "Help Page " + is + "=");
-				switch (page) {
-				case 1:
-					sendHelpLine("send [Player] [Message]", "Send a mail to a person.");
-					sendHelpLine("reply [#MailID/Player] [Message]", "Reply to a mail or a person.");
-					sendHelpLine("read [#MailID]", "Read a mail. Add 'S' infront of the ID to check a send mail.");
-					sendHelpLine("read all", "Mark all your new mails as read.");
-					break;
-				case 2:
-					sendHelpLine("check <send/received/new/deleted/marked> <page>", "Check (a type of) your mail.");
-					sendHelpLine("delete/undelete [#MailID]", "Delete/Undelete one of your mails.");
-					sendHelpLine("mark/unmark [#MailID]", "Mark/Unmark one of your mails as special.");
-					sendHelpLine("search [Player] <page>", "Get all the send/recieved to/from that player.");
-					break;
-				case 3:
-					sendHelpLine("block/unblock [Player]", "Block/Unblock a player from mailing you.");
-					sendHelpLine("blocklist", "Get a list of all the blocked players.");
-					break;
-				}
-				sender.sendMessage(is + " " + ChatColor.GOLD + "Page " + page + " of 3 " + is);
-			} else {
-				badMsg(sender, "There are only 3 help pages.");
+			if (page <= 0 || page >= 4) throw new CommandException("There are only 3 help pages."); //Check pages
+			
+			String is = ChatColor.YELLOW + "===================="; //16 Left
+			msg(ChatColor.GRAY + "Check the forums for more detailed information!");
+			msg(is + "= " + ChatColor.GOLD + "Help Page " + is + "=");
+			switch (page) {
+			case 1:
+				sendHelpLine("send [Player] [Message]", "Send a mail to a person.");
+				sendHelpLine("reply [#MailID/Player] [Message]", "Reply to a mail or a person.");
+				sendHelpLine("read [#MailID]", "Read a mail. Add 'S' infront of the ID to check a send mail.");
+				sendHelpLine("check <send/received/new/deleted/marked> <page>", "Check (a type of) your mail.");
+				break;
+			case 2:
+				sendHelpLine("read all", "Mark all your new mails as read.");
+				sendHelpLine("delete/undelete [#MailID]", "Delete/Undelete one of your mails.");
+				sendHelpLine("mark/unmark [#MailID]", "Mark/Unmark one of your mails as special.");
+				sendHelpLine("search [Player] <page>", "Get all the send/recieved to/from that player.");
+				break;
+			case 3:
+				sendHelpLine("block/unblock [Player]", "Block/Unblock a player from mailing you.");
+				sendHelpLine("blocklist", "Get a list of all the blocked players.");
+				break;
 			}
-			break;
-		case "sql":
-			if (!testPermission(sender, "mail.sql")) {
-				noPermission(sender);
-				return true;
-			}
-			//Mail sql [from] [Where clause]
-			if (args.length > 2) {
-				String whereClause = ""; int xCount = 2;
-				while (xCount < args.length) {
-					if (xCount == 2) whereClause = args[xCount];
-					else whereClause = whereClause + " " + args[xCount];
-					xCount++;
-				}
-				sender.sendMessage(ChatColor.RED + "Executing SQL: " + ChatColor.WHITE + "SELECT COUNT(*) FROM `" + args[1] + "` WHERE " + whereClause);
-				mail.countSQL((Player)sender, args[1], whereClause);
-			}				
+			msg(is + " " + ChatColor.GOLD + "Page " + page + " of 3 " + is);
 			break;
 		case "other":
-			if (!testPermission(sender, "mail.other")) {
-				noPermission(sender);
-				return true;
-			}
-			if (args.length > 3) {
-				User u = ess.getUserMap().getUser(args[1]);
-				if (u != null) {
-					switch (args[2].toLowerCase()) {
-					case "read":
-						try {
-							int mailID = Integer.parseInt(args[3]);
-							if (mailID < 1) throw new NumberFormatException();
-							boolean sendMail = false;
-							if (args.length > 4) sendMail = true;
-							mail.readMailOther((Player)sender, u.getName(), mailID, sendMail);
-						} catch (NumberFormatException e) {badMsg(sender, "This is not a number.");}
-						break;
-					case "check":
-						try {
-							int pageNr = Integer.parseInt(args[3]);
-							if (pageNr < 1) throw new NumberFormatException();
-							boolean sendMail = false;
-							if (args.length > 4) sendMail = true;
-							if (sendMail) mail.checkMailOther((Player)sender, u.getName(), CheckType.SEND, pageNr);
-							else mail.checkMailOther((Player)sender, u.getName(), CheckType.RECIEVED, pageNr);
-						} catch (NumberFormatException e) {badMsg(sender, "This is not a number.");}
-						break;
-					default:
-						badMsg(sender, "Types: check/read");
-					}
-				} else {
-					badMsg(sender, "Player hasn't been on the server.");
-				}
-			} else {
-				badMsg(sender, "You're doing it wrong. Usage: /mail other [player] [type] [page/id] [send]");
+			testPermission("mail.other"); //Test perm
+			if (args.length <= 3) throw new UsageException("mail other [player] [type] [page/id] <send>");
+			offPlayer = getOfflinePlayer(args[1]);
+			boolean sendMail = (args.length > 4);
+			switch (args[2].toLowerCase()) {
+			case "read":
+				mailID = parseIntPositive(args[3]);
+				mail.readMailOther(p, offPlayer.getName(), mailID, sendMail);
+				break;
+			case "check":
+				page = parseIntPositive(args[3]);
+				mail.checkMailOther(p, offPlayer.getName(), (sendMail ? CheckType.SEND : CheckType.RECIEVED), page);
+				break;
+			default:
+				throw new CommandException("Types: check/read");
 			}
 			break;
 		case "clear":
-			sender.sendMessage(ChatColor.RED + "No need to use clear anymore! Use " + ChatColor.WHITE + "/mail read all" + ChatColor.RED + " to mark all your mail as read.");
-			break;
+			throw new CommandException("No need to use clear anymore! Once you've read a mail it will be marked as read. It will not prompt you anymore to read it, but you can still read it!");
 		default:
 			return false;
 		}
 		return true;
 	}
 	
-	private String createMailMessage(String[] args) {
-		String message = ""; int xCount = 2;
-		while (xCount < args.length) {
-			if (xCount == 2) {
-				message = args[xCount];
-			} else {
-				message = message + " " + args[xCount];
-			}
-			xCount++;
-		}
-		return message;
+	/**
+	 * Parse the command input for only an ID.
+	 * Format: /mail [Something] [ID]
+	 * @param throwType The UsageType it should throw if args.length == 1
+	 * @return The found MailID
+	 * @throws CommandException if invalid args length or not a number
+	 */
+	private int parseMailID(UsageType throwType) throws CommandException {
+		if (args.length == 1) throwUsage(throwType); //Usage
+		if (!args[1].toLowerCase().matches("#?\\d+")) throw new CommandException(ErrorMsg.invalidMailID); //Check if ID Number
+		return parseIntPositive(args[1].replace("#", "").replace("s", ""));
+	}
+	
+	/**
+	 * Parse the arguments starting from args[x] into one single mail string
+	 * @return the string
+	 */
+	private String createMailMessage() {
+		return Util.buildString(args, " ", 2);
 	}
 	
 	private enum UsageType {
 		SEND, REPLY, READ, CHECK, DELETE, UNDELETE, MARK, UNMARK, SEARCH, BLOCK, UNBLOCK, BLOCKLIST, GROUP
 	}
 	
-	private void sendUsageMessage(UsageType type) {
-		String msg = ChatColor.RED + "Usage: ";
+	/**
+	 * Throw a usage exception
+	 * @param type The type of usage
+	 * @throws UsageException
+	 */
+	private void throwUsage(UsageType type) throws UsageException {
+		String msg;
 		switch (type) {
-		case BLOCK: sender.sendMessage(msg + "/mail block [Playername]"); break;
-		case BLOCKLIST: sender.sendMessage(msg + "/mail blocklist"); break;
-		case CHECK: sender.sendMessage(msg + "/mail check <send/recieved/new/deleted/special/marked> <page>"); break;
-		case DELETE: sender.sendMessage(msg + "/mail delete [#MailID]"); break;
-		case GROUP: sender.sendMessage(msg + "/mail group [Group] [Message]"); break;
-		case MARK: sender.sendMessage(msg + "/mail mark [#MailID]"); break;
-		case READ: sender.sendMessage(msg + "/mail read [#MailID/Playername]"); break;
-		case REPLY: sender.sendMessage(msg + "/mail reply [#MailID/Playername] [Message]"); break;
-		case SEARCH: sender.sendMessage(msg + "/mail search [Playername]"); break;
-		case SEND: sender.sendMessage(msg + "/mail send [Playername] [Message]"); break;
-		case UNBLOCK: sender.sendMessage(msg + "/mail unblock [Playername]"); break;
-		case UNDELETE: sender.sendMessage(msg + "/mail undelete [#MailID]"); break;
-		case UNMARK: sender.sendMessage(msg + "/mail unmark [#MailID]"); break;
+		case BLOCK: msg = "mail block [Playername]"; break;
+		case BLOCKLIST: msg = "mail blocklist"; break;
+		case CHECK: msg = "mail check <send/recieved/new/deleted/special/marked> <page>"; break;
+		case DELETE: msg = "mail delete [#MailID]"; break;
+		case GROUP: msg = "mail group [Group] [Message]"; break;
+		case MARK: msg = "mail mark [#MailID]"; break;
+		case READ: msg = "mail read [#MailID/Playername]"; break;
+		case REPLY: msg = "mail reply [#MailID/Playername] [Message]"; break;
+		case SEARCH: msg = "mail search [Playername]"; break;
+		case SEND: msg = "mail send [Playername] [Message]"; break;
+		case UNBLOCK: msg = "mail unblock [Playername]"; break;
+		case UNDELETE: msg = "mail undelete [#MailID]"; break;
+		case UNMARK: msg = "mail unmark [#MailID]"; break;
+		default: msg = "mail help";
 		}
+		throw new UsageException(msg);
 	}
 		
+	/**
+	 * Send a line in the /mail help command
+	 * @param command The explained command (will be prepended with /mail )
+	 * @param help The instructions for the command
+	 */
 	private void sendHelpLine(String command, String help) {
-		sender.sendMessage(ChatColor.GOLD + "/mail " + command + " : " + ChatColor.WHITE + help);
+		msg(ChatColor.GOLD + "/mail " + command + " : " + ChatColor.WHITE + help);
 	}
 
 }

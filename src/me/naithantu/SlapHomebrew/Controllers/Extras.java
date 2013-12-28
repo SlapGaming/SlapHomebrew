@@ -20,7 +20,7 @@ public class Extras {
 	HashMap<String, HomeMenu> homeMenus = new HashMap<String, HomeMenu>();
 	List<String> hasJumped = new ArrayList<String>();
 	Menus menus;
-	List<String> ghosts = new ArrayList<String>();
+	HashSet<String> ghosts = new HashSet<String>();
 	Team ghostTeam;
 
 	public Extras(SlapHomebrew plugin) {
@@ -41,10 +41,6 @@ public class Extras {
 	public HashMap<String, Integer> getRainbow() {
 		return rainbow;
 	}
-
-	public void setRainbow(HashMap<String, Integer> rainbow) {
-		this.rainbow = rainbow;
-	}
 	
 	public List<String> getHasJumped(){
 		return hasJumped;
@@ -58,12 +54,8 @@ public class Extras {
 		return menus;
 	}
 	
-	public List<String> getGhosts(){
+	public HashSet<String> getGhosts() {
 		return ghosts;
-	}
-	
-	public void setGhosts(List<String> ghosts){
-		this.ghosts = ghosts;
 	}
 	
 	public Team getGhostTeam(){

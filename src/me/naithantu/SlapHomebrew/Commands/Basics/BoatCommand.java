@@ -2,10 +2,11 @@ package me.naithantu.SlapHomebrew.Commands.Basics;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
+import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Boat;
 import org.bukkit.entity.Player;
@@ -17,35 +18,29 @@ public class BoatCommand extends AbstractCommand {
 		super(sender, args, plugin);
 	}
 
-	public boolean handle() {
-		if (!(sender instanceof Player)) {
-			this.badMsg(sender, "You need to be in-game to do that.");
-			return true;
-		}
+	public boolean handle() throws CommandException {
+		Player player = getPlayer(); //Cast to player
+		testPermission("boat"); //Test permission
+		
+		if (player.isInsideVehicle()) throw new CommandException(ErrorMsg.alreadyInVehicle); //Check if not already in a vehicle
 
-		final Player player = (Player) sender;
-		if (!testPermission(player, "boat")) {
-			this.noPermission(sender);
-			return true;
-		}
-
-		if (player.isInsideVehicle()) {
-			this.badMsg(sender, "You are already in a vehicle.");
-			return true;
-		}
-
-		World w = player.getWorld();
-		int depth = getWaterDepth(player.getLocation());
+		Location loc = player.getLocation();
+		int depth = getWaterDepth(loc); //Get depth
 		if (depth > 0 && depth <= 5) {
-			final Boat boat = w.spawn(player.getLocation().add(0, 1, 0), Boat.class);
+			final Boat boat = loc.getWorld().spawn(loc.add(0, 1, 0), Boat.class);
 			boat.setPassenger(player);			
 			boat.setMetadata("slapVehicle", new FixedMetadataValue(plugin, true));
 		} else {
-			this.badMsg(sender, "You can not use that here!");
+			throw new CommandException(ErrorMsg.cannotUseHere);
 		}
 		return true;
 	}
 
+	/**
+	 * Get the water depth on a certain location
+	 * @param location The location
+	 * @return the depth
+	 */
 	public int getWaterDepth(Location location) {
 		int depth = 0;
 		Material material = location.getBlock().getType();

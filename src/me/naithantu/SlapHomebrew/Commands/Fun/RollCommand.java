@@ -4,11 +4,13 @@ import java.util.Random;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
+import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
 import me.naithantu.SlapHomebrew.Controllers.Lottery;
+import me.naithantu.SlapHomebrew.Util.Util;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 public class RollCommand extends AbstractCommand {
 	
@@ -21,35 +23,35 @@ public class RollCommand extends AbstractCommand {
 		}
 	}
 
-	public boolean handle() {
-		if (!testPermission(sender, "roll")) {
-			this.noPermission(sender);
-			return true;
-		}
+	public boolean handle() throws CommandException {
+		Player p = getPlayer();
+		testPermission("roll");
 		
-		if (lottery.getPlaying()) {
-			if (!lottery.getLottery().containsKey(sender.getName())) {
+		String playername = p.getName();
+		
+		if (lottery.getPlaying()) { //Check if lottery is running
+			if (!lottery.getLottery().containsKey(p.getName())) { //Check if already rolled
 				Random random = new Random();
 				int randInt = random.nextInt(101);
-				lottery.getLottery().put(sender.getName(), randInt);
-				Bukkit.getServer().broadcastMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + sender.getName() + " rolled " + Integer.toString(randInt) + "!");
+				lottery.getLottery().put(playername, randInt);
+				Util.broadcast(playername + " rolled " + randInt + "!");
 			} else {
-				this.badMsg(sender, "You have already rolled in this lottery!");
+				throw new CommandException(ErrorMsg.alreadyRolled);
 			}
 		} else if (lottery.isFakeLotteryPlaying()) {
-			if (!lottery.hasAlreadyFakeRolled(sender.getName())) {
-				if (sender.getName().equals(lottery.getFakeLotteryWinner())) {
-					Bukkit.getServer().broadcastMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + sender.getName() + " rolled 100!");
-					lottery.fakeRoll(sender.getName(), 100);
+			if (!lottery.hasAlreadyFakeRolled(playername)) {
+				if (playername.equals(lottery.getFakeLotteryWinner())) {
+					Util.broadcast(playername + " rolled 100!");
+					lottery.fakeRoll(playername, 100);
 				} else {
-					Bukkit.getServer().broadcastMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + sender.getName() + " rolled 0!");
-					lottery.fakeRoll(sender.getName(), 0);
+					Util.broadcast(playername + " rolled 0!");
+					lottery.fakeRoll(playername, 0);
 				}
 			} else {
-				this.badMsg(sender, "You have already rolled in this lottery!");
+				throw new CommandException(ErrorMsg.alreadyRolled);
 			}
 		} else {
-			this.badMsg(sender, "There is currently no lottery playing!");
+			throw new CommandException("There is currently no lottery playing!");
 		}
 		
 
