@@ -164,7 +164,7 @@ public class SlapCommand extends AbstractCommand {
 			if (args.length != 2 && args.length != 3) throw new UsageException("slap tabgroup [Player] <group> " + ChatColor.GRAY + "(See /slap tabgroups for groups)");
 			offPlayer = getOfflinePlayer(args[1]);
 			PermissionUser pexUser = PermissionsEx.getUser(offPlayer.getName());
-			if (pexUser == null || !pexUser.getGroups()[0].equals("SuperAdmin")) throw new CommandException("This player is not a SuperAdmin.");
+			if (pexUser == null || !pexUser.getGroups()[0].getName().equals("SuperAdmin")) throw new CommandException("This player is not a SuperAdmin.");
 			if (args.length == 2) { //Checking tabgroup
 				TabGroup group = plugin.getPlayerLogger().getSuperAdminGroup(offPlayer.getName());
 				if (group == null) throw new CommandException("This player is in the owners Tab (Not registered)");

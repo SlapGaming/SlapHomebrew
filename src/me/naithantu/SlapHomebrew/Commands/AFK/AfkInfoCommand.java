@@ -41,7 +41,7 @@ public class AfkInfoCommand extends AbstractCommand {
 			Player foundPlayer = getOnlinePlayer(args[0], false); //Get the player
 			String pName = foundPlayer.getName();
 			boolean afk = afkController.isAfk(pName);
-			hMsg("Player: " +  ChatColor.GREEN + pName + ChatColor.WHITE + " | AKF: " + (afk ? ChatColor.AQUA + "Yes" : ChatColor.RED + "No")); //Send AFK string
+			hMsg("Player: " +  ChatColor.GREEN + pName + ChatColor.WHITE + " | AFK: " + (afk ? ChatColor.AQUA + "Yes" : ChatColor.RED + "No")); //Send AFK string
 			if (afk) { //If Player is AFK
 				String afkReason = afkController.getAfkReason(pName); //Get AFK Reason
 				if (!afkReason.equals("AFK")) { //Check if custom AFK reason

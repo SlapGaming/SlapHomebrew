@@ -58,7 +58,7 @@ public class MessageCommand extends AbstractCommand {
 			hMsg("Reloaded messages config!");
 			break;
 		default: //Broadcast a message
-			Util.broadcast(getMessage(args[0])); //Get message & broodkast
+			plugin.getServer().broadcastMessage(getMessage(args[0])); //Get message & broodkast
 		}
 		return true;
 	}
