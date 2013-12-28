@@ -54,6 +54,17 @@ public abstract class AbstractCommand {
 	}
 	
 	/**
+	 * Check if the CommandSender is NOT in a certain world
+	 * @param worldname The name of the world
+	 * @throws CommandException if not a player or if in the world
+	 */
+	protected void testNotWorld(String worldname) throws CommandException {
+		if (getPlayer().getWorld().getName().equalsIgnoreCase(worldname)) {
+			throw new CommandException("You cannot do this in this world!");
+		}
+	}
+	
+	/**
 	 * Try to parse a string to integer. The integer must be positive.
 	 * @param arg The string that needs to be parsed
 	 * @return the int

@@ -1,16 +1,18 @@
 package me.naithantu.SlapHomebrew.Listeners.Player;
 
-import me.naithantu.SlapHomebrew.Controllers.*;
+import java.util.HashMap;
+
 import me.naithantu.SlapHomebrew.SlapHomebrew;
-import me.naithantu.SlapHomebrew.Commands.Staff.MessageCommand;
+import me.naithantu.SlapHomebrew.Controllers.AwayFromKeyboard;
+import me.naithantu.SlapHomebrew.Controllers.Jails;
+import me.naithantu.SlapHomebrew.Controllers.MessageFactory;
+import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-
-import java.util.HashMap;
 
 public class PlayerChatListener implements Listener {
 	private SlapHomebrew plugin;

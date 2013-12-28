@@ -22,7 +22,8 @@ public class RainbowCommand extends AbstractCommand {
 	public boolean handle() throws CommandException {
 		Player player = getPlayer(); //Cast & Test permission
 		testPermission("rainbow");
-
+		testNotWorld("world_pvp");
+		
 		if (!checkLeatherArmor(player.getInventory())) throw new CommandException("You must be wearing leather armour!"); //Check if wearing leather armor
 
 		HashMap<String, Integer> rainbow = plugin.getExtras().getRainbow();
