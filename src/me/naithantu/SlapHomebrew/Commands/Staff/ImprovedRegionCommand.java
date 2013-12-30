@@ -72,7 +72,7 @@ public class ImprovedRegionCommand extends AbstractCommand {
 			iRgCommand = new RedefineCommand(plugin, p, args);
 			break;
 			
-		case "setpriority": case "setp": case "setprio": case "priority": case "pri": //Set the priority of a region
+		case "setpriority": case "setp": case "setpri": case "priority": case "pri": //Set the priority of a region
 			testIRGPermission(Perm.priority);
 			iRgCommand = new PriorityCommand(plugin, p, args);
 			break;
@@ -87,7 +87,7 @@ public class ImprovedRegionCommand extends AbstractCommand {
 			iRgCommand = new AddMemberCommand(plugin, p, args, hasPermission(Perm.addMemberAll));
 			break;
 			
-		case "removemember": case "remmember": case "removem": case "rmember": case "remm": //Remove a member from a region
+		case "removemember": case "remmember": case "removem": case "rmember": case "remm": case "rm": //Remove a member from a region
 			testIRGPermission(Perm.removeMemberOwn);
 			iRgCommand = new RemoveMemberCommand(plugin, p, args, hasPermission(Perm.removeMemberAll));
 			break;
@@ -97,7 +97,7 @@ public class ImprovedRegionCommand extends AbstractCommand {
 			iRgCommand = new AddOwnerCommand(plugin, p, args);
 			break;
 			
-		case "removeowner": case "remowner": case "remo": case "removeo": case "rowner": //Remove a owner of a region
+		case "removeowner": case "remowner": case "remo": case "removeo": case "rowner": case "ro": //Remove a owner of a region
 			testIRGPermission(Perm.removeOwner);
 			iRgCommand = new RemoveOwnerCommand(plugin, p, args);
 			break;
