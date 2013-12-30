@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
+import me.naithantu.SlapHomebrew.Commands.Lists.ListCommand;
 import me.naithantu.SlapHomebrew.Controllers.Book;
 import me.naithantu.SlapHomebrew.Controllers.Jails;
 import me.naithantu.SlapHomebrew.Controllers.Mail;
@@ -179,8 +181,11 @@ public class PlayerJoinListener implements Listener {
 				//Minechat prevention
 				playerLogger.joinedMinechatChecker(player);
 				
-				//Sudo /list
-				player.chat("/list");
+				try { //Execute /list
+					new ListCommand(player, new String[]{}, plugin).handle();
+				} catch (CommandException e) {
+					Util.badMsg(player, e.getMessage());
+				}
 				
 				//Throw in jail
 				if (jails.isInJail(player.getName())) {
