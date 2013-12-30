@@ -55,10 +55,10 @@ public class HelpCommand extends AbstractImprovedRegionCommand {
 				break;
 			}
 		} else {
-			sendHelpLine("addmember <Member 1>.. [-region <regionname>]", "Add members to your region (Will pick the one you're standing in).");
+			sendHelpLine("addmember <Member 1>.. [-region <Region ID>]", "Add members to your region (Will pick the one you're standing in if no region ID given).");
 			sendHelpLine("info [Region ID]", "Get information about your region.");
 			sendHelpLine("list", "Get a list of your regions (in this world)");
-			sendHelpLine("addmember <Member 1>.. [-region <regionname>]", "Remove members from your region (Will pick the one you're standing in).");
+			sendHelpLine("removemember <Member 1>.. [-region <Region ID>]", "Remove members from your region (Will pick the one you're standing in if no region ID given).");
 		}
 		msg(ChatColor.YELLOW + "=========== " + ChatColor.GOLD + "Page " + page + " / " + (staff ? "4" : "1") + ChatColor.YELLOW + " ===========");
 	}
