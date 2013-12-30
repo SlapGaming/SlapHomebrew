@@ -47,15 +47,14 @@ public class AfkInfoCommand extends AbstractCommand {
 				if (!afkReason.equals("AFK")) { //Check if custom AFK reason
 					hMsg("AFK Reason: " + afkReason); //Send AFK Reason
 				}
-				
-				if (Util.testPermission(sender, "afkinfo.extended")) { //If CommandSender has extended info
-					long lastActive = plugin.getPlayerLogger().getLastActivity(pName); //Get the last activity of the player
-					if (lastActive != 0) {
-						long totalSeconds = (System.currentTimeMillis() - lastActive) / 1000;
-						int minutes = (int) Math.floor(totalSeconds / (double) 60);
-						int seconds = (int) totalSeconds - minutes * 60;
-						hMsg("Last activity: " +  minutes + " minutes & " + seconds + " seconds ago."); //Send last activity
-					}
+			}
+			if (Util.testPermission(sender, "afkinfo.extended")) { //If CommandSender has extended info
+				long lastActive = plugin.getPlayerLogger().getLastActivity(pName); //Get the last activity of the player
+				if (lastActive != 0) {
+					long totalSeconds = (System.currentTimeMillis() - lastActive) / 1000;
+					int minutes = (int) Math.floor(totalSeconds / (double) 60);
+					int seconds = (int) totalSeconds - minutes * 60;
+					hMsg("Last activity: " +  minutes + " minutes & " + seconds + " seconds ago."); //Send last activity
 				}
 			}
 		}

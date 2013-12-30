@@ -3,7 +3,7 @@ main: me.naithantu.SlapHomebrew.SlapHomebrew
 depend: [Essentials, Vault, PermissionsEx, ReportRTS]
 softdepend: [TabAPI]
 authors: [naithantu, Stoux2]
-version: 3.1.0
+version: 3.1.1
 description: SlapHomebrew homemade plugin.
 commands:
   vip:
@@ -80,6 +80,9 @@ commands:
   afkinfo:
     description: Get the AFK Reason of a player/all players
     usage: "Usage: /afkinfo <[Player] | list>"
+  afklist:
+    description: Get a list of all AFK players
+    usage: "Usage: /afklist"
   homemenu:
     description: Show the homes icon menu
     usage: "Usage: /homemenu"
