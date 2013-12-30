@@ -78,17 +78,7 @@ public class PlayerInteractEntityListener implements Listener {
 			}
 			return;
 		}
-		
-		
 				
-		//Item frame map block
-		if(clickedEntity.getType() == EntityType.ITEM_FRAME){
-			if(player.getItemInHand().getType() == Material.MAP){
-				player.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + "You may not place maps in item frames!");
-				event.setCancelled(true);
-			}
-		}
-		
 		//Ignored for staff
 		if (!player.hasPermission("slaphomebrew.staff")) {
 			
