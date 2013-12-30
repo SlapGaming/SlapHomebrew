@@ -35,6 +35,7 @@ public class AfkCommand extends AbstractCommand {
 				else afk.setPreventAFK(playername);
 				
 				hMsg("Prevent AFK is " + (preventAfk ? "off." : "on.")); //Send current status message
+				return true;
 			}
 		}
 		

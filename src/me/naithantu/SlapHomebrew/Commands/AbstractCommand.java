@@ -135,7 +135,7 @@ public abstract class AbstractCommand {
 		Player foundPlayer;
 		if (exact) foundPlayer = plugin.getServer().getPlayerExact(playername); //Use exact method
 		else foundPlayer = plugin.getServer().getPlayer(playername);
-		if (foundPlayer == null) throw new CommandException(ErrorMsg.playerNotOnline); //If no player found throw error
+		if (foundPlayer == null) throw new CommandException("There is no player with the name '" + playername + "' online!"); //If no player found throw error
 		return foundPlayer;
 	}
 	
@@ -147,7 +147,7 @@ public abstract class AbstractCommand {
 	 */
 	protected OfflinePlayer getOfflinePlayer(String playername) throws CommandException {
 		OfflinePlayer offPlayer = plugin.getServer().getOfflinePlayer(playername);
-		if (!offPlayer.hasPlayedBefore()) throw new CommandException(ErrorMsg.playerNotFound);
+		if (!offPlayer.hasPlayedBefore()) throw new CommandException("There is no player with the name '" + playername + "' on this server!");
 		return offPlayer;
 	}
 	
