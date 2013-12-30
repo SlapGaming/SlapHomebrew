@@ -84,6 +84,7 @@ public class CommandHandler {
 		case "kills":			commandObj = new KillsCommand(sender, args, plugin);				break;
 		case "playtime":		commandObj = new PlaytimeCommand(sender, args, plugin);				break;
 		case "teleportmob":		commandObj = new TeleportMobCommand(sender, args, plugin);			break;
+		case "improvedregion":	commandObj = new ImprovedRegionCommand(sender, args, plugin);		break;
 		case "plot":
 			if (args.length == 0) return false;
 			switch (args[0].toLowerCase()) {

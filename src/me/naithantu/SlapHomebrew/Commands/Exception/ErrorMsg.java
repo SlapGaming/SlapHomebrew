@@ -4,6 +4,7 @@ public enum ErrorMsg {
 
 	//Dev
 	runningDev("Running a dev server. This is disabled."),
+	notSupportedYet("This function/command is not supported yet!"),
 	
 	//General
 	notAPlayer("You need to be in-game to do this!"),
@@ -33,8 +34,10 @@ public enum ErrorMsg {
 	invalidMailID("The specified mail ID is invalid."),
 	
 	//Horses
-	notOnAHorse("You need to be on a horse to do that!");
+	notOnAHorse("You need to be on a horse to do that!"),
 	
+	//Improved Regions
+	notTheOwner("You are not the owner of this region!");
 	
 	private String message;
 	

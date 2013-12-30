@@ -45,35 +45,44 @@ public class PlayerCommandListener implements Listener {
 			return;
 		}
 		
-		//Morph Whisper -> M
-		if (commandMessage[0].equals("/w")) {
-			player.chat(event.getMessage().replace("/w", "/m"));
+		switch (commandMessage[0]) {//Morph commands
+		case "/w": case "/whisper": case "/tell": //Morph all chat commands -> /message
+			player.chat(event.getMessage().replaceFirst("(?i)"+ commandMessage[0], "/m"));
 			event.setCancelled(true);
 			return;
-		} else if (commandMessage[0].equals("/whisper")) {
-			player.chat(event.getMessage().replace("/whisper", "/m"));
-			event.setCancelled(true);
-			return;
-		}
-		
-		//Morph plugins -> sPlugins
-		if (commandMessage[0].equals("/plugins")) {
+			
+		case "/plugins": //Plugins -> /sPlugins
 			if (!Util.testPermission(player, "spluginsoverride")) {
 				player.chat("/splugins");
 				event.setCancelled(true);
 				return;
 			}
-		}
-		
-		//Morph leave -> gleave
-		if (commandMessage[0].equals("/leave")) {
+			break;
+			
+		case "/leave": //Leave -> /gleave
 			if (player.getWorld().getName().equals("world_sonic")) {
 				event.setCancelled(true);
 				player.chat("/gleave");
 				return;
 			}
+			break;
+			
+		case "/?": //? -> Help
+			if (!Util.testPermission(player, "spluginsoverride")) {
+				player.chat(event.getMessage().replace(commandMessage[0], "/help"));
+				event.setCancelled(true);
+				return;
+			}
+			break;
+			
+		case "/region": case "/rg": //Region -> ImprovedRegion
+			if (!player.hasPermission("irg.regionoverride")) {
+				player.chat(event.getMessage().replaceFirst("(?i)" + commandMessage[0], "/irg"));
+				event.setCancelled(true);
+				return;
+			}
 		}
-		
+				
 		//Set last activity
 		playerLogger.setLastActivity(playerName);
 		
