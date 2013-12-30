@@ -20,11 +20,38 @@ public class BlockPlaceListener implements Listener {
 
 	@EventHandler
 	public void onBlockPlace(BlockPlaceEvent event) {
-		//Add metadata to skulls placed in the wither arena to find out who made a wither.
+		// Add metadata to skulls placed in the wither arena to find out who
+		// made a wither.
 		Block block = event.getBlock();
 		if (block.getType() == Material.SKULL) {
 			if (Util.hasFlag(plugin, block.getLocation(), Flag.ALLOWWITHERSPAWN)) {
-				block.setMetadata("slapWitherSkull", new FixedMetadataValue(plugin, event.getPlayer().getName()));
+				block.setMetadata("slapWitherSkull", new FixedMetadataValue(
+						plugin, event.getPlayer().getName()));
+			}
+		}
+	}
+
+	@EventHandler
+	public void onLogPlace(BlockPlaceEvent event) {
+		Material material = event.getItemInHand().getType();
+		if (material == Material.LOG || material == Material.LOG_2) {
+			int materialData = event.getItemInHand().getData().getData();
+			Block block = event.getBlock();
+			switch (materialData) {
+			case 12:
+				block.setData((byte) 12);
+				break;
+			case 13:
+				block.setData((byte) 13);
+				break;
+			case 14:
+				block.setData((byte) 14);
+				break;
+			case 15:
+				block.setData((byte) 15);
+				break;
+			default:
+				break;
 			}
 		}
 	}
