@@ -91,6 +91,7 @@ public class SlapHomebrew extends JavaPlugin {
 	/**
 	 * Controllers
 	 */
+	private ArrayList<AbstractController> controllers;
 	private AwayFromKeyboard afk;
 	private Bump bump;
 	private ChangeLog changeLog;
@@ -215,24 +216,24 @@ public class SlapHomebrew extends JavaPlugin {
 	}
 	
 	private void initializeControllers() {
-		 bump = new Bump(dataStorage, dataConfig);
-		 changeLog = new ChangeLog();
-		 duelArena = new DuelArena();
-		 extras = new Extras();
-		 show = new FireworkShow();
-		 horses = new Horses();
-		 jails = new Jails();
-		 lag = new Lag();
-		 lottery = new Lottery();
-		 mail = new Mail();
-         messages = new Messages();
-		 playerLogger = new PlayerLogger();
-		 afk = new AwayFromKeyboard(playerLogger);
-		 tabController = new TabController(playerLogger);
-		 vip = new Vip(vipStorage, tabController);
-		 worthList = new WorthList();
-		 
-		 new ApplyChecker(essentials, tabController);
+		 controllers = new ArrayList<>();
+		 controllers.add(bump = new Bump(dataStorage, dataConfig));
+		 controllers.add(changeLog = new ChangeLog());
+		 controllers.add(duelArena = new DuelArena());
+		 controllers.add(extras = new Extras());
+		 controllers.add(show = new FireworkShow());
+		 controllers.add(horses = new Horses());
+		 controllers.add(jails = new Jails());
+		 controllers.add(lag = new Lag());
+		 controllers.add(lottery = new Lottery());
+		 controllers.add(mail = new Mail());
+		 controllers.add(messages = new Messages());
+		 controllers.add(playerLogger = new PlayerLogger());
+		 controllers.add(afk = new AwayFromKeyboard(playerLogger));
+		 controllers.add(tabController = new TabController(playerLogger));
+		 controllers.add(vip = new Vip(vipStorage, tabController));
+		 controllers.add(worthList = new WorthList());
+		 controllers.add(new ApplyChecker(essentials, tabController));
 	}
 	
 	private void initializeLoaders() {
@@ -309,8 +310,9 @@ public class SlapHomebrew extends JavaPlugin {
 	}
 	
 	private void disableControllers() {
-		jails.shutdown();
-		playerLogger.onDisable();
+		for (AbstractController controller : controllers) {
+			controller.shutdown();
+		}
 	}
 
 	
