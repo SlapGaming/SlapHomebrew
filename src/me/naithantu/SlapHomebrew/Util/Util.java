@@ -38,6 +38,7 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 public class Util {
+	
 	public static String getHeader() {
 		return ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE;
 	}

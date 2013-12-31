@@ -9,7 +9,6 @@
 	<classpathentry kind="lib" path="lib/Multiverse-Inventories-2.5.jar"/>
 	<classpathentry kind="lib" path="lib/PermissionsEx.jar"/>
 	<classpathentry kind="lib" path="lib/Vault.jar"/>
-	<classpathentry kind="lib" path="lib/WGCustomFlags.jar"/>
 	<classpathentry kind="lib" path="lib/WorldEdit.jar"/>
 	<classpathentry kind="lib" path="lib/WorldGuard.jar"/>
 	<classpathentry kind="lib" path="lib/LogBlock.jar"/>
@@ -17,6 +16,7 @@
 	<classpathentry kind="lib" path="lib/ReportRTS.jar"/>
 	<classpathentry kind="lib" path="lib/NTheEndAgain.jar"/>
 	<classpathentry kind="lib" path="lib/NCore.jar"/>
+	<classpathentry kind="lib" path="lib/mcbansdevbukkit.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/Essentials.jar"/>
 	<classpathentry kind="lib" path="lib/Craftbukkit.jar"/>
