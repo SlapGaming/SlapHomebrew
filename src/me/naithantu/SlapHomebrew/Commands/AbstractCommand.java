@@ -147,6 +147,7 @@ public abstract class AbstractCommand {
 	 */
 	protected OfflinePlayer getOfflinePlayer(String playername) throws CommandException {
 		OfflinePlayer offPlayer = plugin.getServer().getOfflinePlayer(playername);
+		if (offPlayer.getPlayer() != null) return offPlayer;
 		if (!offPlayer.hasPlayedBefore()) throw new CommandException("There is no player with the name '" + playername + "' on this server!");
 		return offPlayer;
 	}
