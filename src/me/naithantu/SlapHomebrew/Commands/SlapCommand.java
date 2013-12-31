@@ -529,44 +529,7 @@ public class SlapCommand extends AbstractCommand {
 					hMsg("Turned CommandSpy for player " + targetname + ": " + ((isCS) ? ChatColor.RED + "Off." : ChatColor.GREEN + "On.")); //Msg
 				}
 				break;
-				
-			case "sel": case "select": case "info": //Going to be replaced by /irg
-				testPermission("worldguardsc");
-				final String rgCommand = args[0].toLowerCase();
-				final World rgWorld = player.getWorld();
-				final Location rgLoc = player.getLocation(); 
-				plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new BukkitRunnable() {
-					
-					@Override
-					public void run() {
-						ApplicableRegionSet s = plugin.getworldGuard().getRegionManager(rgWorld).getApplicableRegions(rgLoc);
-						Iterator<ProtectedRegion> iterator = s.iterator();
-						ArrayList<ProtectedRegion> regions = new ArrayList<>();
-						int highestPriority = -9001;
-						while (iterator.hasNext()) {
-							ProtectedRegion region = iterator.next();
-							int priority = region.getPriority();
-							if (priority > highestPriority) {
-								regions.clear();
-								regions.add(region);
-								highestPriority = priority;
-							} else if (highestPriority == priority) {
-								regions.add(region);
-							}
-						}
-						int regionsSize = regions.size();
-						if (regionsSize == 1) {
-							player.chat("/rg " + rgCommand + " " + regions.get(0).getId());
-						} else if (regionsSize == 0) {
-							Util.badMsg(player, "No regions found.");
-						} else {
-							Util.badMsg(player, "Multiple regions with highest priority found.");
-							player.chat("/rg " + rgCommand);
-						}
-					}
-				});	
-				break;
-				
+								
 			default: 
 				hMsg("SlapHomebrew is a plugin which adds extra commands to the SlapGaming Server.");
 				hMsg("Current SlapHomebrew Version: " + plugin.getDescription().getVersion());
