@@ -1,18 +1,18 @@
 package me.naithantu.SlapHomebrew.Listeners.Player;
 
 import me.naithantu.SlapHomebrew.Controllers.DuelArena;
+import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-public class DuelArenaListener implements Listener {
+public class DuelArenaListener extends AbstractListener {
 
 	private DuelArena duelArena;
 	

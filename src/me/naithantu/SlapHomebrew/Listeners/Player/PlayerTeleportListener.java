@@ -3,15 +3,15 @@ package me.naithantu.SlapHomebrew.Listeners.Player;
 import me.naithantu.SlapHomebrew.Controllers.AwayFromKeyboard;
 import me.naithantu.SlapHomebrew.Controllers.Jails;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
+import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
-public class PlayerTeleportListener implements Listener {
+public class PlayerTeleportListener extends AbstractListener {
 
 	private Jails jails;
 	private AwayFromKeyboard afk;

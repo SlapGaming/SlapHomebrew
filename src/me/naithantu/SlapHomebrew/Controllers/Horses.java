@@ -14,7 +14,6 @@ import org.bukkit.Material;
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 import me.naithantu.SlapHomebrew.Util.Util;
 
@@ -22,13 +21,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class Horses {
+public class Horses extends AbstractController {
 
 	private YamlStorage horsesStorage;
 	private FileConfiguration horsesConfig;
 	private HashMap<String, Boolean> infoClick;
 	
-	public Horses(SlapHomebrew plugin) {
+	public Horses() {
 		horsesStorage = new YamlStorage(plugin, "horses");
 		horsesConfig = horsesStorage.getConfig();	
 		infoClick = new HashMap<>();
@@ -446,4 +445,8 @@ public class Horses {
 		}
 	}
 	
+    @Override
+    public void shutdown() {
+    	//Not needed
+    }
 }

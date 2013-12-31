@@ -3,14 +3,13 @@ package me.naithantu.SlapHomebrew.Controllers;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 
-public class ChangeLog {
+public class ChangeLog extends AbstractController {
 
 	private int pages;
 	private ArrayList<ChangeLog.LoggedChange> changeLogArray;
@@ -18,7 +17,7 @@ public class ChangeLog {
 	private YamlStorage storage;
 	private FileConfiguration config;
 	
-	public ChangeLog(SlapHomebrew plugin) {
+	public ChangeLog() {
 		changeLogArray = new ArrayList<>();
 		
 		storage = new YamlStorage(plugin, "changelog");
@@ -92,5 +91,10 @@ public class ChangeLog {
 		}
 		
 	}
+
+    @Override
+    public void shutdown() {
+    	//Not needed
+    }
 	
 }

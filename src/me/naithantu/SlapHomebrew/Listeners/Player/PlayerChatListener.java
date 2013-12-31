@@ -2,27 +2,25 @@ package me.naithantu.SlapHomebrew.Listeners.Player;
 
 import java.util.HashMap;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Controllers.AwayFromKeyboard;
 import me.naithantu.SlapHomebrew.Controllers.Jails;
 import me.naithantu.SlapHomebrew.Controllers.MessageFactory;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
+import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
-public class PlayerChatListener implements Listener {
-	private SlapHomebrew plugin;
+public class PlayerChatListener extends AbstractListener {
+	
 	private AwayFromKeyboard afk;
 	private Jails jails;
 	private PlayerLogger playerLogger;
     private HashMap<String, MessageFactory> messagePlayers;
 	
-	public PlayerChatListener(SlapHomebrew plugin, AwayFromKeyboard afk, Jails jails, PlayerLogger playerLogger){
-		this.plugin = plugin;
+	public PlayerChatListener(AwayFromKeyboard afk, Jails jails, PlayerLogger playerLogger){
 		this.afk = afk;
 		this.jails = jails;
 		this.playerLogger = playerLogger;

@@ -2,12 +2,11 @@ package me.naithantu.SlapHomebrew.Listeners;
 
 import org.bukkit.entity.Witch;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-public class PotionListener implements Listener {
+public class PotionListener extends AbstractListener {
 	@EventHandler
 	public void blockPotionDamage(PotionSplashEvent event) {
 		String worldName = event.getEntity().getLocation().getWorld().getName();

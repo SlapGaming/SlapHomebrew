@@ -1,12 +1,12 @@
 package me.naithantu.SlapHomebrew.Controllers;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Runnables.TPSTask;
 
-public class Lag {
-	TPSTask tpsTask;
+public class Lag extends AbstractController {
 	
-	public Lag(SlapHomebrew plugin){
+	private TPSTask tpsTask;
+	
+	public Lag(){
 		tpsTask = new TPSTask();
 		tpsTask.runTaskTimer(plugin, 0, 20);
 	}
@@ -14,4 +14,9 @@ public class Lag {
 	public double getTPS(){
 		return tpsTask.getTPS();
 	}
+	
+    @Override
+    public void shutdown() {
+    	//Not needed
+    }
 }

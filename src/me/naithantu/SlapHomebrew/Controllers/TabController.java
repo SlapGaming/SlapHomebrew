@@ -2,7 +2,6 @@ package me.naithantu.SlapHomebrew.Controllers;
 
 import java.util.ArrayList;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 
 import org.bukkit.ChatColor;
@@ -14,9 +13,8 @@ import ru.tehkode.permissions.PermissionGroup;
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
-public class TabController {
+public class TabController extends AbstractController {
 	
-	private SlapHomebrew plugin;
 	private PlayerLogger playerLogger;
 	
 	private ArrayList<String> ops;
@@ -36,8 +34,7 @@ public class TabController {
 	
 	private boolean tabApiSetup;
 	
-	public TabController(SlapHomebrew plugin, PlayerLogger playerLogger) {
-		this.plugin = plugin;
+	public TabController(PlayerLogger playerLogger) {
 		this.playerLogger = playerLogger;
 				
 		//Get the max players
@@ -271,6 +268,7 @@ public class TabController {
 	}
 	
 	public void playerSwitchGroup(Player p) {
+		if (!tabApiSetup) return; //Return if not setup
 		String playerName = p.getName();
 		removeFromGroups(playerName);
 		playerJoin(p);	
@@ -312,6 +310,11 @@ public class TabController {
 	public int getMaxPlayers() {
 		return maxPlayers;
 	}
+	
+    @Override
+    public void shutdown() {
+    	//Not needed
+    }
 	
 
 }

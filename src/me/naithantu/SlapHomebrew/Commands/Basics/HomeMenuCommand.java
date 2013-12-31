@@ -3,7 +3,6 @@ package me.naithantu.SlapHomebrew.Commands.Basics;
 import java.util.HashMap;
 import java.util.List;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Controllers.HomeMenu;
@@ -14,8 +13,8 @@ import org.bukkit.command.CommandSender;
 import com.earth2me.essentials.User;
 
 public class HomeMenuCommand extends AbstractCommand {
-	public HomeMenuCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
-		super(sender, args, plugin);
+	public HomeMenuCommand(CommandSender sender, String[] args) {
+		super(sender, args);
 	}
 
 	@Override
@@ -41,7 +40,7 @@ public class HomeMenuCommand extends AbstractCommand {
 		if (homeMenus.containsKey(player.getName())) {
 			homeMenus.get(player.getName()).reCreateHomeMainMenu(player);
 		} else {
-			homeMenus.put(player.getName(), new HomeMenu(player, plugin));
+			homeMenus.put(player.getName(), new HomeMenu(player));
 		}
 	}
 	

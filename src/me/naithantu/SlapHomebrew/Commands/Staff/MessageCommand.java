@@ -2,7 +2,6 @@ package me.naithantu.SlapHomebrew.Commands.Staff;
 
 import java.util.Set;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
@@ -20,8 +19,8 @@ public class MessageCommand extends AbstractCommand {
     private YamlStorage messageStorage;
     private FileConfiguration messageConfig;
 	
-	public MessageCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
-		super(sender, args, plugin);
+	public MessageCommand(CommandSender sender, String[] args) {
+		super(sender, args);
         messageStorage = plugin.getMessageStorage();
         messageConfig = messageStorage.getConfig();
 	}

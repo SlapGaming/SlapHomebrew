@@ -7,16 +7,16 @@ import me.naithantu.SlapHomebrew.Controllers.AwayFromKeyboard;
 import me.naithantu.SlapHomebrew.Controllers.Jails;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
 import me.naithantu.SlapHomebrew.Controllers.TabController;
+import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-public class PlayerQuitListener implements Listener {
+public class PlayerQuitListener extends AbstractListener {
 	
 	private YamlStorage timeStorage;
 	private AwayFromKeyboard afk;

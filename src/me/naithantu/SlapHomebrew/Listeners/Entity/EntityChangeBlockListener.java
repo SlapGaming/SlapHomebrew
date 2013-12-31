@@ -1,21 +1,15 @@
 package me.naithantu.SlapHomebrew.Listeners.Entity;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
+import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 
-public class EntityChangeBlockListener implements Listener {
-	SlapHomebrew plugin;
-
-	public EntityChangeBlockListener(SlapHomebrew plugin) {
-		this.plugin = plugin;
-	}
+public class EntityChangeBlockListener extends AbstractListener {
 
 	@EventHandler
 	public void onEntityChangeBlock(EntityChangeBlockEvent event) {

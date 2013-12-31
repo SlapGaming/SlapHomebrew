@@ -3,7 +3,6 @@ package me.naithantu.SlapHomebrew.Controllers;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Runnables.ApplyGathererTask;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 import me.naithantu.SlapHomebrew.Util.Util;
@@ -12,16 +11,14 @@ import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
-import com.earth2me.essentials.Essentials;
-import com.earth2me.essentials.User;
-
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
-public class ApplyChecker {
-	
-	private SlapHomebrew plugin;
+import com.earth2me.essentials.Essentials;
+import com.earth2me.essentials.User;
 
+public class ApplyChecker extends AbstractController {
+	
 	private ApplyGathererTask gathererThread;
 	private ArrayList<String[]> failedThreads;
 	
@@ -31,8 +28,7 @@ public class ApplyChecker {
 	private Essentials ess;
 	private TabController tabController;
 	
-	public ApplyChecker(SlapHomebrew plugin, Essentials ess, TabController tabController){
-		this.plugin = plugin;
+	public ApplyChecker(Essentials ess, TabController tabController){
 		this.ess = ess;
 		this.tabController = tabController;
 		boolean devServer = false;
@@ -125,7 +121,8 @@ public class ApplyChecker {
     	return plugin.getLogger();
     }
 	
-    public void shutDown() {
+    @Override
+    public void shutdown() {
     	gathererThread.cancel();
     	applyThreadStorage.saveConfig();
     }

@@ -2,9 +2,9 @@ package me.naithantu.SlapHomebrew.Listeners.Entity;
 
 import java.util.HashSet;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Controllers.Flag;
 import me.naithantu.SlapHomebrew.Controllers.Horses;
+import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.Location;
@@ -16,16 +16,13 @@ import org.bukkit.entity.NPC;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
-public class EntityDamageByEntityListener implements Listener {
+public class EntityDamageByEntityListener extends AbstractListener {
 	
-	SlapHomebrew plugin;
 	Horses horses;
 
-	public EntityDamageByEntityListener(SlapHomebrew plugin, Horses horses) {
-		this.plugin = plugin;
+	public EntityDamageByEntityListener(Horses horses) {
 		this.horses = horses;
 	}
 

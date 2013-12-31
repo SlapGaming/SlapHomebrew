@@ -1,30 +1,27 @@
 package me.naithantu.SlapHomebrew.Listeners.Player;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Controllers.Lottery;
 import me.naithantu.SlapHomebrew.Controllers.Mail;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
+import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 
-public class PlayerChangedWorldListener implements Listener {
+public class PlayerChangedWorldListener extends AbstractListener {
 
-	private SlapHomebrew plugin;
 	private Lottery lottery;
 	private Mail mail;
 	private PlayerLogger playerLogger;
 
-	public PlayerChangedWorldListener(SlapHomebrew plugin, Lottery lottery, Mail mail, PlayerLogger playerLogger) {
+	public PlayerChangedWorldListener(Lottery lottery, Mail mail, PlayerLogger playerLogger) {
 		this.lottery = lottery;
 		this.mail = mail;
 		this.playerLogger = playerLogger;
-		this.plugin = plugin;
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)

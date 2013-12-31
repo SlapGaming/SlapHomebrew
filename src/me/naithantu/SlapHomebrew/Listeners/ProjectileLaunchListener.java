@@ -5,10 +5,9 @@ import me.naithantu.SlapHomebrew.Util.Util;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.ThrownPotion;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 
-public class ProjectileLaunchListener implements Listener {
+public class ProjectileLaunchListener extends AbstractListener {
 	
 	@EventHandler
 	public void onProjectileLaunch(ProjectileLaunchEvent event) {

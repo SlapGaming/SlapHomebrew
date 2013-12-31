@@ -3,6 +3,11 @@ package me.naithantu.SlapHomebrew.Commands.Staff;
 import java.util.HashMap;
 import java.util.List;
 
+import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
+import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
+import me.naithantu.SlapHomebrew.Util.Util;
+
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_7_R1.entity.CraftEntity;
@@ -10,18 +15,12 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
-import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
-import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
-import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
-import me.naithantu.SlapHomebrew.Util.Util;
-
 public class TeleportMobCommand extends AbstractCommand {
 
 	private static HashMap<String, String> teleportMap;
 	
-	public TeleportMobCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
-		super(sender, args, plugin);
+	public TeleportMobCommand(CommandSender sender, String[] args) {
+		super(sender, args);
 		if (teleportMap == null) {
 			teleportMap = new HashMap<>();
 		}

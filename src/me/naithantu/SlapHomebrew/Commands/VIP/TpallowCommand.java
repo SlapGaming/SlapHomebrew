@@ -2,7 +2,6 @@ package me.naithantu.SlapHomebrew.Commands.VIP;
 
 import java.util.List;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractVipCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Util.Util;
@@ -14,8 +13,8 @@ import org.bukkit.entity.Player;
 
 public class TpallowCommand extends AbstractVipCommand {
 	
-	public TpallowCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
-		super(sender, args, plugin);
+	public TpallowCommand(CommandSender sender, String[] args) {
+		super(sender, args);
 	}
 
 	public boolean handle() throws CommandException {

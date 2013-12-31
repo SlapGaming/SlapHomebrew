@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Lists.ListCommand;
 import me.naithantu.SlapHomebrew.Controllers.Book;
@@ -15,6 +14,7 @@ import me.naithantu.SlapHomebrew.Controllers.Jails;
 import me.naithantu.SlapHomebrew.Controllers.Mail;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
 import me.naithantu.SlapHomebrew.Controllers.TabController;
+import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 import me.naithantu.SlapHomebrew.Util.Util;
 
@@ -23,7 +23,6 @@ import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -31,15 +30,14 @@ import org.bukkit.inventory.PlayerInventory;
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
-public class PlayerJoinListener implements Listener {
-	SlapHomebrew plugin;
-	YamlStorage timeStorage;
-	YamlStorage dataStorage;
-	YamlStorage vipStorage;
+public class PlayerJoinListener extends AbstractListener {
+	
+	private YamlStorage timeStorage;
+	private YamlStorage dataStorage;
+	private YamlStorage vipStorage;
 
-	FileConfiguration timeConfig;
-	FileConfiguration dataConfig;
-	FileConfiguration vipConfig;
+	private FileConfiguration dataConfig;
+	private FileConfiguration vipConfig;
 	
 	private Mail mail;
 	private Jails jails;
@@ -50,12 +48,9 @@ public class PlayerJoinListener implements Listener {
 	private DateFormat checkMonth;
 	private DateFormat checkYear;
 
-	public PlayerJoinListener(SlapHomebrew plugin, YamlStorage timeStorage, YamlStorage dataStorage, YamlStorage vipStorage, Mail mail, Jails jails, PlayerLogger playerLogger, TabController tabController) {
-		this.plugin = plugin;
-		this.timeStorage = timeStorage;
+	public PlayerJoinListener(YamlStorage dataStorage, YamlStorage vipStorage, Mail mail, Jails jails, PlayerLogger playerLogger, TabController tabController) {
 		this.dataStorage = dataStorage;
 		this.vipStorage = vipStorage;
-		timeConfig = timeStorage.getConfig();
 		dataConfig = dataStorage.getConfig();
 		vipConfig = vipStorage.getConfig();
 		this.mail = mail;
@@ -182,7 +177,7 @@ public class PlayerJoinListener implements Listener {
 				playerLogger.joinedMinechatChecker(player);
 				
 				try { //Execute /list
-					new ListCommand(player, new String[]{}, plugin).handle();
+					new ListCommand(player, new String[]{}).handle();
 				} catch (CommandException e) {
 					Util.badMsg(player, e.getMessage());
 				}

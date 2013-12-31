@@ -3,29 +3,26 @@ package me.naithantu.SlapHomebrew.Listeners.Player;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Controllers.AwayFromKeyboard;
 import me.naithantu.SlapHomebrew.Controllers.Jails;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
+import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
 
-public class PlayerCommandListener implements Listener {
+public class PlayerCommandListener extends AbstractListener {
 
-	private SlapHomebrew plugin;
 	private AwayFromKeyboard afk;
 	private Jails jails;
 	private PlayerLogger playerLogger;
 	
-	public PlayerCommandListener(SlapHomebrew plugin, AwayFromKeyboard afk, Jails jails, PlayerLogger playerLogger){
-		this.plugin = plugin;
+	public PlayerCommandListener(AwayFromKeyboard afk, Jails jails, PlayerLogger playerLogger){
 		this.afk = afk;
 		this.jails = jails;
 		this.playerLogger = playerLogger;

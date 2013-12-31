@@ -1,6 +1,5 @@
 package me.naithantu.SlapHomebrew.Commands.Staff;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
@@ -35,8 +34,8 @@ public class ImprovedRegionCommand extends AbstractCommand {
 	private Player p;
 	
 	
-	public ImprovedRegionCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
-		super(sender, args, plugin);
+	public ImprovedRegionCommand(CommandSender sender, String[] args) {
+		super(sender, args);
 		if (wg == null) {
 			wg = plugin.getworldGuard();
 		}

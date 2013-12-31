@@ -2,6 +2,9 @@ package me.naithantu.SlapHomebrew.Commands.Basics;
 
 import java.util.Iterator;
 
+import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -11,14 +14,10 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
-import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
-import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
-
 public class WorldguardsCommand extends AbstractCommand {
 
-	public WorldguardsCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
-		super(sender, args, plugin);
+	public WorldguardsCommand(CommandSender sender, String[] args) {
+		super(sender, args);
 	}
 	
 	@Override

@@ -11,7 +11,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 public class DeleteCommand extends AbstractImprovedRegionCommand {
 
 	public DeleteCommand(SlapHomebrew plugin, Player p, String[] args) {
-		super(plugin, p, args);
+		super(p, args);
 	}
 
 	@Override

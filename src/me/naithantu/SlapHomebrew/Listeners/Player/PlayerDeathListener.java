@@ -2,10 +2,10 @@ package me.naithantu.SlapHomebrew.Listeners.Player;
 
 import java.util.Random;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Controllers.Flag;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogger.DeathType;
+import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.Bukkit;
@@ -20,19 +20,16 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
-public class PlayerDeathListener implements Listener {
+public class PlayerDeathListener extends AbstractListener {
 	
-	private SlapHomebrew plugin;
 	private PlayerLogger playerLogger;
 
-	public PlayerDeathListener(SlapHomebrew plugin, PlayerLogger playerLogger) {
+	public PlayerDeathListener(PlayerLogger playerLogger) {
 		this.playerLogger = playerLogger;
-		this.plugin = plugin;
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)

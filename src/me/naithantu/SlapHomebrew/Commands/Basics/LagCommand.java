@@ -1,6 +1,5 @@
 package me.naithantu.SlapHomebrew.Commands.Basics;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Controllers.Lag;
@@ -12,8 +11,8 @@ public class LagCommand extends AbstractCommand {
 	
 	private static Lag lag;
 
-	public LagCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
-		super(sender, args, plugin);
+	public LagCommand(CommandSender sender, String[] args) {
+		super(sender, args);
 		if (lag == null) {
 			lag = plugin.getLag();
 		}

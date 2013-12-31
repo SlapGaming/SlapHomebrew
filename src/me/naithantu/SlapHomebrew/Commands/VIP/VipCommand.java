@@ -1,6 +1,5 @@
 package me.naithantu.SlapHomebrew.Commands.VIP;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractVipCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
@@ -14,17 +13,17 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
-import com.earth2me.essentials.User;
-
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
+
+import com.earth2me.essentials.User;
 
 public class VipCommand extends AbstractVipCommand {
 
 	private static Vip vip;
 
-	public VipCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
-		super(sender, args, plugin);
+	public VipCommand(CommandSender sender, String[] args) {
+		super(sender, args);
 		if (vip == null) {
 			vip = plugin.getVip();
 		}

@@ -2,7 +2,6 @@ package me.naithantu.SlapHomebrew.Commands.Staff.Plot;
 
 import java.util.List;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
@@ -12,8 +11,8 @@ import org.bukkit.command.CommandSender;
 
 public class PlotcheckCommand extends AbstractCommand {
 
-	public PlotcheckCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
-		super(sender, args, plugin);
+	public PlotcheckCommand(CommandSender sender, String[] args) {
+		super(sender, args);
 	}
 
 	public boolean handle() throws CommandException {

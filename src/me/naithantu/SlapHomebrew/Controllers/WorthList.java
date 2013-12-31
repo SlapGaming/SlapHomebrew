@@ -3,7 +3,6 @@ package me.naithantu.SlapHomebrew.Controllers;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 
 import org.bukkit.ChatColor;
@@ -11,7 +10,7 @@ import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 
-public class WorthList {
+public class WorthList extends AbstractController {
 
 	private boolean configFound;
 	private ConfigurationSection worthConfig;
@@ -19,7 +18,7 @@ public class WorthList {
 	private ArrayList<String> worthList;
 	private int pages;
 	
-	public WorthList(SlapHomebrew plugin) {
+	public WorthList() {
 		YamlStorage worthStorage = new YamlStorage(plugin, "../Essentials/worth");
 		worthConfig = worthStorage.getConfig().getConfigurationSection("worth");
 		configFound = worthConfig != null;
@@ -85,6 +84,11 @@ public class WorthList {
 	public boolean isConfigFound() {
 		return configFound;
 	}
+	
+    @Override
+    public void shutdown() {
+    	//Not needed
+    }
 	
 
 }

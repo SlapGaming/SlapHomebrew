@@ -2,7 +2,6 @@ package me.naithantu.SlapHomebrew.Commands.Fun;
 
 import java.util.HashSet;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
@@ -14,8 +13,8 @@ public class RideCommand extends AbstractCommand {
 
 	private static HashSet<String> rightClicks = new HashSet<>();
 	
-	public RideCommand(CommandSender sender, String[] args, SlapHomebrew plugin){
-		super(sender, args, plugin);
+	public RideCommand(CommandSender sender, String[] args) {
+		super(sender, args);
 	}
 
 	@Override

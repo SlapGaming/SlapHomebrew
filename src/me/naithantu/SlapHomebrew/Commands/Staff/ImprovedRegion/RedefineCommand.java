@@ -13,7 +13,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion.CircularInheritan
 public class RedefineCommand extends AbstractImprovedRegionCommand {
 
 	public RedefineCommand(SlapHomebrew plugin, Player p, String[] args) {
-		super(plugin, p, args);
+		super(p, args);
 	}
 
 	@Override

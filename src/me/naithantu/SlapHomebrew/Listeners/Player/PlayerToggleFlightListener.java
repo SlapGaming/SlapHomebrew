@@ -3,17 +3,18 @@ package me.naithantu.SlapHomebrew.Listeners.Player;
 import java.util.List;
 
 import me.naithantu.SlapHomebrew.Controllers.Extras;
+import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
 
 import org.bukkit.GameMode;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.util.Vector;
 
-public class PlayerToggleFlightListener implements Listener {
-	Extras extras;
+public class PlayerToggleFlightListener extends AbstractListener {
+	
+	private Extras extras;
 	
 	public PlayerToggleFlightListener(Extras extras){
 		this.extras = extras;

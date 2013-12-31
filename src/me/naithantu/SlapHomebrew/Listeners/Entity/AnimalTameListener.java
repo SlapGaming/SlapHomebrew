@@ -1,14 +1,14 @@
 package me.naithantu.SlapHomebrew.Listeners.Entity;
 
 import me.naithantu.SlapHomebrew.Controllers.Horses;
+import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Horse;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityTameEvent;
 
-public class AnimalTameListener implements Listener {
+public class AnimalTameListener extends AbstractListener {
 	
 	private Horses horses;
 	

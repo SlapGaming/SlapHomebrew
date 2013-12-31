@@ -1,6 +1,5 @@
 package me.naithantu.SlapHomebrew.Commands.Basics;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
@@ -14,8 +13,8 @@ import org.bukkit.metadata.FixedMetadataValue;
 
 public class BoatCommand extends AbstractCommand {
 
-	public BoatCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
-		super(sender, args, plugin);
+	public BoatCommand(CommandSender sender, String[] args) {
+		super(sender, args);
 	}
 
 	public boolean handle() throws CommandException {

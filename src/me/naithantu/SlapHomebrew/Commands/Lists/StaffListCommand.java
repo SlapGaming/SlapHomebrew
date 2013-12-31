@@ -2,7 +2,6 @@ package me.naithantu.SlapHomebrew.Commands.Lists;
 
 import java.util.ArrayList;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Controllers.AwayFromKeyboard;
@@ -28,8 +27,8 @@ public class StaffListCommand extends AbstractCommand {
 	private ArrayList<String> staff;
 	private final String afkString = ChatColor.WHITE + " [AFK]";
 	
-	public StaffListCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
-		super(sender, args, plugin);
+	public StaffListCommand(CommandSender sender, String[] args) {
+		super(sender, args);
 	}
 
 	@Override

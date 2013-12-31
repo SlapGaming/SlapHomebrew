@@ -7,13 +7,12 @@ import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Vehicle;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 
-public class VehicleListener implements Listener {
+public class VehicleListener extends AbstractListener {
 	
 	private Horses horses;
 	

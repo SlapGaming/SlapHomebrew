@@ -1,6 +1,5 @@
 package me.naithantu.SlapHomebrew.Commands.Fun;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
@@ -11,8 +10,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 
 public class PotionCommand extends AbstractCommand {
-	public PotionCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
-		super(sender, args, plugin);
+	public PotionCommand(CommandSender sender, String[] args) {
+		super(sender, args);
 	}
 
 	public boolean handle() throws CommandException {

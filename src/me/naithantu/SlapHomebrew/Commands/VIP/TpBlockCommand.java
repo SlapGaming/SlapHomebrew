@@ -2,7 +2,6 @@ package me.naithantu.SlapHomebrew.Commands.VIP;
 
 import java.util.HashSet;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractVipCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 
@@ -10,8 +9,8 @@ import org.bukkit.command.CommandSender;
 
 public class TpBlockCommand extends AbstractVipCommand {
 
-	public TpBlockCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
-		super(sender, args, plugin);
+	public TpBlockCommand(CommandSender sender, String[] args) {
+		super(sender, args);
 	}
 
 	public boolean handle() throws CommandException {

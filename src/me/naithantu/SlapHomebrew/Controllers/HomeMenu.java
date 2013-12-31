@@ -2,7 +2,6 @@ package me.naithantu.SlapHomebrew.Controllers;
 
 import java.util.List;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Controllers.IconMenu.OptionClickEvent;
 
 import org.bukkit.ChatColor;
@@ -11,9 +10,8 @@ import org.bukkit.inventory.ItemStack;
 
 import com.earth2me.essentials.User;
 
-public class HomeMenu {
+public class HomeMenu extends AbstractController {
 
-	private SlapHomebrew plugin;
 	private User essentialsUser;
 	private String playerName;
 	private IconMenu mainMenu;
@@ -26,8 +24,7 @@ public class HomeMenu {
 	int netherHomes;
 	int resourceHomes;
 
-	public HomeMenu(User player, SlapHomebrew plugin) {
-		this.plugin = plugin;
+	public HomeMenu(User player) {
 		essentialsUser = player;
 		playerName = player.getName();
 		createHomeMainMenu();
@@ -80,7 +77,7 @@ public class HomeMenu {
 				handleMainMenuClick(event, event.getCommand().split("-"));
 			}
 
-		}, plugin, playerName);
+		}, playerName);
 
 		mainMenu.setOption("world-" + oldSurvivalHomes, 0, new ItemStack(Material.DIRT, 0), "Old Survival World", oldSurvivalHomes + " home(s)");
 		mainMenu.setOption("world_survival3-" + newSurvivalHomes, 2, new ItemStack(Material.GRASS, 0), "1.7 Survival World", newSurvivalHomes + " home(s)");
@@ -181,7 +178,7 @@ public class HomeMenu {
 				handleHomeMenuClick(event, event.getCommand(), world);
 			}
 
-		}, plugin, playerName);
+		}, playerName);
 
 		//Set menuBar
 		homeMenu.setOption("back_to_home_menu", inventorySize - 5, new ItemStack(Material.BOOK, 0), "Back to the main menu");
@@ -290,5 +287,10 @@ public class HomeMenu {
 			return null;
 		}
 	}
+	
+    @Override
+    public void shutdown() {
+    	//Not needed
+    }
 
 }

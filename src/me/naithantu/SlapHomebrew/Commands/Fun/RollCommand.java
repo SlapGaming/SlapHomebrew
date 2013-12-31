@@ -2,7 +2,6 @@ package me.naithantu.SlapHomebrew.Commands.Fun;
 
 import java.util.Random;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
@@ -16,8 +15,8 @@ public class RollCommand extends AbstractCommand {
 	
 	private static Lottery lottery;
 	
-	public RollCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
-		super(sender, args, plugin);
+	public RollCommand(CommandSender sender, String[] args) {
+		super(sender, args);
 		if (lottery == null) {
 			lottery = plugin.getLottery();
 		}

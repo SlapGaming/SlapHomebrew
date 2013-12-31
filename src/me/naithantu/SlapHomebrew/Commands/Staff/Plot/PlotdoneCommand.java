@@ -4,19 +4,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+
 import com.google.common.base.Joiner;
 
 public class PlotdoneCommand extends AbstractCommand {
 
-	public PlotdoneCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
-		super(sender, args, plugin);
+	public PlotdoneCommand(CommandSender sender, String[] args) {
+		super(sender, args);
 	}
 
 	public boolean handle() throws CommandException {

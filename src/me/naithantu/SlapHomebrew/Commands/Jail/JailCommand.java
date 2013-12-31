@@ -3,7 +3,6 @@ package me.naithantu.SlapHomebrew.Commands.Jail;
 import java.util.Arrays;
 import java.util.List;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
@@ -20,8 +19,8 @@ public class JailCommand extends AbstractCommand {
 	private static Jails jails = null;
 	
 	
-	public JailCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
-		super(sender, args, plugin);
+	public JailCommand(CommandSender sender, String[] args) {
+		super(sender, args);
 		if (jails == null) {
 			jails = plugin.getJails();
 		}

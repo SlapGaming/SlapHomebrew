@@ -2,7 +2,6 @@ package me.naithantu.SlapHomebrew.Commands.Staff.VIP;
 
 import java.util.List;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 
@@ -11,8 +10,8 @@ import org.bukkit.command.CommandSender;
 
 public class VipForumCheckCommand extends AbstractCommand {
 
-	public VipForumCheckCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
-		super(sender, args, plugin);
+	public VipForumCheckCommand(CommandSender sender, String[] args) {
+		super(sender, args);
 	}
 
 	public boolean handle() throws CommandException {

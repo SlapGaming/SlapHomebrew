@@ -3,17 +3,17 @@ package me.naithantu.SlapHomebrew.Commands.Staff.VIP;
 import java.util.HashMap;
 import java.util.List;
 
-import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
 
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
+
 public class VipForumDoneCommand extends AbstractCommand{
 	
-	public VipForumDoneCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
-		super(sender, args, plugin);
+	public VipForumDoneCommand(CommandSender sender, String[] args) {
+		super(sender, args);
 	}
 
 	public boolean handle() throws CommandException {

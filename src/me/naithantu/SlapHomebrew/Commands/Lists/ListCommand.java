@@ -2,7 +2,6 @@ package me.naithantu.SlapHomebrew.Commands.Lists;
 
 import java.util.TreeSet;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Controllers.AwayFromKeyboard;
@@ -17,8 +16,8 @@ import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 public class ListCommand extends AbstractCommand {
 	
-	public ListCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
-		super(sender, args, plugin);
+	public ListCommand(CommandSender sender, String[] args) {
+		super(sender, args);
 	}
 
 	@Override

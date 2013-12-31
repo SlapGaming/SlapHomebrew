@@ -1,10 +1,10 @@
 package me.naithantu.SlapHomebrew.Listeners.Player;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.SlapCommand;
 import me.naithantu.SlapHomebrew.Controllers.Horses;
 import me.naithantu.SlapHomebrew.Controllers.Jails;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
+import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.Bukkit;
@@ -16,26 +16,24 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LeashHitch;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 
-public class PlayerInteractListener implements Listener {
+public class PlayerInteractListener extends AbstractListener {
 	
-	private SlapHomebrew plugin;
 	private Horses horses;
 	private Jails jails;
 	private PlayerLogger playerLogger;
 
-	public PlayerInteractListener(SlapHomebrew plugin, Horses horses, Jails jails, PlayerLogger playerLogger) {
-		this.plugin = plugin;
+	public PlayerInteractListener(Horses horses, Jails jails, PlayerLogger playerLogger) {
 		this.horses = horses;
 		this.jails = jails;
 		this.playerLogger = playerLogger;
 	}
 	
+	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		final Player player = event.getPlayer();

@@ -1,14 +1,15 @@
 package me.naithantu.SlapHomebrew.Listeners.Player;
 
+import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.event.world.PortalCreateEvent;
 
-public class PlayerPortalListener implements Listener{
+public class PlayerPortalListener extends AbstractListener {
 
 	@EventHandler
 	public void onPortalTeleport(PlayerPortalEvent event){

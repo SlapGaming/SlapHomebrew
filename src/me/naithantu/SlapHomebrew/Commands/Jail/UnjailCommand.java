@@ -1,6 +1,5 @@
 package me.naithantu.SlapHomebrew.Commands.Jail;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
@@ -16,8 +15,8 @@ public class UnjailCommand extends AbstractCommand {
 	private static Jails jails = null;
 	private static Essentials ess = null;
 	
-	public UnjailCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
-		super(sender, args, plugin);
+	public UnjailCommand(CommandSender sender, String[] args) {
+		super(sender, args);
 		if (jails == null) {
 			jails = plugin.getJails();
 		}

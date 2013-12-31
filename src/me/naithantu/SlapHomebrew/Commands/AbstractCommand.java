@@ -18,10 +18,10 @@ public abstract class AbstractCommand {
 	protected String[] args;
 	protected SlapHomebrew plugin;
 
-	public AbstractCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
+	public AbstractCommand(CommandSender sender, String[] args) {
 		this.sender = sender;
 		this.args = args;
-		this.plugin = plugin;
+		this.plugin = SlapHomebrew.getInstance();
 	}
 	
 	/*

@@ -1,7 +1,7 @@
 package me.naithantu.SlapHomebrew.Commands.Fun;
 
 import java.util.HashMap;
-import me.naithantu.SlapHomebrew.SlapHomebrew;
+
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Runnables.RainbowTask;
@@ -15,8 +15,8 @@ import org.bukkit.inventory.PlayerInventory;
 
 public class RainbowCommand extends AbstractCommand {
 
-	public RainbowCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
-		super(sender, args, plugin);
+	public RainbowCommand(CommandSender sender, String[] args) {
+		super(sender, args);
 	}
 
 	public boolean handle() throws CommandException {

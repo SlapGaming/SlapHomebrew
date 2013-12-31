@@ -1,6 +1,5 @@
 package me.naithantu.SlapHomebrew.Commands.Staff;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Controllers.Bump;
@@ -11,12 +10,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class BumpdoneCommand extends AbstractCommand {
-	SlapHomebrew plugin;
-	Bump bump;
+	
+	private Bump bump;
 
-	public BumpdoneCommand(CommandSender sender, String args[], SlapHomebrew plugin) {
-		super(sender, args, plugin);
-		this.plugin = plugin;
+	public BumpdoneCommand(CommandSender sender, String args[]) {
+		super(sender, args);
 		bump = plugin.getBump();
 	}
 

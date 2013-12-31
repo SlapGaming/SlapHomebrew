@@ -1,6 +1,5 @@
 package me.naithantu.SlapHomebrew.Commands.Basics;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
@@ -23,8 +22,8 @@ public class MailCommand extends AbstractCommand {
 	private static Mail mail = null;
 	private static Essentials ess = null;
 	
-	public MailCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
-		super(sender, args, plugin);
+	public MailCommand(CommandSender sender, String[] args) {
+		super(sender, args);
 		if (mail == null) {
 			mail = plugin.getMail();
 		}

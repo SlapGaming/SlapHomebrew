@@ -1,6 +1,5 @@
 package me.naithantu.SlapHomebrew.Commands.VIP;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractVipCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 
@@ -9,8 +8,8 @@ import org.bukkit.entity.Player;
 
 public class BackdeathCommand extends AbstractVipCommand {
 
-	public BackdeathCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
-		super(sender, args, plugin);
+	public BackdeathCommand(CommandSender sender, String[] args) {
+		super(sender, args);
 	}
 
 	public boolean handle() throws CommandException {

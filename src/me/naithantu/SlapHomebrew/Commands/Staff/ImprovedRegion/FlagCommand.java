@@ -26,7 +26,7 @@ public class FlagCommand extends AbstractImprovedRegionCommand {
 	 * @param allFlags Is allowed to do all flags
 	 */
 	public FlagCommand(SlapHomebrew plugin, Player p, String[] args, boolean allFlags) {
-		super(plugin, p, args);
+		super(p, args);
 		this.allFlags = allFlags;
 	}
 

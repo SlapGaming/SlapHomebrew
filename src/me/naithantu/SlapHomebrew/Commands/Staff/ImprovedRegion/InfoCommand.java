@@ -23,7 +23,7 @@ public class InfoCommand extends AbstractImprovedRegionCommand {
 	 * @param own Is allowed to check only their own regions
 	 */
 	public InfoCommand(SlapHomebrew plugin, Player p, String[] args, boolean all) {
-		super(plugin, p, args);
+		super(p, args);
 		this.all = all;
 	}
 

@@ -1,6 +1,5 @@
 package me.naithantu.SlapHomebrew.Commands.Lists;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Controllers.ChangeLog;
@@ -12,8 +11,8 @@ public class ChangeLogCommand extends AbstractCommand {
 	
 	private static ChangeLog changeLog = null;
 
-	public ChangeLogCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
-		super(sender, args, plugin);
+	public ChangeLogCommand(CommandSender sender, String[] args) {
+		super(sender, args);
 		if (changeLog == null) {
 			changeLog = plugin.getChangeLog();
 		}

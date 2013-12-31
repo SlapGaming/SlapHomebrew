@@ -5,14 +5,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
-
 import org.bukkit.Bukkit;
 import org.bukkit.scoreboard.Team;
 
-public class Extras {
-	SlapHomebrew plugin;
-
+public class Extras extends AbstractController {
 	HashSet<String> pvpWorld = new HashSet<String>();
 	HashSet<String> pvpTimer = new HashSet<String>();
 	
@@ -23,9 +19,8 @@ public class Extras {
 	HashSet<String> ghosts = new HashSet<String>();
 	Team ghostTeam;
 
-	public Extras(SlapHomebrew plugin) {
-		this.plugin = plugin;
-		menus  = new Menus(plugin);
+	public Extras() {
+		menus  = new Menus();
 		ghostTeam = Bukkit.getScoreboardManager().getNewScoreboard().registerNewTeam("ghosts");
 		ghostTeam.setCanSeeFriendlyInvisibles(true);
 	}
@@ -64,5 +59,10 @@ public class Extras {
 	
 	public HashMap<String, HomeMenu> getHomeMenus() {
 		return homeMenus;
+	}
+	
+	@Override
+	public void shutdown() {
+		//Not needed
 	}
 }

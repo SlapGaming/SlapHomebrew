@@ -1,6 +1,5 @@
 package me.naithantu.SlapHomebrew.Commands.Staff;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Util.Util;
@@ -12,8 +11,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 public class MobcheckCommand extends AbstractCommand {
-	public MobcheckCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
-		super(sender, args, plugin);
+	public MobcheckCommand(CommandSender sender, String[] args) {
+		super(sender, args);
 	}
 
 	public boolean handle() throws CommandException {

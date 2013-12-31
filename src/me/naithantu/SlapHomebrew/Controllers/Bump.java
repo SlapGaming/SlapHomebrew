@@ -3,23 +3,22 @@ package me.naithantu.SlapHomebrew.Controllers;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
+import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitTask;
 
-public class Bump {
-	SlapHomebrew plugin;
-	int amsgId;
-	int shortBumpTimer;
+public class Bump extends AbstractController {
+	BukkitTask amsgId;
+	BukkitTask shortBumpTimer;
 	boolean bumpIsDone = true;
 	YamlStorage dataStorage;
 	FileConfiguration dataConfig;
 
-	public Bump(SlapHomebrew plugin, YamlStorage dataStorage, FileConfiguration dataConfig) {
-		this.plugin = plugin;
+	public Bump(YamlStorage dataStorage, FileConfiguration dataConfig) {
 		this.dataStorage = dataStorage;
 		this.dataConfig = dataConfig;
 		boolean devServer = false;
@@ -38,7 +37,7 @@ public class Bump {
 	}
 
 	public void bumpTimer() {
-		amsgId = Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+		amsgId = Util.runLater(plugin, new Runnable() {
 			public void run() {
 				//Aggressive bumping thing here. Start 5 minute timer.
 				bumpIsDone = false;
@@ -53,7 +52,7 @@ public class Bump {
 	}
 
 	public void shortBumpTimer() {
-		shortBumpTimer = Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+		shortBumpTimer = Util.runLater(plugin, new Runnable() {
 			public void run() {
 				if (getOnlineStaff() > 0 && !bumpIsDone) {
 					Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), "mod-broadcast Post On Yogscast/Minecraftforums, Use /Bumpdone When You Are Going To Bump!");
@@ -80,7 +79,7 @@ public class Bump {
 	}
 
 	public void bump(String playerName) {
-		Bukkit.getScheduler().cancelTask(shortBumpTimer);
+		shortBumpTimer.cancel();
 		bumpIsDone = true;
 		bumpTimer();
 		
@@ -91,4 +90,9 @@ public class Bump {
 		dataStorage.saveConfig();
 
 	}
+	
+    @Override
+    public void shutdown() {
+    	//Not needed
+    }
 }

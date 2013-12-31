@@ -1,6 +1,5 @@
 package me.naithantu.SlapHomebrew.Commands.Staff;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 
@@ -9,8 +8,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class SgmCommand extends AbstractCommand {
-	public SgmCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
-		super(sender, args, plugin);
+	public SgmCommand(CommandSender sender, String[] args) {
+		super(sender, args);
 	}
 
 	public boolean handle() throws CommandException {

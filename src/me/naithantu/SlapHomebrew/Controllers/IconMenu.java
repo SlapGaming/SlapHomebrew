@@ -14,23 +14,21 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
-public class IconMenu implements Listener {
+public class IconMenu extends AbstractController implements Listener {
 
 	private String name;
 	private int size;
 	private OptionClickEventHandler handler;
-	private Plugin plugin;
 
 	private String[] optionNames;
 	private ItemStack[] optionIcons;
 	private String[] optionCommands;
 	private String playerName;
 
-	public IconMenu(String name, int size, OptionClickEventHandler handler, Plugin plugin) {
+	public IconMenu(String name, int size, OptionClickEventHandler handler) {
 		this.name = name;
 		this.size = size;
 		this.handler = handler;
-		this.plugin = plugin;
 		this.playerName = null;
 		this.optionNames = new String[size];
 		this.optionIcons = new ItemStack[size];
@@ -38,11 +36,10 @@ public class IconMenu implements Listener {
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 	}
 	
-	public IconMenu(String name, int size, OptionClickEventHandler handler, Plugin plugin, String playerName) {
+	public IconMenu(String name, int size, OptionClickEventHandler handler, String playerName) {
 		this.name = name;
 		this.size = size;
 		this.handler = handler;
-		this.plugin = plugin;
 		this.playerName = playerName;
 		this.optionNames = new String[size];
 		this.optionIcons = new ItemStack[size];
@@ -180,5 +177,10 @@ public class IconMenu implements Listener {
 		item.setItemMeta(im);
 		return item;
 	}
+	
+    @Override
+    public void shutdown() {
+    	//Not needed
+    }
 
 }

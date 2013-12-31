@@ -2,7 +2,6 @@ package me.naithantu.SlapHomebrew.Controllers;
 
 import java.util.Collection;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Runnables.AFKChecker;
 import me.naithantu.SlapHomebrew.Runnables.WeatherTask;
 import me.naithantu.SlapHomebrew.Util.Util;
@@ -14,12 +13,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-public class Schedulers {
+public class Schedulers extends AbstractController {
 	
-	private SlapHomebrew plugin;
-
-	public Schedulers(SlapHomebrew plugin) {
-		this.plugin = plugin;
+	public Schedulers() {
 		removeInvisibility();
 		checkFlags();
 		startWeather();
@@ -74,5 +70,10 @@ public class Schedulers {
 	private void startAFKChecker() {
 		Util.runTimer(plugin, new AFKChecker(plugin, plugin.getAwayFromKeyboard(), plugin.getPlayerLogger(), 10), 6000, 300);
 	}
+	
+    @Override
+    public void shutdown() {
+    	//Not needed
+    }
 	
 }

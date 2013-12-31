@@ -2,21 +2,20 @@ package me.naithantu.SlapHomebrew.Commands.Lists;
 
 import java.util.ArrayList;
 
-import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
-
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
+
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 
 public class PluginsCommand extends AbstractCommand {
 	
 	private static ArrayList<String> plugins;
 	private static int nrOfPlugins;
 	
-	public PluginsCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
-		super(sender, args, plugin);
+	public PluginsCommand(CommandSender sender, String[] args) {
+		super(sender, args);
 		if (plugins == null) {
 			//Fill ArrayList with plugins
 			plugins = new ArrayList<>();

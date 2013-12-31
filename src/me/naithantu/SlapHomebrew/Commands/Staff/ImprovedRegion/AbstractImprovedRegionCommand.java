@@ -1,6 +1,5 @@
 package me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegion;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.FoundRegionsException;
 import me.naithantu.SlapHomebrew.Commands.Exception.IRGException;
@@ -41,8 +40,8 @@ public abstract class AbstractImprovedRegionCommand extends AbstractCommand {
 	 * @param p The player
 	 * @param args The args of the command
 	 */
-	public AbstractImprovedRegionCommand(SlapHomebrew plugin, Player p, String[] args) {
-		super(p, args, plugin);
+	public AbstractImprovedRegionCommand(Player p, String[] args) {
+		super(p, args);
 		this.p = p;
 		this.aSync = false;
 		wg = plugin.getworldGuard();
@@ -56,8 +55,8 @@ public abstract class AbstractImprovedRegionCommand extends AbstractCommand {
 	 * @param args The args of the command
 	 * @param aSync is aSync
 	 */
-	public AbstractImprovedRegionCommand(SlapHomebrew plugin, Player p, String[] args, boolean aSync) {
-		super(p, args, plugin);
+	public AbstractImprovedRegionCommand(Player p, String[] args, boolean aSync) {
+		super(p, args);
 		this.p = p;
 		this.aSync = aSync;
 		wg = plugin.getworldGuard();

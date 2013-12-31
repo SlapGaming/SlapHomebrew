@@ -4,14 +4,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
-
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-public class AwayFromKeyboard {
+public class AwayFromKeyboard extends AbstractController {
 
-	private SlapHomebrew plugin;
 	private PlayerLogger playerLogger;
 	
 	private Map<String, String> afkReasons;
@@ -19,8 +16,7 @@ public class AwayFromKeyboard {
 	
 	private HashSet<String> preventAFK;
 	
-	public AwayFromKeyboard(SlapHomebrew plugin, PlayerLogger playerLogger){
-		this.plugin = plugin;
+	public AwayFromKeyboard(PlayerLogger playerLogger){
 		this.playerLogger = playerLogger;
 		afkReasons = new HashMap<>();
 		afkTimes = new HashMap<>();
@@ -92,6 +88,11 @@ public class AwayFromKeyboard {
     
     public boolean hasPreventAFK(String player) {
     	return preventAFK.contains(player);
+    }
+    
+    @Override
+    public void shutdown() {
+    	//Not needed
     }
 	
 

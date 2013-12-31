@@ -2,13 +2,13 @@ package me.naithantu.SlapHomebrew.Listeners.Player;
 
 import me.naithantu.SlapHomebrew.Controllers.Lottery;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
+import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
 
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
-public class PlayerInventoryEvent implements Listener {
+public class PlayerInventoryEvent extends AbstractListener {
 	
 	private Lottery lottery;
 	private PlayerLogger playerLogger;

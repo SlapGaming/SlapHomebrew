@@ -1,7 +1,7 @@
 package me.naithantu.SlapHomebrew.Listeners.Entity;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Controllers.Horses;
+import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -10,16 +10,14 @@ import org.bukkit.entity.IronGolem;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Wither;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
 
-public class CreatureDeathListener implements Listener {
-	SlapHomebrew plugin;
-	Horses horses;
+public class CreatureDeathListener extends AbstractListener {
 
-	public CreatureDeathListener(SlapHomebrew plugin, Horses horses) {
-		this.plugin = plugin;
+	private Horses horses;
+
+	public CreatureDeathListener(Horses horses) {
 		this.horses = horses;
 	}
 

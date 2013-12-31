@@ -1,6 +1,5 @@
 package me.naithantu.SlapHomebrew.Commands.Staff;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 
@@ -8,8 +7,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 public class SearchregionCommand extends AbstractCommand {
-	public SearchregionCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
-		super(sender, args, plugin);
+	public SearchregionCommand(CommandSender sender, String[] args) {
+		super(sender, args);
 	}
 
 	public boolean handle() throws CommandException {

@@ -2,7 +2,6 @@ package me.naithantu.SlapHomebrew.Commands.Staff;
 
 import java.util.Date;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
@@ -12,8 +11,8 @@ import org.bukkit.command.CommandSender;
 
 public class TimecheckCommand extends AbstractCommand {
 	
-	public TimecheckCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
-		super(sender, args, plugin);		
+	public TimecheckCommand(CommandSender sender, String[] args) {
+		super(sender, args);	
 	}
 
 	@Override

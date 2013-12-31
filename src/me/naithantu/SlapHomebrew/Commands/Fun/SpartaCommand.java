@@ -1,6 +1,5 @@
 package me.naithantu.SlapHomebrew.Commands.Fun;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
@@ -15,8 +14,8 @@ public class SpartaCommand extends AbstractCommand {
 
 	private BukkitTask task;
 	
-	public SpartaCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
-		super(sender, args, plugin);
+	public SpartaCommand(CommandSender sender, String[] args) {
+		super(sender, args);
 	}
 
 	public boolean handle() throws CommandException {

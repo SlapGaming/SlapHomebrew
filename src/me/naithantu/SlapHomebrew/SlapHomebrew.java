@@ -21,6 +21,7 @@ import me.naithantu.SlapHomebrew.Listeners.*;
 import me.naithantu.SlapHomebrew.Listeners.Entity.*;
 import me.naithantu.SlapHomebrew.Listeners.Player.*;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
+import me.naithantu.SlapHomebrew.Util.Log;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Location;
@@ -37,6 +38,11 @@ import com.earth2me.essentials.Essentials;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 
 public class SlapHomebrew extends JavaPlugin {
+	
+	/**
+	 * The SlapHomebrew instance
+	 */
+	private static SlapHomebrew instance;
 
 	/**
 	 * BackDeath HashMap - Key Playername -> Value DeathLocation
@@ -128,6 +134,7 @@ public class SlapHomebrew extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		//Initialize
+		initializeStatics();
 		initializeExternals();
 		initializeYamlStoragesConfigs();
 		initializeLoaders();
@@ -135,8 +142,8 @@ public class SlapHomebrew extends JavaPlugin {
 		initializeListeners();
 		
 		//Create Schedulers -> Runnables & Make the commandHandler
-		new Schedulers(this);
-		commandHandler = new CommandHandler(this);
+		new Schedulers();
+		commandHandler = new CommandHandler();
 
 		//Create configurationsection if it isn't there yet:
 		if (vipConfig.getConfigurationSection("vipdays") == null) {
@@ -159,6 +166,7 @@ public class SlapHomebrew extends JavaPlugin {
 		getServer().getScheduler().cancelTasks(this);
 		disableSavers();
 		disableControllers();
+		disableStatics();
 	}
 
 	@Override
@@ -172,6 +180,11 @@ public class SlapHomebrew extends JavaPlugin {
 	 * Initializers
 	 **************************************
 	 */	
+	
+	private void initializeStatics() {
+		instance = this;
+		Log.intialize(getLogger());
+	}
 	
 	private void initializeExternals() {
 		Plugin vault = getServer().getPluginManager().getPlugin("Vault");
@@ -202,24 +215,24 @@ public class SlapHomebrew extends JavaPlugin {
 	}
 	
 	private void initializeControllers() {
-		 bump = new Bump(this, dataStorage, dataConfig);
-		 changeLog = new ChangeLog(this);
-		 duelArena = new DuelArena(this);
-		 extras = new Extras(this);
-		 show = new FireworkShow(this);
-		 horses = new Horses(this);
-		 jails = new Jails(this);
-		 lag = new Lag(this);
-		 lottery = new Lottery(this);
-		 mail = new Mail(this);
+		 bump = new Bump(dataStorage, dataConfig);
+		 changeLog = new ChangeLog();
+		 duelArena = new DuelArena();
+		 extras = new Extras();
+		 show = new FireworkShow();
+		 horses = new Horses();
+		 jails = new Jails();
+		 lag = new Lag();
+		 lottery = new Lottery();
+		 mail = new Mail();
          messages = new Messages();
-		 playerLogger = new PlayerLogger(this);
-		 afk = new AwayFromKeyboard(this, playerLogger);
-		 tabController = new TabController(this, playerLogger);
-		 vip = new Vip(this, vipStorage, tabController);
-		 worthList = new WorthList(this);
+		 playerLogger = new PlayerLogger();
+		 afk = new AwayFromKeyboard(playerLogger);
+		 tabController = new TabController(playerLogger);
+		 vip = new Vip(vipStorage, tabController);
+		 worthList = new WorthList();
 		 
-		 new ApplyChecker(this, essentials, tabController);
+		 new ApplyChecker(essentials, tabController);
 	}
 	
 	private void initializeLoaders() {
@@ -231,35 +244,47 @@ public class SlapHomebrew extends JavaPlugin {
 		loadUnfinishedPlots();
 	}
 	
+	/**
+	 * Initialize the listeners
+	 */
 	private void initializeListeners() {
 		PluginManager pm = getServer().getPluginManager();
-		pm.registerEvents(new BlockPlaceListener(this), this);
-		pm.registerEvents(new PlayerChatListener(this, afk, jails, playerLogger), this);
-		pm.registerEvents(new PlayerCommandListener(this, afk, jails, playerLogger), this);
-		pm.registerEvents(new CreatureSpawnListener(this), this);
-		pm.registerEvents(new CreatureDeathListener(this, horses), this);
-		pm.registerEvents(new DuelArenaListener(duelArena), this);
-		pm.registerEvents(new EntityDamageByEntityListener(this, horses), this);
-		pm.registerEvents(new EntityDamageListener(jails), this);
-		pm.registerEvents(new EntityChangeBlockListener(this), this);
-		pm.registerEvents(new PlayerDeathListener(this, playerLogger), this);
-		pm.registerEvents(new DispenseListener(), this);
-		pm.registerEvents(new PlayerInteractListener(this, horses, jails, playerLogger), this);
-		pm.registerEvents(new PlayerJoinListener(this, timeStorage, dataStorage, vipStorage, mail, jails, playerLogger, tabController), this);
-		pm.registerEvents(new PlayerMoveListener(this, extras, afk, playerLogger), this);
-		pm.registerEvents(new PlayerPortalListener(), this);
-		pm.registerEvents(new PotionListener(), this);
-		pm.registerEvents(new ProjectileHitListener(), this);
-		pm.registerEvents(new ProjectileLaunchListener(), this);
-		pm.registerEvents(new PlayerQuitListener(timeStorage, afk, jails, playerLogger, tabController), this);
-		pm.registerEvents(new PlayerTeleportListener(jails, afk, playerLogger), this);
-		pm.registerEvents(new PlayerToggleFlightListener(extras), this);
-		pm.registerEvents(new VehicleListener(horses), this);
-		pm.registerEvents(new PlayerInteractEntityListener(horses, playerLogger), this);
-		pm.registerEvents(new PlayerRespawnListener(), this);
-		pm.registerEvents(new PlayerChangedWorldListener(this, lottery, mail, playerLogger), this);
-		pm.registerEvents(new PlayerInventoryEvent(lottery, playerLogger), this);
-		pm.registerEvents(new AnimalTameListener(horses), this);
+		register(pm, new BlockPlaceListener());
+		register(pm, new PlayerChatListener(afk, jails, playerLogger));
+		register(pm, new PlayerCommandListener(afk, jails, playerLogger));
+		register(pm, new CreatureSpawnListener());
+		register(pm, new CreatureDeathListener(horses));
+		register(pm, new DuelArenaListener(duelArena));
+		register(pm, new EntityDamageByEntityListener(horses));
+		register(pm, new EntityDamageListener(jails));
+		register(pm, new EntityChangeBlockListener());
+		register(pm, new PlayerDeathListener(playerLogger));
+		register(pm, new DispenseListener());
+		register(pm, new PlayerInteractListener(horses, jails, playerLogger));
+		register(pm, new PlayerJoinListener(dataStorage, vipStorage, mail, jails, playerLogger, tabController));
+		register(pm, new PlayerMoveListener(extras, afk, playerLogger));
+		register(pm, new PlayerPortalListener());
+		register(pm, new PotionListener());
+		register(pm, new ProjectileHitListener());
+		register(pm, new ProjectileLaunchListener());
+		register(pm, new PlayerQuitListener(timeStorage, afk, jails, playerLogger, tabController));
+		register(pm, new PlayerTeleportListener(jails, afk, playerLogger));
+		register(pm, new PlayerToggleFlightListener(extras));
+		register(pm, new VehicleListener(horses));
+		register(pm, new PlayerInteractEntityListener(horses, playerLogger));
+		register(pm, new PlayerRespawnListener());
+		register(pm, new PlayerChangedWorldListener(lottery, mail, playerLogger));
+		register(pm, new PlayerInventoryEvent(lottery, playerLogger));
+		register(pm, new AnimalTameListener(horses));
+	}
+	
+	/**
+	 * Register a Abstract EventListener
+	 * @param pm The Pluginmanager
+	 * @param listener The listener
+	 */
+	private void register(PluginManager pm, AbstractListener listener) {
+		pm.registerEvents(listener, this);
 	}
 	
 	
@@ -268,6 +293,11 @@ public class SlapHomebrew extends JavaPlugin {
 	 * Disablers
 	 **************************************
 	 */	
+	
+	private void disableStatics() {
+		instance = null;
+		Log.shutdown();
+	}
 	
 	private void disableSavers() {
 		saveworldGuard();
@@ -451,7 +481,19 @@ public class SlapHomebrew extends JavaPlugin {
 		return unfinishedForumVip;
 	}
 
-
+	/*
+	 **************************************
+	 * SlapHomebrew getter
+	 **************************************
+	 */	
+	/**
+	 * Get the instance of this plugin
+	 * @return
+	 */
+	public static SlapHomebrew getInstance() {
+		return instance;
+	}
+	
 	
 	/*
 	 **************************************

@@ -11,7 +11,7 @@ public class HelpCommand extends AbstractImprovedRegionCommand {
 	private boolean staff;
 	
 	public HelpCommand(SlapHomebrew plugin, Player p, String[] args, boolean staff) {
-		super(plugin, p, args);
+		super(p, args);
 		this.staff = staff;
 	}
 

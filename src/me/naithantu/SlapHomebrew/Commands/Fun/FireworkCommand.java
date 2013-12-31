@@ -1,6 +1,5 @@
 package me.naithantu.SlapHomebrew.Commands.Fun;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
@@ -14,8 +13,8 @@ public class FireworkCommand extends AbstractCommand {
 	
 	private static FireworkShow show;
 
-	public FireworkCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
-		super(sender, args, plugin);
+	public FireworkCommand(CommandSender sender, String[] args) {
+		super(sender, args);
 		if (show == null) {
 			show = plugin.getFireworkShow();
 		}

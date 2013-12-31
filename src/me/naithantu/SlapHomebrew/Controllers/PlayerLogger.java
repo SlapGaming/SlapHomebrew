@@ -13,6 +13,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.TimeZone;
 
+import me.naithantu.SlapHomebrew.Controllers.TabController.TabGroup;
+import me.naithantu.SlapHomebrew.Storage.YamlStorage;
+import me.naithantu.SlapHomebrew.Util.Util;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -22,25 +26,18 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
+import ru.tehkode.permissions.PermissionManager;
+import ru.tehkode.permissions.PermissionUser;
+import ru.tehkode.permissions.bukkit.PermissionsEx;
+
 import com.earth2me.essentials.User;
 import com.earth2me.essentials.UserMap;
 import com.nyancraft.reportrts.ReportRTS;
 import com.nyancraft.reportrts.persistence.Database;
 import com.nyancraft.reportrts.persistence.DatabaseManager;
 
-import ru.tehkode.permissions.PermissionManager;
-import ru.tehkode.permissions.PermissionUser;
-import ru.tehkode.permissions.bukkit.PermissionsEx;
+public class PlayerLogger extends AbstractController {
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
-import me.naithantu.SlapHomebrew.Controllers.TabController.TabGroup;
-import me.naithantu.SlapHomebrew.Storage.YamlStorage;
-import me.naithantu.SlapHomebrew.Util.Util;
-
-public class PlayerLogger {
-
-	private SlapHomebrew plugin;
-	
 	private YamlStorage logYML;
 	private FileConfiguration logConfig;
 	
@@ -67,8 +64,7 @@ public class PlayerLogger {
 	private HashMap<String, SavedPlayer> modInventories;
 	
 	
-	public PlayerLogger(SlapHomebrew plugin) {
-		this.plugin = plugin;
+	public PlayerLogger() {
 		logYML = new YamlStorage(plugin, "playerlog");
 		logConfig = logYML.getConfig();
 		onlineFormat = new SimpleDateFormat("dd:HH:mm:ss");
@@ -777,6 +773,11 @@ public class PlayerLogger {
 			Util.wipeAllPotionEffects(p);
 		}
 	}
+	
+    @Override
+    public void shutdown() {
+    	//Not needed
+    }
 	
 	/**
 	 * Stores information about a Mod (Inventory & XP)

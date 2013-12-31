@@ -6,26 +6,24 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
-
-import com.earth2me.essentials.User;
-import com.earth2me.essentials.UserMap;
-
-import ru.tehkode.permissions.PermissionUser;
-import ru.tehkode.permissions.bukkit.PermissionsEx;
-
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Storage.MailSQL;
 import me.naithantu.SlapHomebrew.Storage.MailSQL.CheckType;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 import me.naithantu.SlapHomebrew.Util.Util;
 
-public class Mail {
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 
-	private SlapHomebrew plugin;
+import ru.tehkode.permissions.PermissionUser;
+import ru.tehkode.permissions.bukkit.PermissionsEx;
+
+import com.earth2me.essentials.User;
+import com.earth2me.essentials.UserMap;
+
+public class Mail extends AbstractController {
+
 	private MailSQL mailSQL;
 
 	private HashMap<String, Boolean> crunchingData;
@@ -37,8 +35,7 @@ public class Mail {
 	
 	private boolean devServer;
 
-	public Mail(SlapHomebrew plugin) {
-		this.plugin = plugin;
+	public Mail() {
 		devServer = false;
 		FileConfiguration pluginConfig = plugin.getConfig();
 		if (pluginConfig.contains("devserver")) {
@@ -988,4 +985,9 @@ public class Mail {
 	public boolean isDevServer() {
 		return devServer;
 	}
+	
+    @Override
+    public void shutdown() {
+    	//Not needed
+    }
 }

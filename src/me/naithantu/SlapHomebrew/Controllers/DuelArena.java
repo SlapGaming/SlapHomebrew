@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
+import me.naithantu.SlapHomebrew.Util.Util;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -18,12 +20,8 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
-import me.naithantu.SlapHomebrew.Util.Util;
+public class DuelArena extends AbstractController {
 
-public class DuelArena {
-
-	private SlapHomebrew plugin;
 	private World pvpWorld;
 	
 	private boolean gameInProgress;
@@ -50,8 +48,7 @@ public class DuelArena {
 	private String[] newGame;
 	private String noPlayer;
 	
-	public DuelArena(SlapHomebrew plugin) {
-		this.plugin = plugin;
+	public DuelArena() {
 		pvpWorld = plugin.getServer().getWorld("world_pvp");
 		gameInProgress = false;
 		onPad1 = false;
@@ -435,5 +432,10 @@ public class DuelArena {
 	public String getPvPTag() {
 		return pvpTag;
 	}
+	
+    @Override
+    public void shutdown() {
+    	stopGame();
+    }
 	
 }

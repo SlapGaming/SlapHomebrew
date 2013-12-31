@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 
 import org.bukkit.Bukkit;
@@ -14,24 +13,23 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-public class Menus {
-	SlapHomebrew plugin;
-	IconMenu vipMenu;
+public class Menus extends AbstractController {
+	
+	private IconMenu vipMenu;
 
-	IconMenu woodMenu;
-	IconMenu stoneMenu;
-	IconMenu netherMenu;
-	IconMenu miscellaneousMenu;
+	private IconMenu woodMenu;
+	private IconMenu stoneMenu;
+	private IconMenu netherMenu;
+	private IconMenu miscellaneousMenu;
 
-	IconMenu creativeMenu;
+	private IconMenu creativeMenu;
 
-	YamlStorage vipStorage;
-	FileConfiguration vipConfig;
+	private YamlStorage vipStorage;
+	private FileConfiguration vipConfig;
 
-	HashMap<String, IconMenu> bookMenus = new HashMap<String, IconMenu>();
+	private HashMap<String, IconMenu> bookMenus = new HashMap<String, IconMenu>();
 
-	public Menus(SlapHomebrew plugin) {
-		this.plugin = plugin;
+	public Menus() {
 		vipStorage = plugin.getVipGrantStorage();
 		vipConfig = vipStorage.getConfig();
 		vipMenu();
@@ -57,7 +55,7 @@ public class Menus {
 			public void onOptionClick(IconMenu.OptionClickEvent event) {
 				handleVipMenu(event);
 			}
-		}, plugin);
+		});
 
 		addMenuBar(vipMenu);
 	}
@@ -69,7 +67,7 @@ public class Menus {
 			public void onOptionClick(IconMenu.OptionClickEvent event) {
 				handleVipMenu(event);
 			}
-		}, plugin);
+		});
 
 		fillIconMenu(woodMenu, "vipitems.wood", true);
 	}
@@ -81,7 +79,7 @@ public class Menus {
 			public void onOptionClick(IconMenu.OptionClickEvent event) {
 				handleVipMenu(event);
 			}
-		}, plugin);
+		});
 
 		fillIconMenu(stoneMenu, "vipitems.stone", true);
 	}
@@ -93,7 +91,7 @@ public class Menus {
 			public void onOptionClick(IconMenu.OptionClickEvent event) {
 				handleVipMenu(event);
 			}
-		}, plugin);
+		});
 
 		fillIconMenu(netherMenu, "vipitems.nether", true);
 	}
@@ -105,7 +103,7 @@ public class Menus {
 			public void onOptionClick(IconMenu.OptionClickEvent event) {
 				handleVipMenu(event);
 			}
-		}, plugin);
+		});
 
 		fillIconMenu(miscellaneousMenu, "vipitems.miscellaneous", true);
 	}
@@ -129,7 +127,7 @@ public class Menus {
 				player.getInventory().addItem(event.getItemClicked());
 				event.setWillClose(false);
 			}
-		}, plugin);
+		});
 
 		fillIconMenu(creativeMenu, "creative.extraitems", false);
 	}
@@ -163,7 +161,7 @@ public class Menus {
 
 				handleVipMenu(event);
 			}
-		}, plugin);
+		});
 
 		addMenuBar(bookMenu);
 
@@ -181,6 +179,7 @@ public class Menus {
 		bookMenus.put(player.getName(), bookMenu);
 	}
 
+	@SuppressWarnings("deprecation")
 	private void fillIconMenu(IconMenu iconMenu, String configKey, boolean addMenuBar) {
 		int extraRow = 0;
 		if (addMenuBar) {
@@ -286,4 +285,9 @@ public class Menus {
 			event.setWillClose(true);
 		}
 	}
+	
+    @Override
+    public void shutdown() {
+    	//Not needed
+    }
 }

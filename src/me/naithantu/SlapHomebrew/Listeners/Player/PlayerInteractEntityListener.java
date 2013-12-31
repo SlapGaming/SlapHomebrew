@@ -4,6 +4,7 @@ import me.naithantu.SlapHomebrew.Commands.Fun.RideCommand;
 import me.naithantu.SlapHomebrew.Commands.Staff.TeleportMobCommand;
 import me.naithantu.SlapHomebrew.Controllers.Horses;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
+import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.Bukkit;
@@ -12,15 +13,14 @@ import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
+import org.bukkit.entity.Horse.Variant;
 import org.bukkit.entity.LeashHitch;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Horse.Variant;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 
-public class PlayerInteractEntityListener implements Listener {
+public class PlayerInteractEntityListener extends AbstractListener {
 	
 	private Horses horses;
 	private PlayerLogger playerLogger;

@@ -2,7 +2,6 @@ package me.naithantu.SlapHomebrew.Commands.Basics;
 
 import java.util.List;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
@@ -16,8 +15,8 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import com.earth2me.essentials.User;
 
 public class HomeCommand extends AbstractCommand {
-	public HomeCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
-		super(sender, args, plugin);
+	public HomeCommand(CommandSender sender, String[] args) {
+		super(sender, args);
 	}
 
 	public boolean handle() throws CommandException {

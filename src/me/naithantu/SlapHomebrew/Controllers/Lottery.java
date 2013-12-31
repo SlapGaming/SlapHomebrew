@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -13,7 +11,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 
-public class Lottery {
+public class Lottery extends AbstractController {
+	
 	public boolean lotteryPlaying = false;
 	public boolean lotteryEnabled = true;
 	public HashMap<String, Integer> lottery = new HashMap<>();
@@ -23,13 +22,10 @@ public class Lottery {
 	private String fakeLotteryWinner;
 	private HashMap<String, Integer> fakeLotteryPlayers = new HashMap<>();
 	private int taskID;
-	
-	SlapHomebrew plugin;
-	
+		
 	int lotteryTimer;
 
-	public Lottery(SlapHomebrew plugin) {
-		this.plugin = plugin;
+	public Lottery() {
 		lotteryTimer();
 	}
 
@@ -239,9 +235,9 @@ public class Lottery {
 		fakeLotteryWinner = null;
 	}
 	
-	
-	
-	
-	
-	
+    @Override
+    public void shutdown() {
+    	//Not needed
+    }
+		
 }

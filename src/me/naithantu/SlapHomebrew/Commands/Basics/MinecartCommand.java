@@ -1,6 +1,5 @@
 package me.naithantu.SlapHomebrew.Commands.Basics;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
@@ -15,8 +14,8 @@ import org.bukkit.util.Vector;
 
 public class MinecartCommand extends AbstractCommand {
 
-	public MinecartCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
-		super(sender, args, plugin);
+	public MinecartCommand(CommandSender sender, String[] args) {
+		super(sender, args);
 	}
 
 	public boolean handle() throws CommandException {

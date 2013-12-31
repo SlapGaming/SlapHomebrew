@@ -1,6 +1,5 @@
 package me.naithantu.SlapHomebrew.Commands.Staff;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
@@ -16,8 +15,8 @@ import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 public class SDemoteCommand extends AbstractCommand {
 
-	public SDemoteCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
-		super(sender, args, plugin);
+	public SDemoteCommand(CommandSender sender, String[] args) {
+		super(sender, args);
 	}
 	
 	@Override

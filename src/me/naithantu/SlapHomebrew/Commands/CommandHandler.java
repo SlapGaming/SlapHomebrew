@@ -1,13 +1,5 @@
 package me.naithantu.SlapHomebrew.Commands;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
-import me.naithantu.SlapHomebrew.Commands.Staff.*;
-import me.naithantu.SlapHomebrew.Commands.Staff.Plot.*;
-import me.naithantu.SlapHomebrew.Commands.Staff.VIP.*;
-import me.naithantu.SlapHomebrew.Commands.Stats.DeathsCommand;
-import me.naithantu.SlapHomebrew.Commands.Stats.KillsCommand;
-import me.naithantu.SlapHomebrew.Commands.Stats.PlaytimeCommand;
-import me.naithantu.SlapHomebrew.Commands.VIP.*;
 import me.naithantu.SlapHomebrew.Commands.AFK.*;
 import me.naithantu.SlapHomebrew.Commands.Basics.*;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
@@ -15,6 +7,11 @@ import me.naithantu.SlapHomebrew.Commands.Fun.*;
 import me.naithantu.SlapHomebrew.Commands.Games.*;
 import me.naithantu.SlapHomebrew.Commands.Jail.*;
 import me.naithantu.SlapHomebrew.Commands.Lists.*;
+import me.naithantu.SlapHomebrew.Commands.Staff.*;
+import me.naithantu.SlapHomebrew.Commands.Staff.Plot.*;
+import me.naithantu.SlapHomebrew.Commands.Staff.VIP.*;
+import me.naithantu.SlapHomebrew.Commands.Stats.*;
+import me.naithantu.SlapHomebrew.Commands.VIP.*;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.ChatColor;
@@ -23,87 +20,81 @@ import org.bukkit.command.CommandSender;
 
 public class CommandHandler {
 	
-	private SlapHomebrew plugin;
-
-	public CommandHandler(SlapHomebrew plugin) {
-		this.plugin = plugin;
-	}
-
 	public boolean handle(CommandSender sender, Command cmd, String[] args) {
 		String command = cmd.getName().toLowerCase();
 		AbstractCommand commandObj = null;
 		switch (command) {
-		case "backdeath": 		commandObj = new BackdeathCommand(sender, args, plugin); 				break;
-		case "boat":			commandObj = new BoatCommand(sender, args, plugin);						break;
-		case "bumpdone":		commandObj = new BumpdoneCommand(sender, args, plugin);					break;
-		case "creativeextra":	commandObj = new CreativeextraCommand(sender, args, plugin);			break;
-		case "group":			commandObj = new GroupCommand(sender, args, plugin);					break;
-		case "home":			commandObj = new HomeCommand(sender, args, plugin);						break;
-		case "homemenu":		commandObj = new HomeMenuCommand(sender, args, plugin);					break;
-		case "lag":				commandObj = new LagCommand(sender, args, plugin);						break;
-		case "leave":			commandObj = new LeaveCommand(sender, args, plugin);					break;
-		case "message":			commandObj = new MessageCommand(sender, args, plugin);					break;
-		case "minecart":		commandObj = new MinecartCommand(sender, args, plugin);					break;
-		case "mobcheck":		commandObj = new MobcheckCommand(sender, args, plugin);					break;
-		case "note":			commandObj = new NoteCommand(sender, args, plugin);						break;
-		case "pay":				commandObj = new PayCommand(sender, args, plugin);						break;
-		case "potion":			commandObj = new PotionCommand(sender, args, plugin);					break;
-		case "rainbow":			commandObj = new RainbowCommand(sender, args, plugin);					break;
-		case "ride":			commandObj = new RideCommand(sender, args, plugin);						break;
-		case "roll":			commandObj = new RollCommand(sender, args, plugin);						break;
-		case "searchregion":	commandObj = new SearchregionCommand(sender, args, plugin);				break;
-		case "sgm":				commandObj = new SgmCommand(sender, args, plugin);						break;
-		case "slap":			commandObj = new SlapCommand(sender, args, plugin);						break;
-		case "sparta":			commandObj = new SpartaCommand(sender, args, plugin);					break;
-		case "te":				commandObj = new TeCommand(sender, args, plugin);						break;
-		case "tpallow":			commandObj = new TpallowCommand(sender, args, plugin);					break;
-		case "tpblock":			commandObj = new TpBlockCommand(sender, args, plugin);					break;
-		case "world":			commandObj = new WorldCommand(sender, args, plugin);					break;
-		case "afk":				commandObj = new AfkCommand(sender, args, plugin);						break;
-		case "afkinfo":			commandObj = new AfkInfoCommand(sender, args, plugin);					break;
-		case "afklist":			commandObj = new AfkInfoCommand(sender, new String[]{"list"}, plugin);	break;
-		case "spawn":			commandObj = new SpawnCommand(sender, args, plugin);					break;
-		case "horse":			commandObj = new HorseCommand(sender, args, plugin);					break;
-		case "changelog":		commandObj = new ChangeLogCommand(sender, args, plugin);				break;
-		case "stafflist":		commandObj = new StaffListCommand(sender, args, plugin);				break;
-		case "mail":			commandObj = new MailCommand(sender, args, plugin);						break;
-		case "jail":			commandObj = new JailCommand(sender, args, plugin);						break;
-		case "jails":			commandObj = new JailCommand(sender, new String[]{"list"}, plugin); 	break;
-		case "unjail":			commandObj = new UnjailCommand(sender, args, plugin);					break;
-		case "xray":			commandObj = new XRayCommand(sender, args, plugin);						break;
-		case "list":			commandObj = new ListCommand(sender, args, plugin);						break;
-		case "fireworkshow":	commandObj = new FireworkCommand(sender, args, plugin);					break;
-		case "timecheck":		commandObj = new TimecheckCommand(sender, args, plugin);				break;
-		case "spromote": 		commandObj = new SPromoteCommand(sender, args, plugin);					break;
-		case "sdemote":			commandObj = new SDemoteCommand(sender, args, plugin); 					break;
-		case "worldguards":		commandObj = new WorldguardsCommand(sender, args, plugin);				break;
-		case "worthlist":		commandObj = new WorthListCommand(sender, args, plugin);				break;
-		case "skick":			commandObj = new SKickCommand(sender, args, plugin);					break;
-		case "splugins":		commandObj = new PluginsCommand(sender, args, plugin);					break;
-		case "suicide":			commandObj = new SuicideCommand(sender, args, plugin);					break;
-		case "deaths":			commandObj = new DeathsCommand(sender, args, plugin);					break;
-		case "kills":			commandObj = new KillsCommand(sender, args, plugin);					break;
-		case "playtime":		commandObj = new PlaytimeCommand(sender, args, plugin);					break;
-		case "teleportmob":		commandObj = new TeleportMobCommand(sender, args, plugin);				break;
-		case "improvedregion":	commandObj = new ImprovedRegionCommand(sender, args, plugin);			break;
+		case "backdeath": 		commandObj = new BackdeathCommand(sender, args); 				break;
+		case "boat":			commandObj = new BoatCommand(sender, args);						break;
+		case "bumpdone":		commandObj = new BumpdoneCommand(sender, args);					break;
+		case "creativeextra":	commandObj = new CreativeextraCommand(sender, args);			break;
+		case "group":			commandObj = new GroupCommand(sender, args);					break;
+		case "home":			commandObj = new HomeCommand(sender, args);						break;
+		case "homemenu":		commandObj = new HomeMenuCommand(sender, args);					break;
+		case "lag":				commandObj = new LagCommand(sender, args);						break;
+		case "leave":			commandObj = new LeaveCommand(sender, args);					break;
+		case "message":			commandObj = new MessageCommand(sender, args);					break;
+		case "minecart":		commandObj = new MinecartCommand(sender, args);					break;
+		case "mobcheck":		commandObj = new MobcheckCommand(sender, args);					break;
+		case "note":			commandObj = new NoteCommand(sender, args);						break;
+		case "pay":				commandObj = new PayCommand(sender, args);						break;
+		case "potion":			commandObj = new PotionCommand(sender, args);					break;
+		case "rainbow":			commandObj = new RainbowCommand(sender, args);					break;
+		case "ride":			commandObj = new RideCommand(sender, args);						break;
+		case "roll":			commandObj = new RollCommand(sender, args);						break;
+		case "searchregion":	commandObj = new SearchregionCommand(sender, args);				break;
+		case "sgm":				commandObj = new SgmCommand(sender, args);						break;
+		case "slap":			commandObj = new SlapCommand(sender, args);						break;
+		case "sparta":			commandObj = new SpartaCommand(sender, args);					break;
+		case "te":				commandObj = new TeCommand(sender, args);						break;
+		case "tpallow":			commandObj = new TpallowCommand(sender, args);					break;
+		case "tpblock":			commandObj = new TpBlockCommand(sender, args);					break;
+		case "world":			commandObj = new WorldCommand(sender, args);					break;
+		case "afk":				commandObj = new AfkCommand(sender, args);						break;
+		case "afkinfo":			commandObj = new AfkInfoCommand(sender, args);					break;
+		case "afklist":			commandObj = new AfkInfoCommand(sender, new String[]{"list"});	break;
+		case "spawn":			commandObj = new SpawnCommand(sender, args);					break;
+		case "horse":			commandObj = new HorseCommand(sender, args);					break;
+		case "changelog":		commandObj = new ChangeLogCommand(sender, args);				break;
+		case "stafflist":		commandObj = new StaffListCommand(sender, args);				break;
+		case "mail":			commandObj = new MailCommand(sender, args);						break;
+		case "jail":			commandObj = new JailCommand(sender, args);						break;
+		case "jails":			commandObj = new JailCommand(sender, new String[]{"list"}); 	break;
+		case "unjail":			commandObj = new UnjailCommand(sender, args);					break;
+		case "xray":			commandObj = new XRayCommand(sender, args);						break;
+		case "list":			commandObj = new ListCommand(sender, args);						break;
+		case "fireworkshow":	commandObj = new FireworkCommand(sender, args);					break;
+		case "timecheck":		commandObj = new TimecheckCommand(sender, args);				break;
+		case "spromote": 		commandObj = new SPromoteCommand(sender, args);					break;
+		case "sdemote":			commandObj = new SDemoteCommand(sender, args); 					break;
+		case "worldguards":		commandObj = new WorldguardsCommand(sender, args);				break;
+		case "worthlist":		commandObj = new WorthListCommand(sender, args);				break;
+		case "skick":			commandObj = new SKickCommand(sender, args);					break;
+		case "splugins":		commandObj = new PluginsCommand(sender, args);					break;
+		case "suicide":			commandObj = new SuicideCommand(sender, args);					break;
+		case "deaths":			commandObj = new DeathsCommand(sender, args);					break;
+		case "kills":			commandObj = new KillsCommand(sender, args);					break;
+		case "playtime":		commandObj = new PlaytimeCommand(sender, args);					break;
+		case "teleportmob":		commandObj = new TeleportMobCommand(sender, args);				break;
+		case "improvedregion":	commandObj = new ImprovedRegionCommand(sender, args);			break;
 		case "plot":
 			if (args.length == 0) return false;
 			switch (args[0].toLowerCase()) {
-			case "check": 		commandObj = new PlotcheckCommand(sender, args, plugin); 				break;
-			case "done": 		commandObj = new PlotdoneCommand(sender, args, plugin); 				break;
-			case "mark": 		commandObj = new PlotmarkCommand(sender, args, plugin); 				break;
-			case "tp": 			commandObj = new PlottpCommand(sender, args, plugin); 					break;
+			case "check": 		commandObj = new PlotcheckCommand(sender, args); 				break;
+			case "done": 		commandObj = new PlotdoneCommand(sender, args); 				break;
+			case "mark": 		commandObj = new PlotmarkCommand(sender, args); 				break;
+			case "tp": 			commandObj = new PlottpCommand(sender, args); 					break;
 			}
 			break;
 		case "vip":			
 			if (args.length == 0) {
-				commandObj = new VipCommand(sender, args, plugin);
+				commandObj = new VipCommand(sender, args);
 			} else {
 				switch (args[0].toLowerCase()) {
-				case "check": 	commandObj = new VipForumCheckCommand(sender, args, plugin); 			break;
-				case "done": 	commandObj = new VipForumDoneCommand(sender, args, plugin); 			break;
-				case "mark": 	commandObj = new VipForumMarkCommand(sender, args, plugin); 			break;
-				default: 		commandObj = new VipCommand(sender, args, plugin);
+				case "check": 	commandObj = new VipForumCheckCommand(sender, args); 			break;
+				case "done": 	commandObj = new VipForumDoneCommand(sender, args); 			break;
+				case "mark": 	commandObj = new VipForumMarkCommand(sender, args); 			break;
+				default: 		commandObj = new VipCommand(sender, args);
 				}
 			}
 			break;

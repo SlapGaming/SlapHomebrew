@@ -3,7 +3,6 @@ package me.naithantu.SlapHomebrew.Commands.Staff;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Util.Util;
@@ -24,8 +23,8 @@ public class XRayCommand extends AbstractCommand {
 	
 	boolean all = false;
 	
-	public XRayCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
-		super(sender, args, plugin);
+	public XRayCommand(CommandSender sender, String[] args) {
+		super(sender, args);
 		if (logblock == null) {
 			logblock = (LogBlock)plugin.getServer().getPluginManager().getPlugin("LogBlock");
 		}

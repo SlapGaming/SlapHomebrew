@@ -3,7 +3,6 @@ package me.naithantu.SlapHomebrew.Controllers;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 
 import org.bukkit.Bukkit;
@@ -14,15 +13,13 @@ import org.bukkit.entity.Player;
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
-public class Vip {
+public class Vip extends AbstractController {
 	
-	private SlapHomebrew plugin;
 	private YamlStorage vipStorage;
 	private FileConfiguration vipConfig;
 	private TabController tabController;
 
-	public Vip(SlapHomebrew plugin, YamlStorage vipStorage, TabController tabController) {
-		this.plugin = plugin;
+	public Vip(YamlStorage vipStorage, TabController tabController) {
 		this.vipStorage = vipStorage;
 		vipConfig = vipStorage.getConfig();
 		this.tabController = tabController;
@@ -170,5 +167,10 @@ public class Vip {
 	public void resetVipDays(String player) {
 		vipConfig.set("vipdays." + player.toLowerCase(), null);
 	}
+	
+    @Override
+    public void shutdown() {
+    	//Not needed
+    }
 	
 }

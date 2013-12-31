@@ -18,7 +18,7 @@ public class RemoveMemberCommand extends AbstractImprovedRegionCommand {
 	private boolean all;
 	
 	public RemoveMemberCommand(SlapHomebrew plugin, Player p, String[] args, boolean all) {
-		super(plugin, p, args);
+		super(p, args);
 		this.all = all;
 	}
 

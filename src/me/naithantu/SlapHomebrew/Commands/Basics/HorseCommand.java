@@ -2,7 +2,6 @@ package me.naithantu.SlapHomebrew.Commands.Basics;
 
 import java.util.List;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Controllers.Horses;
@@ -29,8 +28,8 @@ public class HorseCommand extends AbstractCommand {
 	
 	private Essentials ess;
 	
-	public HorseCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
-		super(sender, args, plugin);
+	public HorseCommand(CommandSender sender, String[] args) {
+		super(sender, args);
 		horses = plugin.getHorses();
 		ess = plugin.getEssentials();
 	}

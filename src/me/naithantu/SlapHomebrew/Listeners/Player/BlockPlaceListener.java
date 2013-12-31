@@ -1,23 +1,17 @@
 package me.naithantu.SlapHomebrew.Listeners.Player;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Controllers.Flag;
+import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 
-public class BlockPlaceListener implements Listener {
-	SlapHomebrew plugin;
-
-	public BlockPlaceListener(SlapHomebrew plugin) {
-		this.plugin = plugin;
-	}
-
+public class BlockPlaceListener extends AbstractListener {
+	
 	@EventHandler
 	public void onBlockPlace(BlockPlaceEvent event) {
 		// Add metadata to skulls placed in the wither arena to find out who
@@ -31,6 +25,7 @@ public class BlockPlaceListener implements Listener {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onLogPlace(BlockPlaceEvent event) {
 		Material material = event.getItemInHand().getType();

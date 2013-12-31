@@ -18,7 +18,7 @@ public class AddMemberCommand extends AbstractImprovedRegionCommand {
 	private boolean all;
 	
 	public AddMemberCommand(SlapHomebrew plugin, Player p, String[] args, boolean all) {
-		super(plugin, p, args);
+		super(p, args);
 		this.all = all;
 	}
 

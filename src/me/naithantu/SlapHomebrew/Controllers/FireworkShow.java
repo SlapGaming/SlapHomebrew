@@ -2,8 +2,6 @@ package me.naithantu.SlapHomebrew.Controllers;
 
 import java.util.HashMap;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
-
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.FireworkEffect.Builder;
@@ -13,9 +11,7 @@ import org.bukkit.entity.Firework;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.scheduler.BukkitTask;
 
-public class FireworkShow {
-
-	private SlapHomebrew plugin;
+public class FireworkShow extends AbstractController {
 	
 	private HashMap<Integer, DispenserPillar> pillars;
 	private HashMap<Integer, FireworkEffect> effects;
@@ -28,8 +24,7 @@ public class FireworkShow {
 	private BukkitTask taskId = null;
 	
 	
-	public FireworkShow(SlapHomebrew plugin) {
-		this.plugin = plugin;
+	public FireworkShow() {
 		pillars = new HashMap<>();
 		effects = new HashMap<>();
 		world = plugin.getServer().getWorld("world_survival2");
@@ -340,5 +335,10 @@ public class FireworkShow {
 		}
 		
 	}
+	
+    @Override
+    public void shutdown() {
+    	//Not needed
+    }
 	
 }

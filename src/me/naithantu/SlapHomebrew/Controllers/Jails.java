@@ -7,6 +7,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.TimeZone;
 
+import me.naithantu.SlapHomebrew.Runnables.JailChecker;
+import me.naithantu.SlapHomebrew.Storage.YamlStorage;
+import me.naithantu.SlapHomebrew.Util.Util;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -16,14 +20,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
-import me.naithantu.SlapHomebrew.Runnables.JailChecker;
-import me.naithantu.SlapHomebrew.Storage.YamlStorage;
-import me.naithantu.SlapHomebrew.Util.Util;
-
-public class Jails {
-
-	private SlapHomebrew plugin;
+public class Jails extends AbstractController {
 	
 	private YamlStorage jailYML;
 	private FileConfiguration jailConfig;
@@ -34,8 +31,7 @@ public class Jails {
 	
 	private JailChecker jailChecker;
 	
-	public Jails(SlapHomebrew plugin) {
-		this.plugin = plugin;
+	public Jails() {
 		jailYML = new YamlStorage(plugin, "jails");
 		jailConfig = jailYML.getConfig();
 		timeLeftFormat = new SimpleDateFormat("HH:mm:ss");

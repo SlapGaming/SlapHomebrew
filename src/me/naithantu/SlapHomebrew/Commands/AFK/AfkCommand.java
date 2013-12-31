@@ -1,6 +1,5 @@
 package me.naithantu.SlapHomebrew.Commands.AFK;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Controllers.AwayFromKeyboard;
@@ -13,8 +12,8 @@ public class AfkCommand extends AbstractCommand {
 	
 	private static AwayFromKeyboard afk = null;
 	
-	public AfkCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
-		super(sender, args, plugin);
+	public AfkCommand(CommandSender sender, String[] args) {
+		super(sender, args);
 		if (afk == null) {
 			afk = plugin.getAwayFromKeyboard();
 		}

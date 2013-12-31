@@ -1,7 +1,7 @@
 package me.naithantu.SlapHomebrew.Listeners.Entity;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Controllers.Flag;
+import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.Location;
@@ -11,17 +11,12 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.Wither;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.metadata.FixedMetadataValue;
 
-public class CreatureSpawnListener implements Listener {
-	SlapHomebrew plugin;
+public class CreatureSpawnListener extends AbstractListener {
 
-	public CreatureSpawnListener(SlapHomebrew plugin) {
-		this.plugin = plugin;
-	}
 	@EventHandler
 	public void onCreatureSpawn(CreatureSpawnEvent event) {
 

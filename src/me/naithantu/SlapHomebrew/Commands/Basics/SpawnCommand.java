@@ -1,6 +1,5 @@
 package me.naithantu.SlapHomebrew.Commands.Basics;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 
@@ -13,8 +12,8 @@ public class SpawnCommand extends AbstractCommand {
 	private Player p;
 	private static String resourceWorldName = null;
 	
-	public SpawnCommand(CommandSender sender, String[] args, SlapHomebrew plugin) {
-		super(sender, args, plugin);
+	public SpawnCommand(CommandSender sender, String[] args) {
+		super(sender, args);
 	}
 	
 	/**
