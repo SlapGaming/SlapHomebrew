@@ -148,7 +148,7 @@ public class FlagCommand extends AbstractImprovedRegionCommand {
 		case "mushroomgrowth": case "mushgrowth": case "mg": case "mgrowth": case "mushroomg": case "mushroomgrow":
 			flag = DefaultFlag.MUSHROOMS;
 			break;
-		case "grassgrowth": case "grasgrowth": case "grasgrow": case "gg": case "grassg": case "ggrowth":
+		case "grassgrowth": case "grasgrowth": case "grassgrow": case "gg": case "grassg": case "ggrowth":
 			flag = DefaultFlag.GRASS_SPREAD;
 			break;
 		case "myceliumspread": case "mspread": case "ms": case "myceliums":

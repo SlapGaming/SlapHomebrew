@@ -61,7 +61,7 @@ public class CommandHandler {
 		case "world":			commandObj = new WorldCommand(sender, args, plugin);					break;
 		case "afk":				commandObj = new AfkCommand(sender, args, plugin);						break;
 		case "afkinfo":			commandObj = new AfkInfoCommand(sender, args, plugin);					break;
-		case "afklist":			commandObj = new AfkInfoCommand(sender, new String[]{"all"}, plugin);	break;
+		case "afklist":			commandObj = new AfkInfoCommand(sender, new String[]{"list"}, plugin);	break;
 		case "spawn":			commandObj = new SpawnCommand(sender, args, plugin);					break;
 		case "horse":			commandObj = new HorseCommand(sender, args, plugin);					break;
 		case "changelog":		commandObj = new ChangeLogCommand(sender, args, plugin);				break;

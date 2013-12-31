@@ -4,6 +4,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import ru.tehkode.permissions.PermissionUser;
+import ru.tehkode.permissions.bukkit.PermissionsEx;
+
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
@@ -31,7 +34,14 @@ public class AfkInfoCommand extends AbstractCommand {
 				String pName = p.getName();
 				if (afkController.isAfk(pName)) { //Check if player is afk
 					afkPlayer = true;
-					msg(" Player: " + ChatColor.AQUA + pName + ChatColor.WHITE + " - Reason: " + ChatColor.GRAY + afkController.getAfkReason(pName)); //Send AFK Reason
+					PermissionUser pexUser = PermissionsEx.getUser(p);
+					String prefix = "";
+					if (pexUser != null) {
+						if (pexUser.getPrefix() != null && pexUser.getPrefix().length() > 2) {
+							prefix = pexUser.getPrefix().substring(0, 2);
+						}
+					}
+					msg(" Player: " + ChatColor.AQUA + ChatColor.translateAlternateColorCodes('&', prefix + pName) + ChatColor.WHITE + " - Reason: " + ChatColor.GRAY + afkController.getAfkReason(pName)); //Send AFK Reason
 				}
 			}
 			if (!afkPlayer) { //If no players AFK
@@ -41,7 +51,16 @@ public class AfkInfoCommand extends AbstractCommand {
 			Player foundPlayer = getOnlinePlayer(args[0], false); //Get the player
 			String pName = foundPlayer.getName();
 			boolean afk = afkController.isAfk(pName);
-			hMsg("Player: " +  ChatColor.GREEN + pName + ChatColor.WHITE + " | AFK: " + (afk ? ChatColor.AQUA + "Yes" : ChatColor.RED + "No")); //Send AFK string
+			
+			PermissionUser pexUser = PermissionsEx.getUser(foundPlayer);
+			String prefix = "";
+			if (pexUser != null) {
+				if (pexUser.getPrefix() != null && pexUser.getPrefix().length() > 2) {
+					prefix = pexUser.getPrefix().substring(0, 2);
+				}
+			}
+			
+			hMsg("Player: " +  ChatColor.translateAlternateColorCodes('&', prefix + pName) + ChatColor.WHITE + " | AFK: " + (afk ? ChatColor.AQUA + "Yes" : ChatColor.RED + "No")); //Send AFK string
 			if (afk) { //If Player is AFK
 				String afkReason = afkController.getAfkReason(pName); //Get AFK Reason
 				if (!afkReason.equals("AFK")) { //Check if custom AFK reason
