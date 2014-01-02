@@ -32,7 +32,6 @@ import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 public class PlayerJoinListener extends AbstractListener {
 	
-	private YamlStorage timeStorage;
 	private YamlStorage dataStorage;
 	private YamlStorage vipStorage;
 
@@ -72,12 +71,6 @@ public class PlayerJoinListener extends AbstractListener {
 
 		if (player.getWorld().getName().equals("world_start"))
 			player.setAllowFlight(true);
-
-		if (player.hasPermission("slaphomebrew.staff")) {
-			String date = new SimpleDateFormat("MMM-d HH:mm:ss z").format(new Date());
-			date = date.substring(0, 1).toUpperCase() + date.substring(1);
-			Util.dateIntoTimeConfig(date, player.getName() + " logged in", timeStorage);
-		}
 
 		//Plot message
 		if (player.hasPermission("slaphomebrew.plot.admin") && plugin.getUnfinishedPlots().size() > 0) {
@@ -137,10 +130,7 @@ public class PlayerJoinListener extends AbstractListener {
 				vipStorage.saveConfig();
 			}
 		}	
-		
-		//Log login time
-		playerLogger.setLoginTime(player.getName());
-		
+				
 		//Add to Tab
 		tabController.playerJoin(player);
 		
