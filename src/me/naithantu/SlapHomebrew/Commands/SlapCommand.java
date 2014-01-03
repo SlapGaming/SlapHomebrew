@@ -130,18 +130,6 @@ public class SlapCommand extends AbstractCommand {
 			targetPlayer.sendMessage(ChatColor.translateAlternateColorCodes('&', Util.buildString(args, " ", 2))); //Send message
 			break;
 			
-		case "promotions": //Get a list of all the recent promotions
-			testPermission("promotions");
-			if (args.length != 2) throw new UsageException("slap promotions [number of promotions]");
-			final int nrOfPromotions = parseIntPositive(args[1]);
-			Util.runASync(plugin, new Runnable() {
-				@Override
-				public void run() {
-					plugin.getPlayerLogger().getPromotions(sender, nrOfPromotions);
-				}
-			});
-			break;
-			
 		case "setrw": case "rw": case "resourceworld": //Set resource world number
 			testPermission("setrw");
 			if (args.length != 2) throw new UsageException("slap setrw [world number]");

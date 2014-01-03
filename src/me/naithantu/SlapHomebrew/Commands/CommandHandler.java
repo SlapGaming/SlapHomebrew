@@ -64,7 +64,6 @@ public class CommandHandler {
 		case "xray":			commandObj = new XRayCommand(sender, args);						break;
 		case "list":			commandObj = new ListCommand(sender, args);						break;
 		case "fireworkshow":	commandObj = new FireworkCommand(sender, args);					break;
-		case "timecheck":		commandObj = new TimecheckCommand(sender, args);				break;
 		case "spromote": 		commandObj = new SPromoteCommand(sender, args);					break;
 		case "sdemote":			commandObj = new SDemoteCommand(sender, args); 					break;
 		case "worldguards":		commandObj = new WorldguardsCommand(sender, args);				break;
@@ -74,7 +73,6 @@ public class CommandHandler {
 		case "suicide":			commandObj = new SuicideCommand(sender, args);					break;
 		case "deaths":			commandObj = new DeathsCommand(sender, args);					break;
 		case "kills":			commandObj = new KillsCommand(sender, args);					break;
-		case "playtime":		commandObj = new PlaytimeCommand(sender, args);					break;
 		case "teleportmob":		commandObj = new TeleportMobCommand(sender, args);				break;
 		case "improvedregion":	commandObj = new ImprovedRegionCommand(sender, args);			break;
 		case "plot":

@@ -3,7 +3,7 @@ main: me.naithantu.SlapHomebrew.SlapHomebrew
 depend: [Essentials, Vault, PermissionsEx, ReportRTS]
 softdepend: [TabAPI]
 authors: [naithantu, Stoux2]
-version: 3.1.5
+version: 3.1.6
 description: SlapHomebrew homemade plugin.
 commands:
   vip:
@@ -129,10 +129,6 @@ commands:
   fireworkshow:
     description: Warp to the fireworkshow
     usage "Usage: /fireworkshow"
-  timecheck:
-    description: Check online-time of a player
-    usage: "Usage: /timecheck [Player]"
-    aliases: [checktime]
   spromote:
     description: Promote a player
   sdemote:
@@ -157,10 +153,6 @@ commands:
   kills:
     description: Get the number of kills
     usage: "Usage: /kills"
-  playtime:
-    description: Check how much time you have played, or check the top playtime list
-    usage: "Usage: /playtime <list>"
-    aliases: [playedtime, timeplayed]
   teleportmob:
     aliases: [tpmob]
   improvedregion:
