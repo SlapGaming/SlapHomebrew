@@ -123,7 +123,7 @@ public class ApplyChecker extends AbstractController {
 	
     @Override
     public void shutdown() {
-    	gathererThread.cancel();
+    	if (gathererThread != null) gathererThread.cancel();
     	applyThreadStorage.saveConfig();
     }
     
