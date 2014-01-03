@@ -31,6 +31,7 @@ public class SlapSecurityAgency extends AbstractController {
 		//Loggers
 		if (loggerEnabled("AFK")) 		add(new AFKLogger(sql)); 		//Log AFK Sessions
 	//	if (loggerEnabled("Bans")) 		add(new BansLogger(sql)); 		//Log Bans
+		if (loggerEnabled("Death"))		add(new DeathLogger(sql));		//Log Deaths & Kills
 	//	if (loggerEnabled("Donation")) 	add(new DonationLogger(sql)); 	//Log Donations
 		if (loggerEnabled("Kick")) 		add(new KickLogger(sql)); 		//Log Kicks
 		if (loggerEnabled("Modreq")) 	add(new ModreqLogger(sql));		//Log Modreqs & their progress
@@ -39,9 +40,9 @@ public class SlapSecurityAgency extends AbstractController {
 		if (loggerEnabled("Session")) 	add(new SessionLogger(sql)); 	//Log Login Sessions
 		
 		//Controllers
-		if (controlEnabled("VIPDays")) {} //Not supported yet
-		if (controlEnabled("VIPForum")) {} //Not supported yet
-		if (controlEnabled("PlotMark")) {} //Not supported yet
+	//	if (controlEnabled("VIPDays")) 
+	//	if (controlEnabled("VIPForum")) 
+	//	if (controlEnabled("PlotMark"))
 		
 		if (loggers.isEmpty()) { //Check if any loggers are enabled
 			Log.warn("All loggers are disabled in the config.");
