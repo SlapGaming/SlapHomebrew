@@ -75,8 +75,9 @@ public class PlayerCommandListener extends AbstractListener {
 				event.setCancelled(true);
 				return;
 			}
+			break;
 			
-		case "modlist": //Modlist -> Stafflist
+		case "/modlist": //Modlist -> Stafflist
 			player.chat(event.getMessage().replaceFirst("(?i)" + commandMessage[0], "/stafflist"));
 			event.setCancelled(true);
 			return;

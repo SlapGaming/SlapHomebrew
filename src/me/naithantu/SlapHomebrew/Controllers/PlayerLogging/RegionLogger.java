@@ -35,7 +35,8 @@ public class RegionLogger extends AbstractLogger {
 			"`changed_by` varchar(20) NOT NULL, " +
 			"`changer_is_a` enum('staff','owner','member','') NOT NULL, " +
 			"`type` enum('addmember','removemember','addowner','removeowner','create','remove','flag','priority','redefine') NOT NULL, " +
-			"`parameter` varchar(255) NOT NULL, KEY `region` (`region`), " +
+			"`parameter` varchar(255) DEFAULT NULL, " +
+			"KEY `region` (`region`), " +
 			"KEY `changed_time` (`changed_time`), " +
 			"KEY `world` (`world`) " +
 			") ENGINE=InnoDB DEFAULT CHARSET=latin1;"

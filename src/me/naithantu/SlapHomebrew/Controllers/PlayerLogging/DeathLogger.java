@@ -18,10 +18,10 @@ public class DeathLogger extends AbstractLogger implements Listener {
 	private HashSet<String> suiciders;
 	
 	private HashSet<Batchable> deaths;
-	private String deathsSQL = "INSERT INTO `mcecon`.`logger_deaths` (`player`, `time`, `deathcause`) VALUES (?, ?, ?);";
+	private String deathsSQL = "INSERT INTO `mcecon`.`logger_deaths` (`player`, `death_time`, `deathcause`) VALUES (?, ?, ?);";
 	
 	private HashSet<Batchable> kills;
-	private String killsSQL = "INSERT INTO `mcecon`.`logger_kills` (`killed_player`, `time`, `killed_by`) VALUES (?, ?, ?);";
+	private String killsSQL = "INSERT INTO `mcecon`.`logger_kills` (`killed_player`, `death_time`, `killed_by`) VALUES (?, ?, ?);";
 	
 	public DeathLogger(LoggerSQL sql) {
 		super(sql);

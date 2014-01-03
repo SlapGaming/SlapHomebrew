@@ -68,9 +68,9 @@ public class StaffListCommand extends AbstractCommand {
 					} else {
 						msg(Util.colorize("All staff: " + Util.buildString(staff, ChatColor.WHITE + ", ")));
 					}
-					return;
 				};
 			});
+			return true;
 		}
 		
 		AwayFromKeyboard afk = plugin.getAwayFromKeyboard();

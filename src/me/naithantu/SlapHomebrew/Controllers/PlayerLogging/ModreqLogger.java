@@ -52,8 +52,8 @@ public class ModreqLogger extends AbstractLogger implements Listener {
 			"`issued_time` bigint(20) NOT NULL, " +
 			"`issued_by_player` varchar(20) NOT NULL, " +
 			"`request` varchar(1000) NOT NULL, " +
-			"`handled_time` bigint(20) NOT NULL, " +
-			"`handled_by_staff` varchar(20) NOT NULL, " +
+			"`handled_time` bigint(20) DEFAULT NULL, " +
+			"`handled_by_staff` varchar(20) DEFAULT NULL, " +
 			"PRIMARY KEY (`iteration`,`modreq_id`), " +
 			"KEY `issued_time` (`issued_time`,`issued_by_player`,`handled_by_staff`) " +
 			") ENGINE=InnoDB DEFAULT CHARSET=latin1;"
