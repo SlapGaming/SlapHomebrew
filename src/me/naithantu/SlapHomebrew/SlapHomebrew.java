@@ -229,11 +229,13 @@ public class SlapHomebrew extends JavaPlugin {
 		 controllers.add(mail = new Mail());
 		 controllers.add(messages = new Messages());
 		 controllers.add(playerLogger = new PlayerLogger());
-		 controllers.add(afk = new AwayFromKeyboard(playerLogger));
+		 controllers.add(afk = new AwayFromKeyboard());
 		 controllers.add(tabController = new TabController(playerLogger));
 		 controllers.add(vip = new Vip(vipStorage, tabController));
 		 controllers.add(worthList = new WorthList());
+		 
 		 controllers.add(new ApplyChecker(essentials, tabController));
+		 controllers.add(new SlapSecurityAgency());
 	}
 	
 	private void initializeLoaders() {
@@ -268,13 +270,13 @@ public class SlapHomebrew extends JavaPlugin {
 		register(pm, new PotionListener());
 		register(pm, new ProjectileHitListener());
 		register(pm, new ProjectileLaunchListener());
-		register(pm, new PlayerQuitListener(timeStorage, afk, jails, playerLogger, tabController));
+		register(pm, new PlayerQuitListener(afk, jails, playerLogger, tabController));
 		register(pm, new PlayerTeleportListener(jails, afk, playerLogger));
 		register(pm, new PlayerToggleFlightListener(extras));
 		register(pm, new VehicleListener(horses));
 		register(pm, new PlayerInteractEntityListener(horses, playerLogger));
 		register(pm, new PlayerRespawnListener());
-		register(pm, new PlayerChangedWorldListener(lottery, mail, playerLogger));
+		register(pm, new PlayerChangedWorldListener(lottery, mail));
 		register(pm, new PlayerInventoryEvent(lottery, playerLogger));
 		register(pm, new AnimalTameListener(horses));
 	}

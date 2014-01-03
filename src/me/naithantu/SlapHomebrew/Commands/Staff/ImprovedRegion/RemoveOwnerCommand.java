@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
+import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.RegionLogger;
+import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.RegionLogger.ChangeType;
+import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.RegionLogger.ChangerIsA;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.ChatColor;
@@ -40,8 +43,12 @@ public class RemoveOwnerCommand extends AbstractImprovedRegionCommand {
 			}
 		}
 		
+		//Save & Msg
 		saveChanges();
 		hMsg("Removed " + ChatColor.RED + Util.buildString(offPlayers, ChatColor.YELLOW + ", " + ChatColor.RED) + ChatColor.YELLOW + " as owners from region " + ChatColor.RED + region.getId());
+		
+		//Log
+		RegionLogger.logRegionChange(region, p, ChangerIsA.staff, ChangeType.removeowner, Util.buildString(offPlayers, " "));
 	}
 
 }

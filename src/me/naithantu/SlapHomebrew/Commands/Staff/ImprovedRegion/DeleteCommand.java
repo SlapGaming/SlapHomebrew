@@ -3,6 +3,9 @@ package me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegion;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
+import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.RegionLogger;
+import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.RegionLogger.ChangeType;
+import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.RegionLogger.ChangerIsA;
 
 import org.bukkit.entity.Player;
 
@@ -20,8 +23,13 @@ public class DeleteCommand extends AbstractImprovedRegionCommand {
 		validateRegionID(args[1]); //Check if valid
 		ProtectedRegion region = getRegion(args[1]); //Get region
 		rm.removeRegion(region.getId()); //Remove region
-		saveChanges(); //Save
-		hMsg("Region '" + region.getId() + "' deleted."); //Msg
+		
+		//Save & Msg
+		saveChanges();
+		hMsg("Region '" + region.getId() + "' deleted.");
+		
+		//Log
+		RegionLogger.logRegionChange(region, p, ChangerIsA.staff, ChangeType.remove, null);
 	}
 
 }

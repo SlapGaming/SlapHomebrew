@@ -148,7 +148,7 @@ public class SDemoteCommand extends AbstractCommand {
 				}
 				
 				//Log event
-				plugin.getPlayerLogger().logPromotion(sender.getName(), playername, userRank.toString(), toPexRank.toString(), true);
+				//TODO
 				return;
 				
 			}

@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
+import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.RegionLogger;
+import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.RegionLogger.ChangeType;
+import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.RegionLogger.ChangerIsA;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.ChatColor;
@@ -40,9 +43,12 @@ public class AddOwnerCommand extends AbstractImprovedRegionCommand {
 			}
 		}
 		
+		//Save & Msg
 		saveChanges();
 		hMsg("Added " + ChatColor.RED + Util.buildString(offPlayers, ChatColor.YELLOW + ", " + ChatColor.RED) + ChatColor.YELLOW + " as owners to region " + ChatColor.RED + region.getId());
 		
+		//Log
+		RegionLogger.logRegionChange(region, p, ChangerIsA.staff, ChangeType.addowner, Util.buildString(offPlayers, " "));
 	}
 
 }

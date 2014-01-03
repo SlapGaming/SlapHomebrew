@@ -3,6 +3,9 @@ package me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegion;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
+import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.RegionLogger;
+import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.RegionLogger.ChangeType;
+import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.RegionLogger.ChangerIsA;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -31,12 +34,12 @@ public class PriorityCommand extends AbstractImprovedRegionCommand {
 		//Set the new priority
 		foundRegion.setPriority(priority);
 		
-		//Save changes
+		//Save & msg
 		saveChanges();
+		hMsg("Priority of region '" + foundRegion.getId() + "' has been set to " + priority + "." + ChatColor.GRAY + " (Higher numbers override)");
 		
-		//Send message
-		hMsg("Priority of region '" + foundRegion.getId() + 
-				"' has been set to " + priority + "." + ChatColor.GRAY + " (Higher numbers override)");
+		//Log
+		RegionLogger.logRegionChange(foundRegion, p, ChangerIsA.staff, ChangeType.priority, args[2]);
 	}
 
 }

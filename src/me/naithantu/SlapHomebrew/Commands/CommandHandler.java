@@ -10,7 +10,6 @@ import me.naithantu.SlapHomebrew.Commands.Lists.*;
 import me.naithantu.SlapHomebrew.Commands.Staff.*;
 import me.naithantu.SlapHomebrew.Commands.Staff.Plot.*;
 import me.naithantu.SlapHomebrew.Commands.Staff.VIP.*;
-import me.naithantu.SlapHomebrew.Commands.Stats.*;
 import me.naithantu.SlapHomebrew.Commands.VIP.*;
 import me.naithantu.SlapHomebrew.Util.Util;
 
@@ -71,8 +70,8 @@ public class CommandHandler {
 		case "skick":			commandObj = new SKickCommand(sender, args);					break;
 		case "splugins":		commandObj = new PluginsCommand(sender, args);					break;
 		case "suicide":			commandObj = new SuicideCommand(sender, args);					break;
-		case "deaths":			commandObj = new DeathsCommand(sender, args);					break;
-		case "kills":			commandObj = new KillsCommand(sender, args);					break;
+	//	case "deaths":			commandObj = new DeathsCommand(sender, args);					break;
+	//	case "kills":			commandObj = new KillsCommand(sender, args);					break;
 		case "teleportmob":		commandObj = new TeleportMobCommand(sender, args);				break;
 		case "improvedregion":	commandObj = new ImprovedRegionCommand(sender, args);			break;
 		case "plot":

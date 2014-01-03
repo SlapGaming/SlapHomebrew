@@ -3,6 +3,7 @@ package me.naithantu.SlapHomebrew.Commands.Staff;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
+import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.KickLogger;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.command.CommandSender;
@@ -21,6 +22,8 @@ public class SKickCommand extends AbstractCommand {
 		
 		Player player = getOnlinePlayer(args[0], false); //Get the player to be kicked
 		String reason = (args.length == 1 ? "You have been kicked!" : Util.buildString(args, " ", 1)); //Build reason (if reason given)
+		
+		KickLogger.logPlayerKickedBy(player.getName(), sender.getName()); //Log
 		
 		player.kickPlayer(reason); //Kick player
 		hMsg(player.getName() + " has been kicked"); 

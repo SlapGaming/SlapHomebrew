@@ -4,6 +4,9 @@ import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.IRGException;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
+import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.RegionLogger;
+import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.RegionLogger.ChangeType;
+import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.RegionLogger.ChangerIsA;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -81,7 +84,7 @@ public class FlagCommand extends AbstractImprovedRegionCommand {
 		
 		//Send message
 		hMsg("Region flag '" + flag.getName() + "' for region '" + region.getId() + "' has been set to '" + value + "'.");
-		
+				
 		//Send current flags
 		RegionPrintoutBuilder printout = new RegionPrintoutBuilder(region);
         printout.append(ChatColor.GRAY);
@@ -89,6 +92,9 @@ public class FlagCommand extends AbstractImprovedRegionCommand {
         printout.appendFlagsList(false);
         printout.append(")");
         printout.send(p);
+        
+        //Log
+        RegionLogger.logRegionChange(region, p, ChangerIsA.staff, ChangeType.flag, flag.getName() + " " + value);
 	}
 	
 	/**

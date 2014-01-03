@@ -13,6 +13,8 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 
 public class DeathLogger extends AbstractLogger implements Listener {
 
+	private static DeathLogger instance;
+	
 	private HashSet<String> suiciders;
 	
 	private HashSet<Batchable> deaths;
@@ -28,6 +30,7 @@ public class DeathLogger extends AbstractLogger implements Listener {
 		
 		deaths = new HashSet<>();
 		kills = new HashSet<>();
+		instance = this;
 	}
 	
 	@EventHandler
@@ -58,6 +61,16 @@ public class DeathLogger extends AbstractLogger implements Listener {
 			} else if (kills.size() > 25) { //else check for kills (else is for preventing batching both at the same time).
 				batch(killsSQL, kills);
 			}
+		}
+	}
+	
+	/**
+	 * A player commits suicide
+	 * @param playername The player
+	 */
+	public static void playerCommitsSuicide(String playername) {
+		if (instance != null) {
+			instance.suiciders.add(playername); //Add to map
 		}
 	}
 
@@ -131,6 +144,7 @@ public class DeathLogger extends AbstractLogger implements Listener {
 		if (!kills.isEmpty()) {
 			batch(killsSQL, kills);
 		}
+		instance = null;
 	}
 
 }

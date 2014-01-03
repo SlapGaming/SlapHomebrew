@@ -1,8 +1,5 @@
 package me.naithantu.SlapHomebrew.Listeners.Player;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import me.naithantu.SlapHomebrew.Controllers.AwayFromKeyboard;
 import me.naithantu.SlapHomebrew.Controllers.Jails;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
@@ -66,7 +63,7 @@ public class PlayerCommandListener extends AbstractListener {
 			
 		case "/?": //? -> Help
 			if (!Util.testPermission(player, "spluginsoverride")) {
-				player.chat(event.getMessage().replace(commandMessage[0], "/help"));
+				player.chat(event.getMessage().replaceFirst("(?i)" + commandMessage[0], "/help"));
 				event.setCancelled(true);
 				return;
 			}
@@ -78,6 +75,11 @@ public class PlayerCommandListener extends AbstractListener {
 				event.setCancelled(true);
 				return;
 			}
+			
+		case "modlist": //Modlist -> Stafflist
+			player.chat(event.getMessage().replaceFirst("(?i)" + commandMessage[0], "/stafflist"));
+			event.setCancelled(true);
+			return;
 		}
 				
 		//Set last activity
@@ -104,14 +106,7 @@ public class PlayerCommandListener extends AbstractListener {
 					player.sendMessage(ChatColor.GRAY + "You are jailed. Use /timeleft to check your time left in jail.");
 				}
 			}
-		}
-						
-		//Catch /modlist command -> Force to /stafflist
-		if (commandMessage[0].equalsIgnoreCase("/modlist")) {
-			player.chat("/stafflist");
-			event.setCancelled(true);
-		}
-				
+		}				
 		
 		//Leave AFK on certain Commands
 		String[] command = event.getMessage().toLowerCase().split(" ");
@@ -138,35 +133,13 @@ public class PlayerCommandListener extends AbstractListener {
 		}
 		
 		if (commandMessage.length > 2) {
-			switch (commandMessage[0]) {
-			//AFK response
-			case "/msg":
+			if (commandMessage[0].equals("/msg")) { //AFK response
 				Player tempPlayer = Bukkit.getPlayer(commandMessage[1]);
 				if (tempPlayer != null) {
 					if (afk.isAfk(tempPlayer.getName())){
 						afk.sendAfkReason(event.getPlayer(), tempPlayer.getName());
 					}
 				}
-				break;
-				
-			//WorldGaurd logger	
-			case "/rg": case "/region":
-				String date = new SimpleDateFormat("MM-dd HH:mm:ss").format(new Date());
-				String action = getActionString(commandMessage[1]);
-				if (action != null) {
-					if (commandMessage[1].equals("define") && !plugin.getRegionMap().containsKey(commandMessage[2])) {
-						plugin.getRegionMap().put(commandMessage[2], date + " " + player.getName() + " made region " + message.replace(getReplaceString(commandMessage[0], commandMessage[1]), ""));
-					} else if ( (commandMessage[1].equals("remove") && plugin.getRegionMap().containsKey(commandMessage[2])) || !commandMessage[1].equals("remove")) {
-						if(commandMessage[1].equals("addmember") && event.getMessage().contains("flag:") && !Util.testPermission(player, "flag")){
-							Util.badMsg(player, "You are not allowed to add member flags!");
-							event.setCancelled(true);
-						} else {
-							String replaceString = getReplaceString(commandMessage[0], commandMessage[1]);
-							logWorldGaurd(commandMessage[2], date, player.getName(), action, message, replaceString);
-						}
-					}
-				}
-				break;
 			}
 		}
 		
@@ -183,36 +156,5 @@ public class PlayerCommandListener extends AbstractListener {
 			}
 		}
 	}
-	
-	private void logWorldGaurd(String commandMessage, String date, String playerName, String action, String completeMessage, String replaceCommand){
-		plugin.getRegionMap().put(commandMessage, plugin.getRegionMap().get(commandMessage) + "<==>" + date + " " + playerName + " " + action + " " + completeMessage.replace(replaceCommand + commandMessage, ""));
-	}
-	
-	private String getReplaceString(String command, String arg){
-		String returnString;
-		if (command.equals("/rg")) {
-			returnString = "/rg " + arg + " ";
-		} else {
-			returnString = "/region " + arg + " ";
-		}
-		return returnString;
-	}
-	
-	private String getActionString(String arg){
-		String returnString = null;
-		switch (arg) {
-		case "define": returnString = "made region"; break;
-		case "remove": returnString = "removed region";	break;
-		case "addowner": returnString = "added owner(s)"; break;
-		case "removeowner":	returnString = "removed owner(s)"; break;
-		case "addmember": returnString = "added member(s)";	break;
-		case "removemember": returnString = "removed member(s)"; break;
-		case "flag": returnString = "flagged region"; break;
-		case "setpriority":	returnString = "set the priority to"; break; 
-		case "redefine": returnString = "redefined region";	break;
-		}
-		return returnString;
-	}
-	
 	
 }

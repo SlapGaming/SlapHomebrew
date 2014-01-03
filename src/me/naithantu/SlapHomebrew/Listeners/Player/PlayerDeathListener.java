@@ -4,7 +4,6 @@ import java.util.Random;
 
 import me.naithantu.SlapHomebrew.Controllers.Flag;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
-import me.naithantu.SlapHomebrew.Controllers.PlayerLogger.DeathType;
 import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
 import me.naithantu.SlapHomebrew.Util.Util;
 
@@ -40,25 +39,13 @@ public class PlayerDeathListener extends AbstractListener {
 			String playername = player.getName();
 			
 			//Check for suicides
-			if (playerLogger.hasCommitedSuicide(playername)) {
+			if (playerLogger.hasCommittedSuicide(playername)) {
 				event.setDeathMessage(null);
 				plugin.getServer().broadcastMessage(playername + " has committed suicide..");
 			}
 			
 			String message = event.getDeathMessage();
 			if (message != null) { 
-				
-				//Deaths logger
-				if (player.getKiller() != null) {
-					playerLogger.addKill(player.getKiller().getName());
-					playerLogger.addDeath(DeathType.player, playername);
-				} else {
-					if (message.contains("slain by")) {
-						playerLogger.addDeath(DeathType.mob, playername);
-					} else {
-						playerLogger.addDeath(DeathType.other, playername);
-					}
-				}
 				
 				//Only send death messages from pvp world to players in the pvp world.
 				if (world.getName().equalsIgnoreCase("world_pvp")) {

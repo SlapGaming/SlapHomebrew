@@ -4,22 +4,19 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.AFKLogger;
+
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 public class AwayFromKeyboard extends AbstractController {
-
-	private PlayerLogger playerLogger;
 	
 	private Map<String, String> afkReasons;
-	private Map<String, Long> afkTimes;
 	
 	private HashSet<String> preventAFK;
 	
-	public AwayFromKeyboard(PlayerLogger playerLogger){
-		this.playerLogger = playerLogger;
+	public AwayFromKeyboard(){
 		afkReasons = new HashMap<>();
-		afkTimes = new HashMap<>();
 		preventAFK = new HashSet<>();
 	}
 	
@@ -28,19 +25,18 @@ public class AwayFromKeyboard extends AbstractController {
     		afkReasons.remove(player);
     	}
     	afkReasons.put(player, reason);
-    	afkTimes.put(player, System.currentTimeMillis());
-    	if (!reason.equals("AFK")) {
-    		plugin.getServer().broadcastMessage(ChatColor.WHITE + player + " is now AFK. Reason: " + reason);
-    	} else {
+    	boolean noReason = reason.equals("AFK");
+    	AFKLogger.logPlayerGoesAFK(player, (noReason ? null : reason)); //Log
+    	if (noReason) {
     		plugin.getServer().broadcastMessage(ChatColor.WHITE + player + " is now AFK.");
+    	} else {
+    		plugin.getServer().broadcastMessage(ChatColor.WHITE + player + " is now AFK. Reason: " + reason);
     	}
     }
     
     public void leaveAfk(String player){
     	afkReasons.remove(player);
-    	long time = afkTimes.get(player);
-    	playerLogger.addAFKTime(player, System.currentTimeMillis() - time);
-    	afkTimes.remove(player);
+    	AFKLogger.logPlayerLeftAFK(player);
     	plugin.getServer().broadcastMessage(ChatColor.WHITE + player + " is no longer AFK");
     }
     
@@ -74,6 +70,7 @@ public class AwayFromKeyboard extends AbstractController {
     
     public void removeAfk(String afkPerson){
     	if (afkReasons.containsKey(afkPerson)) {
+    		AFKLogger.logPlayerLeftAFK(afkPerson);
     		afkReasons.remove(afkPerson);
     	}
     }

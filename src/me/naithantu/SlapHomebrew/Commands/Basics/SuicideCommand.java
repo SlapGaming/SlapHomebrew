@@ -3,6 +3,7 @@ package me.naithantu.SlapHomebrew.Commands.Basics;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
+import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.DeathLogger;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -29,6 +30,7 @@ public class SuicideCommand extends AbstractCommand {
 		} else {
 			p.sendMessage(ChatColor.GRAY + "Goodbye world D:");
 			playerLogger.commitsSuicide(p.getName());
+			DeathLogger.playerCommitsSuicide(p.getName());
 			p.setHealth(0);
 		}
 		return true;
