@@ -384,26 +384,50 @@ public class Util {
     }
     
     public static BukkitTask runASync(SlapHomebrew plugin, Runnable runnable) {
+    	if (!plugin.isEnabled()) {
+    		runnable.run();
+    		return null;
+    	}
     	return getScheduler(plugin).runTaskAsynchronously(plugin, runnable);
     }
     
     public static BukkitTask runASyncLater(SlapHomebrew plugin, Runnable runnable, int delay) {
+    	if (!plugin.isEnabled()) {
+    		runnable.run();
+    		return null;
+    	}
     	return getScheduler(plugin).runTaskLaterAsynchronously(plugin, runnable, delay);
     }
     
     public static BukkitTask runASyncTimer(SlapHomebrew plugin, Runnable runnable, int delay, int period) {
+    	if (!plugin.isEnabled()) {
+    		runnable.run();
+    		return null;
+    	}
     	return getScheduler(plugin).runTaskTimerAsynchronously(plugin, runnable, delay, period);
     }
     
     public static BukkitTask run(SlapHomebrew plugin, Runnable runnable) {
+    	if (!plugin.isEnabled()) {
+    		runnable.run();
+    		return null;
+    	}
     	return getScheduler(plugin).runTask(plugin, runnable);
     }
     
     public static BukkitTask runLater(SlapHomebrew plugin, Runnable runnable, int delay) {
+    	if (!plugin.isEnabled()) {
+    		runnable.run();
+    		return null;
+    	}
     	return getScheduler(plugin).runTaskLater(plugin, runnable, delay);
     }
     
     public static BukkitTask runTimer(SlapHomebrew plugin, Runnable runnable, int delay, int period) {
+    	if (!plugin.isEnabled()) {
+    		runnable.run();
+    		return null;
+    	}
     	return getScheduler(plugin).runTaskTimer(plugin, runnable, delay, period);
     }
     
