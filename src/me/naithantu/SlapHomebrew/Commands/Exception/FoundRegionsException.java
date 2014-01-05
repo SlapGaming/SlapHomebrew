@@ -23,6 +23,6 @@ public class FoundRegionsException extends CommandException {
 	}
 	
 	public FoundRegionsException(HashSet<String> regions) {
-		super("Multiple regions found." + "\n" + Util.buildString(regions, ChatColor.WHITE + ", " + ChatColor.RED));
+		super("Multiple regions found with the same priority." + "\n" + "Regions: " + ChatColor.WHITE + Util.buildString(regions, ChatColor.RED + ", " + ChatColor.WHITE));
 	}
 }
