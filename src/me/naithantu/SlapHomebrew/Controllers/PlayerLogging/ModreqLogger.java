@@ -20,7 +20,7 @@ public class ModreqLogger extends AbstractLogger implements Listener {
 
 	private String sqlQuery = 
 			"INSERT INTO `mcecon`.`logger_modreqs` (`iteration`, `modreq_id`, `issued_time`, `issued_by_player`, `request`, `handled_time`, `handled_by_staff`) " +
-			"VALUES (?, ?, ?, ?, ?, ?, ?);";
+			"VALUES (?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE `handled_time` = ?, `handled_by_staff` = ?;";
 	
 	private HashMap<Integer, CompletedModreq> modreqBatch;
 	private int iteration;
@@ -139,6 +139,8 @@ public class ModreqLogger extends AbstractLogger implements Listener {
 			preparedStatement.setString(5, request);
 			preparedStatement.setLong(6, handledTime);
 			preparedStatement.setString(7, handledByStaff);
+			preparedStatement.setLong(8, handledTime);
+			preparedStatement.setString(9, handledByStaff);
 		}
 		
 	}
