@@ -7,6 +7,7 @@ import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.RegionLogger;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.RegionLogger.ChangeType;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.RegionLogger.ChangerIsA;
+import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -42,15 +43,13 @@ public class FlagCommand extends AbstractImprovedRegionCommand {
 		//Get the region
 		ProtectedRegion region = getRegion(args[1]);
 		
-		Flag<?> flag;
+		Flag<?> flag = getFlag(p, args[2]); //Parse flag
 		
-		//Parse flag
-		if (!allFlags) { //Not able to do all flags
-			flag = getFlag(p, args[2]);
-		} else { //Allowed to do all flags
-			flag = DefaultFlag.fuzzyMatchFlag(args[2]); //Get fuzzy flag
+		if (flag == null && allFlags) { //If no flag found && is allowed to do any kind of flag
+			flag = DefaultFlag.fuzzyMatchFlag(args[2]);
 		}
 		
+		//Check if flag is found
 		if (flag == null) throw new IRGException("No flag found (that you are allowed to use). " + ChatColor.GRAY + "Allowed flags: \n" + allowedFlags(allFlags));
 		
 		String value;
@@ -69,7 +68,7 @@ public class FlagCommand extends AbstractImprovedRegionCommand {
 				throw new IRGException(	"Given value doesn't work for this flag. Expected values: \n" +
 										"none (remove/delete/del), allow (true/on), deny (false/off)");
 			} else {
-				value = args[3]; //Value = something else than those 3
+				value = Util.buildString(args, " ", 3); //Value = something else than those 3
 			}
 		}
 		
@@ -94,7 +93,7 @@ public class FlagCommand extends AbstractImprovedRegionCommand {
         printout.send(p);
         
         //Log
-        RegionLogger.logRegionChange(region, p, ChangerIsA.staff, ChangeType.flag, flag.getName() + " " + value);
+        RegionLogger.logRegionChange(region, p, ChangerIsA.staff, ChangeType.flag, flag.getName() + " -> " + value);
 	}
 	
 	/**
@@ -163,8 +162,8 @@ public class FlagCommand extends AbstractImprovedRegionCommand {
 		case "vinegrowth": case "vg": case "vineg": case "vinegrow": case "vgrow": case "vgrowth":
 			flag = DefaultFlag.VINE_GROWTH;
 			break;
-		default: //No flag found. Send allowed flags
-			throw new IRGException("No flag found (that you are allowed to use). " + ChatColor.GRAY + "Allowed flags: \n" + allowedFlags(false));
+		default:
+			return null;
 		}
 		return flag;
 	}

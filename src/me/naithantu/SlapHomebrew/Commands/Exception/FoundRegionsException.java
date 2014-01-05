@@ -1,5 +1,11 @@
 package me.naithantu.SlapHomebrew.Commands.Exception;
 
+import java.util.HashSet;
+
+import org.bukkit.ChatColor;
+
+import me.naithantu.SlapHomebrew.Util.Util;
+
 
 /**
  * Error thrown while trying to find regions at a player's location
@@ -16,7 +22,7 @@ public class FoundRegionsException extends CommandException {
 		super("You aren't a " + (member ? "member or owner" : "owner") + " of any of the found regions at this location.");
 	}
 	
-	public FoundRegionsException(int foundPriority) {
-		super("Multiple regions found with same priority (highest: " + foundPriority + "). You'll need to enter the region's name.");
+	public FoundRegionsException(HashSet<String> regions) {
+		super("Multiple regions found." + "\n" + Util.buildString(regions, ChatColor.WHITE + ", " + ChatColor.RED));
 	}
 }

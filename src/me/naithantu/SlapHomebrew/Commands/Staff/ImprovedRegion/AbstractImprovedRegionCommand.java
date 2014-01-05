@@ -1,5 +1,7 @@
 package me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegion;
 
+import java.util.HashSet;
+
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.FoundRegionsException;
 import me.naithantu.SlapHomebrew.Commands.Exception.IRGException;
@@ -163,8 +165,11 @@ public abstract class AbstractImprovedRegionCommand extends AbstractCommand {
 		ApplicableRegionSet regionSet = rm.getApplicableRegions(p.getLocation()); //Get all regions on location
 		if (regionSet.size() == 0) throw new FoundRegionsException(); //If no regions found throw error
 		
+		HashSet<String> foundRegions = new HashSet<>();
+		
 		int highestPriority = -9001; boolean oneRegion = false;
 		for (ProtectedRegion foundRegion : regionSet) { //Loop thru regions
+			foundRegions.add(foundRegion.getId()); //Add to set
 			int foundPriority = foundRegion.getPriority(); //Get the region's priority
 			if (foundPriority > highestPriority) { //If found priority is higher then current high
 				region = foundRegion; //Set region
@@ -174,7 +179,7 @@ public abstract class AbstractImprovedRegionCommand extends AbstractCommand {
 				oneRegion = false; //No longer only one region
 			}
 		}
-		if (!oneRegion) throw new FoundRegionsException(highestPriority);
+		if (!oneRegion) throw new FoundRegionsException(foundRegions);
 		return region;
 	}
 	
@@ -189,6 +194,8 @@ public abstract class AbstractImprovedRegionCommand extends AbstractCommand {
 		ProtectedRegion region = null;
 		ApplicableRegionSet regionSet = rm.getApplicableRegions(p.getLocation()); //Get all regions on location
 		if (regionSet.size() == 0) throw new FoundRegionsException(); //If no regions found throw error
+
+		HashSet<String> foundRegions = new HashSet<>();
 		
 		int highestPriority = -9001; boolean oneRegion = false;
 		String playername = p.getName();
@@ -202,6 +209,8 @@ public abstract class AbstractImprovedRegionCommand extends AbstractCommand {
 				continue;
 			}
 			
+			foundRegions.add(foundRegion.getId()); //Add to set
+			
 			int foundPriority = foundRegion.getPriority(); //Get the region's priority
 			if (foundPriority > highestPriority) { //If found priority is higher then current high
 				region = foundRegion; //Set region
@@ -212,7 +221,7 @@ public abstract class AbstractImprovedRegionCommand extends AbstractCommand {
 			}
 		}
 		if (region == null) throw new FoundRegionsException(playername, member); //No regions found that this player can acces
-		if (!oneRegion) throw new FoundRegionsException(highestPriority); //Multiple regions with the same priority
+		if (!oneRegion) throw new FoundRegionsException(foundRegions); //Multiple regions with the same priority
 		return region;
 	}
 	
