@@ -11,6 +11,8 @@ import org.bukkit.plugin.PluginManager;
 
 public class SlapSecurityAgency extends AbstractController {
 
+	private LoggerSQL sql;
+	
 	private FileConfiguration config;
 	private ArrayList<AbstractLogger> loggers;
 	
@@ -23,7 +25,7 @@ public class SlapSecurityAgency extends AbstractController {
 			return;
 		}
 		
-		LoggerSQL sql = new LoggerSQL();
+		sql = new LoggerSQL();
 		if (!sql.connect()) { //Connect to SQL
 			return;
 		}
@@ -46,6 +48,7 @@ public class SlapSecurityAgency extends AbstractController {
 		
 		if (loggers.isEmpty()) { //Check if any loggers are enabled
 			Log.warn("All loggers are disabled in the config.");
+			sql.disconnect();
 			return;
 		}
 		
@@ -53,6 +56,8 @@ public class SlapSecurityAgency extends AbstractController {
 		for (AbstractLogger logger : loggers) { //Register the Loggers that also listen to events.
 			logger.registerEvents(pm);
 		}				
+		
+		sql.startPinging(); //Start pinging the SQL Server
 	}
 	
 	private void add(AbstractLogger logger) {
@@ -86,6 +91,7 @@ public class SlapSecurityAgency extends AbstractController {
 		for (AbstractLogger logger : loggers) {
 			logger.shutdown();
 		}
+		sql.disconnect();
 	}
 	
 

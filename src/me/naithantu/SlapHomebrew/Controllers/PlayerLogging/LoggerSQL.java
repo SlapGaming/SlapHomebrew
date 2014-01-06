@@ -4,10 +4,16 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import org.bukkit.scheduler.BukkitTask;
+
+import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Util.Log;
+import me.naithantu.SlapHomebrew.Util.Util;
 
 public class LoggerSQL {
 
+	private BukkitTask pingingTask;
+	
 	private Connection con;
 	
 	public LoggerSQL() {
@@ -26,6 +32,37 @@ public class LoggerSQL {
 			Log.severe("PlayerLogger failed to connect with SQL. Exception: " + e.getMessage());
 			return false;
 		}
+	}
+	
+	/**
+	 * Disconnect the LoggerSQL
+	 */
+	public void disconnect() {
+		try {
+			con.close();
+			if (pingingTask instanceof BukkitTask && pingingTask != null) {
+				pingingTask.cancel();
+			}
+		} catch (SQLException e) {
+			//Failed to close.. Ignore
+		}
+	}
+	
+	/**
+	 * Start pinging the SQL server
+	 */
+	public void startPinging() {
+		pingingTask = Util.runASyncTimer(SlapHomebrew.getInstance(), new Runnable() {
+			
+			@Override
+			public void run() {
+				try {
+					con.isValid(5);
+				} catch (SQLException e) {
+					Log.severe("Something went wrong with pinging the SQL. Exception: " + e.getMessage());
+				}
+			}
+		}, 18000, 18000);
 	}
 	
 	
