@@ -84,8 +84,8 @@ public class KickLogger extends AbstractLogger implements Listener {
 	 */
 	private void addKick(PlayerKicked kick) {
 		kicks.add(kick);
-		if (kicks.size() >= 20 && plugin.isEnabled()) {
-			batch(sqlQuery, kicks);
+		if (kicks.size() >= 5 && plugin.isEnabled()) {
+			batch();
 		}
 	}
 	
@@ -109,8 +109,13 @@ public class KickLogger extends AbstractLogger implements Listener {
 	}
 	
 	@Override
-	public void shutdown() {
+	public void batch() {
 		batch(sqlQuery, kicks);
+	}
+	
+	@Override
+	public void shutdown() {
+		batch();
 		instance = null;
 	}
 	

@@ -4,6 +4,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.HashSet;
 
+import me.naithantu.SlapHomebrew.Util.Util;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -56,12 +58,22 @@ public class DeathLogger extends AbstractLogger implements Listener {
 			}
 			deaths.add(new PlayerDeath(killedPlayer.getName(), matchedTime, causeReason)); //Add the death
 			
-			if (deaths.size() > 25) { //Check if there are more than 25 deaths recorded
-				batch(deathsSQL, deaths);
-			} else if (kills.size() > 25) { //else check for kills (else is for preventing batching both at the same time).
-				batch(killsSQL, kills);
+			if (deaths.size() > 25 || kills.size() > 25) {
+				batch();
 			}
 		}
+	}
+	
+	@Override
+	public void batch() {
+		batch(deathsSQL, deaths);
+		Util.runLater(plugin, new Runnable() {
+			
+			@Override
+			public void run() {
+				batch(killsSQL, kills);
+			}
+		}, 600);
 	}
 	
 	/**
@@ -138,12 +150,7 @@ public class DeathLogger extends AbstractLogger implements Listener {
 
 	@Override
 	public void shutdown() {
-		if (!deaths.isEmpty()) {
-			batch(deathsSQL, deaths);
-		}
-		if (!kills.isEmpty()) {
-			batch(killsSQL, kills);
-		}
+		batch();
 		instance = null;
 	}
 

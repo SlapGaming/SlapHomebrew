@@ -63,6 +63,11 @@ public abstract class AbstractLogger extends AbstractController {
 		});
 	}
 	
+	/**
+	 * Insert the batch into the SQL DB
+	 */
+	public abstract void batch();
+	
 	
 	protected abstract void createTables() throws SQLException;
 	

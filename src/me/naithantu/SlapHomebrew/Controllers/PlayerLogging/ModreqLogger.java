@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import me.naithantu.SlapHomebrew.Util.Log;
+import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -83,17 +84,23 @@ public class ModreqLogger extends AbstractLogger implements Listener {
 	 */
 	@EventHandler
 	public void onCompleteModreq(ReportCompleteEvent event) {
-		HelpRequest req = event.getRequest();
-		int id = req.getId();
-		if (iteration == 0 || id == 1) {
+		final HelpRequest req = event.getRequest();
+		final int id = req.getId();
+		if (iteration == 0 || id == 1) { //Check Iteration
 			iteration++;
 		}
-		CompletedModreq cm = new CompletedModreq(iteration, id, req.getTimestamp(), req.getName(), req.getMessage(), req.getModTimestamp(), req.getModName());
-		modreqBatch.put(id, cm);
 		
-		if (modreqBatch.size() > 20) {
-			batchModreqs();
-		}
+		Util.runLater(plugin, new Runnable() { //Run later, to prevent null?
+			@Override
+			public void run() {
+				CompletedModreq cm = new CompletedModreq(iteration, id, req.getTimestamp(), req.getName(), req.getMessage(), req.getModTimestamp(), req.getModName());
+				modreqBatch.put(id, cm);
+				
+				if (modreqBatch.size() > 20) {
+					batchModreqs();
+				}
+			}
+		}, 1);
 	}
 	
 	/**
@@ -103,6 +110,11 @@ public class ModreqLogger extends AbstractLogger implements Listener {
 		if (modreqBatch.isEmpty()) return;
 		batch(sqlQuery, new HashSet<Batchable>(modreqBatch.values()));
 		modreqBatch = new HashMap<>();
+	}
+	
+	@Override
+	public void batch() {
+		batchModreqs();
 	}
 
 	@Override

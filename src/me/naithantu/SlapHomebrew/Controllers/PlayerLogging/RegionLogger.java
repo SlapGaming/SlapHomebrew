@@ -55,8 +55,8 @@ public class RegionLogger extends AbstractLogger {
 	private void addChange(String world, String region, String changedBy, ChangerIsA changer, ChangeType changeType, String parameters) {
 		RegionChange change = new RegionChange(world, region, System.currentTimeMillis(), changedBy, changer, changeType, parameters);
 		changes.add(change);
-		if (changes.size() >= 20 && plugin.isEnabled()) {
-			batch(sqlQuery, changes);
+		if (changes.size() >= 5 && plugin.isEnabled()) {
+			batch();
 		}
 	}
 
@@ -71,10 +71,15 @@ public class RegionLogger extends AbstractLogger {
 	public static void logRegionChange(ProtectedRegion region, Player changedBy, ChangerIsA changer, ChangeType changeType, String parameters) {
 		if (instance != null) instance.addChange(changedBy.getWorld().getName(), region.getId(), changedBy.getName(), changer, changeType, parameters);
 	}
+	
+	@Override
+	public void batch() {
+		batch(sqlQuery, changes);
+	}
 			
 	@Override
 	public void shutdown() {
-		batch(sqlQuery, changes);
+		batch();
 		instance = null;
 	}
 	

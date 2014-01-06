@@ -5,12 +5,16 @@ import java.util.ArrayList;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.*;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 import me.naithantu.SlapHomebrew.Util.Log;
+import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.scheduler.BukkitTask;
 
 public class SlapSecurityAgency extends AbstractController {
 
+	private BukkitTask batchingTask;
+	
 	private LoggerSQL sql;
 	
 	private FileConfiguration config;
@@ -49,6 +53,7 @@ public class SlapSecurityAgency extends AbstractController {
 		if (loggers.isEmpty()) { //Check if any loggers are enabled
 			Log.warn("All loggers are disabled in the config.");
 			sql.disconnect();
+			sql = null;
 			return;
 		}
 		
@@ -58,12 +63,33 @@ public class SlapSecurityAgency extends AbstractController {
 		}				
 		
 		sql.startPinging(); //Start pinging the SQL Server
+		startBatchingTask(); //Start batching the loggers
 	}
 	
 	private void add(AbstractLogger logger) {
 		if (logger.isEnabled()) {
 			loggers.add(logger);
 		}
+	}
+	
+	/**
+	 * Start batching the Loggers each 2 minutes.
+	 */
+	private void startBatchingTask() {
+		batchingTask = Util.runASyncTimer(plugin, new Runnable() {
+			
+			private int size = -1;
+			private int current = 0;
+			
+			@Override
+			public void run() {
+				if (size == -1) size = loggers.size(); //Check if size is given
+				loggers.get(current++).batch();
+				if (current >= size) {
+					current = 0;
+				}
+			}
+		}, 12000, 2400);
 	}
 	
 	/**
@@ -88,11 +114,13 @@ public class SlapSecurityAgency extends AbstractController {
 	 * Shutdown all loggers
 	 */
 	public void shutdown() {
+		if (batchingTask instanceof BukkitTask && batchingTask != null) {
+			batchingTask.cancel();
+		}
 		for (AbstractLogger logger : loggers) {
 			logger.shutdown();
 		}
-		sql.disconnect();
+		if (sql != null) sql.disconnect();
 	}
-	
 
 }

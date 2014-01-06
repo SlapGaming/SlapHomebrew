@@ -76,14 +76,19 @@ public class AFKLogger extends AbstractLogger {
 		finishedSessions.add(session); //Add to finished sessions
 		
 		if (finishedSessions.size() >= 20 && plugin.isEnabled()) {
-			batch(query, finishedSessions);
+			batch();
 		}
 	}
 			
 	@Override
 	public void shutdown() {
-		batch(query, finishedSessions);
+		batch();
 		instance = null;
+	}
+	
+	@Override
+	public void batch() {
+		batch(query, finishedSessions);
 	}
 	
 	private class AFKSession implements Batchable {

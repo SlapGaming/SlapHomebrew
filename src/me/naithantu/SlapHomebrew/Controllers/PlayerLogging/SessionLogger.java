@@ -59,14 +59,19 @@ public class SessionLogger extends AbstractLogger implements Listener {
 		s.setQuitTime(); //Set quit time
 		activeSessions.remove(playername); //Remove from map
 		finishedSessions.add(s); //Add to set
-		if (finishedSessions.size() >= 20 && plugin.isEnabled()) {
-			batch(sqlQuery, finishedSessions);
+		if (finishedSessions.size() >= 10 && plugin.isEnabled()) {
+			batch();
 		}
+	}
+	
+	@Override
+	public void batch() {
+		batch(sqlQuery, finishedSessions);
 	}
 		
 	@Override
 	public void shutdown() {
-		batch(sqlQuery, finishedSessions);
+		batch();
 	}
 	
 	private class Session implements Batchable {
