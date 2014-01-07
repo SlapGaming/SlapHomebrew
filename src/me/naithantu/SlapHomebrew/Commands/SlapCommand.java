@@ -415,6 +415,27 @@ public class SlapCommand extends AbstractCommand {
 				lottery.startFakeLottery(targetPlayer.getName()); //Start fake lottery with target as winner
 				break;
 				
+			case "tableflip": case "fliptable": //Flip a table
+				testPermission("tableflip");
+				player.chat("(\u256F\u00B0\u25A1\u00B0\uFF09\u256F\uFE35 \u253B\u2501\u253B Table Flip!!"); //Flip the table
+				Util.runLater(plugin, new Runnable() {
+					@Override
+					public void run() { //5 Seconds later let someone fix the table
+						Player[] onlinePlayers = Util.getOnlinePlayers();
+						if (onlinePlayers.length == 0) return; //Check if anyone online
+						Random r = new Random();
+						Player tPlayer = onlinePlayers[r.nextInt(onlinePlayers.length)];
+						String end;
+						if (tPlayer.getName().equals(player.getName())) { //Same player
+							end = "Sorry about that..";
+						} else {
+							end = "I Fiiix.";
+						}
+						tPlayer.chat("\u252C\u2500\u252C\u30CE( \u00BA _ \u00BA\u30CE) " + end);
+					}
+				}, 100);
+				break;
+				
 			case "spawnhorse": case "horse": //Spawn a maxed-out horse
 				testPermission("spawnhorse");
 				if (args.length != 2) throw new UsageException("slap spawnhorse [horse|mule|donkey|skeleton|zombie]"); //Usage
