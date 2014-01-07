@@ -13,8 +13,11 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 
 public class MessageCommand extends AbstractCommand {
+	
+	private static long lastMessage = 0L;
 	
     private YamlStorage messageStorage;
     private FileConfiguration messageConfig;
@@ -33,17 +36,20 @@ public class MessageCommand extends AbstractCommand {
 			if (args.length != 2) throw new UsageException("message show [message]"); //Check usage
 			msg(getMessage(args[1])); //Send message
 			break;
+			
 		case "list": //Show a full list of messages to the player
 			if (!messageConfig.contains("messages")) throw new CommandException("There are no messages!"); //Check if config contains messages 
 			Set<String> messages = ((MemorySection) messageConfig.get("messages")).getKeys(true); //Get all messages
 			hMsg("Messages: " + ChatColor.RED + Util.buildString(messages, ChatColor.WHITE + ", " + ChatColor.RED)); //Send messages
 			break;
+			
 		case "create": //Create a new message
 			testPermission("message.admin"); //Test perm
 			if (args.length != 2) throw new UsageException("message create [message]"); //Check usage
 			plugin.getMessages().getMessagePlayers().put(sender.getName(), new MessageFactory(args[1])); //Add player to chat listener
 			hMsg("Type the message now, the name of this message is going to be: " + args[1]);
 			break;
+			
 		case "remove": //Remove a message
 			testPermission("message.admin"); //Test perm
 			if (args.length != 2) throw new UsageException("message remove [message]"); //Check usage
@@ -51,13 +57,23 @@ public class MessageCommand extends AbstractCommand {
 			messageConfig.set("messages." + args[1], null); //Remove from config
 			hMsg("Removed message: " + args[1]);
 			break;
+			
 		case "reload": //Reload the config
 			testPermission("message.admin"); //Test perm
 			messageStorage.reloadConfig(); //Reload messages
 			hMsg("Reloaded messages config!");
 			break;
+			
 		default: //Broadcast a message
-			plugin.getServer().broadcastMessage(getMessage(args[0])); //Get message & broodkast
+			String message = getMessage(args[0]);
+			if (sender instanceof Player) { //Spamming prevention for Staff
+				if (System.currentTimeMillis() - lastMessage > 2500) { //Check if last message was 2.5+ seconds ago
+					lastMessage = System.currentTimeMillis(); //Set last message
+				} else { //Throw spamming error
+					throw new CommandException("Wait a bit longer before spamming everyone agian.");
+				}
+			}
+			plugin.getServer().broadcastMessage(message); //Get message & broodkast
 		}
 		return true;
 	}
