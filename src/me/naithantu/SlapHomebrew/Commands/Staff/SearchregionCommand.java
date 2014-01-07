@@ -2,6 +2,7 @@ package me.naithantu.SlapHomebrew.Commands.Staff;
 
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
+import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -15,14 +16,15 @@ public class SearchregionCommand extends AbstractCommand {
 		testPermission("searchregion"); //Test perm
 		if (args.length != 1)  return false; //Check usage
 		
-		String regionname = args[0].toLowerCase();
-		if (!plugin.getRegionMap().containsKey(regionname)) throw new CommandException("No results found!"); //Check if there are any results
+	//	String regionname = args[0].toLowerCase();
+	//	if (!plugin.getRegionMap().containsKey(regionname)) throw new CommandException("No results found!"); //Check if there are any results
 		
-		String[] changes = plugin.getRegionMap().get(regionname).split("<==>"); //Get results
-		sender.sendMessage(ChatColor.DARK_AQUA + "Region changes for region " + regionname + ":");
-		for (String change : changes) { //Send all
-			sender.sendMessage(ChatColor.GOLD + change);
-		}
-		return true;
+	//	String[] changes = plugin.getRegionMap().get(regionname).split("<==>"); //Get results
+	//	sender.sendMessage(ChatColor.DARK_AQUA + "Region changes for region " + regionname + ":");
+	//	for (String change : changes) { //Send all
+	//		sender.sendMessage(ChatColor.GOLD + change);
+	//	}	
+	//	return true;
+		throw new CommandException(ErrorMsg.notSupportedYet);
 	}
 }

@@ -3,7 +3,7 @@ main: me.naithantu.SlapHomebrew.SlapHomebrew
 depend: [Essentials, Vault, PermissionsEx]
 softdepend: [TabAPI, ReportRTS, MCBans]
 authors: [naithantu, Stoux2]
-version: 3.2.2
+version: 3.2.5
 description: SlapHomebrew homemade plugin.
 commands:
   vip:
@@ -57,6 +57,7 @@ commands:
   ride:
     description: Ride other players or entities!
   plot:
+    usage: "Usage: /plot [check <ID> | mark <Comment> | teleport [ID] | finish [ID] <Comment>]"
     description: Multifunctional command for plot-clearing.
   pmark:
     description: Mark a plot to be cleared.

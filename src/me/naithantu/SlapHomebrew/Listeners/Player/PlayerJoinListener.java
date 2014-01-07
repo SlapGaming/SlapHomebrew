@@ -14,6 +14,7 @@ import me.naithantu.SlapHomebrew.Controllers.Jails;
 import me.naithantu.SlapHomebrew.Controllers.Mail;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
 import me.naithantu.SlapHomebrew.Controllers.TabController;
+import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.PlotControl;
 import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 import me.naithantu.SlapHomebrew.Util.Util;
@@ -67,19 +68,14 @@ public class PlayerJoinListener extends AbstractListener {
 	public void onPlayerLogin(PlayerJoinEvent event) {
 		final Player player = event.getPlayer();
 
+		//TODO To be removed?
 		plugin.getExtras().getGhostTeam().addPlayer(player);
 
+		//Double jump
 		if (player.getWorld().getName().equals("world_start"))
 			player.setAllowFlight(true);
 
-		//Plot message
-		if (player.hasPermission("slaphomebrew.plot.admin") && plugin.getUnfinishedPlots().size() > 0) {
-			plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-				public void run() {
-					player.sendMessage(ChatColor.GREEN + "There are " + plugin.getUnfinishedPlots().size() + " unfinished plot requests! Type /plot check to see them!");
-				}
-			}, 10);
-		}
+		//VIP Message
 		if (player.hasPermission("slaphomebrew.vip.check") && plugin.getUnfinishedForumVip().size() > 0) {
 			plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
 				public void run() {
@@ -179,6 +175,11 @@ public class PlayerJoinListener extends AbstractListener {
 				
 				//Check mails
 				mail.hasNewMail(player);
+				
+				//If admin send pending plot checks
+				if (Util.testPermission(player, "plot.admin")) {
+					PlotControl.sendUnfinishedPlotMarks(player);
+				}
 				
 			}
 		}, 10);

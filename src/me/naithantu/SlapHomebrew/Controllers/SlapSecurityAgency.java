@@ -48,7 +48,7 @@ public class SlapSecurityAgency extends AbstractController {
 		//Controllers
 	//	if (controlEnabled("VIPDays")) 
 	//	if (controlEnabled("VIPForum")) 
-	//	if (controlEnabled("PlotMark"))
+		if (controlEnabled("Plot"))		add(new PlotControl(sql));		//Control plot marks
 		
 		if (loggers.isEmpty()) { //Check if any loggers are enabled
 			Log.warn("All loggers are disabled in the config.");
@@ -107,7 +107,7 @@ public class SlapSecurityAgency extends AbstractController {
 	 * @return enabled
 	 */
 	private boolean controlEnabled(String name) {
-		return config.getBoolean("control" + name + "Control");
+		return config.getBoolean("control." + name + "Control");
 	}
 	
 	/**

@@ -1,18 +1,10 @@
 package me.naithantu.SlapHomebrew;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import me.naithantu.SlapHomebrew.Commands.CommandHandler;
 import me.naithantu.SlapHomebrew.Commands.Basics.SpawnCommand;
@@ -48,19 +40,7 @@ public class SlapHomebrew extends JavaPlugin {
 	 * BackDeath HashMap - Key Playername -> Value DeathLocation
 	 */
 	private HashMap<String, Location> backDeathMap = new HashMap<String, Location>();
-	
-	/**
-	 * worldGuard HashMap - Key Regionname -> value x
-	 */
-	private HashMap<String, String> regionMap = new HashMap<String, String>();
-	
-	/**
-	 * Plots HashMap - Key PlotRequestID -> Value Info
-	 * UnfinishedPlots List - List of unfinished PlotRequestIDs
-	 */
-	private HashMap<Integer, String> plots = new HashMap<Integer, String>();
-	private List<Integer> unfinishedPlots = new ArrayList<Integer>();
-	
+			
 	/**
 	 * forumVip HashMap - Key VIPForumID -> Value Info
 	 * unfinishedForumVip - List of unfinished VIPForumIDs
@@ -240,11 +220,8 @@ public class SlapHomebrew extends JavaPlugin {
 	
 	private void initializeLoaders() {
 		tpBlocks = loadHashSet("tpblocks");
-		loadworldGuard();
-		loadPlots();
 		loadUnfinishedForumVip();
 		loadForumVip();
-		loadUnfinishedPlots();
 	}
 	
 	/**
@@ -303,10 +280,7 @@ public class SlapHomebrew extends JavaPlugin {
 	}
 	
 	private void disableSavers() {
-		saveworldGuard();
 		saveHashSet(tpBlocks, "tpblocks");
-		saveUnfinishedPlots();
-		savePlots();
 		saveForumVip();
 		saveUnfinishedForumVip();
 	}
@@ -329,55 +303,6 @@ public class SlapHomebrew extends JavaPlugin {
 		List<String> tempList = new ArrayList<String>(hashSet);
 		dataConfig.set(configString, null);
 		dataConfig.set(configString, tempList);
-		dataStorage.saveConfig();
-	}
-	
-	private void savePlots() {
-		dataConfig.set("plots", null);
-		for (Map.Entry<Integer, String> entry : plots.entrySet()) {
-			dataConfig.set("plots." + entry.getKey(), entry.getValue());
-		}
-		dataStorage.saveConfig();
-	}
-	
-	@SuppressWarnings("rawtypes")
-	private void saveworldGuard() {
-		File worldguard = new File("plugins" + File.separator + "SlapHomebrew" + File.separator + "worldGuard.yml");
-		if (!worldguard.exists()) {
-			try {
-				new File("plugins" + File.separator + "SlapHomebrew").mkdir();
-				worldguard.createNewFile();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		} else {
-			worldguard.delete();
-			try {
-				new File("plugins" + File.separator + "SlapHomebrew").mkdir();
-				worldguard.createNewFile();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		try {
-			FileWriter fIn = new FileWriter("plugins" + File.separator + "SlapHomebrew" + File.separator + "worldGuard.yml");
-			BufferedWriter oIn = new BufferedWriter(fIn);
-			Set<?> set = regionMap.entrySet();
-			Iterator<?> i = set.iterator();
-			while (i.hasNext()) {
-				Map.Entry me = (Map.Entry) i.next();
-				oIn.write(me.getKey().toString() + ":" + me.getValue().toString());
-				oIn.newLine();
-			}
-			oIn.close();
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	private void saveUnfinishedPlots() {
-		dataConfig.set("unfinishedplots", unfinishedPlots);
 		dataStorage.saveConfig();
 	}
 
@@ -408,35 +333,6 @@ public class SlapHomebrew extends JavaPlugin {
 		return hashSet;
 	}
 	
-	private void loadPlots() {
-		if (dataConfig.getConfigurationSection("plots") == null)
-			return;
-		for (String key : dataConfig.getConfigurationSection("plots").getKeys(false)) {
-			plots.put(Integer.valueOf(key), dataConfig.getString("plots." + key));
-		}
-	}
-
-	private void loadworldGuard() {
-		FileReader fRead = null;
-		try {
-			fRead = new FileReader("plugins" + File.separator + "SlapHomebrew" + File.separator + "worldGuard.yml");
-			BufferedReader bRead = new BufferedReader(fRead);
-			String tempString;
-			while ((tempString = bRead.readLine()) != null) {
-				String[] tempList = tempString.split(":", 2);
-				regionMap.put(tempList[0], tempList[1]);
-			}
-			bRead.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-	}
-
-	private void loadUnfinishedPlots() {
-		unfinishedPlots = dataConfig.getIntegerList("unfinishedplots");
-	}
-
 	private void loadUnfinishedForumVip() {
 		unfinishedForumVip = dataConfig.getIntegerList("unfinishedforumvip");
 	}
@@ -460,21 +356,9 @@ public class SlapHomebrew extends JavaPlugin {
 	public HashMap<String, Location> getBackDeathMap() {
 		return backDeathMap;
 	}
-	
-	public HashMap<String, String> getRegionMap() {
-		return regionMap;
-	}
 
 	public HashSet<String> getTpBlocks() {
 		return tpBlocks;
-	}
-
-	public HashMap<Integer, String> getPlots() {
-		return plots;
-	}
-	
-	public List<Integer> getUnfinishedPlots() {
-		return unfinishedPlots;
 	}
 
 	public HashMap<Integer, String> getForumVip() {

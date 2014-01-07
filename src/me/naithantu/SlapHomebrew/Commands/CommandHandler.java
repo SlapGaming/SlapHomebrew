@@ -8,7 +8,6 @@ import me.naithantu.SlapHomebrew.Commands.Games.*;
 import me.naithantu.SlapHomebrew.Commands.Jail.*;
 import me.naithantu.SlapHomebrew.Commands.Lists.*;
 import me.naithantu.SlapHomebrew.Commands.Staff.*;
-import me.naithantu.SlapHomebrew.Commands.Staff.Plot.*;
 import me.naithantu.SlapHomebrew.Commands.Staff.VIP.*;
 import me.naithantu.SlapHomebrew.Commands.VIP.*;
 import me.naithantu.SlapHomebrew.Util.Util;
@@ -74,15 +73,7 @@ public class CommandHandler {
 	//	case "kills":			commandObj = new KillsCommand(sender, args);					break;
 		case "teleportmob":		commandObj = new TeleportMobCommand(sender, args);				break;
 		case "improvedregion":	commandObj = new ImprovedRegionCommand(sender, args);			break;
-		case "plot":
-			if (args.length == 0) return false;
-			switch (args[0].toLowerCase()) {
-			case "check": 		commandObj = new PlotcheckCommand(sender, args); 				break;
-			case "done": 		commandObj = new PlotdoneCommand(sender, args); 				break;
-			case "mark": 		commandObj = new PlotmarkCommand(sender, args); 				break;
-			case "tp": 			commandObj = new PlottpCommand(sender, args); 					break;
-			}
-			break;
+		case "plot":			commandObj = new PlotCommand(sender, args);						break;
 		case "vip":			
 			if (args.length == 0) {
 				commandObj = new VipCommand(sender, args);
