@@ -1,6 +1,7 @@
 package me.naithantu.SlapHomebrew.Controllers.PlayerLogging;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -78,6 +79,42 @@ public class AFKLogger extends AbstractLogger {
 		if (finishedSessions.size() >= 20 && plugin.isEnabled()) {
 			batch();
 		}
+	}
+	
+	/**
+	 * Get the AFK time for a player
+	 * Should be called in A-Sync
+	 * @param playername The player
+	 * @return time afk, or -1 if failed
+	 */
+	public static long getAFKTime(final String playername) {
+		if (instance == null) { //Check if initialzed
+			return -1L;
+		}
+		long afkTime = 0;
+		try {
+			for (Batchable batchable : instance.finishedSessions) { //Get from unbatched
+				AFKSession session = (AFKSession) batchable;
+				if (session.player.equalsIgnoreCase(playername)) { //Check if session is about player
+					afkTime += (session.leftAFK - session.wentAFK); //Add to time
+				}
+			}
+			PreparedStatement prep = instance.sql.getConnection().prepareStatement( //Get from DB
+				"SELECT SUM(`left_afk`) - SUM(`went_afk`) FROM `logger_afk` WHERE `player` = ?;"
+			); 
+			prep.setString(1, playername);
+			ResultSet afkRS = prep.executeQuery(); //Execute
+			if (afkRS.next()) { //If given
+				afkTime += afkRS.getLong(1); //Add to time
+			}
+			if (instance.activeSessions.containsKey(playername)) { //Check if currently AFK
+				afkTime += (System.currentTimeMillis() - instance.activeSessions.get(playername).wentAFK);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			afkTime = -1;
+		}
+		return afkTime;
 	}
 			
 	@Override

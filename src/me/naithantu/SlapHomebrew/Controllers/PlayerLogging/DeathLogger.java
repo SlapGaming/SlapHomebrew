@@ -1,11 +1,18 @@
 package me.naithantu.SlapHomebrew.Controllers.PlayerLogging;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map.Entry;
 
+import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Util.Util;
 
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -85,7 +92,227 @@ public class DeathLogger extends AbstractLogger implements Listener {
 			instance.suiciders.add(playername); //Add to map
 		}
 	}
+	
+	/**
+	 * Send the deaths of a player
+	 * @param p The player
+	 * @throws CommandException if DeathLogging disabled.
+	 */
+	public static void sendPlayerDeaths(final Player p) throws CommandException {
+		if (instance == null) { //Check if initialized
+			AbstractCommand.removeDoingCommand(p);
+			throw new CommandException("DeathLogging is currently disabled.");
+		}
+		Util.runASync(instance.plugin, new Runnable() {
+			
+			@Override
+			public void run() {
+				try {
+					HashMap<String, Integer> deathMap = new HashMap<>();
+					String playername = p.getName();
+					
+					int totalDeaths = 0;
+					
+					for (Batchable batchable : instance.deaths) { //Loop thru deaths still waiting to be batched
+						PlayerDeath death = (PlayerDeath) batchable;
+						if (death.player.equalsIgnoreCase(playername)) { 
+							addToDeathMap(deathMap, death.deathCause, 1);
+							totalDeaths++;
+						}
+					}
+					
+					PreparedStatement prep = instance.sql.getConnection().prepareStatement( //Prepare Statement to get Deaths from SQL
+						"SELECT COUNT(*) as `Deaths`, `deathcause` FROM `logger_deaths` WHERE `player` = ? GROUP BY `deathcause`;"
+					);
+					prep.setString(1, playername);
+					ResultSet deathRS = prep.executeQuery(); //Execute
+					
+					while (deathRS.next()) { //Loop thru results
+						int deathNrs = deathRS.getInt(1);
+						String cause = deathRS.getString(2);
+						addToDeathMap(deathMap, cause, deathNrs); //Add to map
+						totalDeaths += deathNrs;
+					}
+					
+					if (deathMap.isEmpty()) { //No deaths
+						Util.badMsg(p, "You have not died since the 5th of Januari 2014.");
+					} else {
+						Util.msg(p, "You have died " + totalDeaths + " " + (totalDeaths == 1 ? "time" : "times") + " since the 5th of Januari 2014"); //Send start message
+						for (Entry<String, Integer> entry : deathMap.entrySet()) { //Loop thru deaths
+							String reason = getReason(entry.getKey()); //Parse -> Reason
+							if (reason != null) { //Send reason if not null
+								p.sendMessage(ChatColor.GOLD + "  \u2517\u25B6 " + ChatColor.GRAY + reason + ": " + ChatColor.WHITE + entry.getValue());
+							}
+						}
+					}					
+				} catch (SQLException e) {
+					Util.badMsg(p, "Something went wrong!");
+					e.printStackTrace();
+				} finally {
+					AbstractCommand.removeDoingCommand(p);
+				}
+			}
+		});
+	}
+	
+	/**
+	 * Add deaths to the death map
+	 * @param map The map
+	 * @param cause The deathcause
+	 * @param amountOfDeaths The number of deaths
+	 */
+	private static void addToDeathMap(HashMap<String, Integer> map, String cause, int amountOfDeaths) {
+		if (map.get(cause) != null) {
+			amountOfDeaths += map.get(cause);
+		}
+		map.put(cause, amountOfDeaths);
+	}
 
+	/**
+	 * Get the reason based on the DeathCause
+	 * @param cause The cause
+	 * @return The reason
+	 */
+	private static String getReason(String cause) {
+		String reason = null;
+		if (cause.equalsIgnoreCase("player")) { //If cause = by player
+			reason = "Killed by players";
+		} else { //Standard death reason
+			try {
+				switch(DamageCause.valueOf(cause.toUpperCase())) { //Switch DamageCauses
+				case BLOCK_EXPLOSION:	reason = "By Exploding blocks";					break;
+				case CONTACT:			reason = "By block damage (Ex. Cactus)";		break;
+				case CUSTOM:			reason = "Other";								break;
+				case DROWNING:			reason = "Drowned";								break;
+				case ENTITY_ATTACK:		reason = "Killed by mobs";						break;
+				case ENTITY_EXPLOSION:	reason = "Killed by exploding mobs";			break;
+				case FALL:				reason = "Fell to your death";					break;
+				case FALLING_BLOCK:		reason = "Blocks fell on your head";			break;
+				case FIRE: 
+				case FIRE_TICK:			reason = "Burned to your death";				break;
+				case LAVA:				reason = "Drowned in lava";						break;
+				case LIGHTNING:			reason = "Struck by lightning";					break;
+				case MAGIC:				reason = "Killed by magic";						break;
+				case MELTING:			reason = "You melted, wat";						break;
+				case POISON:			reason = "Poisoned";							break;
+				case PROJECTILE:		reason = "Hit by projectiles";					break;
+				case STARVATION:		reason = "Starved to death";					break;
+				case SUFFOCATION:		reason = "Suffocated in a wall";				break;
+				case SUICIDE:			reason = "Suicided";							break;
+				case THORNS:			reason = "Killed by thorns";					break;
+				case VOID:				reason = "Fell out the world";					break;
+				case WITHER:			reason = "Killed by wither damage";				break;
+				}
+			} catch (IllegalArgumentException e) {
+				
+			}
+		}
+		return reason;
+	}
+	
+	/**
+	 * Send the number of kills to the player
+	 * @param p The player
+	 * @throws CommandException if DeathLogging is disabled
+	 */
+	public static void sendPlayerKills(final Player p) throws CommandException {
+		if (instance == null) { //Check if initialized
+			AbstractCommand.removeDoingCommand(p);
+			throw new CommandException("DeathLogging is currently disabled.");
+		}
+		Util.runASync(instance.plugin, new Runnable() {
+			@Override
+			public void run() {
+				ArrayList<PlayerKilled> kills = new ArrayList<>();
+				String playername = p.getName();
+				
+				for (Batchable batchable : instance.kills) { //Loop thru unbatched kills
+					PlayerKilled kill = (PlayerKilled) batchable;
+					if (kill.killedBy.equalsIgnoreCase(playername) || kill.killedPlayer.equalsIgnoreCase(playername)) { //Add to arraylist if player = sender
+						kills.add(kill);
+					}
+				}
+				
+				try {
+					PreparedStatement prep = instance.sql.getConnection().prepareStatement( //Query for getting kills out of SQL
+						"SELECT `killed_player`, `killed_by` FROM `logger_kills` WHERE `killed_player` = ? OR `killed_by` = ?;"
+					);
+					prep.setString(1, playername);
+					prep.setString(2, playername);
+					ResultSet killRS = prep.executeQuery();
+					while (killRS.next()) { //Loop thru results
+						kills.add(instance.new PlayerKilled(killRS.getString(1), 0, killRS.getString(2))); //Add to kills
+					}
+					
+					//Maps
+					HashMap<String, Integer> playerKilled = new HashMap<>();
+					HashMap<String, Integer> playerGotKilled = new HashMap<>();
+					
+					for (PlayerKilled kill : kills) { //Loop thru kills
+						if (kill.killedBy.equalsIgnoreCase(playername)) { //Player killed another player, add to that map
+							addToKillMap(playerKilled, kill.killedPlayer);
+						} else { //Player got killed
+							addToKillMap(playerGotKilled, kill.killedBy); 
+						}
+					}
+					
+					//Loop thru stuff for Killed By
+					int numberOfTimesKilled = 0; int mostKilledByKills = 0; String mostKilledBy = null;
+					for (Entry<String, Integer> entry : playerGotKilled.entrySet()) {
+						numberOfTimesKilled += entry.getValue();
+						if (mostKilledByKills < entry.getValue()) {
+							mostKilledByKills = entry.getValue();
+							mostKilledBy = entry.getKey();
+						}
+					}
+					
+					//Same thing for Kills
+					int numberOfKills = 0; int mostKills = 0; String mostKillsOn = null;
+					for (Entry<String, Integer> entry : playerKilled.entrySet()) {
+						numberOfKills += entry.getValue();
+						if (mostKills < entry.getValue()) {
+							mostKills = entry.getValue();
+							mostKillsOn = entry.getKey();
+						}
+					}
+					
+					
+					if (numberOfKills == 0 && numberOfTimesKilled == 0) { //No kills, nor has been killed
+						Util.msg(p, "You haven't killed anyone, nor have you been killed since this was implemented.");
+					} else {
+						//Send kills
+						Util.msg(p, "You have killed " + numberOfKills + (numberOfKills == 1 ? " person." : " people and have been killed " + numberOfTimesKilled + (numberOfTimesKilled == 1 ? " time." : " times.")));
+						if (mostKills > 1) {
+							p.sendMessage(ChatColor.GOLD + "  \u2517\u25B6 " + ChatColor.GRAY + "Most killed: " + mostKillsOn + " (" + mostKills + " times)");
+						}
+						if (numberOfTimesKilled > 1) {
+							p.sendMessage(ChatColor.GOLD + "  \u2517\u25B6 " + ChatColor.GRAY + "Most killed by: " + mostKilledBy + " (" + mostKilledByKills + " times)");
+						}
+					}
+				} catch (SQLException e) {
+					Util.badMsg(p, "Something went wrong!");
+					e.printStackTrace();
+				} finally {
+					AbstractCommand.removeDoingCommand(p);
+				}
+			}
+		});		
+	}
+	
+	/**
+	 * Add a kill to map
+	 * @param map The map
+	 * @param player The player
+	 */
+	private static void addToKillMap(HashMap<String, Integer> map, String player) {
+		int kills = 1;
+		if (map.containsKey(player)) {
+			kills += map.get(player);
+		}
+		map.put(player, kills);
+	}
+	
+	
 	@Override
 	protected void createTables() throws SQLException {
 		executeUpdate( //Create deaths table

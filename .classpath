@@ -17,8 +17,8 @@
 	<classpathentry kind="lib" path="lib/NTheEndAgain.jar"/>
 	<classpathentry kind="lib" path="lib/NCore.jar"/>
 	<classpathentry kind="lib" path="lib/mcbansdevbukkit.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/Essentials.jar"/>
 	<classpathentry kind="lib" path="lib/Craftbukkit.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

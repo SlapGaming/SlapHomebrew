@@ -3,7 +3,7 @@ main: me.naithantu.SlapHomebrew.SlapHomebrew
 depend: [Essentials, Vault, PermissionsEx]
 softdepend: [TabAPI, ReportRTS, MCBans]
 authors: [naithantu, Stoux2]
-version: 3.2.5
+version: 3.3.0
 description: SlapHomebrew homemade plugin.
 commands:
   vip:
@@ -35,7 +35,7 @@ commands:
     usage: "Usage: /message [name] or /message create [name] or /message list or /message show [message]"
   searchregion:
     description: Searches for a worldguard region.
-    usage: "Usage: /searchregion [regionname]"
+    usage: "Usage: /searchregion [regionname] <[Worldname] | old>"
     aliases: [srg, searchrg]
   roll:
     description: Roll a random number to win prizes in the hourly lottery!
@@ -149,11 +149,15 @@ commands:
     description: Commit suicide
     usage: "Usage: /suicide"
   deaths:
-    description: Get the number of deaths
+    description: Get the number of deaths since the 5th of Januari 2014
     usage: "Usage: /deaths"
   kills:
-    description: Get the number of kills
+    description: Get the number of kills since the 5th of Januari 2014
     usage: "Usage: /kills"
+  onlinetime:
+    description: Get your time spent on the server since the 5th of Januari 2014
+    usage: "Usage: /onlinetime"
+    aliases: [playtime,afktime]
   teleportmob:
     aliases: [tpmob]
   improvedregion:

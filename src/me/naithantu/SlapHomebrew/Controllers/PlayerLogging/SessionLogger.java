@@ -2,10 +2,16 @@ package me.naithantu.SlapHomebrew.Controllers.PlayerLogging;
 
 import java.net.InetSocketAddress;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
+import me.naithantu.SlapHomebrew.Util.Util;
+
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -14,6 +20,8 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 public class SessionLogger extends AbstractLogger implements Listener {
 
+	private static SessionLogger instance;
+	
 	private String sqlQuery = 
 			"INSERT INTO `mcecon`.`logger_times` (`player`, `join_time`, `quit_time`, `ip`, `port`, `first_time`) " +
 			"VALUES (?, ?, ?, ?, ?, ?);";
@@ -26,6 +34,7 @@ public class SessionLogger extends AbstractLogger implements Listener {
 		if (!enabled) return;
 		activeSessions = new HashMap<>();
 		finishedSessions = new HashSet<>();
+		instance = this;
 	}
 	
 	@Override
@@ -64,6 +73,58 @@ public class SessionLogger extends AbstractLogger implements Listener {
 		}
 	}
 	
+	/**
+	 * Send the playtime to a player
+	 * @param p The player
+	 * @throws CommandException
+	 */
+	public static void sendPlayerTime(final Player p) throws CommandException {
+		if (instance == null) {
+			AbstractCommand.removeDoingCommand(p);
+			throw new CommandException("The SessionLogger is currently disabled.");
+		}
+		
+		String playername = p.getName();
+		long playtime = 0L;
+		
+		for (Batchable batchable : instance.finishedSessions) { //Loop thru unbatched sessions
+			Session finishedSession = (Session) batchable;
+			if (finishedSession.player.equalsIgnoreCase(playername)) { //If current player add time
+				playtime += finishedSession.quit - finishedSession.join;
+			}
+		}
+		
+		try {
+			PreparedStatement prep = instance.sql.getConnection().prepareStatement( //Get Total time from DB
+				"SELECT SUM( `quit_time` ) - SUM( `join_time` ) AS `playtime` FROM `logger_times` WHERE `player` = ?;"
+			);
+			prep.setString(1, playername);
+			ResultSet timeRS = prep.executeQuery();
+			if (timeRS.next()) { //If time given
+				playtime += timeRS.getLong(1);
+			}
+			
+			//Get AFK time
+			long afk = AFKLogger.getAFKTime(playername);
+			
+			if (instance.activeSessions.containsKey(playername)) { //Add current online time
+				playtime += (System.currentTimeMillis() - instance.activeSessions.get(playername).join);
+			}
+			
+			//Send messages
+			Util.msg(p, "Onlinetime: " + Util.getTimePlayedString(playtime) + ".");
+			if (afk > 0) {
+				p.sendMessage(ChatColor.GOLD + "  \u2517\u25B6 " + ChatColor.GRAY + "of which AFK: " + Util.getTimePlayedString(afk));
+			}			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			Util.badMsg(p, "Woops! Something went wrong.");
+		} finally {
+			AbstractCommand.removeDoingCommand(p);
+		}
+	}
+	
+	
 	@Override
 	public void batch() {
 		batch(sqlQuery, finishedSessions);
@@ -72,6 +133,7 @@ public class SessionLogger extends AbstractLogger implements Listener {
 	@Override
 	public void shutdown() {
 		batch();
+		instance = null;
 	}
 	
 	private class Session implements Batchable {

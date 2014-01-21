@@ -9,6 +9,9 @@ import me.naithantu.SlapHomebrew.Commands.Jail.*;
 import me.naithantu.SlapHomebrew.Commands.Lists.*;
 import me.naithantu.SlapHomebrew.Commands.Staff.*;
 import me.naithantu.SlapHomebrew.Commands.Staff.VIP.*;
+import me.naithantu.SlapHomebrew.Commands.Stats.DeathsCommand;
+import me.naithantu.SlapHomebrew.Commands.Stats.KillsCommand;
+import me.naithantu.SlapHomebrew.Commands.Stats.OnlineTimeCommand;
 import me.naithantu.SlapHomebrew.Commands.VIP.*;
 import me.naithantu.SlapHomebrew.Util.Util;
 
@@ -69,8 +72,9 @@ public class CommandHandler {
 		case "skick":			commandObj = new SKickCommand(sender, args);					break;
 		case "splugins":		commandObj = new PluginsCommand(sender, args);					break;
 		case "suicide":			commandObj = new SuicideCommand(sender, args);					break;
-	//	case "deaths":			commandObj = new DeathsCommand(sender, args);					break;
-	//	case "kills":			commandObj = new KillsCommand(sender, args);					break;
+		case "deaths":			commandObj = new DeathsCommand(sender, args);					break;
+		case "kills":			commandObj = new KillsCommand(sender, args);					break;
+		case "onlinetime":		commandObj = new OnlineTimeCommand(sender, args);					break;
 		case "teleportmob":		commandObj = new TeleportMobCommand(sender, args);				break;
 		case "improvedregion":	commandObj = new ImprovedRegionCommand(sender, args);			break;
 		case "plot":			commandObj = new PlotCommand(sender, args);						break;
