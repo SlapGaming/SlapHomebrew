@@ -380,6 +380,19 @@ public class Util {
     		p.removePotionEffect(effect.getType());
     	}
     }
+    
+    /**
+     * Send a message to all players with the specified permission
+     * @param permission The permission
+     * @param message The message
+     */
+    public static void messagePermissionHolders(String permission, String message) {
+    	for (Player p : Bukkit.getOnlinePlayers()) {
+    		if (testPermission(p, permission)) {
+    			p.sendMessage(message);
+    		}
+    	}
+    }
         
     /**
      * Get all the online players

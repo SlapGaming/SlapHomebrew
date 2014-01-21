@@ -3,7 +3,7 @@ main: me.naithantu.SlapHomebrew.SlapHomebrew
 depend: [Essentials, Vault, PermissionsEx]
 softdepend: [TabAPI, ReportRTS, MCBans]
 authors: [naithantu, Stoux2]
-version: 3.3.0
+version: 3.4.0
 description: SlapHomebrew homemade plugin.
 commands:
   vip:
@@ -164,3 +164,11 @@ commands:
     description: The improved region commands
     usage: "Usage: /improvedregion help"
     aliases: [irg, improvedrg, iregion]
+  g: #Guide chat
+    aliases: [gc, ac, helpop]
+  a: #Mod/Admin chat
+    aliases: [amsg, mc]
+  x: #Potato chat
+    aliases: [pc]
+  chattoggle: #chat toggle
+    aliases: [togglechat, tc, ct]

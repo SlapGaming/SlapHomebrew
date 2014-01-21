@@ -75,6 +75,7 @@ public class SlapHomebrew extends JavaPlugin {
 	private AwayFromKeyboard afk;
 	private Bump bump;
 	private ChangeLog changeLog;
+	private ChatChannels chatChannels;
 	private DuelArena duelArena;
 	private Extras extras;
 	private FireworkShow show;
@@ -199,6 +200,7 @@ public class SlapHomebrew extends JavaPlugin {
 		 controllers = new ArrayList<>();
 		 controllers.add(bump = new Bump(dataStorage, dataConfig));
 		 controllers.add(changeLog = new ChangeLog());
+		 controllers.add(chatChannels = new ChatChannels());
 		 controllers.add(duelArena = new DuelArena());
 		 controllers.add(extras = new Extras());
 		 controllers.add(show = new FireworkShow());
@@ -230,7 +232,7 @@ public class SlapHomebrew extends JavaPlugin {
 	private void initializeListeners() {
 		PluginManager pm = getServer().getPluginManager();
 		register(pm, new BlockPlaceListener());
-		register(pm, new PlayerChatListener(afk, jails, playerLogger));
+		register(pm, new PlayerChatListener(afk, jails, playerLogger, chatChannels));
 		register(pm, new PlayerCommandListener(afk, jails, playerLogger));
 		register(pm, new CreatureSpawnListener());
 		register(pm, new CreatureDeathListener(horses));
@@ -415,6 +417,10 @@ public class SlapHomebrew extends JavaPlugin {
 
 	public ChangeLog getChangeLog() {
 		return changeLog;
+	}
+	
+	public ChatChannels getChatChannels() {
+		return chatChannels;
 	}
 
 	public Mail getMail() {

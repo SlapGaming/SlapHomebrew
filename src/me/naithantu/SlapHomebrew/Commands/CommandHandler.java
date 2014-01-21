@@ -2,6 +2,8 @@ package me.naithantu.SlapHomebrew.Commands;
 
 import me.naithantu.SlapHomebrew.Commands.AFK.*;
 import me.naithantu.SlapHomebrew.Commands.Basics.*;
+import me.naithantu.SlapHomebrew.Commands.Chat.ChatCommand;
+import me.naithantu.SlapHomebrew.Commands.Chat.ChatToggleCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Fun.*;
 import me.naithantu.SlapHomebrew.Commands.Games.*;
@@ -74,10 +76,14 @@ public class CommandHandler {
 		case "suicide":			commandObj = new SuicideCommand(sender, args);					break;
 		case "deaths":			commandObj = new DeathsCommand(sender, args);					break;
 		case "kills":			commandObj = new KillsCommand(sender, args);					break;
-		case "onlinetime":		commandObj = new OnlineTimeCommand(sender, args);					break;
+		case "onlinetime":		commandObj = new OnlineTimeCommand(sender, args);				break;
 		case "teleportmob":		commandObj = new TeleportMobCommand(sender, args);				break;
 		case "improvedregion":	commandObj = new ImprovedRegionCommand(sender, args);			break;
 		case "plot":			commandObj = new PlotCommand(sender, args);						break;
+		case "g":/*GuideChat */	commandObj = new ChatCommand(sender, "guidechat", args);		break;
+		case "a":/*ModChat   */	commandObj = new ChatCommand(sender, "modchat", args);			break;
+		case "x":/*PotatoChat*/	commandObj = new ChatCommand(sender, "potatochat", args);		break;
+		case "chattoggle":		commandObj = new ChatToggleCommand(sender, args);				break;
 		case "vip":			
 			if (args.length == 0) {
 				commandObj = new VipCommand(sender, args);

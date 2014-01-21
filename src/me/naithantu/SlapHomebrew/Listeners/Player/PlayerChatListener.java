@@ -3,6 +3,7 @@ package me.naithantu.SlapHomebrew.Listeners.Player;
 import java.util.HashMap;
 
 import me.naithantu.SlapHomebrew.Controllers.AwayFromKeyboard;
+import me.naithantu.SlapHomebrew.Controllers.ChatChannels;
 import me.naithantu.SlapHomebrew.Controllers.Jails;
 import me.naithantu.SlapHomebrew.Controllers.MessageFactory;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
@@ -18,14 +19,17 @@ public class PlayerChatListener extends AbstractListener {
 	private AwayFromKeyboard afk;
 	private Jails jails;
 	private PlayerLogger playerLogger;
+	private ChatChannels chatChannels;
     private HashMap<String, MessageFactory> messagePlayers;
 	
-	public PlayerChatListener(AwayFromKeyboard afk, Jails jails, PlayerLogger playerLogger){
+	public PlayerChatListener(AwayFromKeyboard afk, Jails jails, PlayerLogger playerLogger, ChatChannels chatChannels){
 		this.afk = afk;
 		this.jails = jails;
 		this.playerLogger = playerLogger;
+		this.chatChannels = chatChannels;
         this.messagePlayers = plugin.getMessages().getMessagePlayers();
 	}
+	
 	@EventHandler
 	public void onPlayerChat(AsyncPlayerChatEvent event) {
 		Player player = event.getPlayer();
@@ -64,6 +68,7 @@ public class PlayerChatListener extends AbstractListener {
 			return;
 		}
 		
+		//Listener for /message
 		if (messagePlayers.containsKey(player.getName())) {
             MessageFactory messageFactory = messagePlayers.get(player.getName());
 			message = event.getMessage();
@@ -77,6 +82,14 @@ public class PlayerChatListener extends AbstractListener {
                 messageFactory.addMessage(message);
                 player.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + "Added text to message, type '*' to save message!");
             }
+            return;
+		}
+		
+		//Chat into channel
+		if (chatChannels.isPlayerInChannel(playerName)) {
+			chatChannels.playerInChannel(player, message);
+			event.setCancelled(true);
+			return;
 		}
 		
 		//Check for AFK

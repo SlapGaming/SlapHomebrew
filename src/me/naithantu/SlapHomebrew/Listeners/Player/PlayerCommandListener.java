@@ -76,6 +76,11 @@ public class PlayerCommandListener extends AbstractListener {
 				return;
 			}
 			break;
+		case "/ac": case "/helpop": //Whine at them for not using /g or /gc
+			if (Util.testPermission(player, "guidechat")) {
+				player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&d&l&nSTOP USING &b&l&n/AC &f&l&n| &c&l&nALSO COLORS &f&l&n| &e&l&nUSE /G"));
+			}
+			break;
 			
 		case "/modlist": //Modlist -> Stafflist
 			player.chat(event.getMessage().replaceFirst("(?i)" + commandMessage[0], "/stafflist"));
@@ -146,14 +151,18 @@ public class PlayerCommandListener extends AbstractListener {
 		
 		//Send commandspy message
 		if (!event.isCancelled()) {
-			String lCmd = commandMessage[0].toLowerCase();
-			if (!lCmd.equals("/roll") && !lCmd.equals("/afk") && !lCmd.equals("/suicide") && !lCmd.equals("/me") && !lCmd.equals("/j") && !lCmd.equals("/jumpto") && !lCmd.equals("/ac") && !lCmd.equals("/a") && !lCmd.equals("/amsg") && !lCmd.equals("/helpop")) {
-				switch (lCmd) {
-				case "/r": case "/reply": case "/mail":	case "/tell": case "/t": case "/m": case "/msg":
-					playerLogger.sendToCommandSpies(playerName, event.getMessage(), true); break;
-				default:
-					playerLogger.sendToCommandSpies(playerName, event.getMessage(), false);
-				}
+			switch (commandMessage[0].substring(1).toLowerCase()) {
+			case "roll": case "afk": case "suicide": case "me": case "j": case "jumpto": //Standard ignored
+			case "g": case "gc": case "ac": case "helpop": //GuideChat
+			case "a": case "amsg": case "mc": //ModChat
+			case "x": case "pc": //PotatoChat
+				//Ignore these commands
+				break;
+			case "r": case "reply": case "mail": case "tell": case "t": case "m": case "msg":
+				playerLogger.sendToCommandSpies(playerName, event.getMessage(), true); 
+				break;
+			default:
+				playerLogger.sendToCommandSpies(playerName, event.getMessage(), false);
 			}
 		}
 	}
