@@ -104,7 +104,7 @@ public class ChatChannels extends AbstractController {
 	public void playerLeaveChannel(Player p, boolean msg) {
 		Channel channel = playersInChannels.get(p.getName()); //Get channel
 		if (channel == null) return; //Safety dance
-		channels.remove(p.getName());
+		playersInChannels.remove(p.getName());
 		if (msg) {
 			Util.msg(p, "You have left the chat channel: " + ChatColor.GREEN + channel.permission);
 		}
@@ -157,7 +157,7 @@ public class ChatChannels extends AbstractController {
 			if (args.length == 0) {
 				throw new UsageException(permission + " [message]");
 			}
-			Util.messagePermissionHolders(permission, format + sender.getName() + ": " + ChatColor.WHITE + Util.buildString(args, " ", 0));
+			Util.messagePermissionHolders(permission, format + "<" +sender.getName() + ">: " + ChatColor.WHITE + Util.buildString(args, " ", 0));
 		}
 		
 	}

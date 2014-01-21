@@ -1,6 +1,7 @@
 package me.naithantu.SlapHomebrew.Listeners.Player;
 
 import me.naithantu.SlapHomebrew.Controllers.AwayFromKeyboard;
+import me.naithantu.SlapHomebrew.Controllers.ChatChannels;
 import me.naithantu.SlapHomebrew.Controllers.Jails;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
 import me.naithantu.SlapHomebrew.Controllers.TabController;
@@ -16,12 +17,14 @@ public class PlayerQuitListener extends AbstractListener {
 	private Jails jails;
 	private PlayerLogger playerLogger;
 	private TabController tabController;
+	private ChatChannels chatChannels;
 
-	public PlayerQuitListener(AwayFromKeyboard afk, Jails jails, PlayerLogger playerLogger, TabController tabController) {
+	public PlayerQuitListener(AwayFromKeyboard afk, Jails jails, PlayerLogger playerLogger, TabController tabController, ChatChannels chatChannels) {
 		this.afk = afk;
 		this.jails = jails;
 		this.playerLogger = playerLogger;
 		this.tabController = tabController;
+		this.chatChannels = chatChannels;
 	}
 
 	@EventHandler
@@ -45,6 +48,11 @@ public class PlayerQuitListener extends AbstractListener {
 		
 		//Remove from last activity
 		playerLogger.removeFromLastActivity(playername);
+		
+		//Remove from ChatChannels
+		if (chatChannels.isPlayerInChannel(playername)) {
+			chatChannels.playerLeaveChannel(player, false);
+		}
 		
 	}
 }

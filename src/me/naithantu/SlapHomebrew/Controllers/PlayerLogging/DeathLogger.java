@@ -135,9 +135,9 @@ public class DeathLogger extends AbstractLogger implements Listener {
 					}
 					
 					if (deathMap.isEmpty()) { //No deaths
-						Util.badMsg(p, "You have not died since the 5th of Januari 2014.");
+						Util.badMsg(p, "You have not died since 5 Jan. '14.");
 					} else {
-						Util.msg(p, "You have died " + totalDeaths + " " + (totalDeaths == 1 ? "time" : "times") + " since the 5th of Januari 2014"); //Send start message
+						Util.msg(p, "You have died " + totalDeaths + " " + (totalDeaths == 1 ? "time" : "times") + " since 5 Jan. '14"); //Send start message
 						for (Entry<String, Integer> entry : deathMap.entrySet()) { //Loop thru deaths
 							String reason = getReason(entry.getKey()); //Parse -> Reason
 							if (reason != null) { //Send reason if not null

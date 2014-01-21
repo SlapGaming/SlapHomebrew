@@ -249,7 +249,7 @@ public class SlapHomebrew extends JavaPlugin {
 		register(pm, new PotionListener());
 		register(pm, new ProjectileHitListener());
 		register(pm, new ProjectileLaunchListener());
-		register(pm, new PlayerQuitListener(afk, jails, playerLogger, tabController));
+		register(pm, new PlayerQuitListener(afk, jails, playerLogger, tabController, chatChannels));
 		register(pm, new PlayerTeleportListener(jails, afk, playerLogger));
 		register(pm, new PlayerToggleFlightListener(extras));
 		register(pm, new VehicleListener(horses));
