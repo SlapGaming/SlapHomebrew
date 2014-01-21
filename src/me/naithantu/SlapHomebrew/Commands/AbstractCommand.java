@@ -1,5 +1,7 @@
 package me.naithantu.SlapHomebrew.Commands;
 
+import java.util.HashSet;
+
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
@@ -13,7 +15,10 @@ import org.bukkit.entity.Player;
 public abstract class AbstractCommand {
 
 	abstract public boolean handle() throws CommandException;
-
+	
+	//Command hashset
+	private static HashSet<String> doingCommand = new HashSet<>();
+	
 	protected CommandSender sender;
 	protected String[] args;
 	protected SlapHomebrew plugin;
@@ -173,5 +178,52 @@ public abstract class AbstractCommand {
 	protected void hMsg(String msg) {
 		Util.msg(sender, msg);
 	}
+	
+	
+	/*
+	 *******************
+	 * Command Control *
+	 *******************
+	 */
+	/**
+	 * Check if a player is doing a command
+	 * @throws CommandException if already doing a command
+	 */
+	protected void checkDoingCommand() throws CommandException {
+		if (sender instanceof Player) {
+			if (doingCommand.contains(sender.getName())) {
+				throw new CommandException("You're already executing a command!");
+			}
+		}
+	}
+	
+	/**
+	 * Add a player to the doing command set
+	 */
+	protected void addDoingCommand() {
+		if (sender instanceof Player) {
+			doingCommand.add(sender.getName());
+		}
+	}
+	
+	/**
+	 * Remove a player from the doing command set
+	 */
+	protected void removeDoingCommand() {
+		removeDoingCommand(sender);
+	}
+	
+	/**
+	 * Remove a player from the doing command set
+	 * @param sender The player
+	 */
+	public static void removeDoingCommand(CommandSender sender) {
+		if (doingCommand != null && sender instanceof Player) {
+			doingCommand.remove(sender.getName());
+		}
+	}
+	
+	
+	
 	
 }

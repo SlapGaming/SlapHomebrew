@@ -55,6 +55,7 @@ public class MessageCommand extends AbstractCommand {
 			if (args.length != 2) throw new UsageException("message remove [message]"); //Check usage
 			checkForMessage(args[1]); //Check if message exists
 			messageConfig.set("messages." + args[1], null); //Remove from config
+			messageStorage.saveConfig();
 			hMsg("Removed message: " + args[1]);
 			break;
 			

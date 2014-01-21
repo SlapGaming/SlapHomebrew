@@ -240,6 +240,12 @@ public class Util {
     	return (user.has("slaphomebrew." + perm));
     }
     
+    /**
+     * Get the time played string
+     * Format: X Days, X Hours, X Minutes and X seconds
+     * @param l The time played
+     * @return The string or 'Unkown'
+     */
     public static String getTimePlayedString(long l) {
     	String returnString = "";
     	int t = 0; 
@@ -257,17 +263,17 @@ public class Util {
     	case 4:
     		int days = (int)Math.floor(l / 86400.00);
     		l = l - (days * 86400);
-    		returnString = days + " days, ";
+    		returnString = days + (days == 1 ? " day, " : " days, ");
     	case 3:
     		int hours = (int)Math.floor(l / 3600.00);
     		l = l - (hours * 3600);
-    		returnString = returnString + hours + " hours, ";
+    		returnString += hours + (hours == 1 ? " hour, " : " hours, ");
     	case 2:
     		int minutes = (int)Math.floor(l / 60.00);
     		l = l - (minutes * 60);
-    		returnString = returnString + minutes + " minutes and ";
+    		returnString += minutes + (minutes == 1 ? " minute" : " minutes") + " and ";
     	case 1:
-    		returnString = returnString + l + " seconds";
+    		returnString += l + (l == 1 ? " second." : " seconds");
     		break;
     	default:
     		returnString = "Unkown";
