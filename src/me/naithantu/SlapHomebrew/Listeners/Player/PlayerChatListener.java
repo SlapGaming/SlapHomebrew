@@ -87,7 +87,7 @@ public class PlayerChatListener extends AbstractListener {
 		
 		//Chat into channel
 		if (chatChannels.isPlayerInChannel(playerName)) {
-			chatChannels.playerInChannel(player, message);
+			chatChannels.playerInChannel(player, event.getMessage());
 			event.setCancelled(true);
 			return;
 		}

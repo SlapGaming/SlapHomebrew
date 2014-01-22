@@ -81,6 +81,18 @@ public class PlayerCommandListener extends AbstractListener {
 				player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&d&l&nSTOP USING &b&l&n/AC &f&l&n| &c&l&nALSO COLORS &f&l&n| &e&l&nUSE /G"));
 			}
 			break;
+					
+		case "/guidechat": //Guidechat -> /gc
+			if (Util.testPermission(player, "guidechat")) {
+				event.setMessage(event.getMessage().replaceFirst("(?i)" + commandMessage[0], "/gc"));
+			}
+			break;
+			
+		case "/modchat": //Modchat -> /mc
+			if (Util.testPermission(player, "modchat")) {
+				event.setMessage(event.getMessage().replaceFirst("(?i)" + commandMessage[0], "/mc"));
+			}
+			break;
 			
 		case "/modlist": //Modlist -> Stafflist
 			player.chat(event.getMessage().replaceFirst("(?i)" + commandMessage[0], "/stafflist"));
