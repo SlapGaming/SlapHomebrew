@@ -4,6 +4,7 @@ import me.naithantu.SlapHomebrew.Commands.AFK.*;
 import me.naithantu.SlapHomebrew.Commands.Basics.*;
 import me.naithantu.SlapHomebrew.Commands.Chat.ChatCommand;
 import me.naithantu.SlapHomebrew.Commands.Chat.ChatToggleCommand;
+import me.naithantu.SlapHomebrew.Commands.Chat.MentionCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Fun.*;
 import me.naithantu.SlapHomebrew.Commands.Games.*;
@@ -84,6 +85,7 @@ public class CommandHandler {
 		case "a":/*ModChat   */	commandObj = new ChatCommand(sender, "modchat", args);			break;
 		case "x":/*PotatoChat*/	commandObj = new ChatCommand(sender, "potatochat", args);		break;
 		case "chattoggle":		commandObj = new ChatToggleCommand(sender, args);				break;
+		case "mention":			commandObj = new MentionCommand(sender, args);					break;
 		case "vip":			
 			if (args.length == 0) {
 				commandObj = new VipCommand(sender, args);
