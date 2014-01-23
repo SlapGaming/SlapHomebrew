@@ -71,7 +71,7 @@ public class MessageCommand extends AbstractCommand {
 				if (System.currentTimeMillis() - lastMessage > 2500) { //Check if last message was 2.5+ seconds ago
 					lastMessage = System.currentTimeMillis(); //Set last message
 				} else { //Throw spamming error
-					throw new CommandException("Wait a bit longer before spamming everyone agian.");
+					throw new CommandException("Wait a bit longer before spamming everyone again.");
 				}
 			}
 			plugin.getServer().broadcastMessage(message); //Get message & broodkast

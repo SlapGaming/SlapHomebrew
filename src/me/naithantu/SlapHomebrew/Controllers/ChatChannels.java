@@ -23,9 +23,9 @@ public class ChatChannels extends AbstractController {
 		playersInChannels = new HashMap<>();
 		
 		//Add Channels
-		createChannel("guidechat", ChatColor.GOLD + "[GuideChat] " + ChatColor.GREEN);
-		createChannel("modchat",  ChatColor.RED + "[ModChat] " + ChatColor.GOLD);
-		createChannel("potatochat", ChatColor.DARK_AQUA + "[PotatoChat] " + ChatColor.AQUA);		
+		createChannel("guidechat", ChatColor.GREEN + "[GuideChat] " + ChatColor.DARK_PURPLE, ChatColor.GRAY);
+		createChannel("modchat",  ChatColor.RED + "[ModChat] " + ChatColor.DARK_PURPLE, ChatColor.GRAY);
+		createChannel("potatochat", ChatColor.DARK_AQUA + "[PotatoChat] " + ChatColor.AQUA, ChatColor.WHITE);		
 	}
 	
 	/**
@@ -115,8 +115,8 @@ public class ChatChannels extends AbstractController {
 	 * @param permission The permission needed / Also the command
 	 * @param format The format send
 	 */
-	private void createChannel(String permission, String format) {
-		channels.put(permission, new Channel(permission, format));
+	private void createChannel(String permission, String format, ChatColor textColor) {
+		channels.put(permission, new Channel(permission, format, textColor));
 	}
 	
 	/**
@@ -138,10 +138,12 @@ public class ChatChannels extends AbstractController {
 		
 		private String format;
 		private String permission; //Same as Command
+		private ChatColor textColor;
 		
-		public Channel(String permission, String format) {
+		public Channel(String permission, String format, ChatColor textColor) {
 			this.format = format;
 			this.permission = permission;
+			this.textColor = textColor;
 		}
 		
 		/**
@@ -157,7 +159,7 @@ public class ChatChannels extends AbstractController {
 			if (args.length == 0) {
 				throw new UsageException(permission + " [message]");
 			}
-			Util.messagePermissionHolders(permission, format + "<" +sender.getName() + ">: " + ChatColor.WHITE + Util.buildString(args, " ", 0));
+			Util.messagePermissionHolders(permission, format + "<" +sender.getName() + ">: " + textColor + Util.buildString(args, " ", 0));
 		}
 		
 	}
