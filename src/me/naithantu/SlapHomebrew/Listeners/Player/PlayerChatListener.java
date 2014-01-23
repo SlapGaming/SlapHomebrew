@@ -13,6 +13,7 @@ import me.naithantu.SlapHomebrew.Controllers.Mention;
 import me.naithantu.SlapHomebrew.Controllers.MessageFactory;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
 import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
+import me.naithantu.SlapHomebrew.Util.Log;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.ChatColor;
@@ -192,6 +193,9 @@ public class PlayerChatListener extends AbstractListener {
 						p.playSound(p.getLocation(), Sound.ORB_PICKUP, 10, 1);
 					}
 				}
+				
+				//Log
+				Log.info("Chat:" + name + " " + event.getMessage());
 				
 				for (Player p : Util.getOnlinePlayers()) { //Send message to all players
 					String sendMessage = name;
