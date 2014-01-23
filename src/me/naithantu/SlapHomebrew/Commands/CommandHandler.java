@@ -81,8 +81,9 @@ public class CommandHandler {
 		case "teleportmob":		commandObj = new TeleportMobCommand(sender, args);				break;
 		case "improvedregion":	commandObj = new ImprovedRegionCommand(sender, args);			break;
 		case "plot":			commandObj = new PlotCommand(sender, args);						break;
-		case "g":/*GuideChat */	commandObj = new ChatCommand(sender, "guidechat", args);		break;
-		case "a":/*ModChat   */	commandObj = new ChatCommand(sender, "modchat", args);			break;
+		case "guide":			commandObj = new ChatCommand(sender, "guidechat", args);		break;
+		case "mod":				commandObj = new ChatCommand(sender, "modchat", args);			break;
+		case "admin":			commandObj = new ChatCommand(sender, "adminchat", args);			break;
 		case "x":/*PotatoChat*/	commandObj = new ChatCommand(sender, "potatochat", args);		break;
 		case "chattoggle":		commandObj = new ChatToggleCommand(sender, args);				break;
 		case "mention":			commandObj = new MentionCommand(sender, args);					break;

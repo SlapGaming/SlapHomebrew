@@ -23,9 +23,10 @@ public class ChatChannels extends AbstractController {
 		playersInChannels = new HashMap<>();
 		
 		//Add Channels
-		createChannel("guidechat", ChatColor.GREEN + "[GuideChat] " + ChatColor.DARK_PURPLE, ChatColor.GRAY);
-		createChannel("modchat",  ChatColor.RED + "[ModChat] " + ChatColor.DARK_PURPLE, ChatColor.GRAY);
-		createChannel("potatochat", ChatColor.DARK_AQUA + "[PotatoChat] " + ChatColor.AQUA, ChatColor.WHITE);		
+		createChannel("guidechat", ChatColor.GOLD + "=> [GuideChat]");
+		createChannel("modchat",  ChatColor.AQUA + "=> [ModChat]");
+		createChannel("adminchat", ChatColor.RED + "=> [AdminChat]");
+		createChannel("potatochat", ChatColor.DARK_AQUA + "=> [PotatoChat]");		
 	}
 	
 	/**
@@ -93,7 +94,7 @@ public class ChatChannels extends AbstractController {
 			throw new CommandException(ErrorMsg.noPermission);
 		}
 		playersInChannels.put(p.getName(), channel); //Put in channel
-		Util.msg(p, "You are now talking in: " + ChatColor.GREEN + chatPermission); //Msg
+		Util.msg(p, "You are now talking in " + channel.format); //Msg
 	}
 	
 	/**
@@ -115,8 +116,8 @@ public class ChatChannels extends AbstractController {
 	 * @param permission The permission needed / Also the command
 	 * @param format The format send
 	 */
-	private void createChannel(String permission, String format, ChatColor textColor) {
-		channels.put(permission, new Channel(permission, format, textColor));
+	private void createChannel(String permission, String format) {
+		channels.put(permission, new Channel(permission, format));
 	}
 	
 	/**
@@ -138,12 +139,10 @@ public class ChatChannels extends AbstractController {
 		
 		private String format;
 		private String permission; //Same as Command
-		private ChatColor textColor;
 		
-		public Channel(String permission, String format, ChatColor textColor) {
+		public Channel(String permission, String format) {
 			this.format = format;
 			this.permission = permission;
-			this.textColor = textColor;
 		}
 		
 		/**
@@ -159,7 +158,7 @@ public class ChatChannels extends AbstractController {
 			if (args.length == 0) {
 				throw new UsageException(permission + " [message]");
 			}
-			Util.messagePermissionHolders(permission, format + "<" +sender.getName() + ">: " + textColor + Util.buildString(args, " ", 0));
+			Util.messagePermissionHolders(permission, format + ChatColor.WHITE + " <" + ChatColor.LIGHT_PURPLE + sender.getName() + ChatColor.WHITE + "> " + Util.buildString(args, " ", 0));
 		}
 		
 	}
