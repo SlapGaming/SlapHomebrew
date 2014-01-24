@@ -401,7 +401,7 @@ public class SlapCommand extends AbstractCommand {
 					ghosts.remove(playername);
 					player.removePotionEffect(PotionEffectType.INVISIBILITY);
 				}
-				hMsg("You are " + (isGhost ? "no longer" : "now") + " a ghosts!");
+				hMsg("You are " + (isGhost ? "no longer" : "now") + " a ghost!");
 				break;
 				
 			case "fakelottery": case "fakeroll": //Start a fake lottery

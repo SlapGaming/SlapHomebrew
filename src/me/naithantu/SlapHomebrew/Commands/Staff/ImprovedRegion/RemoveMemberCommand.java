@@ -2,7 +2,6 @@ package me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegion;
 
 import java.util.ArrayList;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.RegionLogger;
@@ -20,7 +19,7 @@ public class RemoveMemberCommand extends AbstractImprovedRegionCommand {
 
 	private boolean all;
 	
-	public RemoveMemberCommand(SlapHomebrew plugin, Player p, String[] args, boolean all) {
+	public RemoveMemberCommand(Player p, String[] args, boolean all) {
 		super(p, args);
 		this.all = all;
 	}

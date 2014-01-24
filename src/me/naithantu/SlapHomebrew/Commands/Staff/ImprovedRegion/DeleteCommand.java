@@ -1,6 +1,5 @@
 package me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegion;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.RegionLogger;
@@ -13,7 +12,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 public class DeleteCommand extends AbstractImprovedRegionCommand {
 
-	public DeleteCommand(SlapHomebrew plugin, Player p, String[] args) {
+	public DeleteCommand(Player p, String[] args) {
 		super(p, args);
 	}
 

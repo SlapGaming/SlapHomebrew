@@ -1,6 +1,5 @@
 package me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegion;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
 
@@ -14,7 +13,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 public class TeleportCommand extends AbstractImprovedRegionCommand {
 
-	public TeleportCommand(SlapHomebrew plugin, Player p, String[] args) {
+	public TeleportCommand(Player p, String[] args) {
 		super(p, args);
 	}
 

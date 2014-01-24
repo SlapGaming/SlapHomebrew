@@ -1,6 +1,5 @@
 package me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegion;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 
 import org.bukkit.ChatColor;
@@ -10,7 +9,7 @@ public class HelpCommand extends AbstractImprovedRegionCommand {
 
 	private boolean staff;
 	
-	public HelpCommand(SlapHomebrew plugin, Player p, String[] args, boolean staff) {
+	public HelpCommand(Player p, String[] args, boolean staff) {
 		super(p, args);
 		this.staff = staff;
 	}

@@ -54,67 +54,67 @@ public class ImprovedRegionCommand extends AbstractCommand {
 		switch (args[0].toLowerCase()) {
 		case "select": case "sel": case "s": //Selects a WG
 			testIRGPermission(Perm.select);
-			iRgCommand = new SelectCommand(plugin, p, args);
+			iRgCommand = new SelectCommand(p, args);
 			break;
 			
 		case "info": case "information": case "i": //Info about the WG
 			testIRGPermission(Perm.infoOwn);
-			iRgCommand = new InfoCommand(plugin, p, args, hasPermission(Perm.infoAll));
+			iRgCommand = new InfoCommand(p, args, hasPermission(Perm.infoAll));
 			break;
 			
 		case "define": case "def": case "create": case "d": //Define a region
 			testIRGPermission(Perm.define);
-			iRgCommand = new DefineCommand(plugin, p, args);
+			iRgCommand = new DefineCommand(p, args);
 			break;
 			
 		case "redefine": case "red": case "redef": //Redefine a region
 			testIRGPermission(Perm.redefine);
-			iRgCommand = new RedefineCommand(plugin, p, args);
+			iRgCommand = new RedefineCommand(p, args);
 			break;
 			
 		case "setpriority": case "setp": case "setpri": case "priority": case "pri": //Set the priority of a region
 			testIRGPermission(Perm.priority);
-			iRgCommand = new PriorityCommand(plugin, p, args);
+			iRgCommand = new PriorityCommand(p, args);
 			break;
 			
 		case "flag": case "f": //Give a region a flag or remove a flag
 			testIRGPermission(Perm.flagMod);
-			iRgCommand = new FlagCommand(plugin, p, args, hasPermission(Perm.flagAll));
+			iRgCommand = new FlagCommand(p, args, hasPermission(Perm.flagAll));
 			break;
 			
 		case "addmember": case "addm": case "am": case "member": //Add a member to a region
 			testIRGPermission(Perm.addMemberOwn);
-			iRgCommand = new AddMemberCommand(plugin, p, args, hasPermission(Perm.addMemberAll));
+			iRgCommand = new AddMemberCommand(p, args, hasPermission(Perm.addMemberAll));
 			break;
 			
 		case "removemember": case "remmember": case "removem": case "rmember": case "remm": case "rm": //Remove a member from a region
 			testIRGPermission(Perm.removeMemberOwn);
-			iRgCommand = new RemoveMemberCommand(plugin, p, args, hasPermission(Perm.removeMemberAll));
+			iRgCommand = new RemoveMemberCommand(p, args, hasPermission(Perm.removeMemberAll));
 			break;
 			
 		case "addowner": case "addo": case "ao": case "owner": //Add a owner to a region
 			testIRGPermission(Perm.addOwner);
-			iRgCommand = new AddOwnerCommand(plugin, p, args);
+			iRgCommand = new AddOwnerCommand(p, args);
 			break;
 			
 		case "removeowner": case "remowner": case "remo": case "removeo": case "rowner": case "ro": //Remove a owner of a region
 			testIRGPermission(Perm.removeOwner);
-			iRgCommand = new RemoveOwnerCommand(plugin, p, args);
+			iRgCommand = new RemoveOwnerCommand(p, args);
 			break;
 			
 		case "delete": case "del": case "remove": case "rem": //Remove a region
 			testIRGPermission(Perm.delete);
-			iRgCommand = new DeleteCommand(plugin, p, args);
+			iRgCommand = new DeleteCommand(p, args);
 			break;
 			
 		case "list": //Get a list of all the regions
 			testIRGPermission(Perm.listOwn);
-			iRgCommand = new ListCommand(plugin, p, args, hasPermission(Perm.listAll));
+			iRgCommand = new ListCommand(p, args, hasPermission(Perm.listAll));
 			break;
 			
 		case "tp": case "teleport": //Teleport to the WG
 			testIRGPermission(Perm.teleport);
-			iRgCommand = new TeleportCommand(plugin, p, args);
+			iRgCommand = new TeleportCommand(p, args);
 			break;
 			
 		case "copy": case "copysel": case "copyselection": //Copy the selection of a different player
@@ -145,7 +145,7 @@ public class ImprovedRegionCommand extends AbstractCommand {
 			
 		case "help":
 			testIRGPermission(Perm.help);
-			iRgCommand = new HelpCommand(plugin, p, args, hasPermission(Perm.helpStaff));
+			iRgCommand = new HelpCommand(p, args, hasPermission(Perm.helpStaff));
 			break;
 			
 		default:

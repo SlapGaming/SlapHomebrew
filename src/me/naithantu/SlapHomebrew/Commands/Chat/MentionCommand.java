@@ -46,6 +46,7 @@ public class MentionCommand extends AbstractCommand {
 			if (args.length < 2) throw new UsageException("mention ban <Playername>"); //Usage
 			targetPlayer = getOnlinePlayer(args[1], false); //Get player
 			mention.setBanned(targetPlayer.getName(), true); //Set banned -> True
+			hMsg(targetPlayer.getName() + " is now banned from the @Mention system.");
 			break;
 			
 		case "unban": //Unban a player
@@ -53,6 +54,7 @@ public class MentionCommand extends AbstractCommand {
 			if (args.length < 2) throw new UsageException("mention unban <Playername>"); //Usage
 			targetPlayer = getOnlinePlayer(args[1], false); //Get player
 			mention.setBanned(targetPlayer.getName(), false); //Set banned -> False
+			hMsg(targetPlayer.getName() + " is now unbanned from the @Mention system.");
 			break;
 			
 		case "sound": case "nofication": case "s": case "notificationsound": //Turn notification sound on/off
@@ -80,6 +82,9 @@ public class MentionCommand extends AbstractCommand {
 			sender.sendMessage(ChatColor.GOLD + "  \u2517\u25B6 /mention info : " + ChatColor.WHITE + "Get information about your current @Mention settings.");
 			sender.sendMessage(ChatColor.GOLD + "  \u2517\u25B6 /mention sound <on/off> : " + ChatColor.WHITE + "Turn the notification sound on or off.");
 			break;
+			
+		default:
+			return false;
 		}
 		
 		

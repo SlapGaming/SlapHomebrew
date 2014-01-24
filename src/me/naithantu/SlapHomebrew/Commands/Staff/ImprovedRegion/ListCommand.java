@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
 
@@ -17,7 +16,7 @@ public class ListCommand extends AbstractImprovedRegionCommand {
 
 	private boolean all;
 	
-	public ListCommand(SlapHomebrew plugin, Player p, String[] args, boolean all) {
+	public ListCommand(Player p, String[] args, boolean all) {
 		super(p, args);
 		this.all = all;
 	}

@@ -1,6 +1,5 @@
 package me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegion;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.IRGException;
 import me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegionCommand.Perm;
@@ -16,13 +15,12 @@ public class InfoCommand extends AbstractImprovedRegionCommand {
 	
 	/**
 	 * Make a new info command
-	 * @param plugin The plugin
 	 * @param p The player
 	 * @param args The args of the command
 	 * @param all Is allowed to check all regions
 	 * @param own Is allowed to check only their own regions
 	 */
-	public InfoCommand(SlapHomebrew plugin, Player p, String[] args, boolean all) {
+	public InfoCommand(Player p, String[] args, boolean all) {
 		super(p, args);
 		this.all = all;
 	}

@@ -1,6 +1,5 @@
 package me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegion;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.IRGException;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
@@ -24,12 +23,11 @@ public class FlagCommand extends AbstractImprovedRegionCommand {
 	
 	/**
 	 * Make a new FlagCommand
-	 * @param plugin The main plugin
 	 * @param p The player
 	 * @param args The command parameters
 	 * @param allFlags Is allowed to do all flags
 	 */
-	public FlagCommand(SlapHomebrew plugin, Player p, String[] args, boolean allFlags) {
+	public FlagCommand(Player p, String[] args, boolean allFlags) {
 		super(p, args);
 		this.allFlags = allFlags;
 	}

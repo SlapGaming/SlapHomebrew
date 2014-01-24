@@ -1,6 +1,5 @@
 package me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegion;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 
 import org.bukkit.entity.Player;
@@ -9,7 +8,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 public class SelectCommand extends AbstractImprovedRegionCommand {
 
-	public SelectCommand(SlapHomebrew plugin, Player p, String[] args) {
+	public SelectCommand(Player p, String[] args) {
 		super(p, args);
 	}
 
