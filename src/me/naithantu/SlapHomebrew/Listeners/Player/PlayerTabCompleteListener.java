@@ -27,13 +27,14 @@ public class PlayerTabCompleteListener extends AbstractListener {
 					int length = name.length(); //
 					for (Player p : Util.getOnlinePlayers()) { //Loop thru players
 						String playername = p.getName(); //Get name of player
-						if (name.equalsIgnoreCase(playername.substring(0, length))) { //Check if matches
-							suggestions.add("@" + playername); //Add to suggestions
+						if (playername.length() >= length) { //Check if current @[name] isn't longer than the player name
+							if (name.equalsIgnoreCase(playername.substring(0, length))) { //Check if matches
+								suggestions.add("@" + playername); //Add to suggestions
+							}
 						}
 					}
 				}
 			}
 		}
 	}
-
 }
