@@ -16,6 +16,7 @@ import me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegion.PriorityCommand;
 import me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegion.RedefineCommand;
 import me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegion.RemoveMemberCommand;
 import me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegion.RemoveOwnerCommand;
+import me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegion.SeenGroupCommand;
 import me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegion.SelectCommand;
 import me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegion.TeleportCommand;
 
@@ -116,16 +117,6 @@ public class ImprovedRegionCommand extends AbstractCommand {
 			iRgCommand = new TeleportCommand(plugin, p, args);
 			break;
 			
-		case "seen": //Get the /seen of the players on the region
-			testIRGPermission(Perm.seen);
-			throw new CommandException(ErrorMsg.notSupportedYet);
-			//Break;
-			
-		case "group": //Get the ranks of the players on the region
-			testIRGPermission(Perm.group);
-			throw new CommandException(ErrorMsg.notSupportedYet);
-			//Break;
-			
 		case "copy": case "copysel": case "copyselection": //Copy the selection of a different player
 			testIRGPermission(Perm.copySelection);
 			throw new CommandException(ErrorMsg.notSupportedYet);
@@ -145,6 +136,11 @@ public class ImprovedRegionCommand extends AbstractCommand {
 			} else {
 				hMsg("You are not a PEX User?");
 			}
+			break;
+			
+		case "group": case "seen": case "seengroup": case "groupseen": //Get Group & Last seen of owners & members
+			testIRGPermission(Perm.seengroup);
+			iRgCommand = new SeenGroupCommand(p, args);
 			break;
 			
 		case "help":
@@ -217,11 +213,8 @@ public class ImprovedRegionCommand extends AbstractCommand {
 		/** Allows you to delete a region */
 		delete("irg.delete"),
 		
-		/** Gets you a list of all the owners & members with their PermissionGroups */
-		group("irg.group"),
-		
-		/** Gets you a list of all the owners & members with their last online time */
-		seen("irg.seen"),
+		/** Gets you a list of all the owners & members with their PermissionGroups & Last seen */
+		seengroup("irg.seengroup"),
 		
 		/** Copy the selection another staff member has */
 		copySelection("irg.copyselection"),
