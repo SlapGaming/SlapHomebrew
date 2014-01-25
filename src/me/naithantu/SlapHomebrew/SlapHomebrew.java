@@ -13,6 +13,7 @@ import me.naithantu.SlapHomebrew.Listeners.*;
 import me.naithantu.SlapHomebrew.Listeners.Entity.*;
 import me.naithantu.SlapHomebrew.Listeners.Player.*;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
+import me.naithantu.SlapHomebrew.Timing.HandlerControl;
 import me.naithantu.SlapHomebrew.Util.Log;
 import net.milkbowl.vault.economy.Economy;
 
@@ -220,6 +221,9 @@ public class SlapHomebrew extends JavaPlugin {
 		 
 		 controllers.add(new ApplyChecker(essentials, tabController));
 		 controllers.add(new SlapSecurityAgency());
+		 
+		 //Temporary EventTimer
+		 new HandlerControl();
 	}
 	
 	private void initializeLoaders() {
