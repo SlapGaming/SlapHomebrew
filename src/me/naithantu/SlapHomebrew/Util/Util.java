@@ -11,6 +11,8 @@ import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Controllers.Flag;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
+import net.minecraft.server.v1_7_R1.ChatSerializer;
+import net.minecraft.server.v1_7_R1.PacketPlayOutChat;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -20,6 +22,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.craftbukkit.v1_7_R1.entity.CraftPlayer;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -391,6 +394,32 @@ public class Util {
     		if (testPermission(p, permission)) {
     			p.sendMessage(message);
     		}
+    	}
+    }
+    
+    /**
+     * Send a JSON Formatted message to a player
+     * @param p The player
+     * @param json The JSON message
+     */
+    public static void sendJsonMessage(Player p, String json) {
+    	((CraftPlayer) p)
+    		.getHandle()
+    		.playerConnection
+    		.sendPacket(
+    			new PacketPlayOutChat(
+    				ChatSerializer.a(json)
+    			)
+    		);
+    }
+    
+    /**
+     * Send a JSON Formatted message to all players
+     * @param json The JSON message
+     */
+    public static void broadcastJsonMessage(String json) {
+    	for (Player p : getOnlinePlayers()) {
+    		sendJsonMessage(p, json);
     	}
     }
         
