@@ -4,6 +4,7 @@ import me.naithantu.SlapHomebrew.Commands.AFK.*;
 import me.naithantu.SlapHomebrew.Commands.Basics.*;
 import me.naithantu.SlapHomebrew.Commands.Chat.ChatCommand;
 import me.naithantu.SlapHomebrew.Commands.Chat.ChatToggleCommand;
+import me.naithantu.SlapHomebrew.Commands.Chat.FancyChatCommand;
 import me.naithantu.SlapHomebrew.Commands.Chat.MentionCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Fun.*;
@@ -39,6 +40,7 @@ public class CommandHandler {
 		case "chattoggle":		commandObj = new ChatToggleCommand(sender, args);				break;
 		case "creativeextra":	commandObj = new CreativeextraCommand(sender, args);			break;
 		case "deaths":			commandObj = new DeathsCommand(sender, args);					break;
+		case "fancymessage":	commandObj = new FancyChatCommand(sender, args);				break;
 		case "fireworkshow":	commandObj = new FireworkCommand(sender, args);					break;
 		case "group":			commandObj = new GroupCommand(sender, args);					break;
 		case "guide":			commandObj = new ChatCommand(sender, "guidechat", args);		break;

@@ -3,7 +3,7 @@ main: me.naithantu.SlapHomebrew.SlapHomebrew
 depend: [Essentials, Vault, PermissionsEx]
 softdepend: [TabAPI, ReportRTS, MCBans]
 authors: [naithantu, Stoux2]
-version: 3.4.9
+version: 3.4.10
 description: A custom plugin which adds lots of extra features to the SlapGaming minecraft server.
 commands:
   vip:
@@ -177,3 +177,6 @@ commands:
   mention:
     description: Commands for the @Mention feature
     usage: "Usage: /mention < help | info | sound <on/off> >"
+  fancymessage:
+    description: Fancy messages!
+    aliases: [fm]

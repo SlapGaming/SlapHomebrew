@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
+import me.naithantu.SlapHomebrew.Controllers.FancyMessage.FancyMessage;
+import me.naithantu.SlapHomebrew.Util.Util;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -24,9 +27,13 @@ public class Lottery extends AbstractController {
 	private int taskID;
 		
 	int lotteryTimer;
+	
+	private String jsonMessage;
 
 	public Lottery() {
 		lotteryTimer();
+		
+		jsonMessage = new FancyMessage("[SLAP] ").color(ChatColor.GOLD).addText("The lottery has started! Click me!").runCommand("/roll").tooltip("Click to roll!").toJSONString();
 	}
 
 	private void lotteryTimer() {
@@ -41,7 +48,7 @@ public class Lottery extends AbstractController {
 				}
 				if (lotteryEnabled == true) {
 					lotteryPlaying = true;
-					Bukkit.getServer().broadcastMessage(ChatColor.GOLD + "[SLAP]" + ChatColor.WHITE + " The lottery has started! Type /roll to play!");
+					Util.broadcastJsonMessage(jsonMessage);
 					shortLotteryTimer();
 					lotteryTimer();
 				}
@@ -191,7 +198,7 @@ public class Lottery extends AbstractController {
 	
 	/* ---Fake Lottery Stuff--- */	
 	public void startFakeLottery(String winner){
-		Bukkit.getServer().broadcastMessage(ChatColor.GOLD + "[SLAP]" + ChatColor.WHITE + " The lottery has started! Type /roll to play!");
+		Util.broadcastJsonMessage(jsonMessage);
 		fakeLotteryPlaying = true;
 		fakeLotteryWinner = winner;
 		fakeLotteryPlayers.clear();

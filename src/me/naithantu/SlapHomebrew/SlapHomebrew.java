@@ -9,6 +9,7 @@ import java.util.Map;
 import me.naithantu.SlapHomebrew.Commands.CommandHandler;
 import me.naithantu.SlapHomebrew.Commands.Basics.SpawnCommand;
 import me.naithantu.SlapHomebrew.Controllers.*;
+import me.naithantu.SlapHomebrew.Controllers.FancyMessage.FancyMessageControl;
 import me.naithantu.SlapHomebrew.Listeners.*;
 import me.naithantu.SlapHomebrew.Listeners.Entity.*;
 import me.naithantu.SlapHomebrew.Listeners.Player.*;
@@ -79,6 +80,7 @@ public class SlapHomebrew extends JavaPlugin {
 	private ChatChannels chatChannels;
 	private DuelArena duelArena;
 	private Extras extras;
+	private FancyMessageControl fancyMessage;
 	private FireworkShow show;
 	private Horses horses;
 	private Jails jails;
@@ -205,6 +207,7 @@ public class SlapHomebrew extends JavaPlugin {
 		 controllers.add(chatChannels = new ChatChannels());
 		 controllers.add(duelArena = new DuelArena());
 		 controllers.add(extras = new Extras());
+		 controllers.add(fancyMessage = new FancyMessageControl());
 		 controllers.add(show = new FireworkShow());
 		 controllers.add(horses = new Horses());
 		 controllers.add(jails = new Jails());
@@ -416,6 +419,10 @@ public class SlapHomebrew extends JavaPlugin {
 	
 	public Lottery getLottery() {
 		return lottery;
+	}
+	
+	public FancyMessageControl getFancyMessage() {
+		return fancyMessage;
 	}
 
 	public Horses getHorses() {
