@@ -7,6 +7,7 @@ import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
@@ -41,7 +42,7 @@ public class Bump extends AbstractController {
 			public void run() {
 				//Aggressive bumping thing here. Start 5 minute timer.
 				bumpIsDone = false;
-				Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), "mod-broadcast Post On Yogscast/Minecraftforums, Use /Bumpdone When You Are Going Bump!");
+				Util.messagePermissionHolders("bump", ChatColor.RED + "[BUMP] " + ChatColor.GREEN + "Bump the forums! When you're going to, do: " + ChatColor.YELLOW + "/bumpdone");
 				if (getOnlineStaff() > 0) {
 					shortBumpTimer();
 				} else {
