@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.*;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 import me.naithantu.SlapHomebrew.Util.Log;
+import me.naithantu.SlapHomebrew.Util.SQLPool;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.configuration.file.FileConfiguration;
@@ -14,8 +15,6 @@ import org.bukkit.scheduler.BukkitTask;
 public class SlapSecurityAgency extends AbstractController {
 
 	private BukkitTask batchingTask;
-	
-	private LoggerSQL sql;
 	
 	private FileConfiguration config;
 	private ArrayList<AbstractLogger> loggers;
@@ -29,31 +28,30 @@ public class SlapSecurityAgency extends AbstractController {
 			return;
 		}
 		
-		sql = new LoggerSQL();
-		if (!sql.connect()) { //Connect to SQL
+		if (!SQLPool.isSetup()) { //SQL Disabled
+			Log.warn("[SSA] No SQL Connection available. SSA is disabled.");
 			return;
 		}
 		
 		//Loggers
-		if (loggerEnabled("AFK")) 		add(new AFKLogger(sql)); 		//Log AFK Sessions
-	//	if (loggerEnabled("Bans")) 		add(new BansLogger(sql)); 		//Log Bans
-		if (loggerEnabled("Death"))		add(new DeathLogger(sql));		//Log Deaths & Kills
-	//	if (loggerEnabled("Donation")) 	add(new DonationLogger(sql)); 	//Log Donations
-		if (loggerEnabled("Kick")) 		add(new KickLogger(sql)); 		//Log Kicks
-		if (loggerEnabled("Modreq")) 	add(new ModreqLogger(sql));		//Log Modreqs & their progress
-	//	if (loggerEnabled("Notes")) 	add(new NotesLogger(sql)); 		//Log Notes (added by staff)
-		if (loggerEnabled("Region")) 	add(new RegionLogger(sql)); 	//Log Region Changes
-		if (loggerEnabled("Session")) 	add(new SessionLogger(sql)); 	//Log Login Sessions
+		if (loggerEnabled("AFK")) 		add(new AFKLogger()); 		//Log AFK Sessions
+	//	if (loggerEnabled("Bans")) 		add(new BansLogger()); 		//Log Bans
+		if (loggerEnabled("Death"))		add(new DeathLogger());		//Log Deaths & Kills
+	//	if (loggerEnabled("Donation")) 	add(new DonationLogger()); 	//Log Donations
+		if (loggerEnabled("Kick")) 		add(new KickLogger()); 		//Log Kicks
+		if (loggerEnabled("Modreq")) 	add(new ModreqLogger());	//Log Modreqs & their progress
+	//	if (loggerEnabled("Notes")) 	add(new NotesLogger()); 	//Log Notes (added by staff)
+	//	if (loggerEnabled("Promotion")) add(new PromotionLogger());	//Log promotions
+		if (loggerEnabled("Region")) 	add(new RegionLogger()); 	//Log Region Changes
+		if (loggerEnabled("Session")) 	add(new SessionLogger()); 	//Log Login Sessions
 		
 		//Controllers
 	//	if (controlEnabled("VIPDays")) 
 	//	if (controlEnabled("VIPForum")) 
-		if (controlEnabled("Plot"))		add(new PlotControl(sql));		//Control plot marks
+		if (controlEnabled("Plot"))		add(new PlotControl());		//Control plot marks
 		
 		if (loggers.isEmpty()) { //Check if any loggers are enabled
 			Log.warn("All loggers are disabled in the config.");
-			sql.disconnect();
-			sql = null;
 			return;
 		}
 		
@@ -62,7 +60,6 @@ public class SlapSecurityAgency extends AbstractController {
 			logger.registerEvents(pm);
 		}				
 		
-		sql.startPinging(); //Start pinging the SQL Server
 		startBatchingTask(); //Start batching the loggers
 	}
 	
@@ -120,7 +117,6 @@ public class SlapSecurityAgency extends AbstractController {
 		for (AbstractLogger logger : loggers) {
 			logger.shutdown();
 		}
-		if (sql != null) sql.disconnect();
 	}
 
 }

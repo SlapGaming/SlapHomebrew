@@ -1,10 +1,13 @@
 package me.naithantu.SlapHomebrew.Controllers.PlayerLogging;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.HashSet;
+
+import me.naithantu.SlapHomebrew.Util.SQLPool;
 
 public class AFKLogger extends AbstractLogger {
 	
@@ -17,8 +20,8 @@ public class AFKLogger extends AbstractLogger {
 			"INSERT INTO `mcecon`.`logger_afk` (`player`, `went_afk`, `left_afk`, `reason`) " +
 			"VALUES (?, ?, ?, ?);";
 	
-	public AFKLogger(LoggerSQL sql) {
-		super(sql);
+	public AFKLogger() {
+		super();
 		if (!enabled) return;
 		activeSessions = new HashMap<>();
 		finishedSessions = new HashSet<>();
@@ -92,14 +95,16 @@ public class AFKLogger extends AbstractLogger {
 			return -1L;
 		}
 		long afkTime = 0;
-		try {
-			for (Batchable batchable : instance.finishedSessions) { //Get from unbatched
-				AFKSession session = (AFKSession) batchable;
-				if (session.player.equalsIgnoreCase(playername)) { //Check if session is about player
-					afkTime += (session.leftAFK - session.wentAFK); //Add to time
-				}
+		
+		for (Batchable batchable : instance.finishedSessions) { //Get from unbatched
+			AFKSession session = (AFKSession) batchable;
+			if (session.player.equalsIgnoreCase(playername)) { //Check if session is about player
+				afkTime += (session.leftAFK - session.wentAFK); //Add to time
 			}
-			PreparedStatement prep = instance.sql.getConnection().prepareStatement( //Get from DB
+		}
+		Connection con = SQLPool.getConnection(); //Get a connection
+		try {
+			PreparedStatement prep = con.prepareStatement( //Get from DB
 				"SELECT SUM(`left_afk`) - SUM(`went_afk`) FROM `logger_afk` WHERE `player` = ?;"
 			); 
 			prep.setString(1, playername);
@@ -113,6 +118,8 @@ public class AFKLogger extends AbstractLogger {
 		} catch (SQLException e) {
 			e.printStackTrace();
 			afkTime = -1;
+		} finally {
+			SQLPool.returnConnection(con); //Return con
 		}
 		return afkTime;
 	}

@@ -25,8 +25,8 @@ public class KickLogger extends AbstractLogger implements Listener {
 			"INSERT INTO `mcecon`.`logger_kicks` (`player`, `kicked_time`, `kicked_by`, `reason`) " +
 			"VALUES (?, ?, ?, ?);";
 	
-	public KickLogger(LoggerSQL sql) {
-		super(sql);
+	public KickLogger() {
+		super();
 		if (!enabled) return;
 		kicks = new HashSet<>();
 		kickedByMap = new HashMap<>();

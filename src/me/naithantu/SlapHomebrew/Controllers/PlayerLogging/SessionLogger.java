@@ -1,6 +1,7 @@
 package me.naithantu.SlapHomebrew.Controllers.PlayerLogging;
 
 import java.net.InetSocketAddress;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,6 +10,7 @@ import java.util.HashSet;
 
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
+import me.naithantu.SlapHomebrew.Util.SQLPool;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.ChatColor;
@@ -29,8 +31,8 @@ public class SessionLogger extends AbstractLogger implements Listener {
 	private HashMap<String, Session> activeSessions; // Playername -> Session
 	private HashSet<Batchable> finishedSessions;
 	
-	public SessionLogger(LoggerSQL sql) {
-		super(sql);
+	public SessionLogger() {
+		super();
 		if (!enabled) return;
 		activeSessions = new HashMap<>();
 		finishedSessions = new HashSet<>();
@@ -94,8 +96,9 @@ public class SessionLogger extends AbstractLogger implements Listener {
 			}
 		}
 		
+		Connection con = SQLPool.getConnection();
 		try {
-			PreparedStatement prep = instance.sql.getConnection().prepareStatement( //Get Total time from DB
+			PreparedStatement prep = con.prepareStatement( //Get Total time from DB
 				"SELECT SUM( `quit_time` ) - SUM( `join_time` ) AS `playtime` FROM `logger_times` WHERE `player` = ?;"
 			);
 			prep.setString(1, playername);
@@ -120,6 +123,7 @@ public class SessionLogger extends AbstractLogger implements Listener {
 			e.printStackTrace();
 			Util.badMsg(p, "Woops! Something went wrong.");
 		} finally {
+			SQLPool.returnConnection(con);
 			AbstractCommand.removeDoingCommand(p);
 		}
 	}

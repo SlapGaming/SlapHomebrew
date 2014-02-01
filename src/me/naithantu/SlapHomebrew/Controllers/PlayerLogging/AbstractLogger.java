@@ -1,5 +1,6 @@
 package me.naithantu.SlapHomebrew.Controllers.PlayerLogging;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.HashSet;
@@ -9,15 +10,14 @@ import org.bukkit.plugin.PluginManager;
 
 import me.naithantu.SlapHomebrew.Controllers.AbstractController;
 import me.naithantu.SlapHomebrew.Util.Log;
+import me.naithantu.SlapHomebrew.Util.SQLPool;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 public abstract class AbstractLogger extends AbstractController {
 
-	protected LoggerSQL sql;
 	protected boolean enabled;
 	
-	public AbstractLogger(LoggerSQL sql) {
-		this.sql = sql;
+	public AbstractLogger() {
 		enable();
 	}
 	
@@ -49,15 +49,18 @@ public abstract class AbstractLogger extends AbstractController {
 		Util.runASync(plugin, new Runnable() {
 			@Override
 			public void run() {
+				Connection con = SQLPool.getConnection(); //Get connection
 				try {
-					PreparedStatement prep = sql.getConnection().prepareStatement(sqlStatement);
-					for (Batchable batchable : batch) {
+					PreparedStatement prep = con.prepareStatement(sqlStatement);
+					for (Batchable batchable : batch) { //Prepare batch
 						batchable.addBatch(prep);
 						prep.addBatch();
 					}
-					prep.executeBatch();
+					prep.executeBatch(); //Execute
 				} catch (SQLException e) {
 					Log.severe("Failed to insert batch. Batchable class: " + batch.iterator().next().getClass().getName() + " | Exception: " + e.getMessage());
+				} finally {
+					SQLPool.returnConnection(con); //Return connection
 				}
 			}
 		});
@@ -78,7 +81,10 @@ public abstract class AbstractLogger extends AbstractController {
 	 * @throws SQLException if failed
 	 */
 	protected int executeUpdate(String query) throws SQLException {
-		return sql.getConnection().createStatement().executeUpdate(query);
+		Connection con = SQLPool.getConnection(); //Get Connection
+		int result = con.createStatement().executeUpdate(query); //Execute update
+		SQLPool.returnConnection(con); //Return connection
+		return result; //Return result
 	}
 	
 	/**

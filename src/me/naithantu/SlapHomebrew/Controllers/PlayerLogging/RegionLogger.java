@@ -1,5 +1,6 @@
 package me.naithantu.SlapHomebrew.Controllers.PlayerLogging;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,6 +11,7 @@ import java.util.HashSet;
 
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
+import me.naithantu.SlapHomebrew.Util.SQLPool;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.ChatColor;
@@ -30,8 +32,8 @@ public class RegionLogger extends AbstractLogger {
 			"INSERT INTO `mcecon`.`logger_regions` (`world`, `region`, `changed_time`, `changed_by`, `changer_is_a`, `type`, `parameter`) " +
 			"VALUES (?, ?, ?, ?, ?, ?, ?);";
 	
-	public RegionLogger(LoggerSQL sql) {
-		super(sql);
+	public RegionLogger() {
+		super();
 		if (!enabled) return;
 		changes = new HashSet<>();
 		format = new SimpleDateFormat("dd MMM. HH:mm");
@@ -102,8 +104,9 @@ public class RegionLogger extends AbstractLogger {
 						foundChanges.add(change);
 					}
 				}
+				Connection con = SQLPool.getConnection();
 				try {
-					PreparedStatement prep = instance.sql.getConnection().prepareStatement( //Prep Statement for getting changes
+					PreparedStatement prep = con.prepareStatement( //Prep Statement for getting changes
 						"SELECT `changed_time`, `changed_by`, `changer_is_a`, `type`, `parameter` FROM `logger_regions` " +
 						"WHERE `world` = ? AND `region` = ?;"
 					);

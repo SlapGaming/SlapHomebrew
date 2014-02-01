@@ -1,5 +1,6 @@
 package me.naithantu.SlapHomebrew.Controllers.PlayerLogging;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -7,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import me.naithantu.SlapHomebrew.Util.Log;
+import me.naithantu.SlapHomebrew.Util.SQLPool;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.event.EventHandler;
@@ -26,8 +28,8 @@ public class ModreqLogger extends AbstractLogger implements Listener {
 	private HashMap<Integer, CompletedModreq> modreqBatch;
 	private int iteration;
 	
-	public ModreqLogger(LoggerSQL sql) {
-		super(sql);
+	public ModreqLogger() {
+		super();
 		findReportRTS();
 		if (!enabled) return;
 		modreqBatch = new HashMap<Integer, ModreqLogger.CompletedModreq>();
@@ -65,8 +67,9 @@ public class ModreqLogger extends AbstractLogger implements Listener {
 	 * Find the current iteration in the database
 	 */
 	private void findIteration() {
+		Connection con = SQLPool.getConnection();
 		try {
-			ResultSet rs = sql.getConnection().createStatement().executeQuery("SELECT MAX(`iteration`) FROM `logger_modreqs`;"); //Get max current iteration
+			ResultSet rs = con.createStatement().executeQuery("SELECT MAX(`iteration`) FROM `logger_modreqs`;"); //Get max current iteration
 			rs.next();
 			iteration = rs.getInt(1);
 			if (rs.wasNull()) { //No entries yet
@@ -75,6 +78,8 @@ public class ModreqLogger extends AbstractLogger implements Listener {
 		} catch (SQLException e) {
 			enabled = false;
 			Log.severe("Failed to find iteration (ModreqLogger). Exception: " + e.getMessage());
+		} finally {
+			SQLPool.returnConnection(con);
 		}
 	}
 		

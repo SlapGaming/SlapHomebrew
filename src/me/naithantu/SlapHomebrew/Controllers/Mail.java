@@ -9,6 +9,8 @@ import java.util.List;
 import me.naithantu.SlapHomebrew.Storage.MailSQL;
 import me.naithantu.SlapHomebrew.Storage.MailSQL.CheckType;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
+import me.naithantu.SlapHomebrew.Util.Log;
+import me.naithantu.SlapHomebrew.Util.SQLPool;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.ChatColor;
@@ -45,17 +47,16 @@ public class Mail extends AbstractController {
 			plugin.saveConfig();
 		}
 		if (!devServer) {
+			if (!SQLPool.isSetup()) { //Check if SQL Pool is setup.
+				Log.warn("[MAIL] No SQL Connections. Disabling Mail.");
+				return;
+			}
 			mailSQL = new MailSQL();
 			crunchingData = new HashMap<>();
 			dateFormat = new SimpleDateFormat("HH:mm dd-MM-yyyy zzz");
 			monthFormat = new SimpleDateFormat("dd-MM");
 			mailYML = new YamlStorage(plugin, "mail");
 			mailConfigYML = mailYML.getConfig();
-			if (mailSQL.isConnected()) {
-				plugin.getLogger().info("[MAIL] Connected with MySQL database");
-			} else {
-				plugin.getLogger().info("[MAIL] Connection with MySQL database failed. Will deny all mail interaction.");
-			}
 		} else {
 			plugin.getLogger().info("[MAIL] Running a dev server. Mail disabled.");
 		}
@@ -387,10 +388,7 @@ public class Mail extends AbstractController {
 	}
 
 	public void hasNewMail(final Player player) {
-		if (devServer) return;
-		if (!mailSQL.isConnected())
-			return;
-		
+		if (devServer) return;		
 
 		runAsync(new Runnable() {
 
@@ -867,7 +865,7 @@ public class Mail extends AbstractController {
 	
 	/* OTHER STUFF */
 	private boolean sqlConnected(CommandSender sender) {
-		if (mailSQL.isConnected()) {
+		if (!isDevServer()) {
 			return true;
 		} else {
 			sender.sendMessage(ChatColor.RED + "The mail system is currently not available.");

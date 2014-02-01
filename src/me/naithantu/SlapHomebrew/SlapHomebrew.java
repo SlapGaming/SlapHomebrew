@@ -16,6 +16,7 @@ import me.naithantu.SlapHomebrew.Listeners.Player.*;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 import me.naithantu.SlapHomebrew.Timing.HandlerControl;
 import me.naithantu.SlapHomebrew.Util.Log;
+import me.naithantu.SlapHomebrew.Util.SQLPool;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Location;
@@ -102,6 +103,11 @@ public class SlapHomebrew extends JavaPlugin {
 	private WorldGuardPlugin worldGuard;
 	
 	/**
+	 * SQL Pool
+	 */
+	private SQLPool pool;
+	
+	/**
 	 * allowCakeTp boolean - 
 	 */
 	private boolean allowCakeTp;
@@ -153,6 +159,7 @@ public class SlapHomebrew extends JavaPlugin {
 		disableSavers();
 		disableControllers();
 		disableStatics();
+		pool.shutdown();
 	}
 
 	@Override
@@ -185,6 +192,7 @@ public class SlapHomebrew extends JavaPlugin {
 		if (rsp != null) {
 			economy = rsp.getProvider();
 		}
+		pool = new SQLPool(); //Create SQL Pool
 	}
 
 	private void initializeYamlStoragesConfigs() {

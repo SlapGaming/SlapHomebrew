@@ -431,6 +431,15 @@ public class Util {
     	return Bukkit.getServer().getOnlinePlayers();
     }
     
+    /**
+     * Get the OfflinePlayer based on their name
+     * @param playername The player's name
+     * @return the player
+     */
+    public static OfflinePlayer getOfflinePlayer(String playername) {
+    	return Bukkit.getOfflinePlayer(playername);
+    }
+    
     public static BukkitTask runASync(SlapHomebrew plugin, Runnable runnable) {
     	if (!plugin.isEnabled()) {
     		runnable.run();

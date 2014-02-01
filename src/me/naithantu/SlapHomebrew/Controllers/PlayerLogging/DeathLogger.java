@@ -1,5 +1,6 @@
 package me.naithantu.SlapHomebrew.Controllers.PlayerLogging;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,6 +11,7 @@ import java.util.Map.Entry;
 
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
+import me.naithantu.SlapHomebrew.Util.SQLPool;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.ChatColor;
@@ -32,8 +34,8 @@ public class DeathLogger extends AbstractLogger implements Listener {
 	private HashSet<Batchable> kills;
 	private String killsSQL = "INSERT INTO `mcecon`.`logger_kills` (`killed_player`, `death_time`, `killed_by`) VALUES (?, ?, ?);";
 	
-	public DeathLogger(LoggerSQL sql) {
-		super(sql);
+	public DeathLogger() {
+		super();
 		if (!enabled) return;
 		suiciders = new HashSet<>();
 		
@@ -107,21 +109,21 @@ public class DeathLogger extends AbstractLogger implements Listener {
 			
 			@Override
 			public void run() {
-				try {
-					HashMap<String, Integer> deathMap = new HashMap<>();
-					String playername = p.getName();
-					
-					int totalDeaths = 0;
-					
-					for (Batchable batchable : instance.deaths) { //Loop thru deaths still waiting to be batched
-						PlayerDeath death = (PlayerDeath) batchable;
-						if (death.player.equalsIgnoreCase(playername)) { 
-							addToDeathMap(deathMap, death.deathCause, 1);
-							totalDeaths++;
-						}
+				HashMap<String, Integer> deathMap = new HashMap<>();
+				String playername = p.getName();
+				
+				int totalDeaths = 0;
+				
+				for (Batchable batchable : instance.deaths) { //Loop thru deaths still waiting to be batched
+					PlayerDeath death = (PlayerDeath) batchable;
+					if (death.player.equalsIgnoreCase(playername)) { 
+						addToDeathMap(deathMap, death.deathCause, 1);
+						totalDeaths++;
 					}
-					
-					PreparedStatement prep = instance.sql.getConnection().prepareStatement( //Prepare Statement to get Deaths from SQL
+				}
+				Connection con = SQLPool.getConnection(); //Get connection
+				try {
+					PreparedStatement prep = con.prepareStatement( //Prepare Statement to get Deaths from SQL
 						"SELECT COUNT(*) as `Deaths`, `deathcause` FROM `logger_deaths` WHERE `player` = ? GROUP BY `deathcause`;"
 					);
 					prep.setString(1, playername);
@@ -149,6 +151,7 @@ public class DeathLogger extends AbstractLogger implements Listener {
 					Util.badMsg(p, "Something went wrong!");
 					e.printStackTrace();
 				} finally {
+					SQLPool.returnConnection(con); //Return connection
 					AbstractCommand.removeDoingCommand(p);
 				}
 			}
@@ -232,9 +235,9 @@ public class DeathLogger extends AbstractLogger implements Listener {
 						kills.add(kill);
 					}
 				}
-				
+				Connection con = SQLPool.getConnection(); //Get connection
 				try {
-					PreparedStatement prep = instance.sql.getConnection().prepareStatement( //Query for getting kills out of SQL
+					PreparedStatement prep = con.prepareStatement( //Query for getting kills out of SQL
 						"SELECT `killed_player`, `killed_by` FROM `logger_kills` WHERE `killed_player` = ? OR `killed_by` = ?;"
 					);
 					prep.setString(1, playername);
@@ -293,6 +296,7 @@ public class DeathLogger extends AbstractLogger implements Listener {
 					Util.badMsg(p, "Something went wrong!");
 					e.printStackTrace();
 				} finally {
+					SQLPool.returnConnection(con); //Return connection
 					AbstractCommand.removeDoingCommand(p);
 				}
 			}
