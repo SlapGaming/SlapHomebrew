@@ -2,17 +2,17 @@ package me.naithantu.SlapHomebrew.Controllers;
 
 import java.util.List;
 
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Controllers.IconMenu.OptionClickEvent;
+import me.naithantu.SlapHomebrew.Util.Util;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-
-import com.earth2me.essentials.User;
 
 public class HomeMenu extends AbstractController {
 
-	private User essentialsUser;
+	private Player player;
 	private String playerName;
 	private IconMenu mainMenu;
 	private IconMenu homeMenu;
@@ -23,9 +23,12 @@ public class HomeMenu extends AbstractController {
 	int creativeHomes;
 	int netherHomes;
 	int resourceHomes;
+	
+	private Homes homesControl;
 
-	public HomeMenu(User player) {
-		essentialsUser = player;
+	public HomeMenu(Player player) {
+		this.player = player;
+		homesControl = plugin.getHomes();
 		playerName = player.getName();
 		createHomeMainMenu();
 	}
@@ -43,12 +46,16 @@ public class HomeMenu extends AbstractController {
 			homeMenu = null;
 		}
 
-		homes = essentialsUser.getHomes();
+		try {
+			homes = homesControl.getHomes(playerName);
+		} catch (CommandException e) {
+			return;
+		}
 		oldSurvivalHomes = newSurvivalHomes = creativeHomes = netherHomes = resourceHomes = 0;
 
 		for (String home : homes) {
 			try {
-				String worldName = essentialsUser.getHome(home).getWorld().getName();
+				String worldName = homesControl.getHome(playerName, home).getWorld().getName();
 				switch (worldName.toLowerCase()) {
 				case "world":
 					oldSurvivalHomes++;
@@ -67,6 +74,7 @@ public class HomeMenu extends AbstractController {
 					break;
 				}
 			} catch (Exception e) {
+				
 			}
 		}
 
@@ -85,13 +93,11 @@ public class HomeMenu extends AbstractController {
 		mainMenu.setOption("world_nether-" + netherHomes, 6, new ItemStack(Material.NETHER_BRICK, 0), "The Nether", netherHomes + " home(s)");
 		mainMenu.setOption("world_resource10-" + resourceHomes, 8, new ItemStack(Material.COBBLESTONE, 0), "Resource World", resourceHomes + " home(s)");
 
-		mainMenu.open(essentialsUser.getPlayer());
+		mainMenu.open(player);
 
 	}
 
-	public void reCreateHomeMainMenu(User player) {
-		essentialsUser = plugin.getEssentials().getUserMap().getUser(player.getName());
-		playerName = player.getName();
+	public void reCreateHomeMainMenu() {
 		createHomeMainMenu();
 	}
 
@@ -139,7 +145,7 @@ public class HomeMenu extends AbstractController {
 			nrOfHomes = 0;
 			for (String home : homes) {
 				try {
-					if (essentialsUser.getHome(home).getWorld().getName().equals(world)) {
+					if (homesControl.getHome(playerName, home).getWorld().getName().equalsIgnoreCase(world)) {
 						nrOfHomes++;
 					}
 				} catch (Exception e) {
@@ -215,8 +221,7 @@ public class HomeMenu extends AbstractController {
 			}
 		}
 
-		homeMenu.open(essentialsUser.getPlayer());
-
+		homeMenu.open(player);
 	}
 
 	/* ---Show--- */
@@ -225,7 +230,7 @@ public class HomeMenu extends AbstractController {
 
 			@Override
 			public void run() {
-				mainMenu.open(essentialsUser.getPlayer());
+				mainMenu.open(player);
 			}
 
 		}, 2);
@@ -250,7 +255,7 @@ public class HomeMenu extends AbstractController {
 		int numberOfHomes = Integer.parseInt(worldInfo[1]);
 		if (numberOfHomes == 0) {
 			//No homes in that world
-			essentialsUser.sendMessage(ChatColor.RED + "You don't have any homes in this world.");
+			Util.badMsg(player, "You don't have any homes in this world.");
 			event.setWillClose(false);
 		} else {
 			showNextHomeMenu(worldInfo[0], 1);
@@ -274,7 +279,7 @@ public class HomeMenu extends AbstractController {
 	/* ---Others--- */
 	private void teleportPlayer(String home) {
 		try {
-			essentialsUser.teleport(essentialsUser.getHome(home));
+			player.teleport(homesControl.getHome(playerName, home)); //Teleport to only home
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -282,7 +287,7 @@ public class HomeMenu extends AbstractController {
 
 	private String getWorldName(String home) {
 		try {
-			return essentialsUser.getHome(home).getWorld().getName();
+			return homesControl.getHome(playerName, home).getWorld().getName();
 		} catch (Exception e) {
 			return null;
 		}

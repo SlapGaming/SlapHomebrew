@@ -2,6 +2,7 @@ package me.naithantu.SlapHomebrew.Listeners.Player;
 
 import me.naithantu.SlapHomebrew.Controllers.AwayFromKeyboard;
 import me.naithantu.SlapHomebrew.Controllers.ChatChannels;
+import me.naithantu.SlapHomebrew.Controllers.Homes;
 import me.naithantu.SlapHomebrew.Controllers.Jails;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
 import me.naithantu.SlapHomebrew.Controllers.TabController;
@@ -18,13 +19,15 @@ public class PlayerQuitListener extends AbstractListener {
 	private PlayerLogger playerLogger;
 	private TabController tabController;
 	private ChatChannels chatChannels;
+	private Homes homes;
 
-	public PlayerQuitListener(AwayFromKeyboard afk, Jails jails, PlayerLogger playerLogger, TabController tabController, ChatChannels chatChannels) {
+	public PlayerQuitListener(AwayFromKeyboard afk, Jails jails, PlayerLogger playerLogger, TabController tabController, ChatChannels chatChannels, Homes homes) {
 		this.afk = afk;
 		this.jails = jails;
 		this.playerLogger = playerLogger;
 		this.tabController = tabController;
 		this.chatChannels = chatChannels;
+		this.homes = homes;
 	}
 
 	@EventHandler
@@ -42,6 +45,9 @@ public class PlayerQuitListener extends AbstractListener {
 				
 		//Leave tab
 		tabController.playerQuit(player);
+		
+		//Leave homes
+		homes.playerQuit(player);
 		
 		//Remove from minechatChecker
 		playerLogger.removeFromMoved(playername);

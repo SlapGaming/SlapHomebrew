@@ -41,13 +41,12 @@ public class SlapSecurityAgency extends AbstractController {
 		if (loggerEnabled("Kick")) 		add(new KickLogger()); 		//Log Kicks
 		if (loggerEnabled("Modreq")) 	add(new ModreqLogger());	//Log Modreqs & their progress
 	//	if (loggerEnabled("Notes")) 	add(new NotesLogger()); 	//Log Notes (added by staff)
-	//	if (loggerEnabled("Promotion")) add(new PromotionLogger());	//Log promotions
+		if (loggerEnabled("Promotion")) add(new PromotionLogger());	//Log promotions
 		if (loggerEnabled("Region")) 	add(new RegionLogger()); 	//Log Region Changes
 		if (loggerEnabled("Session")) 	add(new SessionLogger()); 	//Log Login Sessions
 		
 		//Controllers
-	//	if (controlEnabled("VIPDays")) 
-	//	if (controlEnabled("VIPForum")) 
+		if (controlEnabled("VIPForum")) add(new VipForumControl()); //Control VIP Forum promotions 
 		if (controlEnabled("Plot"))		add(new PlotControl());		//Control plot marks
 		
 		if (loggers.isEmpty()) { //Check if any loggers are enabled

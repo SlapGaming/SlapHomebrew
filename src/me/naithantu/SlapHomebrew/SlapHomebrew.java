@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 
 import me.naithantu.SlapHomebrew.Commands.CommandHandler;
 import me.naithantu.SlapHomebrew.Commands.Basics.SpawnCommand;
@@ -45,13 +44,6 @@ public class SlapHomebrew extends JavaPlugin {
 	private HashMap<String, Location> backDeathMap = new HashMap<String, Location>();
 			
 	/**
-	 * forumVip HashMap - Key VIPForumID -> Value Info
-	 * unfinishedForumVip - List of unfinished VIPForumIDs
-	 */
-	private HashMap<Integer, String> forumVip = new HashMap<Integer, String>();
-	private List<Integer> unfinishedForumVip = new ArrayList<Integer>();
-
-	/**
 	 * tpBlocks HashSet - Contains all tpBlocks
 	 */
 	private HashSet<String> tpBlocks = new HashSet<String>();
@@ -61,14 +53,10 @@ public class SlapHomebrew extends JavaPlugin {
 	 * FileConfigs
 	 */
 	private YamlStorage dataStorage;
-	private YamlStorage vipStorage;
-	private YamlStorage timeStorage;
-	private YamlStorage sonicStorage;
 	private YamlStorage vipGrantStorage;
 	private YamlStorage applyThreadStorage;
     private YamlStorage messageStorage;
 	private FileConfiguration dataConfig;
-	private FileConfiguration vipConfig;
 	private Configuration config;
 
 	/**
@@ -83,6 +71,7 @@ public class SlapHomebrew extends JavaPlugin {
 	private Extras extras;
 	private FancyMessageControl fancyMessage;
 	private FireworkShow show;
+	private Homes homes;
 	private Horses horses;
 	private Jails jails;
 	private Lag lag;
@@ -136,11 +125,6 @@ public class SlapHomebrew extends JavaPlugin {
 		//Create Schedulers -> Runnables & Make the commandHandler
 		new Schedulers();
 		commandHandler = new CommandHandler();
-
-		//Create configurationsection if it isn't there yet:
-		if (vipConfig.getConfigurationSection("vipdays") == null) {
-			vipConfig.createSection("vipdays");
-		}
 		
 		//Set resource world
 		String rwWorld = config.getString("resourceworld");
@@ -198,14 +182,10 @@ public class SlapHomebrew extends JavaPlugin {
 	private void initializeYamlStoragesConfigs() {
 		config = getConfig();
 		dataStorage = new YamlStorage(this, "data");
-		vipStorage = new YamlStorage(this, "vip");
-		timeStorage = new YamlStorage(this, "time");
-		sonicStorage = new YamlStorage(this, "sonic");
 		vipGrantStorage = new YamlStorage(this, "vipgrant");
 		applyThreadStorage = new YamlStorage(this, "ApplyThreads");
         messageStorage = new YamlStorage(this, "messages");
 		dataConfig = dataStorage.getConfig();
-		vipConfig = vipStorage.getConfig();
 	}
 	
 	private void initializeControllers() {
@@ -217,6 +197,7 @@ public class SlapHomebrew extends JavaPlugin {
 		 controllers.add(extras = new Extras());
 		 controllers.add(fancyMessage = new FancyMessageControl());
 		 controllers.add(show = new FireworkShow());
+		 controllers.add(homes = new Homes());
 		 controllers.add(horses = new Horses());
 		 controllers.add(jails = new Jails());
 		 controllers.add(lag = new Lag());
@@ -227,7 +208,7 @@ public class SlapHomebrew extends JavaPlugin {
 		 controllers.add(playerLogger = new PlayerLogger());
 		 controllers.add(afk = new AwayFromKeyboard());
 		 controllers.add(tabController = new TabController(playerLogger));
-		 controllers.add(vip = new Vip(vipStorage, tabController));
+		 controllers.add(vip = new Vip(tabController));
 		 controllers.add(worthList = new WorthList());
 		 
 		 controllers.add(new ApplyChecker(essentials, tabController));
@@ -239,52 +220,54 @@ public class SlapHomebrew extends JavaPlugin {
 	
 	private void initializeLoaders() {
 		tpBlocks = loadHashSet("tpblocks");
-		loadUnfinishedForumVip();
-		loadForumVip();
 	}
 	
 	/**
 	 * Initialize the listeners
 	 */
 	private void initializeListeners() {
-		PluginManager pm = getServer().getPluginManager();
-		register(pm, new BlockPlaceListener());
-		register(pm, new PlayerChatListener(afk, jails, playerLogger, chatChannels, mention));
-		register(pm, new PlayerTabCompleteListener());
-		register(pm, new PlayerCommandListener(afk, jails, playerLogger));
-		register(pm, new CreatureSpawnListener());
-		register(pm, new CreatureDeathListener(horses));
-		register(pm, new DuelArenaListener(duelArena));
-		register(pm, new EntityDamageByEntityListener(horses));
-		register(pm, new EntityDamageListener(jails));
-		register(pm, new EntityChangeBlockListener());
-		register(pm, new PlayerDeathListener(playerLogger));
-		register(pm, new DispenseListener());
-		register(pm, new PlayerInteractListener(horses, jails, playerLogger));
-		register(pm, new PlayerJoinListener(dataStorage, vipStorage, mail, jails, playerLogger, tabController));
-		register(pm, new PlayerMoveListener(extras, afk, playerLogger));
-		register(pm, new PlayerPortalListener());
-		register(pm, new PotionListener());
-		register(pm, new ProjectileHitListener());
-		register(pm, new ProjectileLaunchListener());
-		register(pm, new PlayerQuitListener(afk, jails, playerLogger, tabController, chatChannels));
-		register(pm, new PlayerTeleportListener(jails, afk, playerLogger));
-		register(pm, new PlayerToggleFlightListener(extras));
-		register(pm, new VehicleListener(horses));
-		register(pm, new PlayerInteractEntityListener(horses, playerLogger));
-		register(pm, new PlayerRespawnListener());
-		register(pm, new PlayerChangedWorldListener(lottery, mail));
-		register(pm, new PlayerInventoryEvent(lottery, playerLogger));
-		register(pm, new AnimalTameListener(horses));
+		register(				
+				//Listeners
+				new AnimalTameListener(horses),
+				new BlockPlaceListener(),
+				new CreatureDeathListener(horses),
+				new CreatureSpawnListener(),
+				new DispenseListener(),
+				new DuelArenaListener(duelArena),
+				new EntityChangeBlockListener(),
+				new EntityDamageByEntityListener(horses),
+				new EntityDamageListener(jails),
+				new PlayerChangedWorldListener(lottery, mail),
+				new PlayerChatListener(afk, jails, playerLogger, chatChannels, mention),
+				new PlayerCommandListener(afk, jails, playerLogger),
+				new PlayerDeathListener(playerLogger),
+				new PlayerInteractEntityListener(horses, playerLogger),
+				new PlayerInteractListener(horses, jails, playerLogger),
+				new PlayerInventoryEvent(lottery, playerLogger),
+				new PlayerJoinListener(mail, jails, playerLogger, tabController, homes),
+				new PlayerMoveListener(extras, afk, playerLogger),
+				new PlayerPortalListener(),
+				new PlayerQuitListener(afk, jails, playerLogger, tabController, chatChannels, homes),
+				new PlayerRespawnListener(),
+				new PlayerTabCompleteListener(),
+				new PlayerTeleportListener(jails, afk, playerLogger),
+				new PlayerToggleFlightListener(extras),
+				new PotionListener(),
+				new ProjectileHitListener(),
+				new ProjectileLaunchListener(),
+				new VehicleListener(horses)
+		);
 	}
 	
 	/**
 	 * Register a Abstract EventListener
-	 * @param pm The Pluginmanager
-	 * @param listener The listener
+	 * @param listeners The listeners
 	 */
-	private void register(PluginManager pm, AbstractListener listener) {
-		pm.registerEvents(listener, this);
+	private void register(AbstractListener... listeners) {
+		PluginManager pm = getServer().getPluginManager();
+		for (AbstractListener listener : listeners) {
+			pm.registerEvents(listener, this);
+		}
 	}
 	
 	
@@ -301,8 +284,6 @@ public class SlapHomebrew extends JavaPlugin {
 	
 	private void disableSavers() {
 		saveHashSet(tpBlocks, "tpblocks");
-		saveForumVip();
-		saveUnfinishedForumVip();
 	}
 	
 	private void disableControllers() {
@@ -326,19 +307,6 @@ public class SlapHomebrew extends JavaPlugin {
 		dataStorage.saveConfig();
 	}
 
-	private void saveUnfinishedForumVip() {
-		dataConfig.set("unfinishedforumvip", unfinishedForumVip);
-		dataStorage.saveConfig();
-	}
-
-	private void saveForumVip() {
-		dataConfig.set("forumvip", null);
-		for (Map.Entry<Integer, String> entry : forumVip.entrySet()) {
-			dataConfig.set("forumvip." + entry.getKey(), entry.getValue());
-		}
-		dataStorage.saveConfig();
-	}
-
 
 	
 	/*
@@ -353,19 +321,6 @@ public class SlapHomebrew extends JavaPlugin {
 		return hashSet;
 	}
 	
-	private void loadUnfinishedForumVip() {
-		unfinishedForumVip = dataConfig.getIntegerList("unfinishedforumvip");
-	}
-
-	private void loadForumVip() {
-		if (dataConfig.getConfigurationSection("forumvip") == null)
-			return;
-		for (String key : dataConfig.getConfigurationSection("forumvip").getKeys(false)) {
-			forumVip.put(Integer.valueOf(key), dataConfig.getString("forumvip." + key));
-		}
-	}
-	
-	
 	
 	/*
 	 **************************************
@@ -379,14 +334,6 @@ public class SlapHomebrew extends JavaPlugin {
 
 	public HashSet<String> getTpBlocks() {
 		return tpBlocks;
-	}
-
-	public HashMap<Integer, String> getForumVip() {
-		return forumVip;
-	}
-	
-	public List<Integer> getUnfinishedForumVip() {
-		return unfinishedForumVip;
 	}
 
 	/*
@@ -431,6 +378,10 @@ public class SlapHomebrew extends JavaPlugin {
 	
 	public FancyMessageControl getFancyMessage() {
 		return fancyMessage;
+	}
+	
+	public Homes getHomes() {
+		return homes;
 	}
 
 	public Horses getHorses() {
@@ -487,21 +438,9 @@ public class SlapHomebrew extends JavaPlugin {
 	 * YamlStorage getters
 	 **************************************
 	 */	
-	
-	public YamlStorage getTimeStorage() {
-		return timeStorage;
-	}
-
-	public YamlStorage getVipStorage() {
-		return vipStorage;
-	}
 
 	public YamlStorage getDataStorage() {
 		return dataStorage;
-	}
-
-	public YamlStorage getSonicStorage() {
-		return sonicStorage;
 	}
 
 	public YamlStorage getVipGrantStorage() {

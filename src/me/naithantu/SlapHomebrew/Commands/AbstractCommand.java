@@ -63,9 +63,12 @@ public abstract class AbstractCommand {
 	 * @param worldname The name of the world
 	 * @throws CommandException if not a player or if in the world
 	 */
-	protected void testNotWorld(String worldname) throws CommandException {
-		if (getPlayer().getWorld().getName().equalsIgnoreCase(worldname)) {
-			throw new CommandException("You cannot do this in this world!");
+	protected void testNotWorld(String... worldnames) throws CommandException {
+		String playerWorld = getPlayer().getWorld().getName();
+		for (String worldname : worldnames) {
+			if (playerWorld.equalsIgnoreCase(worldname)) {
+				throw new CommandException("You cannot do this in this world!");
+			}
 		}
 	}
 	

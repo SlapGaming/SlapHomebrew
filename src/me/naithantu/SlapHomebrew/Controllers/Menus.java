@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
+import me.naithantu.SlapHomebrew.Commands.Exception.NotVIPException;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
+import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -215,74 +218,81 @@ public class Menus extends AbstractController {
 
 	private void handleVipMenu(IconMenu.OptionClickEvent event) {
 		final Player player = event.getPlayer();
-		String playerName = player.getName();
-		
-		//Check for uses to prevent spam click abusing.
-		YamlStorage dataStorage = plugin.getDataStorage();
-		FileConfiguration dataConfig = dataStorage.getConfig();
-		int timesUsed = dataConfig.getInt("usedgrant." + playerName);
-		if(timesUsed >= 3){
-			return;
-		}
-		
-		if (event.getPosition() == 0) {
-			player.closeInventory();
-			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-				public void run() {
-					netherMenu.open(player);
-				}
-			}, 2);
-			return;
-		}
-		if (event.getPosition() == 2) {
-			player.closeInventory();
-			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-				public void run() {
-					woodMenu.open(player);
-				}
-			}, 2);
-			return;
-		}
-		if (event.getPosition() == 4) {
-			player.closeInventory();
-			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-				public void run() {
-					stoneMenu.open(player);
-				}
-			}, 2);
-			return;
-		}
-		if (event.getPosition() == 6) {
-			player.closeInventory();
-			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-				public void run() {
-					miscellaneousMenu.open(player);
-				}
-			}, 2);
-			return;
-		}
-
-		if (event.getPosition() == 8) {
-			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-				public void run() {
-					openBookMenu(player);
-				}
-			}, 2);
-			return;
-		}
-		event.setWillClose(false);
-
-		if (player.getInventory().firstEmpty() == -1) {
-			player.sendMessage(ChatColor.RED + "Your inventory is full!");
-			return;
-		}
-
-		timesUsed += 1;
-		dataConfig.set("usedgrant." + playerName, timesUsed);
-		player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + (3 - timesUsed) + " times left today.");
-		player.getInventory().addItem(event.getItemClicked());
-		if (timesUsed >= 3) {
-			event.setWillClose(true);
+		String playername = player.getName();
+		try {
+			//Get uses left
+			Vip vip = plugin.getVip(); //Get VIP
+			int usesLeft = vip.getVipGrantUsesLeft(playername);
+			if (usesLeft <= 0) {
+				Util.badMsg(player, ErrorMsg.alreadyUsedVipGrant.toString());
+				return;
+			}
+			
+			if (event.getPosition() == 0) {
+				player.closeInventory();
+				Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+					public void run() {
+						netherMenu.open(player);
+					}
+				}, 2);
+				return;
+			}
+			if (event.getPosition() == 2) {
+				player.closeInventory();
+				Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+					public void run() {
+						woodMenu.open(player);
+					}
+				}, 2);
+				return;
+			}
+			if (event.getPosition() == 4) {
+				player.closeInventory();
+				Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+					public void run() {
+						stoneMenu.open(player);
+					}
+				}, 2);
+				return;
+			}
+			if (event.getPosition() == 6) {
+				player.closeInventory();
+				Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+					public void run() {
+						miscellaneousMenu.open(player);
+					}
+				}, 2);
+				return;
+			}
+	
+			if (event.getPosition() == 8) {
+				Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+					public void run() {
+						openBookMenu(player);
+					}
+				}, 2);
+				return;
+			}
+			event.setWillClose(false);
+	
+			if (player.getInventory().firstEmpty() == -1) {
+				player.sendMessage(ChatColor.RED + "Your inventory is full!");
+				return;
+			}
+	
+			//use the grant
+			usesLeft = vip.useVipGrant(playername);
+			player.getInventory().addItem(event.getItemClicked());
+			
+			//Message		
+			if (usesLeft <= 0) {
+				event.setWillClose(true);
+				player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "You have used all your VIP grants for today!");
+			} else {
+				player.sendMessage(ChatColor.DARK_AQUA + "[VIP] " + ChatColor.WHITE + "You have " + usesLeft + (usesLeft == 1 ? " use" : " uses") + " left today.");
+			}
+		} catch (NotVIPException e) { //If not VIP
+			Util.badMsg(player, e.getMessage());
 		}
 	}
 	

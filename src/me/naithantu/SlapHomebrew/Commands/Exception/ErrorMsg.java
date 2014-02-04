@@ -36,6 +36,9 @@ public enum ErrorMsg {
 	//Horses
 	notOnAHorse("You need to be on a horse to do that!"),
 	
+	//VIP
+	alreadyUsedVipGrant("You have already used VIP Grant 3 times today!"),
+	
 	//Improved Regions
 	notTheOwner("You are not the owner of this region!");
 	

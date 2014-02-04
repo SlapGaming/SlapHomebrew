@@ -1,4 +1,4 @@
-package me.naithantu.SlapHomebrew.Commands.Basics;
+package me.naithantu.SlapHomebrew.Commands.Homes;
 
 import java.util.HashMap;
 import java.util.List;
@@ -6,11 +6,11 @@ import java.util.List;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Controllers.HomeMenu;
+import me.naithantu.SlapHomebrew.Controllers.Homes;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.command.CommandSender;
-
-import com.earth2me.essentials.User;
+import org.bukkit.entity.Player;
 
 public class HomeMenuCommand extends AbstractCommand {
 	public HomeMenuCommand(CommandSender sender, String[] args) {
@@ -19,26 +19,27 @@ public class HomeMenuCommand extends AbstractCommand {
 
 	@Override
 	public boolean handle() throws CommandException {
-		getPlayer();
+		Player p = getPlayer();
 		testPermission("homemenu");
+		String playername = p.getName();
 		
-		User targetPlayer = plugin.getEssentials().getUserMap().getUser(sender.getName()); //Fetch Essentials User (which extends Player)
-		List<String> homes = targetPlayer.getHomes();
+		Homes homesControl = plugin.getHomes(); //Get homescontroller
+		
+		List<String> homes = homesControl.getHomes(playername);
 		if (homes.size() == 0) {
 			Util.badMsg(sender, "You currently have no homes set.");
 		} else if (homes.size() == 1) {
-			HomeCommand.teleportToHome(targetPlayer, homes.get(0));
+			p.teleport(homesControl.getHome(playername, homes.get(0)));
 		} else {
-			showHomeMenu(targetPlayer);
+			showHomeMenu(p);
 		}
 		return true;
 	}
 	
-	
-	private void showHomeMenu(User player){
+	private void showHomeMenu(Player player){
 		HashMap<String, HomeMenu> homeMenus = plugin.getExtras().getHomeMenus();
 		if (homeMenus.containsKey(player.getName())) {
-			homeMenus.get(player.getName()).reCreateHomeMainMenu(player);
+			homeMenus.get(player.getName()).reCreateHomeMainMenu();
 		} else {
 			homeMenus.put(player.getName(), new HomeMenu(player));
 		}

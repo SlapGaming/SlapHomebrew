@@ -3,12 +3,15 @@ main: me.naithantu.SlapHomebrew.SlapHomebrew
 depend: [Essentials, Vault, PermissionsEx]
 softdepend: [TabAPI, ReportRTS, MCBans]
 authors: [naithantu, Stoux2]
-version: 3.4.11
+version: 3.5.0
 description: A custom plugin which adds lots of extra features to the SlapGaming minecraft server.
 commands:
   vip:
     description: Same as vipitem.
     usage: /vip
+  vipforum:
+    description: VIP Forum Promotions
+    usage: "/vipforum <check | done>"
   minecart:
     description: Spawns you inside a moving minecart.
   boat:
@@ -92,6 +95,12 @@ commands:
     usage: "Usage: /spawn <world>"
   home:
     description: Teleports you home.
+    usage: "Usage: /home <homename>"
+  homes:
+    description: Gives you a list of your homes.
+    usage: "Usage: /homes"
+  homeother:
+    usage: "Usage: /homeother [player] <[homename] | list>"
   horse:
     description: Horse commands
     usage: "Need help? /horse help"
@@ -180,3 +189,5 @@ commands:
   fancymessage:
     description: Fancy messages!
     aliases: [fm]
+  promotion:
+    description: Promotion commands
