@@ -279,7 +279,7 @@ public class Vip extends AbstractController {
 	 * @return milliseconds
 	 */
 	private long daysToMilliseconds(int days) {
-		return (days * 24 * 60 * 60 * 1000);
+		return ((long) days) * 24L * 60L * 60L * 1000L;
 	}
 		
 	/**
