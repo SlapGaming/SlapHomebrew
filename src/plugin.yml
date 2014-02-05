@@ -3,7 +3,7 @@ main: me.naithantu.SlapHomebrew.SlapHomebrew
 depend: [Essentials, Vault, PermissionsEx]
 softdepend: [TabAPI, ReportRTS, MCBans]
 authors: [naithantu, Stoux2]
-version: 3.5.1
+version: 3.5.2
 description: A custom plugin which adds lots of extra features to the SlapGaming minecraft server.
 commands:
   vip:
@@ -192,3 +192,6 @@ commands:
     aliases: [fm]
   promotion:
     description: Promotion commands
+  whitelist:
+    description: Whitelist for maintenance
+    usage: "Usage: /whitelist < on | off | add [Player] | remove [Player] | getMessage | setMessage [Message..] | whitelisted | status >"

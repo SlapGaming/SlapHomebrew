@@ -82,6 +82,7 @@ public class SlapHomebrew extends JavaPlugin {
 	private PlayerLogger playerLogger;
 	private TabController tabController;
 	private Vip vip;
+	private Whitelist whitelist;
 	private WorthList worthList;
 
 	/**
@@ -209,6 +210,7 @@ public class SlapHomebrew extends JavaPlugin {
 		 controllers.add(afk = new AwayFromKeyboard());
 		 controllers.add(tabController = new TabController(playerLogger));
 		 controllers.add(vip = new Vip(tabController));
+		 controllers.add(whitelist = new Whitelist());
 		 controllers.add(worthList = new WorthList());
 		 
 		 controllers.add(new ApplyChecker(essentials, tabController));
@@ -245,6 +247,7 @@ public class SlapHomebrew extends JavaPlugin {
 				new PlayerInteractListener(horses, jails, playerLogger),
 				new PlayerInventoryEvent(lottery, playerLogger),
 				new PlayerJoinListener(mail, jails, playerLogger, tabController, homes),
+				new PlayerLoginListener(whitelist),
 				new PlayerMoveListener(extras, afk, playerLogger),
 				new PlayerPortalListener(),
 				new PlayerQuitListener(afk, jails, playerLogger, tabController, chatChannels, homes),
@@ -426,6 +429,10 @@ public class SlapHomebrew extends JavaPlugin {
 	
 	public Vip getVip() {
 		return vip;
+	}
+	
+	public Whitelist getWhitelist() {
+		return whitelist;
 	}
 	
 	public WorthList getWorthList() {
