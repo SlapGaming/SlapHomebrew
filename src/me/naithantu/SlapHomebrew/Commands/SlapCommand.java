@@ -241,7 +241,39 @@ public class SlapCommand extends AbstractCommand {
 			nmsPlayer.viewingCredits = true;
 			nmsPlayer.playerConnection.sendPacket(new PacketPlayOutBed());
 			break;
-					
+			
+		case "toldstatus": case "told": //Send a told status
+			testPermission("toldstatus");
+			if (args.length < 3) throw new UsageException("slap toldstatus [Player] [Interval] [Don't stop when player goes offline]"); //Usage
+			targetPlayer = getOnlinePlayer(args[1], false); //Get player
+			
+			boolean ticks = false;
+			int interval;
+			if (args[2].toLowerCase().contains("t")) { //Contains t -> It's ticks
+				ticks = true;
+				interval = parseIntPositive(args[2].toLowerCase().replaceFirst("t", "")); //Remove the t & parse the ticks
+			} else { //Seconds
+				interval = parseIntPositive(args[2]);
+			}
+			
+			boolean stop = true;
+			if (args.length > 3) { //Check if stop is specified
+				stop = false;
+			}
+			
+			plugin.getToldStatus().sendToldStatus(targetPlayer, (ticks ? interval : interval * 20), stop); //Send toldstatus
+			hMsg("Sending told status to " + targetPlayer.getName() + ". Interval: " + interval + (ticks ? " ticks." : " seconds."));
+			break;
+			
+		case "stoptoldstatus": case "stoptold": //Stop a told status sender
+			testPermission("stoptoldstatus"); //Perms
+			if (args.length != 2) throw new UsageException("slap stoptoldstatus [Player]"); //usage
+			offPlayer = getOfflinePlayer(args[1]); //Get player
+			plugin.getToldStatus().stopToldStatus(offPlayer.getName()); //Stop told status
+			hMsg("Stopping told status for player: " + offPlayer.getName());
+			break;
+			
+			
 		default: //Player issued commands
 			final Player player = getPlayer();
 			final String playername = player.getName();

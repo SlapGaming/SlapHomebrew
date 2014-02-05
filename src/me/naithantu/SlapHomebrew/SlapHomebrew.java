@@ -81,6 +81,7 @@ public class SlapHomebrew extends JavaPlugin {
     private Messages messages;
 	private PlayerLogger playerLogger;
 	private TabController tabController;
+	private ToldStatus toldStatus;
 	private Vip vip;
 	private Whitelist whitelist;
 	private WorthList worthList;
@@ -209,6 +210,7 @@ public class SlapHomebrew extends JavaPlugin {
 		 controllers.add(playerLogger = new PlayerLogger());
 		 controllers.add(afk = new AwayFromKeyboard());
 		 controllers.add(tabController = new TabController(playerLogger));
+		 controllers.add(toldStatus = new ToldStatus());
 		 controllers.add(vip = new Vip(tabController));
 		 controllers.add(whitelist = new Whitelist());
 		 controllers.add(worthList = new WorthList());
@@ -425,6 +427,10 @@ public class SlapHomebrew extends JavaPlugin {
 	
 	public TabController getTabController() {
 		return tabController;
+	}
+	
+	public ToldStatus getToldStatus() {
+		return toldStatus;
 	}
 	
 	public Vip getVip() {
