@@ -241,15 +241,7 @@ public class SlapCommand extends AbstractCommand {
 			nmsPlayer.viewingCredits = true;
 			nmsPlayer.playerConnection.sendPacket(new PacketPlayOutBed());
 			break;
-			
-		case "ping": case "pingplayer": //Show the ping of a player
-			testPermission("pingplayer");
-			if (args.length != 2)  throw new UsageException("slap pingplayer [Player]"); //Usage
-			targetPlayer = getOnlinePlayer(args[1], false);
-			nmsPlayer = ((CraftPlayer) targetPlayer).getHandle();
-			hMsg(targetPlayer.getName() + "'s ping: " + ChatColor.GREEN + nmsPlayer.ping + ChatColor.WHITE + " ms.");
-			break;
-		
+					
 		default: //Player issued commands
 			final Player player = getPlayer();
 			final String playername = player.getName();
