@@ -69,6 +69,7 @@ public class CommandHandler {
 		case "note":			commandObj = new NoteCommand(sender, args);						break;
 		case "onlinetime":		commandObj = new OnlineTimeCommand(sender, args);				break;
 		case "pay":				commandObj = new PayCommand(sender, args);						break;
+		case "ping":			commandObj = new PingCommand(sender, args);						break;
 		case "plot":			commandObj = new PlotCommand(sender, args);						break;
 		case "potion":			commandObj = new PotionCommand(sender, args);					break;
 		case "promotion":		commandObj = new PromotionCommand(sender, args);				break;
