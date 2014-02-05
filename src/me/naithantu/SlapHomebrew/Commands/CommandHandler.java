@@ -5,6 +5,7 @@ import me.naithantu.SlapHomebrew.Commands.Basics.*;
 import me.naithantu.SlapHomebrew.Commands.Chat.ChatCommand;
 import me.naithantu.SlapHomebrew.Commands.Chat.ChatToggleCommand;
 import me.naithantu.SlapHomebrew.Commands.Chat.FancyChatCommand;
+import me.naithantu.SlapHomebrew.Commands.Chat.LinksCommand;
 import me.naithantu.SlapHomebrew.Commands.Chat.MentionCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Fun.*;
@@ -59,6 +60,7 @@ public class CommandHandler {
 		case "kills":			commandObj = new KillsCommand(sender, args);					break;
 		case "lag":				commandObj = new LagCommand(sender, args);						break;
 		case "leave":			commandObj = new LeaveCommand(sender, args);					break;
+		case "links":			commandObj = new LinksCommand(sender, args);					break;
 		case "list":			commandObj = new ListCommand(sender, args);						break;
 		case "mail":			commandObj = new MailCommand(sender, args);						break;
 		case "mention":			commandObj = new MentionCommand(sender, args);					break;

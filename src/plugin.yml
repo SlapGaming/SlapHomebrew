@@ -199,3 +199,7 @@ commands:
     description: Get your connection latency to the server. Green = Good, Orange/Gold = Mediocre, Red = Bad
     aliases: [pong]
     usage: "Usage: /ping"
+  links:
+    description: Get quick acces to website links!
+    aliases: [link]
+    usage: "Usage: /links"
