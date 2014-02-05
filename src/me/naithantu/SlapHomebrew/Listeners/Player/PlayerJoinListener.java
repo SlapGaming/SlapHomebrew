@@ -107,7 +107,7 @@ public class PlayerJoinListener extends AbstractListener {
 				
 				//If Admin send VIP Forum promotions
 				if (Util.testPermission(player, "vipforum")) {
-					VipForumControl.sendUnfinishedForumPromotions(player);
+					VipForumControl.sendNumberOfUnfinishedPromotions(player);
 				}
 			}
 		}, 10);

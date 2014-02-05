@@ -4,18 +4,25 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Util.Log;
 import me.naithantu.SlapHomebrew.Util.SQLPool;
 
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class VipForumControl extends AbstractLogger {
 
 	private static VipForumControl instance;
+	private SimpleDateFormat format;
 	
 	//SQL Statements
 	private String sqlQuery = 
@@ -47,6 +54,8 @@ public class VipForumControl extends AbstractLogger {
 		if (!enabled) return;		
 		
 		batch = new HashSet<>();
+		format = new SimpleDateFormat("dd MMM. HH:mm zzz");
+		instance = this;
 	}
 	
 	/**
@@ -139,7 +148,7 @@ public class VipForumControl extends AbstractLogger {
 	 * Send unfinished promotions to a player
 	 * @param p The player
 	 */
-	public static void sendUnfinishedForumPromotions(Player p) {
+	public static void sendNumberOfUnfinishedPromotions(Player p) {
 		if (instance == null) return; //Check if enabled
 		if (instance.unfinishedForumPromotions.isEmpty()) return; //Check if any unfinished forum promotions
 		int promotionsLeft = 0;
@@ -147,6 +156,80 @@ public class VipForumControl extends AbstractLogger {
 			promotionsLeft += iterationMap.size();
 		}
 		p.sendMessage(ChatColor.GREEN + "There " + (promotionsLeft == 1 ? "is 1 pending forum promotion." : "are " + promotionsLeft + " pending forum promotions."));
+	}
+	
+	/**
+	 * Get the VipForumControl instance
+	 * @return the instance
+	 * @throws CommandException if not enabled
+	 */
+	public static VipForumControl getInstance() throws CommandException {
+		if (instance == null) throw new CommandException("VipForumControl is not enabled.");
+		return instance;
+	}
+	
+	/**
+	 * Send pending forum promotions to a player
+	 * @param cs The player
+	 * @throws CommandException if no pending forum promotions
+	 */
+	public void sendPendingPromotions(CommandSender cs) throws CommandException {
+		if (unfinishedForumPromotions.isEmpty()) throw new CommandException("There are no pending forum promotions."); //Check if any pending
+		ArrayList<ForumPromotion> promotions = new ArrayList<>();
+		for (HashMap<Integer, ForumPromotion> iterationMap : unfinishedForumPromotions.values()) { //Put all Promotions in a Array
+			for (ForumPromotion fp : iterationMap.values()) {
+				promotions.add(fp);
+			}
+		}
+		int size = promotions.size();
+		if (size > 1) { //Sort the array if needed
+			Collections.sort(promotions);
+		}
+		cs.sendMessage(ChatColor.AQUA + "---------- " + size + " Forum " + ((size == 1) ? "Promotion" : "Promotions") + " Pending ----------");
+		for (ForumPromotion fp : promotions) { //Send info
+			fp.sendInfo(cs);
+		}
+	}
+	
+	/**
+	 * Finish a pending forum promotion
+	 * Uses the current iteration
+	 * @param ID The ID
+	 * @param handledBy Handled by CommandSender 
+	 * @param comment Optional comment
+	 * @throws CommandException if no pending FP with this ID
+	 */
+	public void finishPendingPromotion(int ID, String handledBy, String comment) throws CommandException {
+		finishPendingPromotion(currentIteration, ID, handledBy, comment);
+	}
+	
+	/**
+	 * Finish a pending Forum Promotion
+	 * @param iteration The iteration
+	 * @param ID The ID
+	 * @param handledBy Handled by CommandSender
+	 * @param comment Optional comment
+	 * @throws CommandException if no pending FP with this ID
+	 */
+	public void finishPendingPromotion(int iteration, int ID, String handledBy, String comment) throws CommandException {
+		ForumPromotion fp;
+		try {
+			fp = unfinishedForumPromotions.get(iteration).get(ID); //Get ForumPromotion
+			if (fp == null) throw new NullPointerException(); //If none found with that ID
+		} catch (NullPointerException e) {
+			throw new CommandException("There is no pending forum promotion with ID: #" + ID + ChatColor.GRAY + " (Iteration #" + iteration + ")");
+		}
+		//Set paramaters
+		fp.handledBy = handledBy;
+		fp.handledTime = System.currentTimeMillis();
+		fp.comment = comment;
+		
+		//If not added to the batch
+		if (!batch.contains(fp)) {
+			batch.add(fp);
+		}
+		
+		unfinishedForumPromotions.get(iteration).remove(ID); //Remove from Unfinished		
 	}
 	
 	@Override
@@ -177,7 +260,7 @@ public class VipForumControl extends AbstractLogger {
 		instance = null;
 	}
 	
-	private class ForumPromotion implements Batchable {
+	private class ForumPromotion implements Batchable, Comparable<ForumPromotion> {
 		
 		private int iteration;
 		private int ID;
@@ -213,14 +296,41 @@ public class VipForumControl extends AbstractLogger {
 			
 			//Insert -> Extra stuff (most likely null)
 			preparedStatement.setString(6, handledBy);
-			preparedStatement.setLong(7, handledTime);
+			if (handledTime == null) { preparedStatement.setNull(7, Types.BIGINT); }
+			else { preparedStatement.setLong(7, handledTime); }
 			preparedStatement.setString(8, comment);
 			
 			//Update
 			preparedStatement.setString(9, handledBy);
-			preparedStatement.setLong(10, handledTime);
+			if (handledTime == null) { preparedStatement.setNull(10, Types.BIGINT); }
+			else { preparedStatement.setLong(10, handledTime); }
 			preparedStatement.setString(11, comment);
 		}	
+		
+		/**
+		 * Send info about the ForumPromotion to a player
+		 * @param cs The player
+		 */
+		public void sendInfo(CommandSender cs) {
+			cs.sendMessage(
+				ChatColor.WHITE + "ID: " + ChatColor.GREEN + ((currentIteration == iteration) ? "#"+ ID : "#" + iteration + "." + ID) +
+				ChatColor.WHITE + " - Time: " + ChatColor.GOLD + format.format(promotionTime) +
+				ChatColor.WHITE + " - " + (promotion ? ChatColor.GREEN + "Promote " : ChatColor.RED + "Demote") + ChatColor.GOLD + " " + player
+			);
+			if (handledBy != null) {
+				cs.sendMessage(" \u2517\u25B6 Handled by: " + ChatColor.GREEN + handledBy + ChatColor.WHITE + " - Time: " + ChatColor.GOLD + format.format(handledTime)); //Send handled info
+				if (comment != null) {
+					cs.sendMessage(ChatColor.GRAY + "  \u2517\u25B6 Comment: " + comment);
+				}
+			}
+		}
+		
+		@Override
+		public int compareTo(ForumPromotion o) {
+			int iterationDiff = iteration - o.iteration; //Calculate Iteration diff
+			if (iterationDiff != 0) return iterationDiff; //If not same iteration
+			return ID - o.ID; //Otherwise ID
+		}
 		
 	}
 

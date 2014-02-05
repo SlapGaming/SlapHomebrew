@@ -85,7 +85,7 @@ public class PlotCommand extends AbstractCommand {
 	 * @return an array of the ints
 	 * @throws CommandException if not a valid ID
 	 */
-	private int[] parseID(String arg) throws CommandException {
+	public static int[] parseID(String arg) throws CommandException {
 		arg = arg.replace(".", "-").replace("#", ""); //Replace . with - (Split breaks on .) && Remove #
 		if (arg.matches("\\d+-\\d+")) {
 			String[] split = arg.split("-");

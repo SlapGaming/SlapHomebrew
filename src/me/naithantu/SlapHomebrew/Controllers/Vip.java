@@ -12,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import me.naithantu.SlapHomebrew.Commands.Exception.AlreadyVIPException;
 import me.naithantu.SlapHomebrew.Commands.Exception.NotVIPException;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.PromotionLogger;
+import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.VipForumControl;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 import me.naithantu.SlapHomebrew.Util.Log;
 import me.naithantu.SlapHomebrew.Util.SQLPool;
@@ -314,6 +315,7 @@ public class Vip extends AbstractController {
 		case "builder": case "member": //Player is Builder or Member
 			if (isVIP) { //if VIP
 				user.setGroups(getPermissionGroup("VIP")); //Promote to VIP
+				VipForumControl.logForumPromotion(user.getName(), true); //Log ForumPromotion
 			}
 			break;
 		case "guide": //Player is Guide
@@ -324,6 +326,7 @@ public class Vip extends AbstractController {
 		case "vip": //Player is a VIP
 			if (!isVIP) { //if not VIP anymore
 				user.setGroups(getPermissionGroup("Member")); //Demote to Member
+				VipForumControl.logForumPromotion(user.getName(), false); //Log ForumPromotion
 			}
 			break;
 		case "vipguide": //Player is a VIP Guide

@@ -3,15 +3,16 @@ main: me.naithantu.SlapHomebrew.SlapHomebrew
 depend: [Essentials, Vault, PermissionsEx]
 softdepend: [TabAPI, ReportRTS, MCBans]
 authors: [naithantu, Stoux2]
-version: 3.5.0
+version: 3.5.1
 description: A custom plugin which adds lots of extra features to the SlapGaming minecraft server.
 commands:
   vip:
     description: Same as vipitem.
-    usage: /vip
+    usage: "Usage: /vip help"
   vipforum:
     description: VIP Forum Promotions
-    usage: "/vipforum <check | done>"
+    usage: "Usage: /vipforum <check | finish [ID]>"
+    aliases: [forumvip]
   minecart:
     description: Spawns you inside a moving minecart.
   boat:

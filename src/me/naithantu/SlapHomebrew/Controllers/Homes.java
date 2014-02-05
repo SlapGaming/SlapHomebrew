@@ -172,7 +172,7 @@ public class Homes extends AbstractController {
 		if (!boughtHomes.containsKey(pLc)) { //Check if bought any homes
 			throw new CommandException("This player hasn't bought any homes!");
 		}
-		int currentHomes = boughtHomes.get(pLc); //Get number of bought homes
+		int currentHomes = getNumberOfBoughtHomes(playername); //Get number of bought homes
 		if (currentHomes < homes) { //If trying to remove more homes than bought
 			throw new CommandException("The player has only bought " + currentHomes + (currentHomes == 1 ? " home." : " homes."));
 		}
@@ -182,7 +182,7 @@ public class Homes extends AbstractController {
 			config.set("boughthome." + pLc, null); //Remove from config
 		} else {
 			boughtHomes.put(pLc, currentHomes); //Set new amount
-			config.set("boughthome." + pLc, homes); //Set in config
+			config.set("boughthome." + pLc, currentHomes); //Set in config
 		}
 		yaml.saveConfig();
 	}

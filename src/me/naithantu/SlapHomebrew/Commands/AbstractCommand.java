@@ -78,7 +78,7 @@ public abstract class AbstractCommand {
 	 * @return the int
 	 * @throws CommandException if the arg is not a valid int or negative/zero
 	 */
-	protected int parseIntPositive(String arg) throws CommandException {
+	protected static int parseIntPositive(String arg) throws CommandException {
 		int nr = parseInt(arg);
 		if (nr <= 0) throw new CommandException(arg + " is not a valid number. It needs to be positive (1+).");
 		return nr;
@@ -90,7 +90,7 @@ public abstract class AbstractCommand {
 	 * @return The int
 	 * @throws CommandException if the arg is not a valid int
 	 */
-	protected int parseInt(String arg) throws CommandException {
+	protected static int parseInt(String arg) throws CommandException {
 		try {
 			return Integer.parseInt(arg);
 		} catch (NumberFormatException e) {
