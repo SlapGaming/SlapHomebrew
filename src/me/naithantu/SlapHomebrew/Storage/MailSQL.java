@@ -13,11 +13,9 @@ import org.bukkit.Bukkit;
 
 public class MailSQL {
 
-    private boolean connected;
     private Logger logger;
     	
 	public MailSQL() {
-		connected = false;
 		logger = Bukkit.getLogger();
 		createTables();
 	}    
@@ -33,7 +31,6 @@ public class MailSQL {
     	} catch (SQLException e) {
     		//Fatal error
     		logError(e.getMessage());
-    		connected = false;
     	} finally {
     		SQLPool.returnConnection(con);
     	}
@@ -43,9 +40,6 @@ public class MailSQL {
     
     //Send Mail
     public boolean sendMail(String sender, String reciever, String message, String responseToIdInSend, String responseToIdInRecieved){  	
-    	if (!connected) {
-    		return false;
-    	}
     	boolean messageFailed; int messageID = -1;
     	//Create message
     	Connection con = SQLPool.getConnection(); //Get connection
@@ -91,9 +85,6 @@ public class MailSQL {
     }
     
     public int insertMessage(String message){
-    	if (!connected) {
-    		return -1;
-    	}
     	int messageID = -1;
     	Connection con = SQLPool.getConnection(); //Get connection
     	//Create message
@@ -114,9 +105,6 @@ public class MailSQL {
     }
     
     public boolean sendMailGroup(String sender, String reciever, int messageID) {
-    	if (!connected) {
-    		return false;
-    	}
 		boolean succes = true;
 		int senderID = getNextSenderMailID(sender);
 		if (senderID > 0) {
