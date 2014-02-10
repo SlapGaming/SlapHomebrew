@@ -440,7 +440,7 @@ public class SessionLogger extends AbstractLogger implements Listener {
 				
 		@Override
 		public int compareTo(LeaderboardEntry o) {
-			return (int) (playtime - o.playtime);
+			return (int) (o.playtime - playtime);
 		}
 		
 	}

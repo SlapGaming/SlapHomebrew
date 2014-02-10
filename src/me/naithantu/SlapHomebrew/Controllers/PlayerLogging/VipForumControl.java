@@ -229,7 +229,13 @@ public class VipForumControl extends AbstractLogger {
 			batch.add(fp);
 		}
 		
-		unfinishedForumPromotions.get(iteration).remove(ID); //Remove from Unfinished		
+		HashMap<Integer, ForumPromotion> iterationMap = unfinishedForumPromotions.get(iteration); //Get map
+		iterationMap.remove(ID); //Remove from Unfinished
+		if (iterationMap.isEmpty()) { //Remove map if empty
+			unfinishedForumPromotions.remove(iteration);
+		}
+		
+		
 	}
 	
 	@Override
