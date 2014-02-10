@@ -11,6 +11,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 public class RainbowCommand extends AbstractCommand {
@@ -22,11 +23,7 @@ public class RainbowCommand extends AbstractCommand {
 	public boolean handle() throws CommandException {
 		Player player = getPlayer(); //Cast & Test permission
 		testPermission("rainbow");
-		testNotWorld("world_pvp");
-		
-		if (!checkLeatherArmor(player.getInventory())) throw new CommandException("You must be wearing leather armour!"); //Check if wearing leather armor
-
-		HashMap<String, Integer> rainbow = plugin.getExtras().getRainbow();
+		testNotWorld("world_pvp");		
 		
 		boolean fast = false;
 		if (args.length == 1) { //Check if fast rainbow
@@ -34,6 +31,12 @@ public class RainbowCommand extends AbstractCommand {
 				fast = true;
 			}
 		}
+		
+		if (!fast) { //Normal user
+			if (!checkLeatherArmor(player.getInventory())) throw new CommandException("You must be wearing leather armour!"); //Check if wearing leather armor
+		}
+		
+		HashMap<String, Integer> rainbow = plugin.getExtras().getRainbow();  //Get rainbow
 
 		String playername = player.getName();
 		if (rainbow.containsKey(playername)) { //Already got /rainbow enabled -> Cancel
@@ -41,6 +44,13 @@ public class RainbowCommand extends AbstractCommand {
 			rainbow.remove(playername);
 			hMsg("Your armour will no longer change colour!");
 		} else { //Start rainbow
+			if (fast) { //If fast set armor to leather stuff
+				PlayerInventory playerInv = player.getInventory();
+				playerInv.setBoots(new ItemStack(Material.LEATHER_BOOTS));
+				playerInv.setLeggings(new ItemStack(Material.LEATHER_LEGGINGS));
+				playerInv.setChestplate(new ItemStack(Material.LEATHER_CHESTPLATE));
+				playerInv.setHelmet(new ItemStack(Material.LEATHER_HELMET));
+			}
 			RainbowTask rainbowTask = new RainbowTask(plugin, player, fast);
 			rainbowTask.runTaskTimer(plugin, 0, 1);
 			rainbow.put(playername, rainbowTask.getTaskId());
