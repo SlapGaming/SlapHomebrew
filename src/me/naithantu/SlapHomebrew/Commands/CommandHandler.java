@@ -89,6 +89,7 @@ public class CommandHandler {
 		case "suicide":			commandObj = new SuicideCommand(sender, args);					break;
 		case "te":				commandObj = new TeCommand(sender, args);						break;
 		case "teleportmob":		commandObj = new TeleportMobCommand(sender, args);				break;
+		case "timecheck":		commandObj = new TimecheckCommand(sender, args);				break;
 		case "tpallow":			commandObj = new TpallowCommand(sender, args);					break;
 		case "tpblock":			commandObj = new TpBlockCommand(sender, args);					break;
 		case "unjail":			commandObj = new UnjailCommand(sender, args);					break;

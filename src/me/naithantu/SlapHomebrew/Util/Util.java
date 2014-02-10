@@ -274,9 +274,9 @@ public class Util {
     	case 2:
     		int minutes = (int)Math.floor(l / 60.00);
     		l = l - (minutes * 60);
-    		returnString += minutes + (minutes == 1 ? " minute" : " minutes") + " and ";
+    		returnString += minutes + (minutes == 1 ? " min" : " mins") + " and ";
     	case 1:
-    		returnString += l + (l == 1 ? " second." : " seconds");
+    		returnString += l + (l == 1 ? " sec." : " secs");
     		break;
     	default:
     		returnString = "Unkown";

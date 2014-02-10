@@ -3,7 +3,7 @@ main: me.naithantu.SlapHomebrew.SlapHomebrew
 depend: [Essentials, Vault, PermissionsEx]
 softdepend: [TabAPI, ReportRTS, MCBans]
 authors: [naithantu, Stoux2]
-version: 3.5.2
+version: 3.5.3
 description: A custom plugin which adds lots of extra features to the SlapGaming minecraft server.
 commands:
   vip:
@@ -166,7 +166,7 @@ commands:
     usage: "Usage: /kills"
   onlinetime:
     description: Get your time spent on the server since the 5th of Januari 2014
-    usage: "Usage: /onlinetime"
+    usage: "Usage: /onlinetime <Leaderboard>"
     aliases: [playtime,afktime]
   teleportmob:
     aliases: [tpmob]
@@ -203,3 +203,5 @@ commands:
     description: Get quick acces to website links!
     aliases: [link]
     usage: "Usage: /links"
+  timecheck:
+    aliases: [checktime]
