@@ -56,7 +56,7 @@ public class Bump extends AbstractController {
 		shortBumpTimer = Util.runLater(plugin, new Runnable() {
 			public void run() {
 				if (getOnlineStaff() > 0 && !bumpIsDone) {
-					Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), "mod-broadcast Post On Yogscast/Minecraftforums, Use /Bumpdone When You Are Going To Bump!");
+					Util.messagePermissionHolders("bump", ChatColor.RED + "[BUMP] " + ChatColor.GREEN + "Bump the forums! When you're going to, do: " + ChatColor.YELLOW + "/bumpdone");
 					shortBumpTimer();
 				} else {
 					bumpTimer();
