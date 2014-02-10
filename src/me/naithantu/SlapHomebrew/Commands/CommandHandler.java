@@ -47,6 +47,7 @@ public class CommandHandler {
 		case "deaths":			commandObj = new DeathsCommand(sender, args);					break;
 		case "fancymessage":	commandObj = new FancyChatCommand(sender, args);				break;
 		case "fireworkshow":	commandObj = new FireworkCommand(sender, args);					break;
+		case "flyspeed":		commandObj = new FlySpeedCommand(sender, args);					break;
 		case "group":			commandObj = new GroupCommand(sender, args);					break;
 		case "guide":			commandObj = new ChatCommand(sender, "guidechat", args);		break;
 		case "home":			commandObj = new HomeCommand(sender, args);						break;

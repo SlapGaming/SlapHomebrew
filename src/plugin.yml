@@ -3,7 +3,7 @@ main: me.naithantu.SlapHomebrew.SlapHomebrew
 depend: [Essentials, Vault, PermissionsEx]
 softdepend: [TabAPI, ReportRTS, MCBans]
 authors: [naithantu, Stoux2]
-version: 3.5.3
+version: 3.5.4
 description: A custom plugin which adds lots of extra features to the SlapGaming minecraft server.
 commands:
   vip:
@@ -205,3 +205,6 @@ commands:
     usage: "Usage: /links"
   timecheck:
     aliases: [checktime]
+  flyspeed:
+    description: Set your fly speed in the creative world
+    usage: "Usage: /flyspeed [1-3]"
