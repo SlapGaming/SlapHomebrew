@@ -208,3 +208,6 @@ commands:
   flyspeed:
     description: Set your fly speed in the creative world
     usage: "Usage: /flyspeed [1-3]"
+  head:
+    description: Get your head!
+    usage: "Usage: /head"

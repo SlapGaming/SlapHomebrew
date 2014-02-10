@@ -50,6 +50,7 @@ public class CommandHandler {
 		case "flyspeed":		commandObj = new FlySpeedCommand(sender, args);					break;
 		case "group":			commandObj = new GroupCommand(sender, args);					break;
 		case "guide":			commandObj = new ChatCommand(sender, "guidechat", args);		break;
+		case "head":			commandObj = new HeadCommand(sender, args);						break;
 		case "home":			commandObj = new HomeCommand(sender, args);						break;
 		case "homemenu":		commandObj = new HomeMenuCommand(sender, args);					break;
 		case "homeother":		commandObj = new HomeOtherCommand(sender, args);				break;
