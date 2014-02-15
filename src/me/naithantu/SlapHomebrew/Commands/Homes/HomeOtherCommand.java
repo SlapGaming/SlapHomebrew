@@ -30,7 +30,7 @@ public class HomeOtherCommand extends AbstractCommand {
 		if (args[1].equalsIgnoreCase("list")) { //Get list of all homes
 			hMsg("Homes: " + ChatColor.GRAY + Util.buildString(homes.getHomes(playername), ChatColor.WHITE + ", " + ChatColor.GRAY));
 		} else { //Teleport to a home
-			p.teleport(homes.getHome(playername, args[1]));
+			homes.teleportToLocation(p, homes.getHome(playername, args[1]));
 		}
 		return true;
 	}

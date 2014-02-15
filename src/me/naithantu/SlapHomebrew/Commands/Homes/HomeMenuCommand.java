@@ -29,7 +29,7 @@ public class HomeMenuCommand extends AbstractCommand {
 		if (homes.size() == 0) {
 			Util.badMsg(sender, "You currently have no homes set.");
 		} else if (homes.size() == 1) {
-			p.teleport(homesControl.getHome(playername, homes.get(0)));
+			homesControl.teleportToHome(p, homes.get(0));
 		} else {
 			showHomeMenu(p);
 		}

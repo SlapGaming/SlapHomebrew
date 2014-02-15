@@ -7,6 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import com.earth2me.essentials.User;
 
@@ -228,6 +229,33 @@ public class Homes extends AbstractController {
 	public List<String> getHomes(String playername) throws CommandException {
 		User u = getEssentialsUser(playername);
 		return u.getHomes();
+	}
+	
+	/**
+	 * Teleport a player to a location (using Essentials /back)
+	 * @param p The player
+	 * @param loc The location
+	 * @throws CommandException if user not found or failed to teleport
+	 */
+	public void teleportToLocation(Player p, Location loc) throws CommandException {
+		User user = getEssentialsUser(p.getName());
+		try {
+			user.getTeleport().teleport(p, null, TeleportCause.COMMAND);
+		} catch (Exception e) {
+			throw new CommandException(e.getMessage());
+		}
+		
+	}
+	
+	/**
+	 * Teleport a player to a home (using Essentials /back)
+	 * @param p The player
+	 * @param home The name of the home
+	 * @throws CommandException if no home with that name found
+	 */
+	public void teleportToHome(Player p, String home) throws CommandException {
+		Location loc = getHome(p.getName(), home);
+		teleportToLocation(p, loc);
 	}
 	
 	/**

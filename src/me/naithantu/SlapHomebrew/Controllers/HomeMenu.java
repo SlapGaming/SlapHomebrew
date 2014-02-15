@@ -279,9 +279,9 @@ public class HomeMenu extends AbstractController {
 	/* ---Others--- */
 	private void teleportPlayer(String home) {
 		try {
-			player.teleport(homesControl.getHome(playerName, home)); //Teleport to only home
-		} catch (Exception e) {
-			e.printStackTrace();
+			homesControl.teleportToHome(player, home);
+		} catch (CommandException e) {
+			Util.badMsg(player, e.getMessage());
 		}
 	}
 

@@ -28,7 +28,7 @@ public class HomeCommand extends AbstractCommand {
 			if (args[0].equalsIgnoreCase("list")) { //If list
 				new HomesCommand(p, args).handle();
 			} else { //Teleport to home with name
-				p.teleport(homes.getHome(playername, args[0]));
+				homes.teleportToHome(p, args[0]);
 			}
 		} else { //If no homename given
 			List<String> homeList = homes.getHomes(p.getName()); //Get homes
@@ -39,7 +39,7 @@ public class HomeCommand extends AbstractCommand {
 			}
 			int homesAllowed = homes.getTotalNumberOfHomes(playername); //Get number of allowed homes
 			if (homesAllowed == 1 && homelistSize == 1) { //If only 1 home set, and 1 home allowed
-				p.teleport(homes.getHome(playername, homeList.get(0))); //Teleport to only home
+				homes.teleportToHome(p, homeList.get(0));
 			} else { //Multiple homes allowed
 				new HomesCommand(p, args).handle();
 			}
