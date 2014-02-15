@@ -62,6 +62,10 @@ public class Vip extends AbstractController {
 	private FileConfiguration config;
 	
 	public Vip(TabController tabController) {
+		if (!SQLPool.isSetup()) {
+			setup = false;
+			return;
+		}
 		this.tabController = tabController;
 		temporaryVIPs = new ConcurrentHashMap<>();
 		lifetimeVIPs = new HashSet<>();
