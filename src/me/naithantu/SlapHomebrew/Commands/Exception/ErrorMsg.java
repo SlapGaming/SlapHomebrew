@@ -39,6 +39,9 @@ public enum ErrorMsg {
 	//VIP
 	alreadyUsedVipGrant("You have already used VIP Grant 3 times today!"),
 	
+	//Messages
+	alreadyCombining("You are already combining a message for something."),
+	
 	//Improved Regions
 	notTheOwner("You are not the owner of this region!");
 	

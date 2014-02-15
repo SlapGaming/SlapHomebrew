@@ -1,5 +1,7 @@
 package me.naithantu.SlapHomebrew.PlayerExtension;
 
+import me.naithantu.SlapHomebrew.Controllers.MessageStringer.MessageCombiner;
+
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -30,6 +32,11 @@ public class SlapPlayer {
 	 */
 	private boolean teleportingMob;
 	private Player teleportingTo;
+	
+	/**
+	 * MessageCombiner for combining multiple lines of text
+	 */
+	private MessageCombiner messageCombiner;
 	
 	
 	public SlapPlayer(Player p) {
@@ -215,6 +222,41 @@ public class SlapPlayer {
 	public void removeTeleportingMob() {
 		teleportingMob = false;
 		teleportingTo = null;
+	}
+	
+	/*
+	 * Message combining
+	 */
+	
+	/**
+	 * Check if the player is combining a message
+	 * @return
+	 */
+	public boolean isCombiningMessage() {
+		return (messageCombiner != null);
+	}
+	
+	/**
+	 * Get message combiner
+	 * @return the combiner
+	 */
+	public MessageCombiner getMessageCombiner() {
+		return messageCombiner;
+	}
+	
+	/**
+	 * Set a message combiner
+	 * @param messageCombiner
+	 */
+	public void setMessageCombiner(MessageCombiner messageCombiner) {
+		this.messageCombiner = messageCombiner;
+	}
+	
+	/**
+	 * Remove the message combiner (if there is any)
+	 */
+	public void removeMessageCombiner() {
+		this.messageCombiner = null;
 	}
 	
 	

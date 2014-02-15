@@ -1,7 +1,6 @@
 package me.naithantu.SlapHomebrew.Listeners.Player;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -10,8 +9,7 @@ import me.naithantu.SlapHomebrew.Controllers.AwayFromKeyboard;
 import me.naithantu.SlapHomebrew.Controllers.ChatChannels;
 import me.naithantu.SlapHomebrew.Controllers.Jails;
 import me.naithantu.SlapHomebrew.Controllers.Mention;
-import me.naithantu.SlapHomebrew.Controllers.MessageFactory;
-import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
+import me.naithantu.SlapHomebrew.Controllers.MessageStringer.MessageCombiner;
 import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
 import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
 import me.naithantu.SlapHomebrew.PlayerExtension.SlapPlayer;
@@ -31,22 +29,17 @@ public class PlayerChatListener extends AbstractListener {
 	
 	private AwayFromKeyboard afk;
 	private Jails jails;
-	private PlayerLogger playerLogger;
 	private ChatChannels chatChannels;
 	private Mention mention;
-	
-    private HashMap<String, MessageFactory> messagePlayers;
-    
+	    
     private Pattern pattern;
 	
-	public PlayerChatListener(AwayFromKeyboard afk, Jails jails, PlayerLogger playerLogger, ChatChannels chatChannels, Mention mention){
+	public PlayerChatListener(AwayFromKeyboard afk, Jails jails, ChatChannels chatChannels, Mention mention){
 		this.afk = afk;
 		this.jails = jails;
-		this.playerLogger = playerLogger;
 		this.chatChannels = chatChannels;
 		this.mention = mention;
 		
-        this.messagePlayers = plugin.getMessages().getMessagePlayers();
         pattern = Pattern.compile("@{1}\\w+");
 	}
 	
@@ -91,18 +84,15 @@ public class PlayerChatListener extends AbstractListener {
 		}
 		
 		//Listener for /message
-		if (messagePlayers.containsKey(player.getName())) {
-            MessageFactory messageFactory = messagePlayers.get(player.getName());
-			message = event.getMessage();
+		if (slapPlayer.isCombiningMessage()) {
             event.setCancelled(true);
-            if(message.equals("*")){
-                player.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + "The new message has " + messageFactory.getMessageName() + " as name and " + messageFactory.getMessage() + " as message.");
-                messagePlayers.remove(player.getName());
-                plugin.getMessageStorage().getConfig().set("messages." + messageFactory.getMessageName(), messageFactory.getMessage());
-                plugin.getMessageStorage().saveConfig();
-            } else {
-                messageFactory.addMessage(message);
-                player.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + "Added text to message, type '*' to save message!");
+            MessageCombiner combiner = slapPlayer.getMessageCombiner();
+            if(combiner.isEnding(message)){ //Stopping the message
+            	combiner.finish();
+            	slapPlayer.removeMessageCombiner();
+            } else { //Add text
+                combiner.addText(ucMessage);
+                combiner.notifyHowToEnd();
             }
             return;
 		}
@@ -117,23 +107,6 @@ public class PlayerChatListener extends AbstractListener {
 		//Check for AFK
 		if (afk.isAfk(playerName)) {
 			afk.leaveAfk(playerName);
-		}
-		
-		//DoubleMsg
-		if (player.hasPermission("slaphomebrew.staff") && !event.isCancelled()) {
-			message = event.getMessage();
-			if (playerLogger.hasMessage(playerName)) {
-				playerLogger.sendSecondMessage(playerName, message);
-				event.setCancelled(true);
-			} else {
-				int l = message.length();
-				if (l > 10) {
-					if (message.substring(l - 3).equals("*--")) {
-						playerLogger.setFirstMessage(playerName, message);
-						event.setCancelled(true);
-					}
-				}
-			}
 		}
 		
 		//@Person: Check Event is not Cancelled, if it contains @, If the player is allowed to do this permission wise & check if the player is not banned

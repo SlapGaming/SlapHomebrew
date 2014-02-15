@@ -1,7 +1,6 @@
 package me.naithantu.SlapHomebrew.Controllers;
 
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.TimeZone;
@@ -14,9 +13,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
-import ru.tehkode.permissions.PermissionUser;
-import ru.tehkode.permissions.bukkit.PermissionsEx;
-
 public class PlayerLogger extends AbstractController {
 
 	private YamlStorage logYML;
@@ -24,8 +20,6 @@ public class PlayerLogger extends AbstractController {
 	
 	private SimpleDateFormat format;
 	private SimpleDateFormat onlineFormat;
-		
-	private HashMap<String, String> doubleMessage;
 	
 	private HashSet<String> commandSpy;
 	
@@ -39,7 +33,6 @@ public class PlayerLogger extends AbstractController {
 		onlineFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
 		format = new SimpleDateFormat("dd-MM-yyyy");
 		format.setTimeZone(TimeZone.getTimeZone("GMT"));
-		doubleMessage = new HashMap<>();
 		
 		commandSpy = new HashSet<>();
 		List<String> list = logConfig.getStringList("commandspy");
@@ -59,26 +52,7 @@ public class PlayerLogger extends AbstractController {
     public void shutdown() {
     	//Not needed
     }
-	
-	
-	/*
-	 * Double message
-	 */
-	public void setFirstMessage(String player, String message) {
-		PermissionUser user = PermissionsEx.getUser(player);
-		String tag = "<" + user.getPrefix() + player + ChatColor.WHITE + "> ";
-		doubleMessage.put(player, tag + message.replace("*--", " "));
-	}
-	
-	public void sendSecondMessage(String player, String message) {
-		plugin.getServer().broadcastMessage(ChatColor.translateAlternateColorCodes('&', doubleMessage.get(player) + message));
-		doubleMessage.remove(player);
-	}
-	
-	public boolean hasMessage(String player) {
-		return doubleMessage.containsKey(player);
-	}
-	
+		
 	/*
 	 * CommandSpy
 	 */

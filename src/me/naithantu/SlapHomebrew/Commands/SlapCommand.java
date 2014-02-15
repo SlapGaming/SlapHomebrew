@@ -12,6 +12,9 @@ import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
 import me.naithantu.SlapHomebrew.Controllers.Lottery;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
 import me.naithantu.SlapHomebrew.Controllers.TabController.TabGroup;
+import me.naithantu.SlapHomebrew.Controllers.MessageStringer.MultiChatCombiner;
+import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
+import me.naithantu.SlapHomebrew.PlayerExtension.SlapPlayer;
 import me.naithantu.SlapHomebrew.Util.Util;
 import net.minecraft.server.v1_7_R1.EntityPlayer;
 import net.minecraft.server.v1_7_R1.PacketPlayOutBed;
@@ -562,6 +565,16 @@ public class SlapCommand extends AbstractCommand {
 					}
 					hMsg("Turned CommandSpy for player " + targetname + ": " + ((isCS) ? ChatColor.RED + "Off." : ChatColor.GREEN + "On.")); //Msg
 				}
+				break;
+				
+			case "multimessage": case "doublemsg": case "multimsg": case "*--": //Multi line combined chat message
+				testPermission("multimessage");
+				SlapPlayer slapPlayer = PlayerControl.getPlayer(player); //Get SlapPlayer
+				if (slapPlayer.isCombiningMessage()) { //Check if not already combining a message
+					throw new CommandException("Already combining a message!");
+				}
+				slapPlayer.setMessageCombiner(new MultiChatCombiner(slapPlayer)); //Set new Combiner
+				hMsg("You're now creating a multi lined combined message.");
 				break;
 								
 			default: 

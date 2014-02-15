@@ -4,8 +4,11 @@ import java.util.Set;
 
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
+import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
-import me.naithantu.SlapHomebrew.Controllers.MessageFactory;
+import me.naithantu.SlapHomebrew.Controllers.MessageStringer.MessageCommandCombiner;
+import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
+import me.naithantu.SlapHomebrew.PlayerExtension.SlapPlayer;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 import me.naithantu.SlapHomebrew.Util.Util;
 
@@ -46,17 +49,23 @@ public class MessageCommand extends AbstractCommand {
 		case "create": //Create a new message
 			testPermission("message.admin"); //Test perm
 			if (args.length != 2) throw new UsageException("message create [message]"); //Check usage
-			plugin.getMessages().getMessagePlayers().put(sender.getName(), new MessageFactory(args[1])); //Add player to chat listener
-			hMsg("Type the message now, the name of this message is going to be: " + args[1]);
+			SlapPlayer slapPlayer = PlayerControl.getPlayer(getPlayer()); //Get SlapPlayer
+			if (slapPlayer.isCombiningMessage()) { //Check if already combining
+				throw new CommandException(ErrorMsg.alreadyCombining);
+			}
+			String messageName = args[1].toLowerCase();
+			slapPlayer.setMessageCombiner(new MessageCommandCombiner(slapPlayer, messageName));
+			hMsg("Type the message now, the name of this message is going to be: " + messageName);
 			break;
 			
 		case "remove": //Remove a message
 			testPermission("message.admin"); //Test perm
 			if (args.length != 2) throw new UsageException("message remove [message]"); //Check usage
-			checkForMessage(args[1]); //Check if message exists
-			messageConfig.set("messages." + args[1], null); //Remove from config
+			messageName = args[1].toLowerCase();
+			checkForMessage(messageName); //Check if message exists
+			messageConfig.set("messages." + messageName, null); //Remove from config
 			messageStorage.saveConfig();
-			hMsg("Removed message: " + args[1]);
+			hMsg("Removed message: " + messageName);
 			break;
 			
 		case "reload": //Reload the config
@@ -66,7 +75,7 @@ public class MessageCommand extends AbstractCommand {
 			break;
 			
 		default: //Broadcast a message
-			String message = getMessage(args[0]);
+			String message = getMessage(args[0].toLowerCase());
 			if (sender instanceof Player) { //Spamming prevention for Staff
 				if (System.currentTimeMillis() - lastMessage > 2500) { //Check if last message was 2.5+ seconds ago
 					lastMessage = System.currentTimeMillis(); //Set last message

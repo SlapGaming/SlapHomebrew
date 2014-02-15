@@ -81,7 +81,6 @@ public class SlapHomebrew extends JavaPlugin {
 	private Lottery lottery;
 	private Mail mail;
 	private Mention mention;
-    private Messages messages;
     private PlayerControl playerControl;
 	private PlayerLogger playerLogger;
 	private TabController tabController;
@@ -231,7 +230,6 @@ public class SlapHomebrew extends JavaPlugin {
 		 controllers.add(lottery = new Lottery());
 		 controllers.add(mail = new Mail());
 		 controllers.add(mention = new Mention());
-		 controllers.add(messages = new Messages());
 		 controllers.add(playerLogger = new PlayerLogger());
 		 controllers.add(afk = new AwayFromKeyboard());
 		 controllers.add(tabController = new TabController(playerLogger));
@@ -267,7 +265,7 @@ public class SlapHomebrew extends JavaPlugin {
 				new EntityDamageByEntityListener(horses),
 				new EntityDamageListener(jails),
 				new PlayerChangedWorldListener(lottery, mail),
-				new PlayerChatListener(afk, jails, playerLogger, chatChannels, mention),
+				new PlayerChatListener(afk, jails, chatChannels, mention),
 				new PlayerCommandListener(afk, jails, playerLogger),
 				new PlayerDeathListener(playerLogger),
 				new PlayerInteractEntityListener(horses),
@@ -437,10 +435,6 @@ public class SlapHomebrew extends JavaPlugin {
 	public Mention getMention() {
 		return mention;
 	}
-
-    public Messages getMessages() {
-        return messages;
-    }
 	
 	public Jails getJails() {
 		return jails;
