@@ -69,7 +69,7 @@ public class AfkInfoCommand extends AbstractCommand {
 			}
 			if (Util.testPermission(sender, "afkinfo.extended")) { //If CommandSender has extended info
 				long lastActive = PlayerControl.getPlayer(foundPlayer).getLastActivity(); //Get last activity
-				hMsg("Last activity: " + Util.getTimePlayedString(lastActive) + " ago."); //Get time ago
+				hMsg("Last activity: " + Util.getTimePlayedString(System.currentTimeMillis() - lastActive) + " ago."); //Get time ago
 			}
 		}
 		return true;
