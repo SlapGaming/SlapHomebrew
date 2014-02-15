@@ -16,14 +16,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class MailCommand extends AbstractCommand {
-
-	private static Mail mail = null;
 	
 	public MailCommand(CommandSender sender, String[] args) {
 		super(sender, args);
-		if (mail == null) {
-			mail = plugin.getMail();
-		}
 	}
 
 	@Override
@@ -32,7 +27,7 @@ public class MailCommand extends AbstractCommand {
  			if (args.length < 3 || !args[0].equalsIgnoreCase("send")) throw new UsageException("/mail send [player] [mail..]"); //Check usage
  			
  			OfflinePlayer offPlayer = getOfflinePlayer(args[1]); //Get player
- 			mail.sendConsoleMail(sender, offPlayer.getName(), createMailMessage()); //Send mail
+ 			plugin.getMail().sendConsoleMail(sender, offPlayer.getName(), createMailMessage()); //Send mail
 			return true;
 		}
 
@@ -40,6 +35,8 @@ public class MailCommand extends AbstractCommand {
 		testPermission("mail");
 		
 		OfflinePlayer offPlayer; int mailID, page;
+		
+		Mail mail = plugin.getMail(); //Get mail
 				
 		if (mail.isDevServer()) throw new CommandException(ErrorMsg.runningDev); //Check for Dev server
 		if (args.length == 0) return false; //Usage

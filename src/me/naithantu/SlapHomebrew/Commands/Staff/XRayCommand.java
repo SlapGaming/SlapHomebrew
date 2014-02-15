@@ -19,23 +19,19 @@ import de.diddiz.LogBlock.QueryParams.BlockChangeType;
 
 public class XRayCommand extends AbstractCommand {
 	
-	private static LogBlock logblock = null;
-	
 	boolean all = false;
 	
 	public XRayCommand(CommandSender sender, String[] args) {
 		super(sender, args);
-		if (logblock == null) {
-			logblock = (LogBlock)plugin.getServer().getPluginManager().getPlugin("LogBlock");
-		}
 	}
 
 	@Override
 	public boolean handle() throws CommandException {
 		testPermission("xray"); //Test perm
 		
-		if (logblock == null || !logblock.isEnabled()) { //Check if LogBlock is enabled
-			throw new CommandException("Failed to connect to LogBlock.");
+		final LogBlock logblock = plugin.getLogBlock();
+		if (logblock == null) { //Check if LogBlock is enabled
+			throw new CommandException("SlapHomebrew didn't find LogBlock on the server.");
 		}
 		
 		if (args.length == 0) return false;

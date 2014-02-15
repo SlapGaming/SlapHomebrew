@@ -11,6 +11,7 @@ import org.bukkit.command.CommandSender;
 
 public class PluginsCommand extends AbstractCommand {
 	
+	//TODO Remove static references
 	private static ArrayList<String> plugins;
 	private static int nrOfPlugins;
 	

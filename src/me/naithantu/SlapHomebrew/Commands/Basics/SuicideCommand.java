@@ -2,7 +2,6 @@ package me.naithantu.SlapHomebrew.Commands.Basics;
 
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
-import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.DeathLogger;
 
 import org.bukkit.ChatColor;
@@ -11,13 +10,9 @@ import org.bukkit.entity.Player;
 
 public class SuicideCommand extends AbstractCommand {
 
-	private static PlayerLogger playerLogger;
 	
 	public SuicideCommand(CommandSender sender, String[] args) {
 		super(sender, args);
-		if (playerLogger == null) {
-			playerLogger = plugin.getPlayerLogger();
-		}
 	}
 
 	@Override
@@ -29,7 +24,7 @@ public class SuicideCommand extends AbstractCommand {
 			throw new CommandException("You are already dead o.O");
 		} else {
 			p.sendMessage(ChatColor.GRAY + "Goodbye world D:");
-			playerLogger.commitsSuicide(p.getName());
+			plugin.getPlayerLogger().commitsSuicide(p.getName());
 			DeathLogger.playerCommitsSuicide(p.getName());
 			p.setHealth(0);
 		}

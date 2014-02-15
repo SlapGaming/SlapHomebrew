@@ -14,16 +14,10 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class JailCommand extends AbstractCommand {
-
-	private static Jails jails = null;
-	
+public class JailCommand extends AbstractCommand {	
 	
 	public JailCommand(CommandSender sender, String[] args) {
 		super(sender, args);
-		if (jails == null) {
-			jails = plugin.getJails();
-		}
 	}
 
 	@Override
@@ -32,6 +26,9 @@ public class JailCommand extends AbstractCommand {
 		if (args.length == 0) return false; //Check usage
 		
 		OfflinePlayer offPlayer;
+		
+		//Get jails controller
+		Jails jails = plugin.getJails();
 		
 		switch (args[0].toLowerCase()) {
 		case "list": //Send list of jails

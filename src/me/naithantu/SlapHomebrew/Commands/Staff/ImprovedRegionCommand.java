@@ -25,20 +25,12 @@ import me.naithantu.SlapHomebrew.PlayerExtension.SlapPlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-
 public class ImprovedRegionCommand extends AbstractCommand {
-	
-	private static WorldGuardPlugin wg;
-	
+		
 	private Player p;
-	
 	
 	public ImprovedRegionCommand(CommandSender sender, String[] args) {
 		super(sender, args);
-		if (wg == null) {
-			wg = plugin.getworldGuard();
-		}
 	}
 	
 

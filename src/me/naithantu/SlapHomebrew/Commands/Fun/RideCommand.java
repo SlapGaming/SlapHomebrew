@@ -1,17 +1,14 @@
 package me.naithantu.SlapHomebrew.Commands.Fun;
 
-import java.util.HashSet;
-
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
+import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class RideCommand extends AbstractCommand {
-
-	private static HashSet<String> rightClicks = new HashSet<>();
 	
 	public RideCommand(CommandSender sender, String[] args) {
 		super(sender, args);
@@ -26,7 +23,7 @@ public class RideCommand extends AbstractCommand {
 		if (args.length != 1) return false; //Check usage
 		
 		if (args[0].equalsIgnoreCase("click")) { //Click modus
-			rightClicks.add(player.getName());
+			PlayerControl.getPlayer(player).setRideOnRightClick(true);
 			hMsg("Right-click an entity to ride it.");
 		} else { //Playername
 			Player targetPlayer = getOnlinePlayer(args[0], false);
@@ -35,19 +32,6 @@ public class RideCommand extends AbstractCommand {
 			
 		}
 		return true;
-	}
-	
-	/**
-	 * Get if player has rightClick to ride entity enabled
-	 * @param player The player
-	 * @return rightClick to ride
-	 */
-	public static boolean rightClick(String player){
-		if (rightClicks.contains(player)) {
-			rightClicks.remove(player);
-			return true;
-		}
-		return false;
 	}
 	
 }

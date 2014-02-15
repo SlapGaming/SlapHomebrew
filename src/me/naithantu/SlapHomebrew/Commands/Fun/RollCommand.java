@@ -12,14 +12,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class RollCommand extends AbstractCommand {
-	
-	private static Lottery lottery;
-	
+		
 	public RollCommand(CommandSender sender, String[] args) {
 		super(sender, args);
-		if (lottery == null) {
-			lottery = plugin.getLottery();
-		}
 	}
 
 	public boolean handle() throws CommandException {
@@ -27,6 +22,7 @@ public class RollCommand extends AbstractCommand {
 		testPermission("roll");
 		
 		String playername = p.getName();
+		Lottery lottery = plugin.getLottery(); //Get lottery
 		
 		if (lottery.getPlaying()) { //Check if lottery is running
 			if (!lottery.getLottery().containsKey(p.getName())) { //Check if already rolled

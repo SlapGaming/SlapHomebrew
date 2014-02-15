@@ -1,13 +1,12 @@
 package me.naithantu.SlapHomebrew.Listeners.Player;
 
-import me.naithantu.SlapHomebrew.Commands.Fun.RideCommand;
 import me.naithantu.SlapHomebrew.Commands.Staff.TeleportMobCommand;
 import me.naithantu.SlapHomebrew.Controllers.Horses;
 import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
 import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
+import me.naithantu.SlapHomebrew.PlayerExtension.SlapPlayer;
 import me.naithantu.SlapHomebrew.Util.Util;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -31,11 +30,12 @@ public class PlayerInteractEntityListener extends AbstractListener {
 	@EventHandler
 	public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
 		Player player = event.getPlayer();
+		SlapPlayer slapPlayer = PlayerControl.getPlayer(player);
 		String playername = player.getName();
 		Entity clickedEntity = event.getRightClicked();
 				
 		//Set last activity
-		PlayerControl.getPlayer(player).moved();
+		slapPlayer.moved();
 		
 		//Horse info click
 		if (horses.isInfoClick(playername)) {
@@ -49,22 +49,23 @@ public class PlayerInteractEntityListener extends AbstractListener {
 		}
 				
 		//Entity Ride Click
-		if (RideCommand.rightClick(playername)) {
-			if (player.isInsideVehicle()) {
-				player.getVehicle().eject();
-			}
-			if (clickedEntity instanceof LivingEntity) {
+		if (slapPlayer.isRideOnRightClick()) {
+			player.leaveVehicle(); //Leave vehicle if there is any
+			if (clickedEntity instanceof LivingEntity) { //Check if a livingEntity 
 				clickedEntity.setPassenger(player);
+			} else {
+				Util.badMsg(player, "This is not a Living Entity.");
 			}
+			slapPlayer.setRideOnRightClick(false);
 			return;
 		}
 		
 		//Singlemove Teleport mob
-		if (TeleportMobCommand.isInMap(playername)) {
+		if (slapPlayer.isTeleportingMob()) {
 			event.setCancelled(true);
-			Player toPlayer = Bukkit.getPlayerExact(TeleportMobCommand.getToPlayerName(playername));
+			Player toPlayer = slapPlayer.getTeleportingTo(); //Get player to which the mobs should be teleported
 			if (toPlayer == null || !toPlayer.isOnline()) {
-				TeleportMobCommand.toPlayerWentOffline(playername);
+				slapPlayer.removeTeleportingMob();
 				Util.badMsg(player, "The player to teleport to is offline! Single Move disabled.");
 				return;
 			}

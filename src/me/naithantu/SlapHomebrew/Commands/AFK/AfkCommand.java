@@ -10,18 +10,15 @@ import org.bukkit.entity.Player;
 
 public class AfkCommand extends AbstractCommand {
 	
-	private static AwayFromKeyboard afk = null;
-	
 	public AfkCommand(CommandSender sender, String[] args) {
 		super(sender, args);
-		if (afk == null) {
-			afk = plugin.getAwayFromKeyboard();
-		}
 	}
 
 	public boolean handle() throws CommandException {
 		Player p = getPlayer(); //Cast to player
 		String playername = p.getName();
+		
+		AwayFromKeyboard afk = plugin.getAwayFromKeyboard(); //Get AFK Controller
 		
 		//Prevent auto AFK | command: /afk -prevent
 		if (args.length == 1) {

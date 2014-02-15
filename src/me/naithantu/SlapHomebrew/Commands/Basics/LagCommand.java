@@ -2,26 +2,20 @@ package me.naithantu.SlapHomebrew.Commands.Basics;
 
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
-import me.naithantu.SlapHomebrew.Controllers.Lag;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 public class LagCommand extends AbstractCommand {
-	
-	private static Lag lag;
 
 	public LagCommand(CommandSender sender, String[] args) {
 		super(sender, args);
-		if (lag == null) {
-			lag = plugin.getLag();
-		}
 	}
 
 	public boolean handle() throws CommandException {
 		testPermission("lag");
 		
-		double tps = lag.getTPS();
+		double tps = plugin.getLag().getTPS();
 		String status = ChatColor.YELLOW + "Server Status: ";
 		
 		if (tps >= 17 && tps <= 23) {

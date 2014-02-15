@@ -1,12 +1,12 @@
 package me.naithantu.SlapHomebrew.Commands.Staff;
 
-import java.util.HashMap;
 import java.util.List;
 
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
-import me.naithantu.SlapHomebrew.Util.Util;
+import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
+import me.naithantu.SlapHomebrew.PlayerExtension.SlapPlayer;
 
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -16,14 +16,9 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 public class TeleportMobCommand extends AbstractCommand {
-
-	private static HashMap<String, String> teleportMap;
 	
 	public TeleportMobCommand(CommandSender sender, String[] args) {
 		super(sender, args);
-		if (teleportMap == null) {
-			teleportMap = new HashMap<>();
-		}
 	}
 
 	@Override
@@ -36,10 +31,19 @@ public class TeleportMobCommand extends AbstractCommand {
 		
 		Player toPlayer;
 		
+		//Get SlapPlayer
+		SlapPlayer slapPlayer = PlayerControl.getPlayer(p);
+		
 		switch (args[0].toLowerCase()) {
 		case "massmove": case "mm":
 			if (args.length != 3) throw new UsageException("teleportmob massmove [to Player] [Radius]"); //Check usage
-			removeIfContains(p, true);
+			
+			//Disable SingleMoveMob if enabled
+			if (slapPlayer.isTeleportingMob()) {
+				slapPlayer.removeTeleportingMob();
+				hMsg("SingleMove teleport has been disabled.");
+			}
+			
 			toPlayer = getOnlinePlayer(args[1], false); //Get player to teleport to
 			Location toLocation = toPlayer.getLocation().add(0, 0.2, 0); //Get to location
 			
@@ -60,54 +64,24 @@ public class TeleportMobCommand extends AbstractCommand {
 			
 		case "singlemove": case "sm":
 			if (args.length != 2) throw new UsageException("teleportmob singlemove [to Player]"); //Check usage
-			removeIfContains(p, false);
+			slapPlayer.removeTeleportingMob(); //Reset SingleMoveMob, just in case.
 			toPlayer = getOnlinePlayer(args[1], false); //Get player
-			teleportMap.put(p.getName(), toPlayer.getName()); //Add to teleporter map
+			slapPlayer.setTeleportingMob(toPlayer);
 			hMsg("Click the LivingEntities you want to move. Disable with: /teleportmob StopSingleMove");
 			break;
 			
 		case "stopsinglemove": case "ssm":
-			removeIfContains(p, true);
+			if (!slapPlayer.isTeleportingMob()) { //Check if moving mobs
+				throw new CommandException("SingleMove teleport isn't enabled.");
+			}
+			slapPlayer.removeTeleportingMob(); //Remove
+			hMsg("SingleMove teleport has been disabled."); //Notify
 			break;
 			
 		default:
 			throw new UsageException(fullUsage);
 		}
 		return true;
-	}
-	
-	/**
-	 * Get if a player is a single mob mover
-	 * @param player The player
-	 * @return is mover
-	 */
-	public static boolean isInMap(String player) {
-		if (teleportMap == null) return false;
-		return teleportMap.containsKey(player);
-	}
-	
-	/**
-	 * Get the player to teleport the mob to
-	 * @param fromPlayer From the player
-	 * @return The name of the 'toPlayer'
-	 */
-	public static String getToPlayerName(String fromPlayer) {
-		return teleportMap.get(fromPlayer);
-	}
-	
-	/**
-	 * The player the mob has to be teleported to went offline
-	 * @param fromPlayer
-	 */
-	public static void toPlayerWentOffline(String fromPlayer) {
-		teleportMap.remove(fromPlayer);
-	}
-
-	private void removeIfContains(Player p, boolean msg) {
-		if (teleportMap.containsKey(p.getName())) {
-			teleportMap.remove(p.getName());
-			if (msg) p.sendMessage(Util.getHeader() + "Singlemove mobs has been disabled.");
-		}
 	}
 	
 	/**

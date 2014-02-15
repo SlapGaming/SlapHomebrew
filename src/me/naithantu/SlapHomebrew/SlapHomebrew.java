@@ -32,6 +32,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.earth2me.essentials.Essentials;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 
+import de.diddiz.LogBlock.LogBlock;
+
 public class SlapHomebrew extends JavaPlugin {
 	
 	/**
@@ -94,6 +96,7 @@ public class SlapHomebrew extends JavaPlugin {
 	private Essentials essentials;
 	private Economy economy;
 	private WorldGuardPlugin worldGuard;
+	private LogBlock logBlock;
 	
 	/**
 	 * SQL Pool
@@ -168,19 +171,36 @@ public class SlapHomebrew extends JavaPlugin {
 	}
 	
 	private void initializeExternals() {
-		Plugin vault = getServer().getPluginManager().getPlugin("Vault");
+		PluginManager pm = getServer().getPluginManager();
+		
+		//Get vault
+		Plugin vault = pm.getPlugin("Vault");
 		if (vault == null) {
 			getLogger().warning(String.format("[%s] Vault was _NOT_ found! Disabling plugin.", getDescription().getName()));
 			getPluginLoader().disablePlugin(this);
 			return;
 		}
+		
+		//Get essentials
 		essentials = (Essentials) getServer().getPluginManager().getPlugin("Essentials");
+		
+		//Get worldguard
 		worldGuard = (WorldGuardPlugin) getServer().getPluginManager().getPlugin("WorldGuard");
+		
+		//Get EconomyProvider
 		RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
 		if (rsp != null) {
 			economy = rsp.getProvider();
 		}
-		pool = new SQLPool(); //Create SQL Pool
+		
+		//Get logblock
+		Plugin logBlockPlugin = getServer().getPluginManager().getPlugin("LogBlock");
+		if (logBlockPlugin != null && logBlockPlugin.isEnabled() && logBlockPlugin instanceof LogBlock) {
+			logBlock = (LogBlock) logBlockPlugin;
+		}
+		
+		//Create SQL Pool
+		pool = new SQLPool();
 	}
 
 	private void initializeYamlStoragesConfigs() {
@@ -493,6 +513,10 @@ public class SlapHomebrew extends JavaPlugin {
 	
 	public WorldGuardPlugin getworldGuard() {
 		return worldGuard;
+	}
+	
+	public LogBlock getLogBlock() {
+		return logBlock;
 	}
 	
 	

@@ -8,27 +8,19 @@ import me.naithantu.SlapHomebrew.Controllers.Jails;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 
-import com.earth2me.essentials.Essentials;
-
 public class UnjailCommand extends AbstractCommand {
-
-	private static Jails jails = null;
-	private static Essentials ess = null;
 	
 	public UnjailCommand(CommandSender sender, String[] args) {
 		super(sender, args);
-		if (jails == null) {
-			jails = plugin.getJails();
-		}
-		if (ess == null) {
-			ess = plugin.getEssentials();
-		}
 	}
 
 	@Override
 	public boolean handle() throws CommandException {
 		testPermission("jail"); //Test perm
 		if (args.length != 1) return false; //Check usage
+		
+		//Get jails controller
+		Jails jails = plugin.getJails();
 		
 		OfflinePlayer offPlayer = getOfflinePlayer(args[0]); //Get player
 		if (jails.isInJail(offPlayer.getName())) { //Check if in jail

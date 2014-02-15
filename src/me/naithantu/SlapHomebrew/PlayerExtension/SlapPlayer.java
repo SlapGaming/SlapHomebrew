@@ -16,12 +16,20 @@ public class SlapPlayer {
 	 */
 	private boolean doingCommand; //Is doing command
 	private boolean toggledRegion; //Toggled /irg into /rg
+	private boolean rideOnRightClick; //Ride a clicked entity
 	private boolean moved; //The player has moved since login
+	
 	
 	/**
 	 * The last Epoch time the player did anything
 	 */
 	private long lastActivity;
+	
+	/**
+	 * Teleporting mobs to other players
+	 */
+	private boolean teleportingMob;
+	private Player teleportingTo;
 	
 	
 	public SlapPlayer(Player p) {
@@ -32,10 +40,14 @@ public class SlapPlayer {
 		//Bools
 		doingCommand = false;
 		toggledRegion = false;
+		rideOnRightClick = false;
 		moved = false;
 		
 		//Activity
-		lastActivity = System.currentTimeMillis();		
+		lastActivity = System.currentTimeMillis();
+		
+		//Teleporting mobs
+		teleportingMob = false;
 	}
 	
 	/*
@@ -149,4 +161,61 @@ public class SlapPlayer {
 	public void sendNotMovedMessage() {
 		player.sendMessage(ChatColor.GRAY + "You're not allowed to do commands/chat until you have moved.");
 	}
+	
+	/*
+	 * Ride on right click
+	 */
+	/**
+	 * Check if the player is waiting on a right click to ride an entity
+	 * @return is right click to ride
+	 */
+	public boolean isRideOnRightClick() {
+		return rideOnRightClick;
+	}
+	
+	/**
+	 * Set waiting for Right click to ride
+	 * @param rideOnRightClick ride on click
+	 */
+	public void setRideOnRightClick(boolean rideOnRightClick) {
+		this.rideOnRightClick = rideOnRightClick;
+	}
+	
+	/*
+	 * Teleporting mobs
+	 */
+	/**
+	 * Check if the player is teleporting mobs
+	 * @return is teleporting mobs
+	 */
+	public boolean isTeleportingMob() {
+		return teleportingMob;
+	}
+	
+	/**
+	 * Get the player this player is teleporting mobs to
+	 * @return The player that is being teleported to or null
+	 */
+	public Player getTeleportingTo() {
+		return teleportingTo;
+	}
+	
+	/**
+	 * Set teleporting mobs to the specified player
+	 * @param toPlayer The player
+	 */
+	public void setTeleportingMob(Player toPlayer) {
+		teleportingMob = true;
+		teleportingTo = toPlayer;
+	}
+	
+	/**
+	 * Remove teleporting mobs to a player
+	 */
+	public void removeTeleportingMob() {
+		teleportingMob = false;
+		teleportingTo = null;
+	}
+	
+	
 }

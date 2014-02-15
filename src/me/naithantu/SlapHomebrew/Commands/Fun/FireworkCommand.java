@@ -10,20 +10,18 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class FireworkCommand extends AbstractCommand {
-	
-	private static FireworkShow show;
 
 	public FireworkCommand(CommandSender sender, String[] args) {
 		super(sender, args);
-		if (show == null) {
-			show = plugin.getFireworkShow();
-		}
 	}
 
 	@Override
 	public boolean handle() throws CommandException {
 		Player player = getPlayer();
 		testPermission("fireworkshow");
+		
+		//Get FireworkShow controller
+		FireworkShow show = plugin.getFireworkShow();
 		
 		if (args.length < 1) {
 			if (show.isTeleportAllowed()) {

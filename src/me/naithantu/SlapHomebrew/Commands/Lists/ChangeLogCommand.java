@@ -9,17 +9,15 @@ import org.bukkit.command.CommandSender;
 
 public class ChangeLogCommand extends AbstractCommand {
 	
-	private static ChangeLog changeLog = null;
-
 	public ChangeLogCommand(CommandSender sender, String[] args) {
 		super(sender, args);
-		if (changeLog == null) {
-			changeLog = plugin.getChangeLog();
-		}
 	}
 
 	@Override
 	public boolean handle() throws CommandException {
+		//Get changelog controller
+		ChangeLog changeLog = plugin.getChangeLog();
+		
 		if (args.length == 0) { //get Latest changes
 			changeLog.showPage(sender, 1);
 		} else {
