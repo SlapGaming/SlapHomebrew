@@ -5,11 +5,11 @@ import me.naithantu.SlapHomebrew.Commands.Lists.ListCommand;
 import me.naithantu.SlapHomebrew.Controllers.Homes;
 import me.naithantu.SlapHomebrew.Controllers.Jails;
 import me.naithantu.SlapHomebrew.Controllers.Mail;
-import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
 import me.naithantu.SlapHomebrew.Controllers.TabController;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.PlotControl;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.VipForumControl;
 import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
+import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.ChatColor;
@@ -24,14 +24,12 @@ public class PlayerJoinListener extends AbstractListener {
 		
 	private Mail mail;
 	private Jails jails;
-	private PlayerLogger playerLogger;
 	private TabController tabController;
 	private Homes homes;
 
-	public PlayerJoinListener(Mail mail, Jails jails, PlayerLogger playerLogger, TabController tabController, Homes homes) {
+	public PlayerJoinListener(Mail mail, Jails jails, TabController tabController, Homes homes) {
 		this.mail = mail;
 		this.jails = jails;
-		this.playerLogger = playerLogger;
 		this.tabController = tabController;
 		this.homes = homes;
 	}
@@ -40,6 +38,9 @@ public class PlayerJoinListener extends AbstractListener {
 	public void onPlayerLogin(PlayerJoinEvent event) {
 		final Player player = event.getPlayer();
 
+		//Add player to PlayerControl
+		PlayerControl.getInstance().addSlapPlayer(player);
+		
 		//TODO To be removed?
 		plugin.getExtras().getGhostTeam().addPlayer(player);
 
@@ -80,11 +81,7 @@ public class PlayerJoinListener extends AbstractListener {
 					pi.setItem(3, new ItemStack(Material.STONE_SPADE));
 					pi.setItem(7, new ItemStack(Material.FEATHER));
 					pi.setItem(8, new ItemStack(Material.COOKIE, 5));
-						//TODO Add a new Starter Book
 				}
-				
-				//Minechat prevention
-				playerLogger.joinedMinechatChecker(player);
 				
 				try { //Execute /list
 					new ListCommand(player, new String[]{}).handle();

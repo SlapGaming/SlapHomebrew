@@ -1,10 +1,9 @@
 package me.naithantu.SlapHomebrew.Commands;
 
-import java.util.HashSet;
-
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
+import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.OfflinePlayer;
@@ -14,10 +13,12 @@ import org.bukkit.entity.Player;
 
 public abstract class AbstractCommand {
 
+	/**
+	 * Handle the Command
+	 * @return 
+	 * @throws CommandException
+	 */
 	abstract public boolean handle() throws CommandException;
-	
-	//Command hashset
-	private static HashSet<String> doingCommand = new HashSet<>();
 	
 	protected CommandSender sender;
 	protected String[] args;
@@ -194,7 +195,7 @@ public abstract class AbstractCommand {
 	 */
 	protected void checkDoingCommand() throws CommandException {
 		if (sender instanceof Player) {
-			if (doingCommand.contains(sender.getName())) {
+			if (PlayerControl.getPlayer(sender.getName()).isDoingCommand()) {
 				throw new CommandException("You're already executing a command!");
 			}
 		}
@@ -205,7 +206,7 @@ public abstract class AbstractCommand {
 	 */
 	protected void addDoingCommand() {
 		if (sender instanceof Player) {
-			doingCommand.add(sender.getName());
+			PlayerControl.getPlayer(sender.getName()).setDoingCommand(true);
 		}
 	}
 	
@@ -213,7 +214,9 @@ public abstract class AbstractCommand {
 	 * Remove a player from the doing command set
 	 */
 	protected void removeDoingCommand() {
-		removeDoingCommand(sender);
+		if (sender instanceof Player) {
+			PlayerControl.getPlayer(sender.getName()).setDoingCommand(false);
+		}
 	}
 	
 	/**
@@ -221,8 +224,8 @@ public abstract class AbstractCommand {
 	 * @param sender The player
 	 */
 	public static void removeDoingCommand(CommandSender sender) {
-		if (doingCommand != null && sender instanceof Player) {
-			doingCommand.remove(sender.getName());
+		if (sender instanceof Player) {
+			PlayerControl.getPlayer(sender.getName()).setDoingCommand(false);
 		}
 	}
 	

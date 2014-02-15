@@ -2,7 +2,7 @@ package me.naithantu.SlapHomebrew.Runnables;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Controllers.AwayFromKeyboard;
-import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
+import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.entity.Player;
@@ -12,16 +12,14 @@ public class AFKChecker extends BukkitRunnable {
 	
 	private SlapHomebrew plugin;
 	private AwayFromKeyboard afk;
-	private PlayerLogger playerLogger;
 	private int allowedMinutes;
 	private long allowedInactive;
 	private long inactiveWarning;
 	private long kickedTime;
 	
-	public AFKChecker(SlapHomebrew plugin, AwayFromKeyboard afk, PlayerLogger playerLogger, int allowedInactiveMinutes) {
+	public AFKChecker(SlapHomebrew plugin, AwayFromKeyboard afk, int allowedInactiveMinutes) {
 		this.plugin = plugin;
 		this.afk = afk;
-		this.playerLogger = playerLogger;
 		this.allowedMinutes = allowedInactiveMinutes;
 		this.allowedInactive = (long) allowedMinutes * 60 * 1000;
 		this.inactiveWarning = (long) (allowedMinutes - 1) * 60 * 1000;
@@ -34,7 +32,7 @@ public class AFKChecker extends BukkitRunnable {
 		for (Player p :plugin.getServer().getOnlinePlayers()) {
 			String name = p.getName();
 			if (!afk.hasPreventAFK(name)) {
-				long lastActive = playerLogger.getLastActivity(name);
+				long lastActive = PlayerControl.getPlayer(p).getLastActivity();
 				if (!afk.isAfk(name)) {
 					if (lastActive != 0) {
 						long lastActiveSeconds = systemTime - lastActive;

@@ -2,8 +2,8 @@ package me.naithantu.SlapHomebrew.Listeners.Player;
 
 import me.naithantu.SlapHomebrew.Controllers.AwayFromKeyboard;
 import me.naithantu.SlapHomebrew.Controllers.Jails;
-import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
 import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
+import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -15,12 +15,10 @@ public class PlayerTeleportListener extends AbstractListener {
 
 	private Jails jails;
 	private AwayFromKeyboard afk;
-	private PlayerLogger playerLogger;
 	
-	public PlayerTeleportListener(Jails jails, AwayFromKeyboard afk, PlayerLogger playerLogger) {
+	public PlayerTeleportListener(Jails jails, AwayFromKeyboard afk) {
 		this.jails = jails;
 		this.afk = afk;
-		this.playerLogger = playerLogger;
 	}
 	
 	@EventHandler
@@ -40,7 +38,7 @@ public class PlayerTeleportListener extends AbstractListener {
 		}
 		
 		//Set last activity
-		playerLogger.setLastActivity(playername);
+		PlayerControl.getPlayer(player).active();
 		
 		if (event.getTo().getWorld().getName().equals("world_nether") && event.getTo().getBlockY() >= 127){ 
 			player.sendMessage(ChatColor.RED + "You may not go above the nether!");

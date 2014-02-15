@@ -15,20 +15,14 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.earth2me.essentials.Essentials;
-
 public class MailCommand extends AbstractCommand {
 
 	private static Mail mail = null;
-	private static Essentials ess = null;
 	
 	public MailCommand(CommandSender sender, String[] args) {
 		super(sender, args);
 		if (mail == null) {
 			mail = plugin.getMail();
-		}
-		if (ess == null) {
-			ess = plugin.getEssentials();
 		}
 	}
 

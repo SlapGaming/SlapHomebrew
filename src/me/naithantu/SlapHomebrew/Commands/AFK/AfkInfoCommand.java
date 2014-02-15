@@ -3,6 +3,7 @@ package me.naithantu.SlapHomebrew.Commands.AFK;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Controllers.AwayFromKeyboard;
+import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.ChatColor;
@@ -67,13 +68,8 @@ public class AfkInfoCommand extends AbstractCommand {
 				}
 			}
 			if (Util.testPermission(sender, "afkinfo.extended")) { //If CommandSender has extended info
-				long lastActive = plugin.getPlayerLogger().getLastActivity(pName); //Get the last activity of the player
-				if (lastActive != 0) {
-					long totalSeconds = (System.currentTimeMillis() - lastActive) / 1000;
-					int minutes = (int) Math.floor(totalSeconds / (double) 60);
-					int seconds = (int) totalSeconds - minutes * 60;
-					hMsg("Last activity: " +  minutes + " minutes & " + seconds + " seconds ago."); //Send last activity
-				}
+				long lastActive = PlayerControl.getPlayer(foundPlayer).getLastActivity(); //Get last activity
+				hMsg("Last activity: " + Util.getTimePlayedString(lastActive) + " ago."); //Get time ago
 			}
 		}
 		return true;

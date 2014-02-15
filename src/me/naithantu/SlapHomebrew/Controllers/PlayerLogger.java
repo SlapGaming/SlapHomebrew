@@ -24,12 +24,7 @@ public class PlayerLogger extends AbstractController {
 	
 	private SimpleDateFormat format;
 	private SimpleDateFormat onlineFormat;
-	
-	
-	private HashMap<String, Boolean> minechatMoved;
-	
-	private HashMap<String, Long> lastActivity;
-	
+		
 	private HashMap<String, String> doubleMessage;
 	
 	private HashSet<String> commandSpy;
@@ -44,9 +39,7 @@ public class PlayerLogger extends AbstractController {
 		onlineFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
 		format = new SimpleDateFormat("dd-MM-yyyy");
 		format.setTimeZone(TimeZone.getTimeZone("GMT"));
-		minechatMoved = new HashMap<>();
 		doubleMessage = new HashMap<>();
-		lastActivity = new HashMap<>();
 		
 		commandSpy = new HashSet<>();
 		List<String> list = logConfig.getStringList("commandspy");
@@ -56,79 +49,16 @@ public class PlayerLogger extends AbstractController {
 		
 		suicides = new HashSet<>();
 		doingCommand = new HashSet<>();
-		
-		
-		onEnable();
 	}
 	
 	private void save(){
 		logYML.saveConfig();
 	}
 	
-	public void onEnable(){
-		for (Player onlinePlayer : plugin.getServer().getOnlinePlayers()) {
-			setMoved(onlinePlayer.getName(), true);
-		}
-	}
-	
     @Override
     public void shutdown() {
     	//Not needed
     }
-	
-	/*
-	 * Minechat prevention
-	 */
-	public boolean hasMoved(String playername) {
-		if (minechatMoved == null || playername == null) return false;
-		return minechatMoved.get(playername);
-	}
-	
-	public void setMoved(String playername, boolean moved) {
-		minechatMoved.put(playername, moved);
-	}
-	
-	public void joinedMinechatChecker(Player p) {
-		if (!p.hasPermission("slaphomebrew.staff")) {
-			setMoved(p.getName(), false);
-		} else {
-			setMoved(p.getName(), true); //Staff
-		}
-	}
-	
-	public void removeFromMoved(String playername) {
-		minechatMoved.remove(playername);
-	}
-	
-	public void sendNotMovedMessage(Player p) {
-		p.sendMessage(ChatColor.GRAY + "You're not allowed to do commands/chat until you have moved.");
-	}
-	
-	public boolean inMovedHashMap(String playername) {
-		if (minechatMoved.containsKey(playername)) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-	
-	
-	/*
-	 * Last Activity
-	 */
-	public void setLastActivity(String player) {
-		lastActivity.put(player, System.currentTimeMillis());
-	}
-	
-	public long getLastActivity(String player) {
-		Long a = lastActivity.get(player);
-		if (a == null) return 0;
-		else return a;
-	}
-	
-	public void removeFromLastActivity(String player) {
-		lastActivity.remove(player);
-	}
 	
 	
 	/*

@@ -68,7 +68,7 @@ public class Schedulers extends AbstractController {
 	}
 	
 	private void startAFKChecker() {
-		Util.runTimer(plugin, new AFKChecker(plugin, plugin.getAwayFromKeyboard(), plugin.getPlayerLogger(), 5), 6000, 300);
+		Util.runTimer(plugin, new AFKChecker(plugin, plugin.getAwayFromKeyboard(), 5), 6000, 300);
 	}
 	
     @Override

@@ -4,9 +4,9 @@ import me.naithantu.SlapHomebrew.Controllers.AwayFromKeyboard;
 import me.naithantu.SlapHomebrew.Controllers.ChatChannels;
 import me.naithantu.SlapHomebrew.Controllers.Homes;
 import me.naithantu.SlapHomebrew.Controllers.Jails;
-import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
 import me.naithantu.SlapHomebrew.Controllers.TabController;
 import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
+import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -16,15 +16,13 @@ public class PlayerQuitListener extends AbstractListener {
 	
 	private AwayFromKeyboard afk;
 	private Jails jails;
-	private PlayerLogger playerLogger;
 	private TabController tabController;
 	private ChatChannels chatChannels;
 	private Homes homes;
 
-	public PlayerQuitListener(AwayFromKeyboard afk, Jails jails, PlayerLogger playerLogger, TabController tabController, ChatChannels chatChannels, Homes homes) {
+	public PlayerQuitListener(AwayFromKeyboard afk, Jails jails, TabController tabController, ChatChannels chatChannels, Homes homes) {
 		this.afk = afk;
 		this.jails = jails;
-		this.playerLogger = playerLogger;
 		this.tabController = tabController;
 		this.chatChannels = chatChannels;
 		this.homes = homes;
@@ -49,16 +47,13 @@ public class PlayerQuitListener extends AbstractListener {
 		//Leave homes
 		homes.playerQuit(player);
 		
-		//Remove from minechatChecker
-		playerLogger.removeFromMoved(playername);
-		
-		//Remove from last activity
-		playerLogger.removeFromLastActivity(playername);
-		
 		//Remove from ChatChannels
 		if (chatChannels.isPlayerInChannel(playername)) {
 			chatChannels.playerLeaveChannel(player, false);
 		}
+		
+		//Remove player from PlayerControl
+		PlayerControl.getInstance().removeSlapPlayer(player);
 		
 	}
 }

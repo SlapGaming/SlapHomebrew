@@ -3,8 +3,8 @@ package me.naithantu.SlapHomebrew.Listeners.Player;
 import me.naithantu.SlapHomebrew.Commands.SlapCommand;
 import me.naithantu.SlapHomebrew.Controllers.Horses;
 import me.naithantu.SlapHomebrew.Controllers.Jails;
-import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
 import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
+import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.Bukkit;
@@ -25,12 +25,9 @@ public class PlayerInteractListener extends AbstractListener {
 	
 	private Horses horses;
 	private Jails jails;
-	private PlayerLogger playerLogger;
 
-	public PlayerInteractListener(Horses horses, Jails jails, PlayerLogger playerLogger) {
-		this.horses = horses;
+	public PlayerInteractListener(Horses horses, Jails jails) {
 		this.jails = jails;
-		this.playerLogger = playerLogger;
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -40,7 +37,7 @@ public class PlayerInteractListener extends AbstractListener {
 		final String playername = player.getName();
 		
 		//Set last activity
-		playerLogger.setLastActivity(playername);
+		PlayerControl.getPlayer(player).moved();
 		
 		//Block if in jail
 		if (jails.isInJail(playername)) {

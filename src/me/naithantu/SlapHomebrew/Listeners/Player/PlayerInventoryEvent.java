@@ -1,26 +1,27 @@
 package me.naithantu.SlapHomebrew.Listeners.Player;
 
 import me.naithantu.SlapHomebrew.Controllers.Lottery;
-import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
 import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
+import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
 
-import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
 public class PlayerInventoryEvent extends AbstractListener {
 	
 	private Lottery lottery;
-	private PlayerLogger playerLogger;
 	
-	public PlayerInventoryEvent(Lottery lottery, PlayerLogger playerLogger) {
+	public PlayerInventoryEvent(Lottery lottery) {
 		this.lottery = lottery;
-		this.playerLogger = playerLogger;
 	}
 	
 	@EventHandler
 	public void playerChangedInventory(InventoryClickEvent event) {
-		HumanEntity targetPlayer = event.getWhoClicked();
+		if (!(event.getWhoClicked() instanceof Player)) { //Check if a player
+			return;
+		}
+		Player targetPlayer = (Player) event.getWhoClicked();
 		String playerName = targetPlayer.getName();
 		
 		//Check if player still has lottery prices
@@ -35,7 +36,7 @@ public class PlayerInventoryEvent extends AbstractListener {
 		}	
 		
 		//Set last activity
-		playerLogger.setLastActivity(playerName);
+		PlayerControl.getPlayer(targetPlayer).moved();
 	}
 	
 }

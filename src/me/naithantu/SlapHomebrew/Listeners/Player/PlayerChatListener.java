@@ -13,6 +13,8 @@ import me.naithantu.SlapHomebrew.Controllers.Mention;
 import me.naithantu.SlapHomebrew.Controllers.MessageFactory;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
 import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
+import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
+import me.naithantu.SlapHomebrew.PlayerExtension.SlapPlayer;
 import me.naithantu.SlapHomebrew.Util.Log;
 import me.naithantu.SlapHomebrew.Util.Util;
 
@@ -51,17 +53,18 @@ public class PlayerChatListener extends AbstractListener {
 	@EventHandler
 	public void onPlayerChat(AsyncPlayerChatEvent event) {
 		Player player = event.getPlayer();
+		SlapPlayer slapPlayer = PlayerControl.getPlayer(player);
 		String playerName = player.getName();
 				
 		//Block chat if not moved yet
-		if (!playerLogger.hasMoved(playerName)) {
-			if (event.getMessage().matches("connected with .* using MineChat")) {
-				player.kickPlayer("MineChat is not allowed on this server.");
+		if (!slapPlayer.hasMoved()) {
+			if (event.getMessage().matches("connected with .* using MineChat")) { //If message is saying something like "Connected with Minechat"
+				player.kickPlayer("MineChat is not allowed on this server."); //Kick the player
 				event.setCancelled(true);
 				return;
 			}
 			event.setCancelled(true);
-			playerLogger.sendNotMovedMessage(player);
+			slapPlayer.sendNotMovedMessage();
 			return;
 		}		
 		
@@ -75,7 +78,7 @@ public class PlayerChatListener extends AbstractListener {
 		}
 		
 		//Set last activity
-		playerLogger.setLastActivity(playerName);
+		slapPlayer.active();
 		
 		String ucMessage = event.getMessage();
 		String message = event.getMessage().toLowerCase();

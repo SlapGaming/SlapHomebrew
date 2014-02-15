@@ -19,12 +19,11 @@ import me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegion.RemoveOwnerComman
 import me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegion.SeenGroupCommand;
 import me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegion.SelectCommand;
 import me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegion.TeleportCommand;
+import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
+import me.naithantu.SlapHomebrew.PlayerExtension.SlapPlayer;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import ru.tehkode.permissions.PermissionUser;
-import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 
@@ -124,18 +123,10 @@ public class ImprovedRegionCommand extends AbstractCommand {
 			
 		case "togglerg": case "toggleirg": case "toggleregion": //Toggle /rg <-> /irg for this player
 			testIRGPermission(Perm.toggleRegion);
-			PermissionUser pexUser = PermissionsEx.getUser(p);
-			if (pexUser != null) {
-				if (pexUser.has("-irg.regionoverride")) {
-					pexUser.removePermission("-irg.regionoverride");
-					hMsg("/region will not be overriden with /irg");
-				} else {
-					pexUser.addPermission("-irg.regionoverride");
-					hMsg("Region override is now disabled for you.");
-				}
-			} else {
-				hMsg("You are not a PEX User?");
-			}
+			SlapPlayer sp = PlayerControl.getPlayer(p); //Get the SlapPlayer
+			boolean hasToggled = sp.hasToggledRegion(); //Check if toggled
+			sp.setToggledRegion(!hasToggled); //Revert it
+			hMsg((hasToggled ? "Untoggled" : "Toggled") + " /region"); //Message
 			break;
 			
 		case "group": case "seen": case "seengroup": case "groupseen": //Get Group & Last seen of owners & members

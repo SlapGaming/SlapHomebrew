@@ -3,8 +3,8 @@ package me.naithantu.SlapHomebrew.Listeners.Player;
 import me.naithantu.SlapHomebrew.Commands.Fun.RideCommand;
 import me.naithantu.SlapHomebrew.Commands.Staff.TeleportMobCommand;
 import me.naithantu.SlapHomebrew.Controllers.Horses;
-import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
 import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
+import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.Bukkit;
@@ -23,11 +23,9 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 public class PlayerInteractEntityListener extends AbstractListener {
 	
 	private Horses horses;
-	private PlayerLogger playerLogger;
 	
-	public PlayerInteractEntityListener(Horses horses, PlayerLogger playerLogger) {
+	public PlayerInteractEntityListener(Horses horses) {
 		this.horses = horses;
-		this.playerLogger = playerLogger;
 	}
 	
 	@EventHandler
@@ -37,7 +35,7 @@ public class PlayerInteractEntityListener extends AbstractListener {
 		Entity clickedEntity = event.getRightClicked();
 				
 		//Set last activity
-		playerLogger.setLastActivity(playername);
+		PlayerControl.getPlayer(player).moved();
 		
 		//Horse info click
 		if (horses.isInfoClick(playername)) {

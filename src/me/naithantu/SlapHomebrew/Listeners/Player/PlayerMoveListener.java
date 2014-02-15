@@ -6,8 +6,8 @@ import java.util.logging.Level;
 import me.naithantu.SlapHomebrew.Controllers.AwayFromKeyboard;
 import me.naithantu.SlapHomebrew.Controllers.Extras;
 import me.naithantu.SlapHomebrew.Controllers.Flag;
-import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
 import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
+import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.Bukkit;
@@ -21,12 +21,10 @@ public class PlayerMoveListener extends AbstractListener {
 
 	private Extras extras;
 	private AwayFromKeyboard afk;
-	private PlayerLogger playerLogger;
 
-	public PlayerMoveListener(Extras extras, AwayFromKeyboard afk, PlayerLogger playerLogger) {
+	public PlayerMoveListener(Extras extras, AwayFromKeyboard afk) {
 		this.extras = extras;
 		this.afk = afk;
-		this.playerLogger = playerLogger;
 	}
 
 	@EventHandler
@@ -101,14 +99,7 @@ public class PlayerMoveListener extends AbstractListener {
 			}
 		}
 
-		// Set moved if moved
-		if (playerLogger.inMovedHashMap(playername)) {
-			if (!playerLogger.hasMoved(playername)) {
-				playerLogger.setMoved(playername, true);
-			}
-		}
-
-		// Set last activity
-		playerLogger.setLastActivity(playername);
+		//Player moved
+		PlayerControl.getPlayer(player).moved();
 	}
 }

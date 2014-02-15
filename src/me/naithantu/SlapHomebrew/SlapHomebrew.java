@@ -12,6 +12,7 @@ import me.naithantu.SlapHomebrew.Controllers.FancyMessage.FancyMessageControl;
 import me.naithantu.SlapHomebrew.Listeners.*;
 import me.naithantu.SlapHomebrew.Listeners.Entity.*;
 import me.naithantu.SlapHomebrew.Listeners.Player.*;
+import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 import me.naithantu.SlapHomebrew.Timing.HandlerControl;
 import me.naithantu.SlapHomebrew.Util.Log;
@@ -79,6 +80,7 @@ public class SlapHomebrew extends JavaPlugin {
 	private Mail mail;
 	private Mention mention;
     private Messages messages;
+    private PlayerControl playerControl;
 	private PlayerLogger playerLogger;
 	private TabController tabController;
 	private ToldStatus toldStatus;
@@ -191,7 +193,10 @@ public class SlapHomebrew extends JavaPlugin {
 	}
 	
 	private void initializeControllers() {
-		 controllers = new ArrayList<>();
+		playerControl = new PlayerControl(); //Initialize PlayerControl
+		
+		//Initialize other controllers
+		 controllers = new ArrayList<>();		 
 		 controllers.add(bump = new Bump(dataStorage, dataConfig));
 		 controllers.add(changeLog = new ChangeLog());
 		 controllers.add(chatChannels = new ChatChannels());
@@ -245,17 +250,17 @@ public class SlapHomebrew extends JavaPlugin {
 				new PlayerChatListener(afk, jails, playerLogger, chatChannels, mention),
 				new PlayerCommandListener(afk, jails, playerLogger),
 				new PlayerDeathListener(playerLogger),
-				new PlayerInteractEntityListener(horses, playerLogger),
-				new PlayerInteractListener(horses, jails, playerLogger),
-				new PlayerInventoryEvent(lottery, playerLogger),
-				new PlayerJoinListener(mail, jails, playerLogger, tabController, homes),
+				new PlayerInteractEntityListener(horses),
+				new PlayerInteractListener(horses, jails),
+				new PlayerInventoryEvent(lottery),
+				new PlayerJoinListener(mail, jails, tabController, homes),
 				new PlayerLoginListener(whitelist),
-				new PlayerMoveListener(extras, afk, playerLogger),
+				new PlayerMoveListener(extras, afk),
 				new PlayerPortalListener(),
-				new PlayerQuitListener(afk, jails, playerLogger, tabController, chatChannels, homes),
+				new PlayerQuitListener(afk, jails, tabController, chatChannels, homes),
 				new PlayerRespawnListener(),
 				new PlayerTabCompleteListener(),
-				new PlayerTeleportListener(jails, afk, playerLogger),
+				new PlayerTeleportListener(jails, afk),
 				new PlayerToggleFlightListener(extras),
 				new PotionListener(),
 				new ProjectileHitListener(),
@@ -292,9 +297,13 @@ public class SlapHomebrew extends JavaPlugin {
 	}
 	
 	private void disableControllers() {
+		//Shutdown main controllers
 		for (AbstractController controller : controllers) {
 			controller.shutdown();
 		}
+		
+		//Shutdown player control
+		playerControl.shutdown(); 
 	}
 
 	

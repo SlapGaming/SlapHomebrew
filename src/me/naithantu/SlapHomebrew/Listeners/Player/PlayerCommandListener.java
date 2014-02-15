@@ -4,6 +4,8 @@ import me.naithantu.SlapHomebrew.Controllers.AwayFromKeyboard;
 import me.naithantu.SlapHomebrew.Controllers.Jails;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
 import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
+import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
+import me.naithantu.SlapHomebrew.PlayerExtension.SlapPlayer;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.Bukkit;
@@ -28,16 +30,18 @@ public class PlayerCommandListener extends AbstractListener {
 	@EventHandler
 	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
 		Player player = event.getPlayer();
+		SlapPlayer slapPlayer = PlayerControl.getPlayer(player);
+		
+		//Block commands if not moved yet
+		if (!slapPlayer.hasMoved()) {
+			event.setCancelled(true);
+			slapPlayer.sendNotMovedMessage();
+			return;
+		}
+		
 		String message = event.getMessage().toLowerCase().trim();
 		String[] commandMessage = message.split(" ");
 		String playerName = player.getName();
-		
-		//Block commands if not moved yet
-		if (!playerLogger.hasMoved(playerName)) {
-			event.setCancelled(true);
-			playerLogger.sendNotMovedMessage(player);
-			return;
-		}
 		
 		switch (commandMessage[0]) {//Morph commands
 		case "/w": case "/whisper": case "/tell": //Morph all chat commands -> /message
@@ -45,7 +49,7 @@ public class PlayerCommandListener extends AbstractListener {
 			event.setCancelled(true);
 			return;
 			
-		case "/plugins": //Plugins -> /sPlugins
+		case "/plugins": case "pl": //Plugins -> /sPlugins
 			if (!Util.testPermission(player, "spluginsoverride")) {
 				player.chat("/splugins");
 				event.setCancelled(true);
@@ -70,12 +74,13 @@ public class PlayerCommandListener extends AbstractListener {
 			break;
 			
 		case "/region": case "/rg": //Region -> ImprovedRegion
-			if (!player.hasPermission("irg.regionoverride")) {
-				player.chat(event.getMessage().replaceFirst("(?i)" + commandMessage[0], "/irg"));
+			if (!slapPlayer.hasToggledRegion()) { //If not toggled region
+				player.chat(event.getMessage().replaceFirst("(?i)" + commandMessage[0], "/irg")); //Use /irg
 				event.setCancelled(true);
 				return;
 			}
 			break;
+			
 		case "/ac": case "/helpop": //Whine at them for not using /g or /gc
 			if (Util.testPermission(player, "guidechat")) {
 				player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&d&l&nSTOP USING &b&l&n/AC &f&l&n| &c&l&nALSO COLORS &f&l&n| &e&l&nUSE /G"));
@@ -101,7 +106,7 @@ public class PlayerCommandListener extends AbstractListener {
 		}
 				
 		//Set last activity
-		playerLogger.setLastActivity(playerName);
+		slapPlayer.active();
 		
 		//Cancel commands in Jail
 		if (jails.isInJail(playerName)) {
