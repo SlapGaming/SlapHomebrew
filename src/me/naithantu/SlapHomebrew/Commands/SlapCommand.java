@@ -164,7 +164,7 @@ public class SlapCommand extends AbstractCommand {
 			
 		case "spawnenderdragon": //Spawn a new enderdragon
 			testPermission("spawnenderdragon");
-			Util.runASync(plugin, new Runnable() {
+			Util.runASync(new Runnable() {
 				
 				@Override
 				public void run() {
@@ -177,7 +177,7 @@ public class SlapCommand extends AbstractCommand {
 						if (x == 0) { //If 0 then spawn a new one
 							Util.broadcast("Regenerating the end.. Possible lag incoming.");
 							server.dispatchCommand(server.getConsoleSender(), "nend regen world_the_end");
-							Util.runLater(plugin, new Runnable() {
+							Util.runLater(new Runnable() {
 								@Override
 								public void run() {
 									server.dispatchCommand(server.getConsoleSender(), "nend respawnED world_the_end"); //Spawn a new Enderdragon 30 secs after regenerating the end
@@ -203,7 +203,7 @@ public class SlapCommand extends AbstractCommand {
 			boolean portal = (args.length == 3 && args[2].equalsIgnoreCase("portal")); //Check if portal
 			
 			if (portal) { //Portal Story
-				cancelableTask = Util.runTimer(plugin, new Runnable() {
+				cancelableTask = Util.runTimer(new Runnable() {
 					private int x = 0;
 					@Override
 					public void run() {
@@ -442,7 +442,7 @@ public class SlapCommand extends AbstractCommand {
 			case "tableflip": case "fliptable": //Flip a table
 				testPermission("tableflip");
 				player.chat("(\u256F\u00B0\u25A1\u00B0\uFF09\u256F\uFE35 \u253B\u2501\u253B Table Flip!!"); //Flip the table
-				Util.runLater(plugin, new Runnable() {
+				Util.runLater(new Runnable() {
 					@Override
 					public void run() { //5 Seconds later let someone fix the table
 						Player[] onlinePlayers = Util.getOnlinePlayers();

@@ -23,7 +23,7 @@ public class Schedulers extends AbstractController {
 	}
 
 	private void removeInvisibility() {
-		Util.runTimer(plugin, new Runnable() {
+		Util.runTimer(new Runnable() {
 			public void run() {
 				for (Player player : Bukkit.getServer().getOnlinePlayers()) {
 					Collection<PotionEffect> potionEffects = player.getActivePotionEffects();
@@ -41,7 +41,7 @@ public class Schedulers extends AbstractController {
 	}
 
 	private void checkFlags() {
-		Util.runTimer(plugin, new Runnable() {
+		Util.runTimer(new Runnable() {
 			public void run() {
 				for (Player player : Bukkit.getServer().getOnlinePlayers()) {
 					Location location = player.getLocation();
@@ -64,11 +64,11 @@ public class Schedulers extends AbstractController {
 	}
 	
 	private void startWeather() {
-		Util.runTimer(plugin, new WeatherTask(plugin), 1200, 1200);
+		Util.runTimer(new WeatherTask(plugin), 1200, 1200);
 	}
 	
 	private void startAFKChecker() {
-		Util.runTimer(plugin, new AFKChecker(plugin, plugin.getAwayFromKeyboard(), 5), 6000, 300);
+		Util.runTimer(new AFKChecker(plugin, plugin.getAwayFromKeyboard(), 5), 6000, 300);
 	}
 	
     @Override

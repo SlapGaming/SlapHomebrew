@@ -38,7 +38,7 @@ public class SpartaCommand extends AbstractCommand {
 
 		hMsg("Sparta'd " + target.getName());
 		
-		task = Util.runTimer(plugin, new Runnable() {
+		task = Util.runTimer(new Runnable() {
 			private int sec = 1;
 			@Override
 			public void run() {

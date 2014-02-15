@@ -76,7 +76,7 @@ public class DeathLogger extends AbstractLogger implements Listener {
 	@Override
 	public void batch() {
 		batch(deathsSQL, deaths);
-		Util.runLater(plugin, new Runnable() {
+		Util.runLater(new Runnable() {
 			
 			@Override
 			public void run() {
@@ -105,7 +105,7 @@ public class DeathLogger extends AbstractLogger implements Listener {
 			AbstractCommand.removeDoingCommand(p);
 			throw new CommandException("DeathLogging is currently disabled.");
 		}
-		Util.runASync(instance.plugin, new Runnable() {
+		Util.runASync(new Runnable() {
 			
 			@Override
 			public void run() {
@@ -223,7 +223,7 @@ public class DeathLogger extends AbstractLogger implements Listener {
 			AbstractCommand.removeDoingCommand(p);
 			throw new CommandException("DeathLogging is currently disabled.");
 		}
-		Util.runASync(instance.plugin, new Runnable() {
+		Util.runASync(new Runnable() {
 			@Override
 			public void run() {
 				ArrayList<PlayerKilled> kills = new ArrayList<>();

@@ -54,7 +54,7 @@ public class TimecheckCommand extends AbstractCommand {
 			case "allstaff": case "guidestaff": case "gstaff": case "guidesstaff": //Guides+
 				final Date[] staffDates = parseDates(2);
 				addDoingCommand();
-				Util.runASync(plugin, new Runnable() {
+				Util.runASync(new Runnable() {
 					@Override
 					public void run() {
 						HashMap<String, PermissionUser> playerToUser = new HashMap<>();
@@ -119,7 +119,7 @@ public class TimecheckCommand extends AbstractCommand {
 				}
 				final Date[] groupDates = parseDates(2);
 				addDoingCommand(); //Add doing command
-				Util.runASync(plugin, new Runnable() {
+				Util.runASync(new Runnable() {
 					@Override
 					public void run() {
 						PermissionUser[] permissionUsers = group.getUsers(); //Get users
@@ -148,7 +148,7 @@ public class TimecheckCommand extends AbstractCommand {
 			}
 			final Date[] lbDates = parseDates(2); //Parse dates
 			addDoingCommand(); //Add doing command
-			Util.runASync(plugin, new Runnable() {
+			Util.runASync(new Runnable() {
 				@Override
 				public void run() {
 					ArrayList<LeaderboardEntry> lb = logger.getLeaderboard(lbDates[0], lbDates[1], entries);
@@ -175,7 +175,7 @@ public class TimecheckCommand extends AbstractCommand {
 			final Date[] playerDates = parseDates(1); //Parse dates, if given
 			final String playername = offPlayer.getName();
 			addDoingCommand(); //Add doing command
-			Util.runASync(plugin, new Runnable() {
+			Util.runASync(new Runnable() {
 				@Override
 				public void run() {
 					long time = logger.getPlayedTime(playername, playerDates[0], playerDates[1]); //Get time

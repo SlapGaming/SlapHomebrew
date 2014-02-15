@@ -39,7 +39,7 @@ public class SeenGroupCommand extends AbstractImprovedRegionCommand {
 		p.sendMessage(ChatColor.GRAY + "Collecting info for region: " + region.getId());
 		
 		
-		Util.runASync(plugin, new Runnable() {
+		Util.runASync(new Runnable() {
 			
 			@Override
 			public void run() {

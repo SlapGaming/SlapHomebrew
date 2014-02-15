@@ -33,7 +33,7 @@ public class LeaveCommand extends AbstractCommand {
 			pvpWorld.add(playername);
 			
 			hMsg("You will be teleported to spawn in 10 seconds!");
-			Util.runLater(plugin, new Runnable() {
+			Util.runLater(new Runnable() {
 				
 				@Override
 				public void run() {

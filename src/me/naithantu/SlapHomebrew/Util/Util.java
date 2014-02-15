@@ -440,7 +440,8 @@ public class Util {
     	return Bukkit.getOfflinePlayer(playername);
     }
     
-    public static BukkitTask runASync(SlapHomebrew plugin, Runnable runnable) {
+    public static BukkitTask runASync(Runnable runnable) {
+    	SlapHomebrew plugin = SlapHomebrew.getInstance();
     	if (!plugin.isEnabled()) {
     		runnable.run();
     		return null;
@@ -448,7 +449,8 @@ public class Util {
     	return getScheduler(plugin).runTaskAsynchronously(plugin, runnable);
     }
     
-    public static BukkitTask runASyncLater(SlapHomebrew plugin, Runnable runnable, int delay) {
+    public static BukkitTask runASyncLater(Runnable runnable, int delay) {
+    	SlapHomebrew plugin = SlapHomebrew.getInstance();
     	if (!plugin.isEnabled()) {
     		runnable.run();
     		return null;
@@ -456,7 +458,8 @@ public class Util {
     	return getScheduler(plugin).runTaskLaterAsynchronously(plugin, runnable, delay);
     }
     
-    public static BukkitTask runASyncTimer(SlapHomebrew plugin, Runnable runnable, int delay, int period) {
+    public static BukkitTask runASyncTimer(Runnable runnable, int delay, int period) {
+    	SlapHomebrew plugin = SlapHomebrew.getInstance();
     	if (!plugin.isEnabled()) {
     		runnable.run();
     		return null;
@@ -464,7 +467,8 @@ public class Util {
     	return getScheduler(plugin).runTaskTimerAsynchronously(plugin, runnable, delay, period);
     }
     
-    public static BukkitTask run(SlapHomebrew plugin, Runnable runnable) {
+    public static BukkitTask run(Runnable runnable) {
+    	SlapHomebrew plugin = SlapHomebrew.getInstance();
     	if (!plugin.isEnabled()) {
     		runnable.run();
     		return null;
@@ -472,7 +476,8 @@ public class Util {
     	return getScheduler(plugin).runTask(plugin, runnable);
     }
     
-    public static BukkitTask runLater(SlapHomebrew plugin, Runnable runnable, int delay) {
+    public static BukkitTask runLater(Runnable runnable, int delay) {
+    	SlapHomebrew plugin = SlapHomebrew.getInstance();
     	if (!plugin.isEnabled()) {
     		runnable.run();
     		return null;
@@ -480,7 +485,8 @@ public class Util {
     	return getScheduler(plugin).runTaskLater(plugin, runnable, delay);
     }
     
-    public static BukkitTask runTimer(SlapHomebrew plugin, Runnable runnable, int delay, int period) {
+    public static BukkitTask runTimer(Runnable runnable, int delay, int period) {
+    	SlapHomebrew plugin = SlapHomebrew.getInstance();
     	if (!plugin.isEnabled()) {
     		runnable.run();
     		return null;
@@ -490,6 +496,10 @@ public class Util {
     
     public static BukkitScheduler getScheduler(SlapHomebrew plugin) {
     	return plugin.getServer().getScheduler();
+    }
+    
+    public static BukkitScheduler getScheduler() {
+    	return SlapHomebrew.getInstance().getServer().getScheduler();
     }
     
 }

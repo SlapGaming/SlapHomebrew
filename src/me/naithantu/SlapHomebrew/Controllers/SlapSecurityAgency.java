@@ -72,7 +72,7 @@ public class SlapSecurityAgency extends AbstractController {
 	 * Start batching the Loggers each 2 minutes.
 	 */
 	private void startBatchingTask() {
-		batchingTask = Util.runASyncTimer(plugin, new Runnable() {
+		batchingTask = Util.runASyncTimer(new Runnable() {
 			
 			private int size = -1;
 			private int current = 0;

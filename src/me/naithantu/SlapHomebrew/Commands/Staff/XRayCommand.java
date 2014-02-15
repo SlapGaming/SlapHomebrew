@@ -69,7 +69,7 @@ public class XRayCommand extends AbstractCommand {
 			throw new CommandException("This world doesn't get logged, or can't be checked.");
 		}
 		
-		Util.runASync(plugin, new Runnable() {
+		Util.runASync(new Runnable() {
 			
 			@Override
 			public void run() {

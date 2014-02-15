@@ -93,7 +93,7 @@ public class RegionLogger extends AbstractLogger {
 			AbstractCommand.removeDoingCommand(sender);
 			throw new CommandException("The RegionLogger is currently disabled.");
 		}
-		Util.runASync(instance.plugin, new Runnable() {
+		Util.runASync(new Runnable() {
 			
 			@Override
 			public void run() {

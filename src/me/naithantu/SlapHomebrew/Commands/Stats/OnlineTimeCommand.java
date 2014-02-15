@@ -30,7 +30,7 @@ public class OnlineTimeCommand extends AbstractCommand {
 			switch (args[0].toLowerCase()) {
 			case "lb": case "leader": case "list": case "leaderboard": case "board": case "top": //If want leaderboard
 				final SessionLogger logger = SessionLogger.getInstance(p); //Find instance
-				Util.runASync(plugin, new Runnable() {
+				Util.runASync(new Runnable() {
 					@Override
 					public void run() {
 						ArrayList<LeaderboardEntry> entries = logger.getLeaderboard(null, null, 10); //Get alltime leaderboard

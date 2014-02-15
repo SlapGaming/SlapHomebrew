@@ -58,7 +58,7 @@ public class PlayerJoinListener extends AbstractListener {
 		//First time join?
 		final boolean firstTime = !player.hasPlayedBefore();
 		
-		Util.runLater(plugin, new Runnable() {
+		Util.runLater(new Runnable() {
 			
 			@Override
 			public void run() {

@@ -45,7 +45,7 @@ public class SearchregionCommand extends AbstractCommand {
 		if (!legacy) {
 			RegionLogger.getRegionChanges(sender, region, world);
 		} else {
-			Util.runASync(plugin, new Runnable() {
+			Util.runASync(new Runnable() {
 				
 				private BufferedReader bf;
 

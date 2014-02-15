@@ -60,7 +60,7 @@ public class PromotionCommand extends AbstractCommand {
 			break;
 			
 		case "rank": case "ranks":
-			Util.runASync(plugin, new Runnable() {
+			Util.runASync(new Runnable() {
 				@Override
 				public void run() {
 					try {

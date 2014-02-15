@@ -95,7 +95,7 @@ public class ModreqLogger extends AbstractLogger implements Listener {
 			iteration++;
 		}
 		
-		Util.runLater(plugin, new Runnable() { //Run later, to prevent null?
+		Util.runLater(new Runnable() { //Run later, to prevent null?
 			@Override
 			public void run() {
 				CompletedModreq cm = new CompletedModreq(iteration, id, req.getTimestamp(), req.getName(), req.getMessage(), req.getModTimestamp(), req.getModName());

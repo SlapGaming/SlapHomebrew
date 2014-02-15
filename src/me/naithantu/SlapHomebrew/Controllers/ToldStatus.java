@@ -55,7 +55,7 @@ public class ToldStatus extends AbstractController {
 		
 		p.sendMessage(Util.getHeader() + "TOLD STATUS:");
 		ToldSender told = new ToldSender(p, stopWhenOff); //Create new Runnable
-		BukkitTask task = Util.runTimer(plugin, told, 1, ticksInterval); //Run task
+		BukkitTask task = Util.runTimer(told, 1, ticksInterval); //Run task
 		told.setOwnTask(task); //Set task in ToldSender
 		senders.put(p.getName(), told); //Put in map
 	}

@@ -195,7 +195,7 @@ public class PlotControl extends AbstractLogger {
 			checkDoingCommand(p, true);
 			p.sendMessage(ChatColor.GRAY + "Getting plot mark...");
 			
-			Util.runASync(plugin, new Runnable() {
+			Util.runASync(new Runnable() {
 				@Override
 				public void run() {
 					Connection con = SQLPool.getConnection();
@@ -227,7 +227,7 @@ public class PlotControl extends AbstractLogger {
 		checkDoingCommand(p, true);
 		final PlotMark nPM = new PlotMark(p, comment);
 		
-		Util.runASync(plugin, new Runnable() {
+		Util.runASync(new Runnable() {
 			@Override
 			public void run() {
 				Connection con = SQLPool.getConnection();
@@ -305,7 +305,7 @@ public class PlotControl extends AbstractLogger {
 				unfinishedPlotmarks.remove(iteration); //Remove whole map
 			}
 			
-			Util.runASync(plugin, new Runnable() {
+			Util.runASync(new Runnable() {
 				
 				@Override
 				public void run() {
@@ -405,13 +405,13 @@ public class PlotControl extends AbstractLogger {
 			checkDoingCommand(p, true);
 			p.sendMessage(ChatColor.GRAY + "Getting plot mark location. Teleport might be delayed.");
 			
-			Util.runASync(plugin, new Runnable() { //Get Plot Location
+			Util.runASync(new Runnable() { //Get Plot Location
 				@Override
 				public void run() {
 					Connection con = SQLPool.getConnection();
 					try {
 						final PlotMark pm = getPlotMarkSQL(con, iteration, id); //Get PlotMark
-						Util.run(plugin, new Runnable() { //Run in Sync
+						Util.run(new Runnable() { //Run in Sync
 							@Override
 							public void run() {
 								try {

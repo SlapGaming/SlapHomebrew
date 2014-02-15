@@ -49,7 +49,7 @@ public class SQLPool extends AbstractController {
 	 * Start pinging the connections
 	 */
 	private void startPinging() {
-		Util.runASyncTimer(plugin, new Runnable() {			
+		Util.runASyncTimer(new Runnable() {			
 			@Override
 			public void run() {
 				HashSet<Connection> connectionsSet = new HashSet<>(connections); //Create new hashset of connections

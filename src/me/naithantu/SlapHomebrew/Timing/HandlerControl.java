@@ -2,7 +2,6 @@ package me.naithantu.SlapHomebrew.Timing;
 
 import java.lang.reflect.Field;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.event.HandlerList;
@@ -12,7 +11,7 @@ import org.bukkit.plugin.RegisteredListener;
 public class HandlerControl {
 
 	public HandlerControl() {
-		Util.runLater(SlapHomebrew.getInstance(), new Runnable() {
+		Util.runLater(new Runnable() {
 			
 			@Override
 			public void run() {

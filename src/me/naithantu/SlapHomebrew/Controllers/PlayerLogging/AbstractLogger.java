@@ -56,7 +56,7 @@ public abstract class AbstractLogger extends AbstractController {
 		if (inSync) {
 			executeBatch(sqlStatement, batch);
 		} else {
-			Util.runASync(plugin, new Runnable() {
+			Util.runASync(new Runnable() {
 				@Override
 				public void run() {
 					executeBatch(sqlStatement, batch);

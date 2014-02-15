@@ -39,7 +39,7 @@ public class StaffListCommand extends AbstractCommand {
 		mods = admins = adminPlus = 0;
 		
 		if (args.length == 1 && args[0].equalsIgnoreCase("all")) {
-			Util.runASync(plugin, new Runnable() {
+			Util.runASync(new Runnable() {
 				
 				@Override
 				public void run() {

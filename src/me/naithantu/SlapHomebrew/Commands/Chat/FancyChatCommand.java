@@ -43,7 +43,7 @@ public class FancyChatCommand extends AbstractCommand {
 			break;
 			
 		case "reload":
-			Util.runASync(plugin, new Runnable() {
+			Util.runASync(new Runnable() {
 				@Override
 				public void run() {
 					fmc.reloadFile();

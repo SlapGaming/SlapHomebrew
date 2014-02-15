@@ -123,7 +123,7 @@ public class Vip extends AbstractController {
 	 * Start checking after a minute.
 	 */
 	private void startTimer() {
-		Util.runASyncTimer(plugin, new Runnable() {
+		Util.runASyncTimer(new Runnable() {
 			@Override
 			public void run() {
 				for (Entry<String, Long> entry : temporaryVIPs.entrySet()) { //Check all temporary VIPs
@@ -417,7 +417,7 @@ public class Vip extends AbstractController {
 	 * @param lifetime is lifetime
 	 */
 	private void updateVipTime(final String playername, final Long tillTime, final boolean lifetime) {
-		Util.runASync(plugin, new Runnable() {
+		Util.runASync(new Runnable() {
 			@Override
 			public void run() {
 				Connection con = SQLPool.getConnection();
@@ -460,7 +460,7 @@ public class Vip extends AbstractController {
 	 * @param playername The player
 	 */
 	private void removeVipFromDB(final String playername) {
-		Util.runASync(plugin, new Runnable() {
+		Util.runASync(new Runnable() {
 			@Override
 			public void run() {
 				Connection con = SQLPool.getConnection(); //Get connection

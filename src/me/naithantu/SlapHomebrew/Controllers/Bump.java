@@ -38,7 +38,7 @@ public class Bump extends AbstractController {
 	}
 
 	public void bumpTimer() {
-		amsgId = Util.runLater(plugin, new Runnable() {
+		amsgId = Util.runLater(new Runnable() {
 			public void run() {
 				//Aggressive bumping thing here. Start 5 minute timer.
 				bumpIsDone = false;
@@ -53,7 +53,7 @@ public class Bump extends AbstractController {
 	}
 
 	public void shortBumpTimer() {
-		shortBumpTimer = Util.runLater(plugin, new Runnable() {
+		shortBumpTimer = Util.runLater(new Runnable() {
 			public void run() {
 				if (getOnlineStaff() > 0 && !bumpIsDone) {
 					Util.messagePermissionHolders("bump", ChatColor.RED + "[BUMP] " + ChatColor.GREEN + "Bump the forums! When you're going to, do: " + ChatColor.YELLOW + "/bumpdone");
