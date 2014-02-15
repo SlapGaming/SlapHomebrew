@@ -173,6 +173,9 @@ public class PlayerChatListener extends AbstractListener {
 				//Log
 				Log.info("Chat:" + name + " " + event.getMessage());
 				
+				//Check if colorize
+				boolean colorize = Util.testPermission(player, "staff");
+				
 				for (Player p : Util.getOnlinePlayers()) { //Send message to all players
 					String sendMessage = name;
 					boolean isSender = (p == player); //Check if the player = the sender
@@ -191,7 +194,7 @@ public class PlayerChatListener extends AbstractListener {
 							sendMessage += "@" + mentionedPlayer.getName() + ChatColor.RESET;
 						}
 					}
-					p.sendMessage(sendMessage);
+					p.sendMessage(colorize ? ChatColor.translateAlternateColorCodes('&', sendMessage) : sendMessage); //Send message (Colorize if needed)
 				}
 			}
 		}
