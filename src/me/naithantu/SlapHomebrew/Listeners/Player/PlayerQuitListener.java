@@ -7,7 +7,9 @@ import me.naithantu.SlapHomebrew.Controllers.Jails;
 import me.naithantu.SlapHomebrew.Controllers.TabController;
 import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
 import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
+import me.naithantu.SlapHomebrew.PlayerExtension.SlapPlayer;
 
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -31,6 +33,7 @@ public class PlayerQuitListener extends AbstractListener {
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		Player player = event.getPlayer();
+		SlapPlayer slapPlayer = PlayerControl.getPlayer(player);
 		String playername = player.getName();
 		
 		//Remove from AFK
@@ -50,6 +53,11 @@ public class PlayerQuitListener extends AbstractListener {
 		//Remove from ChatChannels
 		if (chatChannels.isPlayerInChannel(playername)) {
 			chatChannels.playerLeaveChannel(player, false);
+		}
+		
+		//Ragequit
+		if (slapPlayer.isRageQuit()) {
+			event.setQuitMessage(ChatColor.YELLOW + player.getName() + " left in a fit of rage."); //Change quit message
 		}
 		
 		//Remove player from PlayerControl

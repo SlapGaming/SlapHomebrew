@@ -77,6 +77,7 @@ public class CommandHandler {
 		case "plot":			commandObj = new PlotCommand(sender, args);						break;
 		case "potion":			commandObj = new PotionCommand(sender, args);					break;
 		case "promotion":		commandObj = new PromotionCommand(sender, args);				break;
+		case "ragequit":		commandObj = new RageQuitCommand(sender, args);					break;
 		case "rainbow":			commandObj = new RainbowCommand(sender, args);					break;
 		case "ride":			commandObj = new RideCommand(sender, args);						break;
 		case "roll":			commandObj = new RollCommand(sender, args);						break;

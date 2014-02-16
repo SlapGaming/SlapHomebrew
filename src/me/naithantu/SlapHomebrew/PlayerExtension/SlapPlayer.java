@@ -20,6 +20,7 @@ public class SlapPlayer {
 	private boolean toggledRegion; //Toggled /irg into /rg
 	private boolean rideOnRightClick; //Ride a clicked entity
 	private boolean moved; //The player has moved since login
+	private boolean rageQuit; //Player ragequited the server
 	
 	
 	/**
@@ -49,6 +50,7 @@ public class SlapPlayer {
 		toggledRegion = false;
 		rideOnRightClick = false;
 		moved = false;
+		rageQuit = false;
 		
 		//Activity
 		lastActivity = System.currentTimeMillis();
@@ -257,6 +259,25 @@ public class SlapPlayer {
 	 */
 	public void removeMessageCombiner() {
 		this.messageCombiner = null;
+	}
+	
+	/*
+	 * Ragequit
+	 */
+	/**
+	 * Set if the player is going to rage quit
+	 * @param rageQuit is going to ragequit
+	 */
+	public void setRageQuit(boolean rageQuit) {
+		this.rageQuit = rageQuit;
+	}
+	
+	/**
+	 * Check if the player is going to rage quit
+	 * @return is going to rage quit
+	 */
+	public boolean isRageQuit() {
+		return rageQuit;
 	}
 	
 	

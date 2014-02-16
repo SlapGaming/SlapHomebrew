@@ -3,7 +3,7 @@ main: me.naithantu.SlapHomebrew.SlapHomebrew
 depend: [Essentials, Vault, PermissionsEx]
 softdepend: [TabAPI, ReportRTS, MCBans]
 authors: [naithantu, Stoux2]
-version: 3.6.1
+version: 3.6.2
 description: A custom plugin which adds lots of extra features to the SlapGaming minecraft server.
 commands:
   vip:
@@ -215,3 +215,6 @@ commands:
     description: Wave to someone!
     usage: "Usage: /wave <toPlayer>"
     aliases: [waves]
+  ragequit:
+    description: Leave in a fit or rage!
+    usage: "Usage: /ragequit"
