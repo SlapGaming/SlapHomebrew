@@ -354,9 +354,18 @@ public class Util {
      * Broadcast a message to all players. Prepend [SLAP] header.
      * @param message The message
      */
-    public static void broadcast(String message) {
+    public static void broadcastHeader(String message) {
     	Bukkit.broadcastMessage(getHeader() + message);
     }
+    
+    /**
+     * Broadcast a message to all players.
+     * @param message The message
+     */
+    public static void broadcast(String message) {
+    	Bukkit.broadcastMessage(message);
+    }
+    
     
     /**
      * Get all blocks in the line of sight of an entity

@@ -3,7 +3,7 @@ main: me.naithantu.SlapHomebrew.SlapHomebrew
 depend: [Essentials, Vault, PermissionsEx]
 softdepend: [TabAPI, ReportRTS, MCBans]
 authors: [naithantu, Stoux2]
-version: 3.6.0
+version: 3.6.1
 description: A custom plugin which adds lots of extra features to the SlapGaming minecraft server.
 commands:
   vip:
@@ -211,3 +211,7 @@ commands:
   head:
     description: Get your head!
     usage: "Usage: /head"
+  wave:
+    description: Wave to someone!
+    usage: "Usage: /wave <toPlayer>"
+    aliases: [waves]

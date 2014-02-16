@@ -97,6 +97,7 @@ public class CommandHandler {
 		case "unjail":			commandObj = new UnjailCommand(sender, args);					break;
 		case "vip":				commandObj = new VipCommand(sender, args);						break;
 		case "vipforum":		commandObj = new VipForumCommand(sender, args);					break;
+		case "wave":			commandObj = new WaveCommand(sender, args);						break;
 		case "whitelist":		commandObj = new WhitelistCommand(sender, args);				break;
 		case "world":			commandObj = new WorldCommand(sender, args);					break;
 		case "worldguards":		commandObj = new WorldguardsCommand(sender, args);				break;

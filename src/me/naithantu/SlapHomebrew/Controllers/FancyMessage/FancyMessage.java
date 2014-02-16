@@ -3,10 +3,14 @@ package me.naithantu.SlapHomebrew.Controllers.FancyMessage;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.server.v1_7_R1.NBTTagCompound;
+
 import org.bukkit.Achievement;
 import org.bukkit.ChatColor;
 import org.bukkit.craftbukkit.libs.com.google.gson.JsonArray;
 import org.bukkit.craftbukkit.libs.com.google.gson.JsonObject;
+import org.bukkit.craftbukkit.v1_7_R1.inventory.CraftItemStack;
+import org.bukkit.inventory.ItemStack;
 
 public class FancyMessage {
 
@@ -92,6 +96,16 @@ public class FancyMessage {
 	public FancyMessage itemTooltip(String itemJSON) {
 		onHover("show_item", itemJSON);
 		return this;
+	}
+	
+	/**
+	 * Create a ToolTip for an item
+	 * @param itemStack The item
+	 */
+	public FancyMessage itemTooltip(ItemStack itemStack) {
+		String s = CraftItemStack.asNMSCopy(itemStack).save(new NBTTagCompound()).toString();
+		System.out.println(s);
+		return itemTooltip(CraftItemStack.asNMSCopy(itemStack).save(new NBTTagCompound()).toString());
 	}
 
 	/**

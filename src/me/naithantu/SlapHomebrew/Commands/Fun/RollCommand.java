@@ -29,17 +29,17 @@ public class RollCommand extends AbstractCommand {
 				Random random = new Random();
 				int randInt = random.nextInt(101);
 				lottery.getLottery().put(playername, randInt);
-				Util.broadcast(playername + " rolled " + randInt + "!");
+				Util.broadcastHeader(playername + " rolled " + randInt + "!");
 			} else {
 				throw new CommandException(ErrorMsg.alreadyRolled);
 			}
 		} else if (lottery.isFakeLotteryPlaying()) {
 			if (!lottery.hasAlreadyFakeRolled(playername)) {
 				if (playername.equals(lottery.getFakeLotteryWinner())) {
-					Util.broadcast(playername + " rolled 100!");
+					Util.broadcastHeader(playername + " rolled 100!");
 					lottery.fakeRoll(playername, 100);
 				} else {
-					Util.broadcast(playername + " rolled 0!");
+					Util.broadcastHeader(playername + " rolled 0!");
 					lottery.fakeRoll(playername, 0);
 				}
 			} else {

@@ -17,7 +17,6 @@ import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
 import me.naithantu.SlapHomebrew.PlayerExtension.SlapPlayer;
 import me.naithantu.SlapHomebrew.Util.Util;
 import net.minecraft.server.v1_7_R1.EntityPlayer;
-import net.minecraft.server.v1_7_R1.PacketPlayOutBed;
 import net.minecraft.server.v1_7_R1.PacketPlayOutSpawnEntityLiving;
 
 import org.bukkit.Bukkit;
@@ -123,7 +122,7 @@ public class SlapCommand extends AbstractCommand {
 			testPermission("header");
 			if (args.length < 2) throw new UsageException("slap header [msg...]");
 			String msg = Util.buildString(args, " ", 1);
-			Util.broadcast(ChatColor.translateAlternateColorCodes('&', msg));
+			Util.broadcastHeader(ChatColor.translateAlternateColorCodes('&', msg));
 			break;
 			
 		case "showmessage": case "showmsg": case "sendmsg": //Send a message to a player
@@ -178,7 +177,7 @@ public class SlapCommand extends AbstractCommand {
 						NTheEndAgain theEnd = (NTheEndAgain) foundPlugin;
 						int x = theEnd.getWorldHandlers().get("worldTheEnd").getNumberOfAliveEnderDragons(); //Get number of alive enderdragons
 						if (x == 0) { //If 0 then spawn a new one
-							Util.broadcast("Regenerating the end.. Possible lag incoming.");
+							Util.broadcastHeader("Regenerating the end.. Possible lag incoming.");
 							server.dispatchCommand(server.getConsoleSender(), "nend regen world_the_end");
 							Util.runLater(new Runnable() {
 								@Override
@@ -236,15 +235,6 @@ public class SlapCommand extends AbstractCommand {
 			hMsg("You've crashed " + targetName + (portal ? " with a very special portal story." : "."));
 			break;
 			
-		case "end": case "showend": case "theend": //Show the player the end credits
-			testPermission("end");
-			if (args.length != 2)  throw new UsageException("slap end [Player]"); //Usage
-			targetPlayer = getOnlinePlayer(args[1], false); //Get targetplayer
-			nmsPlayer = ((CraftPlayer) targetPlayer).getHandle(); //-> ServerPlayer
-			nmsPlayer.viewingCredits = true;
-			nmsPlayer.playerConnection.sendPacket(new PacketPlayOutBed());
-			break;
-			
 		case "toldstatus": case "told": //Send a told status
 			testPermission("toldstatus");
 			if (args.length < 3) throw new UsageException("slap toldstatus [Player] [Interval] [Don't stop when player goes offline]"); //Usage
@@ -276,6 +266,12 @@ public class SlapCommand extends AbstractCommand {
 			hMsg("Stopping told status for player: " + offPlayer.getName());
 			break;
 			
+		case "sudo": case "sudochat": case "chat": //Talk as a different player
+			testPermission("sudochat"); //Perms
+			if (args.length < 3) throw new UsageException("slap sudochat [Player] <Message...>"); //Usage
+			targetPlayer = getOnlinePlayer(args[1], false); //Get player
+			targetPlayer.chat(Util.buildString(args, " ", 2)); //Chat as other player
+			break;
 			
 		default: //Player issued commands
 			final Player player = getPlayer();
