@@ -240,7 +240,7 @@ public class Homes extends AbstractController {
 	public void teleportToLocation(Player p, Location loc) throws CommandException {
 		User user = getEssentialsUser(p.getName());
 		try {
-			user.getTeleport().teleport(p, null, TeleportCause.COMMAND);
+			user.getTeleport().teleport(loc, null, TeleportCause.COMMAND);
 		} catch (Exception e) {
 			throw new CommandException(e.getMessage());
 		}

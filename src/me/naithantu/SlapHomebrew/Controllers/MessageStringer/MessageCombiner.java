@@ -10,9 +10,12 @@ public abstract class MessageCombiner {
 	protected String message;
 	protected SlapPlayer slapPlayer;
 	
+	protected int messagesAdded;
+	
 	public MessageCombiner(SlapPlayer slapPlayer) {
 		message = "";
 		this.slapPlayer = slapPlayer;
+		messagesAdded = 0;
 	}
 	
 	/**
@@ -21,7 +24,10 @@ public abstract class MessageCombiner {
 	 * @return this for chaining
 	 */
 	public MessageCombiner addText(String text) {
-		this.message += " " + text;
+		if (messagesAdded++ > 0) {
+			message += " ";
+		}
+		message += text;
 		return this;
 	}
 	
