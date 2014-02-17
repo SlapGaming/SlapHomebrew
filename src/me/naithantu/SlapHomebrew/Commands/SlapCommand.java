@@ -30,6 +30,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.craftbukkit.v1_7_R1.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -162,6 +163,17 @@ public class SlapCommand extends AbstractCommand {
 		case "tabgroups": //Get a list of all the tabgroups
 			testPermission("tabgroup");
 			hMsg("Tabgroups: " + Arrays.toString(TabGroup.values()));
+			break;
+			
+		case "commandinfo": case "command": //Get the plugin this command belongs to
+			testPermission("commandinfo");
+			if (args.length != 2) throw new UsageException("slap commandinfo [command]"); //Usage
+			String commandLc = args[1].toLowerCase();
+			PluginCommand command = plugin.getServer().getPluginCommand(commandLc); //Try to get the command
+			if (command == null) { //If no command found
+				throw new CommandException("No command found.");
+			}
+			hMsg("This command belongs to the plugin: " + command.getPlugin().getName()); //Message which plugin this command belongs to
 			break;
 			
 		case "spawnenderdragon": //Spawn a new enderdragon
