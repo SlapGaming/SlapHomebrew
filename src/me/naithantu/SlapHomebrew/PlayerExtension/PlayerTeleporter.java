@@ -31,10 +31,16 @@ public class PlayerTeleporter {
 	 */
 	private HashMap<String, AbstractTeleportRequest> incomingRequests;
 	
+	/**
+	 * The System time of the last teleport
+	 */
+	private long lastTeleport;
+	
 	
 	public PlayerTeleporter(SlapPlayer owner) {
 		incomingRequests = new HashMap<>();
 		this.owner = owner;
+		lastTeleport = 0;
 	}
 	
 	/**
@@ -78,6 +84,22 @@ public class PlayerTeleporter {
 	public void removeIncomingRequest(String requester) {
 		String name = requester.toLowerCase();
 		incomingRequests.remove(name);
+	}
+	
+	/**
+	 * Check if the player can teleport.
+	 * The cooldown is on: 1 second
+	 * @return can teleport
+	 */
+	public boolean canTeleport() {
+		return ((System.currentTimeMillis() - lastTeleport) > 1000);
+	}
+		
+	/**
+	 * Call when the player teleported to set the cooldown
+	 */
+	public void teleported() {
+		lastTeleport = System.currentTimeMillis();
 	}
 	
 	/**

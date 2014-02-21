@@ -29,7 +29,7 @@ public class TeleportHereCommand extends AbstractCommand {
 		
 		for (Player foundPlayer : set) { //Loop thru players
 			try { 
-				Util.safeTeleport(foundPlayer, p.getLocation(), p.isFlying(), true); //Try to teleport
+				Util.safeTeleport(foundPlayer, p.getLocation(), p.isFlying(), true, true); //Try to teleport
 			}  catch (CommandException e) {
 				Util.badMsg(p, "Failed to teleport " + foundPlayer.getName() + " to you. (Lava/Void?)"); //Notify player if someone was not able to be teleported
 			}

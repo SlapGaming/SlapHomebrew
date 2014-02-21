@@ -91,7 +91,7 @@ public class FancyMessageControl extends AbstractController {
 	 * @return the JSON String
 	 */
 	public String getPlayerRequester(boolean here, String requestedName) {
-		return playerRequester.replace("%TEXT%", (here ? requestedName + " to be teleported to you!" : "to teleport to " + requestedName));
+		return playerRequester.replace("%TEXT%", (here ? requestedName + " to be teleported to you" : "to teleport to " + requestedName));
 	}
 	
 	/**

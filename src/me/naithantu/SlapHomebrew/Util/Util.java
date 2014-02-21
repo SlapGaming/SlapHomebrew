@@ -450,11 +450,24 @@ public class Util {
      * @param toTeleport The locaction to be teleported to
      * @param isFlying if the location is in the (use true if in doubt).
      * @param registerBackLocation will register the location the player is leaving as /back location
+     * @param ignoreCooldown Will ignore the cooldown
      * @return has teleported under the target player
      * @throws CommandException if teleport into lava or if target is above the void
      */
-    public static boolean safeTeleport(Player toBeTeleported, Location toTeleport, boolean isFlying, boolean registerBackLocation) throws CommandException {
-		Location teleportTo = null;
+    public static boolean safeTeleport(Player toBeTeleported, Location toTeleport, boolean isFlying, boolean registerBackLocation, boolean... ignoreCooldown) throws CommandException {
+    	//Get SlapPlayer
+    	SlapPlayer sp = PlayerControl.getPlayer(toBeTeleported);
+    	
+    	if ((ignoreCooldown.length > 0 && !ignoreCooldown[0]) || ignoreCooldown.length == 0) {
+	    	if (!sp.getTeleporter().canTeleport()) { //Check if able to teleport if cooldown
+	    		if (!Util.testPermission(toBeTeleported, "tp.cooldownoverride")) {
+	    			throw new CommandException("You'll need to wait a bit before teleporting agian!");
+	    		}
+			}
+    	}
+    	
+    	
+    	Location teleportTo = null;
 		boolean tpUnder = false;
 		
 		Location fromLocation = toBeTeleported.getLocation();
@@ -481,11 +494,13 @@ public class Util {
 		
 		toBeTeleported.teleport(teleportTo); //Teleport
 		toBeTeleported.setVelocity(new Vector(0, 0, 0)); //Reset velocity
-		
+				
 		if (registerBackLocation) { //If registering back location
-			SlapPlayer sp = PlayerControl.getPlayer(toBeTeleported); //Get slapplayer
 			sp.getTeleporter().setBackLocation(fromLocation); //Set back location
 		}
+		
+		//Register teleport
+		sp.getTeleporter().teleported();
 		
 		return tpUnder;
     }
