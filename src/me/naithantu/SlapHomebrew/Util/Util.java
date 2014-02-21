@@ -578,4 +578,17 @@ public class Util {
     	return SlapHomebrew.getInstance().getServer().getScheduler();
     }
     
+    /**
+     * Sanitize a string so it is safe to put in a YML file. 
+     * Regex: [^a-z0-9]
+     * Anything that isn't a-z or 0-9 will be replaced with _
+     * The string will also be transformed to lowercase.
+     * 
+     * @param string The string
+     * @return The sanitized string
+     */
+    public static String sanitizeYamlString(String string) {
+    	return string.toLowerCase().replaceAll("[^a-z0-9]", "_");
+    }
+    
 }

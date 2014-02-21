@@ -14,6 +14,7 @@ import me.naithantu.SlapHomebrew.Commands.Homes.HomeCommand;
 import me.naithantu.SlapHomebrew.Commands.Homes.HomeMenuCommand;
 import me.naithantu.SlapHomebrew.Commands.Homes.HomeOtherCommand;
 import me.naithantu.SlapHomebrew.Commands.Homes.HomesCommand;
+import me.naithantu.SlapHomebrew.Commands.Homes.SetHomeCommand;
 import me.naithantu.SlapHomebrew.Commands.Jail.*;
 import me.naithantu.SlapHomebrew.Commands.Lists.*;
 import me.naithantu.SlapHomebrew.Commands.Promotion.PromotionCommand;
@@ -91,6 +92,7 @@ public class CommandHandler {
 		case "ride":			commandObj = new RideCommand(sender, args);						break;
 		case "roll":			commandObj = new RollCommand(sender, args);						break;
 		case "searchregion":	commandObj = new SearchregionCommand(sender, args);				break;
+		case "sethome":			commandObj = new SetHomeCommand(sender, args);					break;
 		case "sgm":				commandObj = new SgmCommand(sender, args);						break;
 		case "skick":			commandObj = new SKickCommand(sender, args);					break;
 		case "slap":			commandObj = new SlapCommand(sender, args);						break;
