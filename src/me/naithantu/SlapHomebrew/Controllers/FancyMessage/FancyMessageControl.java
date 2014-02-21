@@ -44,7 +44,7 @@ public class FancyMessageControl extends AbstractController {
 		//A player sends a request
 		playerRequester =
 				new FancyMessage("[SLAP] ").color(ChatColor.GOLD)
-				.addText("You've requested to %TEXT% to %NAME%. ")
+				.addText("You've requested %TEXT%. ")
 				.addText("[Cancel]").color(ChatColor.GRAY).runCommand("/tpcancel")
 				.toJSONString();
 		
@@ -85,15 +85,13 @@ public class FancyMessageControl extends AbstractController {
 	 * Get player requester JSON String
 	 * Format:
 	 * 		[SLAP] You've requested to [be teleported | teleport] to %NAME%. [Cancel]
-	 * Var: %NAME%
-	 * 	Replace with name of the requested
 	 * 
 	 * @param here Requesting a HereTeleport or not
 	 * @param requestedName Name of the requested person
 	 * @return the JSON String
 	 */
 	public String getPlayerRequester(boolean here, String requestedName) {
-		return playerRequester.replace("%NAME%", requestedName).replace("%TEXT%", (here ? "be teleported" : "teleport"));
+		return playerRequester.replace("%TEXT%", (here ? requestedName + " to be teleported to you!" : "to teleport to " + requestedName));
 	}
 	
 	/**
