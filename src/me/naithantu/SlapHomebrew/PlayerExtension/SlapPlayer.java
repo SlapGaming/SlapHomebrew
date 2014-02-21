@@ -45,6 +45,10 @@ public class SlapPlayer {
 	 */
 	private PlayerTeleporter teleporter;
 	
+	/**
+	 * Death location
+	 */
+	private Location deathLocation;
 	
 	public SlapPlayer(Player p) {
 		//Player
@@ -329,5 +333,23 @@ public class SlapPlayer {
 		return teleporter;
 	}
 	
+	/*
+	 * Death Location
+	 */
+	/**
+	 * Set the death location for this player (Where the player died)
+	 * @param loc the location
+	 */
+	public void setDeathLocation(Location loc) {
+		deathLocation = loc;
+	}
+	
+	/**
+	 * Get the death location (where the player died)
+	 * @return the location
+	 */
+	public Location getDeathLocation() {
+		return deathLocation;
+	}
 	
 }

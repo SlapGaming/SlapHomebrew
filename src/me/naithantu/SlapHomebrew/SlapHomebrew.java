@@ -1,7 +1,6 @@
 package me.naithantu.SlapHomebrew;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -19,7 +18,6 @@ import me.naithantu.SlapHomebrew.Util.Log;
 import me.naithantu.SlapHomebrew.Util.SQLPool;
 import net.milkbowl.vault.economy.Economy;
 
-import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.Configuration;
@@ -40,11 +38,6 @@ public class SlapHomebrew extends JavaPlugin {
 	 * The SlapHomebrew instance
 	 */
 	private static SlapHomebrew instance;
-
-	/**
-	 * BackDeath HashMap - Key Playername -> Value DeathLocation
-	 */
-	private HashMap<String, Location> backDeathMap = new HashMap<String, Location>();
 			
 	/**
 	 * tpBlocks HashSet - Contains all tpBlocks
@@ -360,10 +353,6 @@ public class SlapHomebrew extends JavaPlugin {
 	 **************************************
 	 */	
 	
-	public HashMap<String, Location> getBackDeathMap() {
-		return backDeathMap;
-	}
-
 	public HashSet<String> getTpBlocks() {
 		return tpBlocks;
 	}

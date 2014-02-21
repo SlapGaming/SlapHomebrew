@@ -5,6 +5,8 @@ import java.util.Random;
 import me.naithantu.SlapHomebrew.Controllers.Flag;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
 import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
+import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
+import me.naithantu.SlapHomebrew.Util.Log;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.Bukkit;
@@ -54,21 +56,21 @@ public class PlayerDeathListener extends AbstractListener {
 						if (messagePlayer.getWorld().getName().equalsIgnoreCase("world_pvp"))
 							messagePlayer.sendMessage(message);
 					}
-					System.out.println(message);
+					Log.info(message);
 				}
 			}
 
 			//Add backdeath location if not in pvp/end world or nobackdeath region.
-			if (player.hasPermission("slaphomebrew.backdeath")) {
-				if (!world.getName().equalsIgnoreCase("world_pvp") && !world.getName().equalsIgnoreCase("world_the_end") && !world.getName().equalsIgnoreCase("world_sonic") && !Util.hasFlag(plugin, player.getLocation(), Flag.NOBACKDEATH)) {
-					plugin.getBackDeathMap().put(playername, player.getLocation());
-					player.sendMessage(ChatColor.GRAY + "Use the /backdeath command to return to your death point.");
+			if (!world.getName().equalsIgnoreCase("world_pvp") && !world.getName().equalsIgnoreCase("world_the_end") && !world.getName().equalsIgnoreCase("world_sonic") && !Util.hasFlag(plugin, player.getLocation(), Flag.NOBACKDEATH)) {
+				PlayerControl.getPlayer(player).setDeathLocation(player.getLocation()); //Set death location
+				if (Util.testPermission(player, "backdeath")) { //If has backdeath permission
+					player.sendMessage(ChatColor.GRAY + "Use the /backdeath command to return to your death point."); //Send message
 				}
 			}
 
 			//Print death location to console.
 			Location location = player.getLocation();
-			System.out.println(playername + " died at (" + location.getBlockX() + ", " + location.getBlockY() + ", " + location.getBlockZ() + " in world " + world.getName() + ").");			
+			Log.info(playername + " died at (" + location.getBlockX() + ", " + location.getBlockY() + ", " + location.getBlockZ() + " in world " + world.getName() + ").");			
 		}
 	}
 	
