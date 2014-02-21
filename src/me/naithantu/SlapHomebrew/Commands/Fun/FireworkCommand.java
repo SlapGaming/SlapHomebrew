@@ -4,10 +4,10 @@ import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
 import me.naithantu.SlapHomebrew.Controllers.FireworkShow;
+import me.naithantu.SlapHomebrew.PlayerExtension.SlapPlayer;
 
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 public class FireworkCommand extends AbstractCommand {
 
@@ -17,7 +17,7 @@ public class FireworkCommand extends AbstractCommand {
 
 	@Override
 	public boolean handle() throws CommandException {
-		Player player = getPlayer();
+		SlapPlayer player = getSlapPlayer();
 		testPermission("fireworkshow");
 		
 		//Get FireworkShow controller
@@ -25,7 +25,10 @@ public class FireworkCommand extends AbstractCommand {
 		
 		if (args.length < 1) {
 			if (show.isTeleportAllowed()) {
-				player.teleport(new Location(plugin.getServer().getWorld("world_survival2"), -4700, 65, -4608));
+				//Set back location
+				player.getTeleporter().setBackLocation(player.p().getLocation());
+				//Teleport player
+				player.p().teleport(new Location(plugin.getServer().getWorld("world_survival2"), -4700, 65, -4608));
 			} else {
 				throw new CommandException("here is no firework show running.");
 			}

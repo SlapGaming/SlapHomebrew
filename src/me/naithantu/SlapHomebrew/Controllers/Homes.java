@@ -3,21 +3,21 @@ package me.naithantu.SlapHomebrew.Controllers;
 import java.util.HashMap;
 import java.util.List;
 
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
+import me.naithantu.SlapHomebrew.Commands.Exception.HomeException;
+import me.naithantu.SlapHomebrew.Storage.YamlStorage;
+import me.naithantu.SlapHomebrew.Util.Util;
+
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
-
-import com.earth2me.essentials.User;
 
 import ru.tehkode.permissions.PermissionGroup;
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
-import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
-import me.naithantu.SlapHomebrew.Commands.Exception.HomeException;
-import me.naithantu.SlapHomebrew.Storage.YamlStorage;
+import com.earth2me.essentials.User;
 
 public class Homes extends AbstractController {
 
@@ -238,13 +238,8 @@ public class Homes extends AbstractController {
 	 * @throws CommandException if user not found or failed to teleport
 	 */
 	public void teleportToLocation(Player p, Location loc) throws CommandException {
-		User user = getEssentialsUser(p.getName());
-		try {
-			user.getTeleport().teleport(loc, null, TeleportCause.COMMAND);
-		} catch (Exception e) {
-			throw new CommandException(e.getMessage());
-		}
-		
+		Util.setBackLocation(p);
+		p.teleport(loc);
 	}
 	
 	/**

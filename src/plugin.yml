@@ -3,7 +3,7 @@ main: me.naithantu.SlapHomebrew.SlapHomebrew
 depend: [Essentials, Vault, PermissionsEx]
 softdepend: [TabAPI, ReportRTS, MCBans]
 authors: [naithantu, Stoux2]
-version: 3.6.2
+version: 3.7.0
 description: A custom plugin which adds lots of extra features to the SlapGaming minecraft server.
 commands:
   vip:
@@ -218,3 +218,38 @@ commands:
   ragequit:
     description: Leave in a fit or rage!
     usage: "Usage: /ragequit"
+  tpaccept:
+    description: Accept an incoming teleport request.
+    usage: "Usage: /tpaccept <player>"
+    aliases: [teleportaccept]
+  tpask:
+    description: Request to teleport to someone.
+    usage: "Usage: /tpask <Player>"
+    aliases: [teleportask, tpa]
+  tpaskhere:
+    description: Request someone to teleport to you.
+    usage: "Usage: /tpaskhere <Player>"
+    aliases: [teleportaskhere, tpahere, tpah]
+  tpcancel:
+    description: Cancel an outgoing teleport request.
+    usage: "Usage: /tpcancel"
+    aliases: [tpc, teleportcancel]
+  tpdeny:
+    description: Deny an incoming teleport request.
+    usage: "Usage: /tpdeny <Player>"
+    aliases: [teleportdeny, tpd]
+  tphere:
+    description: Directly teleport people to you.
+    usage: "Usage: /tphere <Player 1> [Player 2...]"
+    aliases: [teleporthere, tph, s]
+  tp:
+    description: Teleport directly to someone.
+    usage: "Usage: /tp <Player>"
+    aliases: [teleport]
+  tprequests:
+    description: Get a list of all the current pending teleport requests
+    usage: "Usage: /tprequests"
+    aliases: [teleportrequests, tpr]
+  back:
+    description: Return to your previous location.
+    usage: "Usage: /back"

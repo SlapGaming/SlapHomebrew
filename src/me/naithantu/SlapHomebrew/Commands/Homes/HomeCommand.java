@@ -39,6 +39,7 @@ public class HomeCommand extends AbstractCommand {
 			}
 			int homesAllowed = homes.getTotalNumberOfHomes(playername); //Get number of allowed homes
 			if (homesAllowed == 1 && homelistSize == 1) { //If only 1 home set, and 1 home allowed
+				
 				homes.teleportToHome(p, homeList.get(0));
 			} else { //Multiple homes allowed
 				new HomesCommand(p, args).handle();

@@ -2,14 +2,14 @@ package me.naithantu.SlapHomebrew.Commands.Basics;
 
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
+import me.naithantu.SlapHomebrew.PlayerExtension.SlapPlayer;
 
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 public class SpawnCommand extends AbstractCommand {
 
-	private Player p;
+	private SlapPlayer p;
 	private static String resourceWorldName = null;
 	
 	public SpawnCommand(CommandSender sender, String[] args) {
@@ -26,7 +26,7 @@ public class SpawnCommand extends AbstractCommand {
 
 	@Override
 	public boolean handle() throws CommandException {
-		p = getPlayer();
+		p = getSlapPlayer();
 		testPermission("spawn");
 				
 		if (args.length == 0) {
@@ -76,9 +76,15 @@ public class SpawnCommand extends AbstractCommand {
 	 */
 	private void teleportToSpawn(String worldname, String teleportString, Float yaw) throws CommandException {
 		try {
+			//Get SpawnLocation
 			Location loc = plugin.getServer().getWorld(worldname).getSpawnLocation();
 			loc.setYaw(yaw);
-			p.teleport(loc);
+			
+			//Set BackLocation
+			p.getTeleporter().setBackLocation(p.p().getLocation());
+			
+			//Teleport player
+			p.p().teleport(loc);
 			hMsg("You have been teleported to the " + teleportString);
 		} catch (NullPointerException e) {
 			throw new CommandException("Sorry! Teleporting to that world is currently disabled.");

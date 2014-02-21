@@ -4,6 +4,7 @@ import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
 import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
+import me.naithantu.SlapHomebrew.PlayerExtension.SlapPlayer;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.OfflinePlayer;
@@ -131,6 +132,15 @@ public abstract class AbstractCommand {
 			throw new CommandException(ErrorMsg.notAPlayer);
 		}
 		return (Player) sender;
+	}
+	
+	/**
+	 * Cast the CommandSender to Player, and get the SlapPlayer instance of that player
+	 * @return the SlapPlayer
+	 * @throws CommandException if the CommandSender is not a player
+	 */
+	protected SlapPlayer getSlapPlayer() throws CommandException {
+		return PlayerControl.getPlayer(getPlayer());
 	}
 	
 	/**

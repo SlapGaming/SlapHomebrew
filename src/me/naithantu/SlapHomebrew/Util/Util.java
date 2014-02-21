@@ -10,12 +10,15 @@ import java.util.List;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Controllers.Flag;
+import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
+import me.naithantu.SlapHomebrew.PlayerExtension.SlapPlayer;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 import net.minecraft.server.v1_7_R1.ChatSerializer;
 import net.minecraft.server.v1_7_R1.PacketPlayOutChat;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -32,6 +35,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.BlockIterator;
+import org.bukkit.util.Vector;
 
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
@@ -438,6 +442,69 @@ public class Util {
      */
     public static Player[] getOnlinePlayers() {
     	return Bukkit.getServer().getOnlinePlayers();
+    }
+    
+    /**
+     * Safely teleport to another player
+     * @param toBeTeleported The player who is going to teleport
+     * @param toTeleport The locaction to be teleported to
+     * @param isFlying if the location is in the (use true if in doubt).
+     * @param registerBackLocation will register the location the player is leaving as /back location
+     * @return has teleported under the target player
+     * @throws CommandException if teleport into lava or if target is above the void
+     */
+    public static boolean safeTeleport(Player toBeTeleported, Location toTeleport, boolean isFlying, boolean registerBackLocation) throws CommandException {
+		Location teleportTo = null;
+		boolean tpUnder = false;
+		
+		Location fromLocation = toBeTeleported.getLocation();
+		
+		if (isFlying && !toBeTeleported.isFlying()) { //Target is flying while the player is not flying -> Find first block under target
+			tpUnder = true;
+			boolean creative = (toBeTeleported.getGameMode() == GameMode.CREATIVE); //Check if in creative
+			for (Location loc = toTeleport; loc.getBlockY() > 0; loc.add(0, -1, 0)) { //Loop thru all blocks under target's location
+				Material m = loc.getBlock().getType();
+				if (m == Material.AIR) continue; //Looking for first solid
+				if (m == Material.LAVA && !creative) { //If teleporting into lava && not in creative
+					throw new CommandException("You would be teleported into Lava!");
+				}
+				teleportTo = loc.add(0, 1, 0); //Set loc + 1 block above
+				break;
+			}
+		} else { //Not flying
+			teleportTo = toTeleport;
+		}
+		
+		if (teleportTo == null) { //Check if location found
+			throw new CommandException("Cannot teleport! Player above void!");
+		}
+		
+		toBeTeleported.teleport(teleportTo); //Teleport
+		toBeTeleported.setVelocity(new Vector(0, 0, 0)); //Reset velocity
+		
+		if (registerBackLocation) { //If registering back location
+			SlapPlayer sp = PlayerControl.getPlayer(toBeTeleported); //Get slapplayer
+			sp.getTeleporter().setBackLocation(fromLocation); //Set back location
+		}
+		
+		return tpUnder;
+    }
+    
+    /**
+     * Set the back location for the player on their current position
+     * @param p The player
+     */
+    public static void setBackLocation(Player p) {
+    	SlapPlayer sp = PlayerControl.getPlayer(p);
+    	sp.getTeleporter().setBackLocation(p.getLocation());
+    }
+    
+    /**
+     * Set the back location for the player on their current position
+     * @param p The slapplayer
+     */
+    public static void setBackLocation(SlapPlayer p) {
+    	p.getTeleporter().setBackLocation(p.p().getLocation());
     }
     
     /**

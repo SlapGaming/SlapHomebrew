@@ -532,6 +532,7 @@ public class PlotControl extends AbstractLogger {
 		public void teleportTo(Player p) throws CommandException {
 			World w = plugin.getServer().getWorld(world);
 			if (w == null) throw new CommandException("This Plot Mark is in a non-existing world.");
+			Util.setBackLocation(p); //Set back location
 			p.teleport(new Location(w, x, y, z));
 		}
 		

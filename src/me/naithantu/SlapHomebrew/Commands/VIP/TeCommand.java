@@ -5,10 +5,6 @@ import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -37,23 +33,8 @@ public class TeCommand extends AbstractVipCommand {
 		
 		switch(targetPlayer.getWorld().getName()) {
 		case "world": case "world_survival2": case "world_survival3": case "world_resource": case "world_the_end": case "world_lobby": case "world_creative": //Only allow TPing to certain worlds
-			Location toLoc = targetPlayer.getLocation();
-			boolean floor = false;
-			Block b = toLoc.getBlock().getRelative(BlockFace.DOWN);
-			int blocks = 0;
-			while (!floor && blocks < 3) { //Try to find a floor
-				if (b.getType() != Material.AIR && b.getType() != Material.LAVA) {
-					floor = true;
-				} else {
-					b = b.getRelative(BlockFace.DOWN); //Keep going down
-				}
-				blocks++;
-			}
-			
-			if (!floor) throw new CommandException("There is no suitable floor below the player!"); //Check if a floor is found
-			
-			player.teleport(toLoc); //Tp to the player
-			if (!Util.testPermission(player, "staff")) { //If teleporting player not staf -> notify target player
+			Util.safeTeleport(player, targetPlayer.getLocation(), targetPlayer.isFlying(), true); //Safe teleport
+			if (!Util.testPermission(player, "staff")) { //If teleporting player not staff -> notify target player
 				targetPlayer.sendMessage(ChatColor.GRAY + player.getName() + " has teleported to you!");
 			}
 			break;

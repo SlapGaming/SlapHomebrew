@@ -3,6 +3,7 @@ package me.naithantu.SlapHomebrew.PlayerExtension;
 import me.naithantu.SlapHomebrew.Controllers.MessageStringer.MessageCombiner;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 public class SlapPlayer {
@@ -39,6 +40,11 @@ public class SlapPlayer {
 	 */
 	private MessageCombiner messageCombiner;
 	
+	/**
+	 * Teleporter class
+	 */
+	private PlayerTeleporter teleporter;
+	
 	
 	public SlapPlayer(Player p) {
 		//Player
@@ -57,7 +63,39 @@ public class SlapPlayer {
 		
 		//Teleporting mobs
 		teleportingMob = false;
+		
+		//Teleporter
+		teleporter = new PlayerTeleporter(this);
 	}
+	
+	/*
+	 * Player interface
+	 */
+	/**
+	 * Send a message to the player
+	 * @param message The message
+	 */
+	public void sendMessage(String message) {
+		player.sendMessage(message);
+	}
+	
+	/**
+	 * Get the player's location
+	 * @return the location
+	 */
+	public Location getLocation() {
+		return player.getLocation();
+	}
+	
+	/**
+	 * Teleport the player
+	 * @param loc To location
+	 * @return succes
+	 */
+	public boolean teleport(Location loc) {
+		return player.teleport(loc);
+	}
+	
 	
 	/*
 	 * General stuff
@@ -278,6 +316,17 @@ public class SlapPlayer {
 	 */
 	public boolean isRageQuit() {
 		return rageQuit;
+	}
+	
+	/*
+	 * Teleport
+	 */
+	/**
+	 * Get this player's teleport class
+	 * @return The teleporter
+	 */
+	public PlayerTeleporter getTeleporter() {
+		return teleporter;
 	}
 	
 	

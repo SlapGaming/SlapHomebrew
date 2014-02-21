@@ -2,6 +2,7 @@ package me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegion;
 
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
+import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -28,6 +29,7 @@ public class TeleportCommand extends AbstractImprovedRegionCommand {
 		int x = (max.getBlockX() + min.getBlockX()) / 2;
 		int y = p.getWorld().getHighestBlockYAt(x, z) + 1; //Get highest block of the loc
 		Location topLoc = new Location(p.getWorld(), x, y, z);
+		Util.setBackLocation(p); //Set back location
 		p.teleport(topLoc); //Teleport
 		boolean isOutsideRegion = !region.contains(x, y, z); //Check if outside region
 		boolean isPolyRegion = region instanceof ProtectedPolygonalRegion; //Check if 
