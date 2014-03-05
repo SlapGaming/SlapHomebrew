@@ -21,16 +21,22 @@ public class WaveCommand extends AbstractCommand {
 	public boolean handle() throws CommandException {
 		Player fromPlayer = getPlayer();
 		testPermission("wave");
-		
+				
 		if (args.length != 1) return false;
-		Player toPlayer = getOnlinePlayer(args[0], false); //Get target
 		
-		if (fromPlayer == toPlayer && !Util.testPermission(fromPlayer, "wave.self")) { //Check if not waving to self, and if allowed to wave to self
-			throw new CommandException("You cannot wave to yourself..");
+		String gray = ChatColor.GRAY.toString(); //Short for grays due to heavy usage
+		
+		if (args[0].equalsIgnoreCase("everyone")) { //If waving to everyone
+			Util.broadcast(gray + " ** " + getName(fromPlayer) + gray + " waves to " + ChatColor.GOLD + "Everyone" + gray + " **");
+		} else { //Waving to player
+			Player toPlayer = getOnlinePlayer(args[0], false); //Get target
+			
+			if (fromPlayer == toPlayer && !Util.testPermission(fromPlayer, "wave.self")) { //Check if not waving to self, and if allowed to wave to self
+				throw new CommandException("You cannot wave to yourself..");
+			}
+			
+			Util.broadcast(gray + " ** " + getName(fromPlayer) + gray + " waves to " + getName(toPlayer) + gray + " **");
 		}
-		
-		String gray = ChatColor.GRAY.toString();
-		Util.broadcast(gray + "** " + getName(fromPlayer) + gray + " waves to " + getName(toPlayer) + gray + " **");
 		return true;
 	}
 	
