@@ -1,9 +1,7 @@
 package me.naithantu.SlapHomebrew.Controllers;
 
-import java.text.SimpleDateFormat;
 import java.util.HashSet;
 import java.util.List;
-import java.util.TimeZone;
 
 import me.naithantu.SlapHomebrew.Controllers.TabController.TabGroup;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
@@ -17,10 +15,7 @@ public class PlayerLogger extends AbstractController {
 
 	private YamlStorage logYML;
 	private FileConfiguration logConfig;
-	
-	private SimpleDateFormat format;
-	private SimpleDateFormat onlineFormat;
-	
+		
 	private HashSet<String> commandSpy;
 	
 	private HashSet<String> doingCommand;
@@ -29,10 +24,6 @@ public class PlayerLogger extends AbstractController {
 	public PlayerLogger() {
 		logYML = new YamlStorage(plugin, "playerlog");
 		logConfig = logYML.getConfig();
-		onlineFormat = new SimpleDateFormat("dd:HH:mm:ss");
-		onlineFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
-		format = new SimpleDateFormat("dd-MM-yyyy");
-		format.setTimeZone(TimeZone.getTimeZone("GMT"));
 		
 		commandSpy = new HashSet<>();
 		List<String> list = logConfig.getStringList("commandspy");

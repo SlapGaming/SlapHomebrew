@@ -1,8 +1,6 @@
 package me.naithantu.SlapHomebrew.Util;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -135,13 +133,6 @@ public class Util {
 				player.sendMessage(message);
 			}
 		}
-	}
-
-	public static String changeTimeFormat(long time, String format) {
-		final Calendar cal = Calendar.getInstance();
-		cal.setTimeInMillis(time);
-		final String timeString = new SimpleDateFormat(format).format(cal.getTime());
-		return timeString;
 	}
 	
 	/**

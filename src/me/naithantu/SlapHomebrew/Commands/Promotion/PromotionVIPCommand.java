@@ -6,6 +6,7 @@ import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
 import me.naithantu.SlapHomebrew.Controllers.Vip;
+import me.naithantu.SlapHomebrew.Util.DateUtil;
 
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -73,7 +74,7 @@ public class PromotionVIPCommand extends AbstractCommand {
 				hMsg(playername + " is lifetime VIP!");
 			} else {
 				long vipEnds = vip.getVIPExpiration(playername);
-				hMsg(playername + "'s VIP ends on: " + ChatColor.GREEN + vip.getFormat().format(vipEnds));
+				hMsg(playername + "'s VIP ends on: " + ChatColor.GREEN + DateUtil.format("dd MMM. yyyy HH:mm zzz", vipEnds));
 			}
 			break;
 			

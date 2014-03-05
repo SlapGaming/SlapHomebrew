@@ -7,6 +7,7 @@ import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
 import me.naithantu.SlapHomebrew.Commands.Exception.NotVIPException;
 import me.naithantu.SlapHomebrew.Controllers.Vip;
+import me.naithantu.SlapHomebrew.Util.DateUtil;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -34,7 +35,7 @@ public class VipCommand extends AbstractCommand {
 					if (vipEnds < System.currentTimeMillis()) { //Check if VIP hasn't ended yet (will be removed pretty soon)
 						hMsg("Warning! Your VIP is about to end!");
 					} else {
-						hMsg("Your VIP ends: " + ChatColor.GREEN + vip.getFormat().format(vipEnds));
+						hMsg("Your VIP ends: " + ChatColor.GREEN + DateUtil.format("dd MMM. yyyy HH:mm zzz", vipEnds));
 					}
 				}
 			} else { //Not VIP

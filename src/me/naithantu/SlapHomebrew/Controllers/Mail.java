@@ -1,6 +1,5 @@
 package me.naithantu.SlapHomebrew.Controllers;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -9,6 +8,7 @@ import java.util.List;
 import me.naithantu.SlapHomebrew.Storage.MailSQL;
 import me.naithantu.SlapHomebrew.Storage.MailSQL.CheckType;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
+import me.naithantu.SlapHomebrew.Util.DateUtil;
 import me.naithantu.SlapHomebrew.Util.Log;
 import me.naithantu.SlapHomebrew.Util.SQLPool;
 import me.naithantu.SlapHomebrew.Util.Util;
@@ -29,8 +29,6 @@ public class Mail extends AbstractController {
 	private MailSQL mailSQL;
 
 	private HashMap<String, Boolean> crunchingData;
-	private SimpleDateFormat dateFormat;
-	private SimpleDateFormat monthFormat;
 
 	private YamlStorage mailYML;
 	private FileConfiguration mailConfigYML;
@@ -53,8 +51,6 @@ public class Mail extends AbstractController {
 			}
 			mailSQL = new MailSQL();
 			crunchingData = new HashMap<>();
-			dateFormat = new SimpleDateFormat("HH:mm dd-MM-yyyy zzz");
-			monthFormat = new SimpleDateFormat("dd-MM");
 			mailYML = new YamlStorage(plugin, "mail");
 			mailConfigYML = mailYML.getConfig();
 		} else {
@@ -228,7 +224,7 @@ public class Mail extends AbstractController {
 			fromName = Util.colorize(user.getPrefix() + user.getName());
 		}
 		sender.sendMessage(new String[] {
-				ChatColor.GOLD + "[INFO] " + ChatColor.WHITE + "Mail " + ChatColor.GREEN + "#" + mailID + ChatColor.WHITE + " sent on " + ChatColor.GREEN + dateFormat.format((Date) mail[1])
+				ChatColor.GOLD + "[INFO] " + ChatColor.WHITE + "Mail " + ChatColor.GREEN + "#" + mailID + ChatColor.WHITE + " sent on " + ChatColor.GREEN + DateUtil.format("dd MMM. HH:mm zzz", (Date) mail[1])
 						+ ChatColor.WHITE + " by " + fromName + ChatColor.WHITE + extraFirstLine + ".",
 				ChatColor.GOLD + "[MAIL] " + ChatColor.ITALIC + ChatColor.WHITE + (fromConsole ? Util.colorize((String) mail[7]) : colorizeMail(user, (String) mail[7]))
 				});
@@ -254,7 +250,7 @@ public class Mail extends AbstractController {
 						extraFirstLine = extraFirstLine + " | Response to " + ChatColor.GREEN + "#" + mail[2] + ChatColor.WHITE;
 					PermissionUser user = PermissionsEx.getUser((String) mail[0]);
 					sender.sendMessage(new String[] {
-							ChatColor.GOLD + "[INFO] " + ChatColor.WHITE + "Mail " + ChatColor.GREEN + "#S" + ID + ChatColor.WHITE + " sent on " + ChatColor.GREEN + dateFormat.format((Date) mail[1])
+							ChatColor.GOLD + "[INFO] " + ChatColor.WHITE + "Mail " + ChatColor.GREEN + "#S" + ID + ChatColor.WHITE + " sent on " + ChatColor.GREEN + DateUtil.format("dd MMM. HH:mm zzz", (Date) mail[1])
 									+ ChatColor.WHITE + " to " + Util.colorize(user.getPrefix() + user.getName()) + ChatColor.WHITE + extraFirstLine + ".",
 							ChatColor.GOLD + "[MAIL] " + ChatColor.ITALIC + ChatColor.WHITE + colorizeMail(PermissionsEx.getUser(sender), (String) mail[4]) });
 				} else {
@@ -331,7 +327,7 @@ public class Mail extends AbstractController {
 							}
 							for (Object[] mail : mails) {
 								if (mail[0] != null && mail[3] != null) {
-									String formattedDate = monthFormat.format((Date) mail[2]);
+									String formattedDate = DateUtil.format("dd-MM", (Date) mail[2]);
 									
 									String fromName; PermissionUser pexUser = null; boolean fromConsole;
 									if (fromConsole = ((String) mail[1]).equalsIgnoreCase("console")) {
@@ -715,11 +711,11 @@ public class Mail extends AbstractController {
 									switch ((String) mail[3]) {
 									case "S":
 										sender.sendMessage(ChatColor.WHITE + "ID:" + ChatColor.GREEN + "#S" + mail[0] + ChatColor.WHITE + " sent on " + ChatColor.GREEN
-												+ monthFormat.format((Date) mail[1]) + ChatColor.WHITE + ": " + colorizeMail(senderU, (String) mail[2]));
+												+ DateUtil.format("dd-MM", (Date) mail[1]) + ChatColor.WHITE + ": " + colorizeMail(senderU, (String) mail[2]));
 										break;
 									case "R":
 										sender.sendMessage(ChatColor.WHITE + "ID:" + ChatColor.GREEN + "#" + mail[0] + ChatColor.WHITE + " recieved on " + ChatColor.GREEN
-												+ monthFormat.format((Date) mail[1]) + ChatColor.WHITE + ": " + colorizeMail(otherU, (String) mail[2]));
+												+ DateUtil.format("dd-MM", (Date) mail[1]) + ChatColor.WHITE + ": " + colorizeMail(otherU, (String) mail[2]));
 										break;
 									}
 								}
@@ -778,7 +774,7 @@ public class Mail extends AbstractController {
 							}
 							for (Object[] mail : mails) {
 								if (mail[0] != null && mail[3] != null) {
-									String formattedDate = monthFormat.format((Date) mail[2]);
+									String formattedDate = DateUtil.format("dd-MM", (Date) mail[2]);
 									PermissionUser pexUser = PermissionsEx.getUser((String) mail[1]);
 									String prefixColor = "";
 									if (pexUser.getPrefix().length() > 1) {
@@ -843,7 +839,7 @@ public class Mail extends AbstractController {
 							extraFirstLine = extraFirstLine + " | Response to " + ChatColor.GREEN + "#" + mail[2] + ChatColor.WHITE;
 						PermissionUser user = PermissionsEx.getUser((String) mail[0]);
 						commandSender.sendMessage(new String[] {
-								ChatColor.GOLD + "[INFO] " + ChatColor.WHITE + "Mail " + ChatColor.GREEN + "#S" + mailID + ChatColor.WHITE + " sent on " + ChatColor.GREEN + dateFormat.format((Date) mail[1])
+								ChatColor.GOLD + "[INFO] " + ChatColor.WHITE + "Mail " + ChatColor.GREEN + "#S" + mailID + ChatColor.WHITE + " sent on " + ChatColor.GREEN +  DateUtil.format("dd MMM. HH:mm zzz", (Date) mail[1])
 										+ ChatColor.WHITE + " to " + Util.colorize(user.getPrefix() + user.getName()) + ChatColor.WHITE + extraFirstLine + ".",
 								ChatColor.GOLD + "[MAIL] " + ChatColor.ITALIC + ChatColor.WHITE + colorizeMail(PermissionsEx.getUser(otherPlayer), (String) mail[4]) });
 					} else {

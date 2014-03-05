@@ -4,13 +4,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
+import me.naithantu.SlapHomebrew.Util.DateUtil;
 import me.naithantu.SlapHomebrew.Util.SQLPool;
 import me.naithantu.SlapHomebrew.Util.Util;
 
@@ -26,8 +26,6 @@ public class RegionLogger extends AbstractLogger {
 	
 	private HashSet<Batchable> changes;
 	
-	private SimpleDateFormat format;
-	
 	private String sqlQuery = 
 			"INSERT INTO `mcecon`.`logger_regions` (`world`, `region`, `changed_time`, `changed_by`, `changer_is_a`, `type`, `parameter`) " +
 			"VALUES (?, ?, ?, ?, ?, ?, ?);";
@@ -36,7 +34,6 @@ public class RegionLogger extends AbstractLogger {
 		super();
 		if (!enabled) return;
 		changes = new HashSet<>();
-		format = new SimpleDateFormat("dd MMM. HH:mm");
 		instance = this;
 	}
 	
@@ -191,7 +188,7 @@ public class RegionLogger extends AbstractLogger {
 		
 		@Override
 		public String toString() {
-			String s = format.format(changedTime) + " | " + ChatColor.WHITE;
+			String s = DateUtil.format("dd MMM. HH:mm", changedTime) + " | " + ChatColor.WHITE;
 			s += changedBy + " (" + aType.toString().substring(0, 1).toUpperCase() + ") ";
 			switch (type) {
 			case addmember:

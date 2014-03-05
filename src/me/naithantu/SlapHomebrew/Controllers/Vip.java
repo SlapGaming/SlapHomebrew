@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
@@ -14,6 +13,7 @@ import me.naithantu.SlapHomebrew.Commands.Exception.NotVIPException;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.PromotionLogger;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.VipForumControl;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
+import me.naithantu.SlapHomebrew.Util.DateUtil;
 import me.naithantu.SlapHomebrew.Util.Log;
 import me.naithantu.SlapHomebrew.Util.SQLPool;
 import me.naithantu.SlapHomebrew.Util.Util;
@@ -49,12 +49,7 @@ public class Vip extends AbstractController {
 	 * Tab Controller for updating groups
 	 */
 	private TabController tabController;
-	
-	/**
-	 * Format for when a players VIP ends
-	 */
-	private SimpleDateFormat format;
-	
+		
 	/**
 	 * Storage & Config for Used Grants
 	 */
@@ -79,9 +74,6 @@ public class Vip extends AbstractController {
 		//Get Storage
 		storage = new YamlStorage(plugin, "usedgrants");
 		config = storage.getConfig();
-		
-		//Create format
-		format = new SimpleDateFormat("dd MMM. yyyy HH:mm zzz");
 		
 		//Check if Used Grants should be reset
 		checkUsedGrants();
@@ -367,16 +359,6 @@ public class Vip extends AbstractController {
 		return new PermissionGroup[]{PermissionsEx.getPermissionManager().getGroup(groupname)};
 	}
 	
-	/**
-	 * Get SimpleDateFormat format.
-	 * Format: Day Month Year Hour:Minute
-	 * @return The format
-	 */
-	public SimpleDateFormat getFormat() {
-		return format;
-	}
-	
-	
 	@Override
 	public void shutdown() {
 		temporaryVIPs.clear();
@@ -493,8 +475,7 @@ public class Vip extends AbstractController {
 	 * Check if the Used Grant should be reset.
 	 */
 	private void checkUsedGrants() {
-		SimpleDateFormat format = new SimpleDateFormat("dd");
-		int day = Integer.parseInt(format.format(System.currentTimeMillis())); //Parse today into day
+		int day = Integer.parseInt(DateUtil.format("dd")); //Parse today into day
 		int founDay = config.getInt("day"); //Get saved day
 		if (day != founDay) { //If not equal, reset
 			config.set("usedgrant", null); //Reset all uses

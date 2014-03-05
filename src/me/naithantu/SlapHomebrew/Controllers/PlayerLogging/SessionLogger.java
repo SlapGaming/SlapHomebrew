@@ -5,7 +5,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -36,14 +35,11 @@ public class SessionLogger extends AbstractLogger implements Listener {
 	private HashMap<String, Session> activeSessions; // Playername -> Session
 	private HashSet<Batchable> finishedSessions;
 	
-	private SimpleDateFormat format;
-	
 	public SessionLogger() {
 		super();
 		if (!enabled) return;
 		activeSessions = new HashMap<>();
 		finishedSessions = new HashSet<>();
-		format = new SimpleDateFormat("dd/MM/yyyy"); //Create format;
 		instance = this;
 	}
 	
@@ -140,14 +136,6 @@ public class SessionLogger extends AbstractLogger implements Listener {
 	 * Calculations/Getters *
 	 ************************
 	 */
-	
-	/**
-	 * Get Format dd/MM/yyyy
-	 * @return get format
-	 */
-	public SimpleDateFormat getFormat() {
-		return format;
-	}
 	
 	/**
 	 * Get instance

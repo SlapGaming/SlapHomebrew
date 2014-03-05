@@ -1,14 +1,13 @@
 package me.naithantu.SlapHomebrew.Controllers;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.TimeZone;
 
 import me.naithantu.SlapHomebrew.Runnables.JailChecker;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
+import me.naithantu.SlapHomebrew.Util.DateUtil;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.Bukkit;
@@ -25,9 +24,7 @@ public class Jails extends AbstractController {
 	
 	private YamlStorage jailYML;
 	private FileConfiguration jailConfig;
-	
-	private SimpleDateFormat timeLeftFormat;
-	
+		
 	private HashMap<String, Long> onlineJailed;
 	
 	private JailChecker jailChecker;
@@ -35,8 +32,6 @@ public class Jails extends AbstractController {
 	public Jails() {
 		jailYML = new YamlStorage(plugin, "jails");
 		jailConfig = jailYML.getConfig();
-		timeLeftFormat = new SimpleDateFormat("HH:mm:ss");
-		timeLeftFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
 		onlineJailed = new HashMap<>();
 		enable();
 		jailChecker = new JailChecker(this);
@@ -293,7 +288,7 @@ public class Jails extends AbstractController {
 	}
 	
 	public String parseTimeLeft(Date d) {
-		String timeLeftString = timeLeftFormat.format(d);
+		String timeLeftString = DateUtil.format("HH:mm:ss", d);
 		String timeLeftMessage = "Unkown.";
 		if (timeLeftString.matches("00:00:[0-9][0-9]")) {
 			timeLeftMessage = Integer.parseInt(timeLeftString.substring(6, 8)) + " seconds.";

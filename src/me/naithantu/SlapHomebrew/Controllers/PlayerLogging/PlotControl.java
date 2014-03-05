@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -12,6 +11,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
+import me.naithantu.SlapHomebrew.Util.DateUtil;
 import me.naithantu.SlapHomebrew.Util.Log;
 import me.naithantu.SlapHomebrew.Util.SQLPool;
 import me.naithantu.SlapHomebrew.Util.Util;
@@ -30,9 +30,7 @@ public class PlotControl extends AbstractLogger {
 	
 	private int currentIteration;
 	private int currentID;
-	
-	private SimpleDateFormat format;
-	
+		
 	public PlotControl() {
 		super();
 		if (!enabled) return; //Check if enable
@@ -43,7 +41,6 @@ public class PlotControl extends AbstractLogger {
 		
 		instance = this;
 		doingCommand = new HashSet<>();
-		format = new SimpleDateFormat("dd MMM. HH:mm zzz");
 	}
 	
 	/**
@@ -550,14 +547,14 @@ public class PlotControl extends AbstractLogger {
 		public void sendInfo(Player p) {
 			p.sendMessage(
 				ChatColor.WHITE + "ID: " + ChatColor.GREEN + ((currentIteration == iteration) ? "#"+id : "#" + iteration + "." + id) +
-				ChatColor.WHITE + " - Time: " + ChatColor.GOLD + format.format(time) +
+				ChatColor.WHITE + " - Time: " + ChatColor.GOLD + DateUtil.format("dd MMM. HH:mm zzz", time) +
 				ChatColor.WHITE + " - By: " + ChatColor.GREEN + byPlayer					
 			);
 			if (comment != null) { //If a comment specified
 				p.sendMessage(ChatColor.GRAY + " \u2517\u25B6 Comment: " + comment);
 			}
 			if (handledBy != null) { //If handled
-				p.sendMessage("  \u2517\u25B6 Handled by: " + ChatColor.GREEN + handledBy + ChatColor.WHITE + " - Time: " + ChatColor.GOLD + format.format(handledTime)); //Send handled info
+				p.sendMessage("  \u2517\u25B6 Handled by: " + ChatColor.GREEN + handledBy + ChatColor.WHITE + " - Time: " + ChatColor.GOLD + DateUtil.format("dd MMM. HH:mm zzz", handledTime)); //Send handled info
 				if (handledComment != null) { //Check if comment
 					p.sendMessage(ChatColor.GRAY + "   \u2517\u25B6 Comment: " + handledComment);
 				}

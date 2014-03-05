@@ -6,7 +6,7 @@ import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Controllers.ChangeLog;
-import me.naithantu.SlapHomebrew.Util.DateFormatUtil;
+import me.naithantu.SlapHomebrew.Util.DateUtil;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.command.CommandSender;
@@ -73,7 +73,7 @@ public class ChangeLogCommand extends AbstractCommand {
 			
 		case 2:
 			if (args[0].equalsIgnoreCase("add") && Util.testPermission(sender, "addchangelog") && args[1].isEmpty()) { //Give the current date if nothing else given
-				return createNewList(DateFormatUtil.formatDate("dd/MM/yyyy"));
+				return createNewList(DateUtil.format("dd/MM/yyyy"));
 			}
 		default:
 			return createEmptyList();

@@ -1,9 +1,7 @@
 package me.naithantu.SlapHomebrew.Controllers;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
+import me.naithantu.SlapHomebrew.Util.DateUtil;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.Bukkit;
@@ -85,7 +83,7 @@ public class Bump extends AbstractController {
 		bumpTimer();
 		
 		//Add message to config.
-		String date = new SimpleDateFormat("MMM.d HH:mm z").format(new Date());
+		String date = DateUtil.format("MMM.d HH:mm z");
 		date = date.substring(0, 1).toUpperCase() + date.substring(1);
 		dataConfig.set("bumps." + date, playerName);
 		dataStorage.saveConfig();

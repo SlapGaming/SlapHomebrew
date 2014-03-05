@@ -15,7 +15,7 @@ import me.naithantu.SlapHomebrew.Listeners.Player.*;
 import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 import me.naithantu.SlapHomebrew.Timing.HandlerControl;
-import me.naithantu.SlapHomebrew.Util.DateFormatUtil;
+import me.naithantu.SlapHomebrew.Util.DateUtil;
 import me.naithantu.SlapHomebrew.Util.Log;
 import me.naithantu.SlapHomebrew.Util.SQLPool;
 import me.naithantu.SlapHomebrew.Util.Util;
@@ -183,7 +183,7 @@ public class SlapHomebrew extends JavaPlugin {
 	private void initializeStatics() {
 		instance = this;
 		Log.intialize(getLogger());
-		DateFormatUtil.initialize();
+		DateUtil.initialize();
 	}
 	
 	private void initializeExternals() {
@@ -325,7 +325,7 @@ public class SlapHomebrew extends JavaPlugin {
 	private void disableStatics() {
 		instance = null;
 		Log.shutdown();
-		DateFormatUtil.destruct();
+		DateUtil.destruct();
 	}
 	
 	private void disableSavers() {

@@ -5,13 +5,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
+import me.naithantu.SlapHomebrew.Util.DateUtil;
 import me.naithantu.SlapHomebrew.Util.Log;
 import me.naithantu.SlapHomebrew.Util.SQLPool;
 
@@ -22,7 +22,6 @@ import org.bukkit.entity.Player;
 public class VipForumControl extends AbstractLogger {
 
 	private static VipForumControl instance;
-	private SimpleDateFormat format;
 	
 	//SQL Statements
 	private String sqlQuery = 
@@ -54,7 +53,6 @@ public class VipForumControl extends AbstractLogger {
 		if (!enabled) return;		
 		
 		batch = new HashSet<>();
-		format = new SimpleDateFormat("dd MMM. HH:mm zzz");
 		instance = this;
 	}
 	
@@ -320,11 +318,11 @@ public class VipForumControl extends AbstractLogger {
 		public void sendInfo(CommandSender cs) {
 			cs.sendMessage(
 				ChatColor.WHITE + "ID: " + ChatColor.GREEN + ((currentIteration == iteration) ? "#"+ ID : "#" + iteration + "." + ID) +
-				ChatColor.WHITE + " - Time: " + ChatColor.GOLD + format.format(promotionTime) +
+				ChatColor.WHITE + " - Time: " + ChatColor.GOLD + DateUtil.format("dd MMM. HH:mm zzz", promotionTime) +
 				ChatColor.WHITE + " - " + (promotion ? ChatColor.GREEN + "Promote " : ChatColor.RED + "Demote") + ChatColor.GOLD + " " + player
 			);
 			if (handledBy != null) {
-				cs.sendMessage(" \u2517\u25B6 Handled by: " + ChatColor.GREEN + handledBy + ChatColor.WHITE + " - Time: " + ChatColor.GOLD + format.format(handledTime)); //Send handled info
+				cs.sendMessage(" \u2517\u25B6 Handled by: " + ChatColor.GREEN + handledBy + ChatColor.WHITE + " - Time: " + ChatColor.GOLD + DateUtil.format("dd MMM. HH:mm zzz", handledTime)); //Send handled info
 				if (comment != null) {
 					cs.sendMessage(ChatColor.GRAY + "  \u2517\u25B6 Comment: " + comment);
 				}

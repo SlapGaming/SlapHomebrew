@@ -1,7 +1,6 @@
 package me.naithantu.SlapHomebrew.Commands.Staff;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -12,6 +11,7 @@ import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.SessionLogger;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.SessionLogger.LeaderboardEntry;
+import me.naithantu.SlapHomebrew.Util.DateUtil;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.ChatColor;
@@ -157,11 +157,11 @@ public class TimecheckCommand extends AbstractCommand {
 					if (lbDates[0] == null) {
 						hMsgString += "since 5th of January.";
 					} else {
-						hMsgString += "since " + logger.getFormat().format(lbDates[0]);
+						hMsgString += "since " + DateUtil.format("dd/MM/yyyy", lbDates[0]);
 						if (lbDates[1] == null) {
 							hMsgString += ".";
 						} else {
-							hMsgString += " till " + logger.getFormat().format(lbDates[1]) + ".";
+							hMsgString += " till " + DateUtil.format("dd/MM/yyyy", lbDates[1]) + ".";
 						}
 					}
 					hMsg(hMsgString);
@@ -208,15 +208,14 @@ public class TimecheckCommand extends AbstractCommand {
 		
 		Date fromDate = null, toDate = null;
 				
-		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy"); //Create format
 		try {
-			fromDate = format.parse(args[firstDateArg]); //Parse fromDate
+			fromDate = DateUtil.parse("dd/MM/yyyy", args[firstDateArg]);
 			Date now = new Date(); //Get current date
 			if (fromDate.after(now)) { //FromDate can't be in the future
 				throw new CommandException("The specified from date is in the future!");
 			}
 			if (firstDateArg + 1 < args.length) { //If toDate specified
-				toDate = format.parse(args[firstDateArg + 1]);  //Parse date
+				toDate = DateUtil.parse("dd/MM/yyyy", args[firstDateArg + 1]);
 				if (fromDate.after(toDate)) { //If fromDate after toDate
 					throw new CommandException("The from date cannot be after the to date!");
 				}
