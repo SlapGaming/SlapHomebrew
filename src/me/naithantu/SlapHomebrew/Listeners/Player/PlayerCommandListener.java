@@ -43,6 +43,16 @@ public class PlayerCommandListener extends AbstractListener {
 		String[] commandMessage = message.split(" ");
 		String playerName = player.getName();
 		
+		//Block ryuuga from saying :S
+		if (playerName.equals("ryuuga")) {
+			if (message.contains(":s")) {
+				player.kickPlayer(":S");
+				event.setCancelled(true);
+				return;
+			}
+		}
+		
+		
 		switch (commandMessage[0]) {//Morph commands
 		case "/w": case "/whisper": case "/tell": //Morph all chat commands -> /message
 			player.chat(event.getMessage().replaceFirst("(?i)"+ commandMessage[0], "/m"));

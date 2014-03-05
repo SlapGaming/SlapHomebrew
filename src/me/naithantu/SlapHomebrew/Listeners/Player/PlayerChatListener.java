@@ -83,6 +83,15 @@ public class PlayerChatListener extends AbstractListener {
 			return;
 		}
 		
+		//Block ryuuga from saying :S
+		if (playerName.equals("ryuuga")) {
+			if (message.contains(":s")) {
+				player.kickPlayer(":S");
+				event.setCancelled(true);
+				return;
+			}
+		}
+		
 		//Listener for /message
 		if (slapPlayer.isCombiningMessage()) {
             event.setCancelled(true);
@@ -111,7 +120,7 @@ public class PlayerChatListener extends AbstractListener {
 		
 		//@Person: Check Event is not Cancelled, if it contains @, If the player is allowed to do this permission wise & check if the player is not banned
 		if (!event.isCancelled() && ucMessage.contains("@") && Util.testPermission(player, "mention") && !mention.isBanned(playerName)) { 
-			Matcher matcher = pattern.matcher(message); //Match the sentence
+			Matcher matcher = pattern.matcher(ucMessage); //Match the sentence
 			
 			ArrayList<Object> messageParts = null; //Null sets, so they don't get created if not needed
 			HashSet<Player> notifyPlayers = null;
@@ -119,7 +128,7 @@ public class PlayerChatListener extends AbstractListener {
 			int start = 0;
 			
 			while (matcher.find()) { //Find all occurences
-				String name = message.substring(matcher.start() + 1, matcher.end()); //Get Name (Without the @)
+				String name = ucMessage.substring(matcher.start() + 1, matcher.end()); //Get Name (Without the @)
 				Player p = plugin.getServer().getPlayer(name); //Get player
 				if (p != null) { //Check if it exists
 					
@@ -129,7 +138,7 @@ public class PlayerChatListener extends AbstractListener {
 					}
 					
 					if (matcher.start() != 0) { //Check if not starts with @[name]
-						messageParts.add(message.substring(start, matcher.start())); //Add part of String as part
+						messageParts.add(ucMessage.substring(start, matcher.start())); //Add part of String as part
 					}
 					
 					messageParts.add(p); //Add player as part
@@ -139,7 +148,7 @@ public class PlayerChatListener extends AbstractListener {
 				}
 			}
 			if (messageParts != null && message.length() > start) { //If more letters && Message has been split
-				messageParts.add(message.substring(start));  				
+				messageParts.add(ucMessage.substring(start));  				
 			}
 			
 			if (messageParts != null) { //If message has been split
