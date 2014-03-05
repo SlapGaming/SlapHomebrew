@@ -1,6 +1,7 @@
 package me.naithantu.SlapHomebrew;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
@@ -160,12 +161,23 @@ public class SlapHomebrew extends JavaPlugin {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
-		return commandHandler.handle(sender, cmd, args);
+		long s = System.currentTimeMillis(); //Start timing
+		boolean handled = commandHandler.handle(sender, cmd, args); //Handle command
+		long took = System.currentTimeMillis() - s; //End timing
+		if (took > 50) { //If took longer than 1 tick, warn
+			Log.warn("Tick disrupted! Command took: " + took + "ms. Cmd: " + cmd.getName() + " | Args: " + Arrays.toString(args));
+		}
+		return handled;
 	}
 	
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-		List<String> handled = TabHandler.handle(sender, command, args);
+		long s = System.currentTimeMillis(); //Start timing
+		List<String> handled = TabHandler.handle(sender, command, args); //Handle TabComplete
+		long took = System.currentTimeMillis() - s; //End timing
+		if (took > 50) { //If took longer than 1 tick, warn
+			Log.warn("Tick disrupted! CommandTabComplete took: " + took + "ms. Cmd: " + command.getName() + " | Args: " + Arrays.toString(args));
+		}
 		if (handled == null) {
 			return super.onTabComplete(sender, command, alias, args);
 		} else {
