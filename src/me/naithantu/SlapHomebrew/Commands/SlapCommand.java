@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 
+import me.naithantu.SlapHomebrew.TabFidling;
 import me.naithantu.SlapHomebrew.Commands.Basics.SpawnCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
@@ -76,6 +77,10 @@ public class SlapCommand extends AbstractCommand {
 		OfflinePlayer offPlayer; EntityPlayer nmsPlayer; Player targetPlayer;
 		
 		switch (args[0].toLowerCase()) {
+		case "a":
+			new TabFidling().run(getPlayer());
+			break;
+		
 		case "reload": //Reload the plugin
 			testPermission("manage");
 			Bukkit.getPluginManager().disablePlugin(plugin);

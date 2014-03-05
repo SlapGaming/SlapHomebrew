@@ -1,5 +1,7 @@
 package me.naithantu.SlapHomebrew.Commands.Promotion;
 
+import java.util.List;
+
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -251,6 +253,29 @@ public class PromotionRankCommand extends AbstractCommand {
 			}
 		}
 		
+	}
+	
+	/**
+	 * TabComplete on this command
+	 * @param sender The sender of the command
+	 * @param args given arguments
+	 * @return List of options
+	 */
+	public static List<String> tabComplete(CommandSender sender, String[] args) {
+		if (args.length == 2) {
+			return filterResults(createNewList("promote", "demote", "logs"), args[1]); //Return sub commands
+		} else if (args.length == 3 && !args[2].equalsIgnoreCase("logs")) {
+			return listAllPlayers(sender.getName()); //Return players
+		} else if (args.length == 4 && !args[2].equalsIgnoreCase("logs")) {
+			List<String> ranks = createEmptyList();
+			for (Rank r : Rank.values()) { //Loop thru ranks
+				if (r.toRank) { //If to rank add it
+					ranks.add(r.toString());
+				}
+			}
+			return filterResults(ranks, args[3]); //Return ranks
+		}
+		return createEmptyList();
 	}
 	
 }

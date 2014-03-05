@@ -1,5 +1,7 @@
 package me.naithantu.SlapHomebrew.Commands.Basics;
 
+import java.util.List;
+
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.PlayerExtension.SlapPlayer;
@@ -22,6 +24,14 @@ public class SpawnCommand extends AbstractCommand {
 	 */
 	public static void setResourceWorldName(String name) {
 		resourceWorldName = name;
+	}
+	
+	/**
+	 * Get the name of the current resource world
+	 * @return the name
+	 */
+	public static String getResourceWorldName() {
+		return resourceWorldName;
 	}
 
 	@Override
@@ -89,6 +99,22 @@ public class SpawnCommand extends AbstractCommand {
 		} catch (NullPointerException e) {
 			throw new CommandException("Sorry! Teleporting to that world is currently disabled.");
 		}
+	}
+	
+	/**
+	 * TabComplete on this command
+	 * @param sender The sender of the command
+	 * @param args given arguments
+	 * @return List of options
+	 */
+	public static List<String> tabComplete(CommandSender sender, String[] args) {
+		if (args.length == 1) {
+			return filterResults(
+				createNewList("oldsurvival", "newsurvival", "creative", "resourceworld", "games", "pvp", "nether", "end"),
+				args[0]
+			);
+		}
+		return null;
 	}
 
 }

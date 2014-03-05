@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
@@ -241,6 +242,28 @@ public class TimecheckCommand extends AbstractCommand {
 			}
 			sender.sendMessage(ChatColor.GREEN + String.valueOf(rank) + ". " + ChatColor.GOLD + playername +  ChatColor.WHITE + " - " + Util.getTimePlayedString(entry.getPlaytime())); //Send score
 			rank++;
+		}
+	}
+
+	/**
+	 * TabComplete on this command
+	 * @param sender The sender of the command
+	 * @param args given arguments
+	 * @return List of options
+	 */
+	public static List<String> tabComplete(CommandSender sender, String[] args) {
+		if (!Util.testPermission(sender, "timecheck")) return createEmptyList();
+		
+		if (args.length == 1) {
+			List<String> players = listAllPlayers(sender.getName()); //List all players
+			players.add(0, "leaderboard"); //Add other options
+			players.add(0, "list");
+			return filterResults(players, args[0]); //Filter and return
+		} else if (args.length == 2 && args[0].equalsIgnoreCase("list")) { //If first argument is list
+			List<String> options = createNewList("staff", "guidesstaff", "allstaff", "Guide", "VIPGuide", "Mod", "Admin", "SuperAdmin"); //Options
+			return filterResults(options, args[1]); //Filter results
+		} else {
+			return null;
 		}
 	}
 	

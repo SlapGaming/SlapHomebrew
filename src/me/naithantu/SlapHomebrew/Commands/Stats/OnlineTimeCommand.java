@@ -1,6 +1,7 @@
 package me.naithantu.SlapHomebrew.Commands.Stats;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
@@ -56,5 +57,15 @@ public class OnlineTimeCommand extends AbstractCommand {
 		SessionLogger.sendPlayerTime(p); //Send played time
 		return true;
 	}	
+	
+	/**
+	 * TabComplete on this command
+	 * @param sender The sender of the command
+	 * @param args given arguments
+	 * @return List of options
+	 */
+	public static List<String> tabComplete(CommandSender sender, String[] args) {
+		return createNewList("leaderboard");
+	}
 
 }

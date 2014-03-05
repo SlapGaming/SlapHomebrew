@@ -1,5 +1,8 @@
 package me.naithantu.SlapHomebrew.Commands;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
@@ -239,7 +242,83 @@ public abstract class AbstractCommand {
 		}
 	}
 	
+	/*
+	 ****************
+	 * Tab Complete *
+	 **************** 
+	 */
+	/**
+	 * Creates a list of all players that can be auto tab completed
+	 * @param exclude Possible players that should be excluded
+	 * @return the list of names
+	 */
+	public static List<String> listAllPlayers(String... exclude) {
+		List<String> list = new ArrayList<>();
+		for (Player player : Util.getOnlinePlayers()) {
+			String p = player.getName();
+			boolean skip = false;
+			for (String ex : exclude) {
+				if (p.equalsIgnoreCase(ex)) {
+					skip = true;
+					break;
+				}
+			}
+			if (!skip) list.add(p);
+		}
+		return list;
+	}
 	
+	/**
+	 * Create a new empty List<String>
+	 * @return empty string list
+	 */
+	public static List<String> createEmptyList() {
+		return new ArrayList<String>();
+	}
+	
+	/**
+	 * Create a new list with the given options
+	 * @param options optional options
+	 * @return list with options
+	 */
+	public static List<String> createNewList(String... options) {
+		List<String> list = createEmptyList();
+		for (String option : options) {
+			list.add(option);
+		}
+		return list;
+	}
+	
+	/**
+	 * Filter all strings that start with the given string 
+	 * @param list The list
+	 * @param startWith start with
+	 * @return the same list (filtered)
+	 */
+	public static List<String> filterResults(List<String> list, String startWith) {
+		if (startWith.equals("")) return list;
+		
+		startWith = startWith.toLowerCase(); //To lowercase
+		
+		for (int x = list.size() - 1; x >= 0; x--) { //Loop thru results, start at last entry
+			String s = list.get(x);
+			if (!(s.toLowerCase().startsWith(startWith))) { //If not start with given string
+				list.remove(x); //Remove from list
+			}
+		}
+		return list;
+	}
+	
+	/**
+	 * Add strings to a string list
+	 * @param list The list
+	 * @param toBeAdded Strings that need to be added
+	 */
+	public static void addToList(List<String> list, String...toBeAdded) {
+		for (String s : toBeAdded) {
+			list.add(s);
+		}
+	}
 	
 	
 }

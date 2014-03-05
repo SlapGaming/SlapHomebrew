@@ -47,6 +47,14 @@ public class ChangeLog extends AbstractController {
 		targetPlayer.sendMessage(ChatColor.YELLOW + "================== " + ChatColor.GOLD  + "Page " + page + " out of " + pages + ChatColor.YELLOW  + " ==================");
 	}
 	
+	/**
+	 * Return the number of pages
+	 * @return the number of pages
+	 */
+	public int getPages() {
+		return pages;
+	}
+	
 	private void sendMessage(CommandSender targetPlayer, LoggedChange loggedChange) {
 		targetPlayer.sendMessage(ChatColor.GOLD + "[" + loggedChange.date + "] " + ChatColor.WHITE + loggedChange.change);
 	}

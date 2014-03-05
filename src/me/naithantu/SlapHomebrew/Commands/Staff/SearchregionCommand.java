@@ -4,7 +4,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
+import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.RegionLogger;
@@ -12,6 +15,7 @@ import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 public class SearchregionCommand extends AbstractCommand {
 	
@@ -77,5 +81,29 @@ public class SearchregionCommand extends AbstractCommand {
 			});
 		}
 		return true;
+	}
+	
+	/**
+	 * TabComplete on this command
+	 * @param sender The sender of the command
+	 * @param args given arguments
+	 * @return List of options
+	 */
+	public static List<String> tabComplete(CommandSender sender, String[] args) {
+		if (!Util.testPermission(sender, "searchregion")) return createEmptyList(); //No perm
+		
+		if (sender instanceof Player) {
+			if (args.length == 1) { //If first argument
+				if (args[0].length() > 3) { //If atleast some letters given
+					return filterResults( //Filter results
+						new ArrayList<String>( //Create new list with all regions in that world
+							SlapHomebrew.getInstance().getworldGuard().getRegionManager(((Player) sender).getWorld()).getRegions().keySet()
+						),
+						args[0]
+					);
+				}
+			}
+		}
+		return null;
 	}
 }

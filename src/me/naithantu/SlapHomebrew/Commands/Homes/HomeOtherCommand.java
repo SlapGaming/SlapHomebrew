@@ -1,10 +1,13 @@
 package me.naithantu.SlapHomebrew.Commands.Homes;
 
+import java.util.List;
+
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
@@ -35,4 +38,30 @@ public class HomeOtherCommand extends AbstractCommand {
 		return true;
 	}
 
+	/**
+	 * TabComplete on this command
+	 * @param sender The sender of the command
+	 * @param args given arguments
+	 * @return List of options
+	 */
+	public static List<String> tabComplete(CommandSender sender, String[] args) {
+		if (!Util.testPermission(sender, "homeother") || args.length != 2) return null;
+		
+		List<String> list = createEmptyList();
+		OfflinePlayer offPlayer = SlapHomebrew.getInstance().getServer().getOfflinePlayer(args[0]);
+		if (offPlayer.getPlayer() == null && !offPlayer.hasPlayedBefore()) { //If player doesn't exist
+			return list;
+		}
+				
+		//Add list and all homes
+		list.add("list");
+		try {
+			list.addAll(SlapHomebrew.getInstance().getHomes().getHomes(args[0]));
+		} catch (CommandException e) {}
+		
+		//Filter
+		filterResults(list, args[1]);
+		
+		return list; //Return
+	}
 }

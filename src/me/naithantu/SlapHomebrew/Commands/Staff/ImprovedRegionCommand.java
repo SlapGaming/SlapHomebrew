@@ -1,5 +1,9 @@
 package me.naithantu.SlapHomebrew.Commands.Staff;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
@@ -24,6 +28,9 @@ import me.naithantu.SlapHomebrew.PlayerExtension.SlapPlayer;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import com.sk89q.worldguard.protection.flags.DefaultFlag;
+import com.sk89q.worldguard.protection.flags.Flag;
 
 public class ImprovedRegionCommand extends AbstractCommand {
 		
@@ -248,5 +255,125 @@ public class ImprovedRegionCommand extends AbstractCommand {
 		if (returnBool == false) throw new CommandException(ErrorMsg.noPermission);
 		return returnBool;
 	}	
+	
+	/**
+	 * TabComplete on this command
+	 * @param sender The sender of the command
+	 * @param args given arguments
+	 * @return List of options
+	 */
+	public static List<String> tabComplete(CommandSender sender, String[] args) {
+		boolean staff = sender.hasPermission(Perm.helpStaff.toString());
+		if (args.length == 1) { //No command given
+			List<String> list;
+			if (!staff) { //No staff commands
+				list = createNewList("list", "info", "addmember", "removemember");
+			} else { //All commands (Without OP ones)
+				list = createNewList("addmember", "addowner", "define", "delete", "flag", "seengroup", "info", "list", "setpriority", "redefine", "removemember", "removeowner", "select", "teleport");
+			}
+			
+			//Filter results
+			filterResults(list, args[0]);
+			return list;
+		} else if (staff) { //Staff commands 
+			switch (args[0].toLowerCase()) {
+			case "select": case "sel": case "s": //Selects a WG
+				if (args.length == 2) {
+					return listRegions(sender, args[1]);
+				} else if (args.length == 3) {
+					return createNewList("sel");
+				} else {
+					return createEmptyList();
+				}
+				
+			case "flag": case "f": //Give a region a flag or remove a flag
+				if (args.length == 2) {
+					return listRegions(sender, args[1]);
+				} else if (args.length == 3) { //The flag
+					if (sender.hasPermission(Perm.flagAll.toString())) { //Return all flags
+						List<String> flags = createEmptyList();
+						for (Flag<?> f : DefaultFlag.getFlags()) { //Get all flags
+							flags.add(f.getName());
+						}
+						return filterResults(flags, args[2]); //Filter flags
+					} else {
+						return filterResults( //REturn mod flags
+							createNewList("snowfall", "snowmelt", "iceform", "icemelt", "mushroomgrowth", "grassgrowth", "myceliumspread", "vinegrowth"),
+							args[2]
+						);
+					}
+				} else if (args.length == 4) { //Last argument
+					return filterResults( //Return filtered options
+						createNewList("none", "remove", "delete", "allow", "true", "on", "deny", "false", "off"),
+						args[3]
+					);
+				} else {
+					return null;
+				}
+				
+			case "info": case "information": case "i": //Info about the WG
+			case "redefine": case "red": case "redef": //Redefine a region
+			case "setpriority": case "setp": case "setpri": case "priority": case "pri": //Set the priority of a region
+			case "delete": case "del": case "remove": case "rem": //Remove a region
+			case "tp": case "teleport": //Teleport to the WG
+			case "group": case "seen": case "seengroup": case "groupseen": //Get Group & Last seen of owners & members
+				if (args.length == 2) {
+					return listRegions(sender, args[1]); //Return regions
+				} else {
+					return null;
+				}
+				
+			case "addmember": case "addm": case "am": case "member": //Add a member to a region
+			case "removemember": case "remmember": case "removem": case "rmember": case "remm": case "rm": //Remove a member from a region
+			case "addowner": case "addo": case "ao": case "owner": //Add a owner to a region
+			case "removeowner": case "remowner": case "remo": case "removeo": case "rowner": case "ro": //Remove a owner of a region
+				if (args.length == 2) {
+					return listRegions(sender, args[1]);
+				} else {
+					return listAllPlayers(sender.getName());
+				}
+				
+			case "list": //Get a list of all the regions
+				if (args.length == 2) { //First argument
+					List<String> players = listAllPlayers();
+					players.add(0, "all");
+					return filterResults(players, args[1]);
+				} else {
+					return createEmptyList();
+				}
+				
+				
+			case "togglerg": case "toggleirg": case "toggleregion": //Toggle /rg <-> /irg for this player
+				return createEmptyList();
+				
+			case "copy": case "copysel": case "copyselection": //Copy the selection of a different player
+			case "define": case "def": case "create": case "d": //Define a region
+				return null;
+				
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * List filtered results of all regions
+	 * or if the arg is 3 chars or shorter player names
+	 * @param sender The sender
+	 * @param arg The given argument to filter on
+	 * @return filtered list
+	 */
+	private static List<String> listRegions(CommandSender sender, String arg) {
+		if (arg.length() > 3 && sender instanceof Player) { //If atleast some letters given
+			return filterResults( //Filter results
+				new ArrayList<String>( //Create new list with all regions in that world
+					SlapHomebrew.getInstance().getworldGuard().getRegionManager(((Player) sender).getWorld()).getRegions().keySet()
+				),
+				arg
+			);
+		} else {
+			return null;
+		}
+	}
+	
 	
 }

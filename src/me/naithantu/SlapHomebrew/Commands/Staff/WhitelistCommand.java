@@ -1,9 +1,13 @@
 package me.naithantu.SlapHomebrew.Commands.Staff;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 
+import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
@@ -72,6 +76,29 @@ public class WhitelistCommand extends AbstractCommand {
 			return false;
 		}
 		return true;
+	}
+	
+	/**
+	 * TabComplete on this command
+	 * @param sender The sender of the command
+	 * @param args given arguments
+	 * @return List of options
+	 */
+	public static List<String> tabComplete(CommandSender sender, String[] args) {
+		if (!Util.testPermission(sender, "whitelist")) return createEmptyList(); //No perm
+		if (args.length == 1) {
+			return filterResults(
+				createNewList("on", "off", "addplayer", "removeplayer", "status", "whitelisted", "setmessage", "getmessage"),
+				args[0]
+			);
+		} else if (args.length == 2 && (args[0].equalsIgnoreCase("remove") || args[0].equalsIgnoreCase("removeplayer"))) {
+			return filterResults(
+					new ArrayList<String>(SlapHomebrew.getInstance().getWhitelist().getAllowedPlayers()),
+					args[1]
+			);
+		} else {
+			return createEmptyList();
+		}
 	}
 
 }

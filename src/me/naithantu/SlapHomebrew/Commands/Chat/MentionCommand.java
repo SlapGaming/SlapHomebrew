@@ -1,5 +1,7 @@
 package me.naithantu.SlapHomebrew.Commands.Chat;
 
+import java.util.List;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -87,8 +89,28 @@ public class MentionCommand extends AbstractCommand {
 			return false;
 		}
 		
-		
 		return true;
+	}
+	
+	/**
+	 * TabComplete on this command
+	 * @param sender The sender of the command
+	 * @param args given arguments
+	 * @return List of options
+	 */
+	public static List<String> tabComplete(CommandSender sender, String[] args) {
+		if (args.length == 1) {
+			//Create new list with options
+			List<String> list = createNewList("info", "sound", "help");
+			//Add perm options
+			if (Util.testPermission(sender, "mention.ban")) list.add("ban");
+			if (Util.testPermission(sender, "mention.ban")) list.add("unban");
+			filterResults(list, args[0]);
+			return list;
+		} else if (args.length == 2 && args[0].equalsIgnoreCase("sound")) {
+			return createNewList("on", "off");
+		}
+		return null;
 	}
 
 }

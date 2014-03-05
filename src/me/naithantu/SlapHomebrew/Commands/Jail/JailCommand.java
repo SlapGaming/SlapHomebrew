@@ -3,6 +3,7 @@ package me.naithantu.SlapHomebrew.Commands.Jail;
 import java.util.Arrays;
 import java.util.List;
 
+import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
@@ -118,6 +119,67 @@ public class JailCommand extends AbstractCommand {
 			}
 		}
 		return true;
+	}
+	
+	/**
+	 * TabComplete on this command
+	 * @param sender The sender of the command
+	 * @param args given arguments
+	 * @return List of options
+	 */
+	public static List<String> tabComplete(CommandSender sender, String[] args) {
+		if (!Util.testPermission(sender, "jail")) return null;
+		
+		if (args.length == 1) {
+			//List all players (exclude sender if a player)
+			String[] exclude = ((sender instanceof Player) ? new String[]{sender.getName()} : new String[]{});
+			List<String> options = listAllPlayers(exclude);
+			
+			//Add options
+			if (Util.testPermission(sender, "jail.remove")) options.add(0, "remove");
+			if (Util.testPermission(sender, "jail.create")) options.add(0, "create");
+			options.add(0, "list");
+			options.add(0, "info");
+			
+			//Filter results
+			filterResults(options, args[0]);
+			return options;
+		} else {
+			switch (args[0].toLowerCase()) {
+			case "create": case "info": case "list": //No futher usage for create or info
+				return null;
+				
+			case "remove": //Return jails for remove
+				if (args.length > 2) {
+					return null;
+				} else {
+					List<String> list = SlapHomebrew.getInstance().getJails().getJailList(); //Get all jails
+					filterResults(list, args[1]); //Filter the results
+					return list;
+				}
+				
+			default:
+				switch (args.length) {
+				case 2: //Playername given -> Jail name
+					List<String> jails = SlapHomebrew.getInstance().getJails().getJailList();
+					filterResults(jails, args[1]);
+					return jails;
+					
+				case 3:  //Jail name given -> Add time
+					if (args[2].isEmpty()) {
+						return createNewList("3", "5", "8", "10", "15");
+					} else {
+						return null;
+					}
+					
+				case 4: //Time given -> Add time formats
+					List<String> formats = createNewList("sec", "seconds", "min", "minutes", "hour", "hours");
+					filterResults(formats, args[3]);
+					return formats;	
+				}
+			}
+		}
+		return null;
 	}
 	
 }

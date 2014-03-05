@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import me.naithantu.SlapHomebrew.Commands.CommandHandler;
+import me.naithantu.SlapHomebrew.Commands.TabHandler;
 import me.naithantu.SlapHomebrew.Commands.Basics.SpawnCommand;
 import me.naithantu.SlapHomebrew.Controllers.*;
 import me.naithantu.SlapHomebrew.Controllers.FancyMessage.FancyMessageControl;
@@ -14,8 +15,10 @@ import me.naithantu.SlapHomebrew.Listeners.Player.*;
 import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 import me.naithantu.SlapHomebrew.Timing.HandlerControl;
+import me.naithantu.SlapHomebrew.Util.DateFormatUtil;
 import me.naithantu.SlapHomebrew.Util.Log;
 import me.naithantu.SlapHomebrew.Util.SQLPool;
+import me.naithantu.SlapHomebrew.Util.Util;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.command.Command;
@@ -134,6 +137,16 @@ public class SlapHomebrew extends JavaPlugin {
 		SpawnCommand.setResourceWorldName(rwWorld);
 		
 		saveConfig();
+		
+		//Essentials reflection code is a bit broken. TabComplete handling of some essential commands still go to Essentials
+		//Instead of SlapHomebrew. Migrates the handler from Essentials to Slaphomebrew
+		Util.runLater(new Runnable() {
+			@Override
+			public void run() {
+				TabHandler.migrateEssentialTabCommands(instance);
+			}
+		}, 10);
+		
 	}
 
 	@Override
@@ -150,6 +163,16 @@ public class SlapHomebrew extends JavaPlugin {
 		return commandHandler.handle(sender, cmd, args);
 	}
 	
+	@Override
+	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+		List<String> handled = TabHandler.handle(sender, command, args);
+		if (handled == null) {
+			return super.onTabComplete(sender, command, alias, args);
+		} else {
+			return handled;
+		}
+	}
+	
 	
 	/*
 	 **************************************
@@ -160,6 +183,7 @@ public class SlapHomebrew extends JavaPlugin {
 	private void initializeStatics() {
 		instance = this;
 		Log.intialize(getLogger());
+		DateFormatUtil.initialize();
 	}
 	
 	private void initializeExternals() {
@@ -301,6 +325,7 @@ public class SlapHomebrew extends JavaPlugin {
 	private void disableStatics() {
 		instance = null;
 		Log.shutdown();
+		DateFormatUtil.destruct();
 	}
 	
 	private void disableSavers() {

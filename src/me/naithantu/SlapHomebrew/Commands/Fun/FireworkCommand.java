@@ -1,10 +1,13 @@
 package me.naithantu.SlapHomebrew.Commands.Fun;
 
+import java.util.List;
+
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
 import me.naithantu.SlapHomebrew.Controllers.FireworkShow;
 import me.naithantu.SlapHomebrew.PlayerExtension.SlapPlayer;
+import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -51,6 +54,20 @@ public class FireworkCommand extends AbstractCommand {
 			}
 		}
 		return true;
+	}
+	
+	/**
+	 * TabComplete on this command
+	 * @param sender The sender of the command
+	 * @param args given arguments
+	 * @return List of options
+	 */
+	public static List<String> tabComplete(CommandSender sender, String[] args) {
+		if (args.length == 1 && Util.testPermission(sender, "fireworkshowcontroller")) {
+			return createNewList("run", "toggle");
+		} else {
+			return createEmptyList();
+		}
 	}
 	
 

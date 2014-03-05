@@ -1,5 +1,7 @@
 package me.naithantu.SlapHomebrew.Commands.Promotion;
 
+import java.util.List;
+
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
@@ -84,6 +86,22 @@ public class PromotionVIPCommand extends AbstractCommand {
 	@Override
 	protected void testPermission(String perm) throws CommandException {
 		super.testPermission("promotion.vip." + perm);
+	}
+	
+	/**
+	 * TabComplete on this command
+	 * @param sender The sender of the command
+	 * @param args given arguments
+	 * @return List of options
+	 */
+	public static List<String> tabComplete(CommandSender sender, String[] args) {
+		if (args.length == 2) {
+			return filterResults(createNewList("addvipdays", "setvipdays", "removevip", "lifetime", "addlifetimevip", "setlifetimevip", "days", "getdays", "getvipdays"), args[1]);
+		} else if (args.length == 3) {
+			return listAllPlayers(sender.getName());
+		} else {
+			return null;
+		}
 	}
 
 }

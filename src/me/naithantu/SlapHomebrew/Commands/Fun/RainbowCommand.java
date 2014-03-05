@@ -1,6 +1,7 @@
 package me.naithantu.SlapHomebrew.Commands.Fun;
 
 import java.util.HashMap;
+import java.util.List;
 
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
@@ -72,5 +73,19 @@ public class RainbowCommand extends AbstractCommand {
 			inventory.getChestplate().getType() == Material.LEATHER_CHESTPLATE && 
 			inventory.getHelmet().getType() == Material.LEATHER_HELMET
 		);
+	}
+	
+	/**
+	 * TabComplete on this command
+	 * @param sender The sender of the command
+	 * @param args given arguments
+	 * @return List of options
+	 */
+	public static List<String> tabComplete(CommandSender sender, String[] args) {
+		if (Util.testPermission(sender, "rainbow.fast")) {
+			return createNewList("fast");
+		} else {
+			return createEmptyList();
+		}
 	}
 }

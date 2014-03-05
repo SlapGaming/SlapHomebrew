@@ -1,7 +1,9 @@
 package me.naithantu.SlapHomebrew.Commands.Chat;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
@@ -80,6 +82,44 @@ public class ChatToggleCommand extends AbstractCommand {
 		} else { //Not in a channel
 			cc.playerSwitchChannel(p, channel);
 		}
+	}
+	
+	/**
+	 * TabComplete on this command
+	 * @param sender The sender of the command
+	 * @param args given arguments
+	 * @return List of options
+	 */
+	public static List<String> tabComplete(CommandSender sender, String[] args) {
+		if (!(sender instanceof Player) || args.length > 1) return createEmptyList(); //Usage
+		
+		//Get ChatChannels of the player
+		ChatChannels cc = SlapHomebrew.getInstance().getChatChannels();
+		List<String> channels = cc.getAllowedChannels((Player) sender);
+		
+		//Create new list
+		List<String> list = createEmptyList();
+		int size = channels.size();
+		
+		if (size == 0) { //No permission for any channels
+			return list;
+		}
+		
+		if (cc.isPlayerInChannel(sender.getName())) { //Check if in a channel
+			list.add("none");
+		}
+		
+		if (size > 1) { //If more than 1 channel available
+			list.add("list");
+		}
+		
+		//Add channels
+		list.addAll(channels);
+		
+		//Filter results
+		filterResults(list, args[0]);
+		
+		return list;
 	}
 
 }

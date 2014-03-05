@@ -1,5 +1,7 @@
 package me.naithantu.SlapHomebrew.Commands.Staff;
 
+import java.util.List;
+
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -98,6 +100,24 @@ public class PlotCommand extends AbstractCommand {
 				parseIntPositive(arg)
 			};
 		}
+	}
+	
+	/**
+	 * TabComplete on this command
+	 * @param sender The sender of the command
+	 * @param args given arguments
+	 * @return List of options
+	 */
+	public static List<String> tabComplete(CommandSender sender, String[] args) {		
+		if (Util.testPermission(sender, "plot.mod") && args.length == 1) {
+			List<String> commands = createNewList("check", "mark", "teleport");
+			if (Util.testPermission(sender, "plot.admin")) {
+				commands.add("finish");
+			}
+			filterResults(commands, args[0]);
+			return commands;
+		}
+		return createEmptyList();
 	}
 
 }

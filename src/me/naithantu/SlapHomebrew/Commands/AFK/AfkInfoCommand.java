@@ -1,5 +1,7 @@
 package me.naithantu.SlapHomebrew.Commands.AFK;
 
+import java.util.List;
+
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Controllers.AwayFromKeyboard;
@@ -75,4 +77,24 @@ public class AfkInfoCommand extends AbstractCommand {
 		return true;
 	}
 
+	/**
+	 * TabComplete on this command
+	 * @param sender The sender of the command
+	 * @param args given arguments
+	 * @return List of options
+	 */
+	public static List<String> tabComplete(CommandSender sender, String[] args) {
+		if (args.length > 1) return createEmptyList();
+		List<String> list;
+		if (sender instanceof Player) { //If sender = a player, exclude it from the afkinfo list
+			list = listAllPlayers(sender.getName());
+		} else { //List all players
+			list = listAllPlayers();
+		}
+		list.add(0, "list"); //Add 'list' to the list.
+		
+		filterResults(list, args[0]); //Filter results
+		return list;
+	}
+	
 }

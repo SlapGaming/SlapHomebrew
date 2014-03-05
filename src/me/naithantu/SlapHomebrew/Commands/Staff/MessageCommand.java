@@ -1,7 +1,10 @@
 package me.naithantu.SlapHomebrew.Commands.Staff;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
+import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
@@ -14,6 +17,7 @@ import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -106,4 +110,44 @@ public class MessageCommand extends AbstractCommand {
 		checkForMessage(path);
 		return ChatColor.translateAlternateColorCodes('&', messageConfig.getString("messages." + path));
 	}
+	
+	/**
+	 * TabComplete on this command
+	 * @param sender The sender of the command
+	 * @param args given arguments
+	 * @return List of options
+	 */
+	public static List<String> tabComplete(CommandSender sender, String[] args) {
+		if (!(Util.testPermission(sender, "message"))) return null;
+		
+		if (args.length == 1) {
+			List<String> messages = getMessages(); //Get messages
+			addToList(messages, "show", "list"); //Add command options
+			if (Util.testPermission(sender, "message.admin")) { //Add admin commands if permission
+				addToList(messages, "create", "remove", "reload");
+			}
+			//Filter & Return
+			filterResults(messages, args[0]);
+			return messages;
+		} else if (args.length == 2 && (args[0].equalsIgnoreCase("remove") || args[0].equalsIgnoreCase("show"))) { //If remove or show, give all messages
+			return filterResults(getMessages(), args[1]);
+		}
+		return null;
+	}
+	
+	/**
+	 * Get all messages
+	 * @return list of messages
+	 */
+	private static List<String> getMessages() {
+		ConfigurationSection config = SlapHomebrew.getInstance().getMessageStorage().getConfig().getConfigurationSection("messages");
+		List<String> messages;
+		if (config != null) {
+			messages = new ArrayList<>(config.getKeys(false));
+		} else {
+			messages = createEmptyList();
+		}
+		return messages;
+	}
+	
 }

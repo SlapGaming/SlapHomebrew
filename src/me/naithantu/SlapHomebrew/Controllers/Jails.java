@@ -17,6 +17,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
@@ -220,6 +221,19 @@ public class Jails extends AbstractController {
 			}
 		}
 		return jailList;
+	}
+	
+	/**
+	 * Get all jailed players
+	 * @return list of players
+	 */
+	public List<String> getJailedPlayers() {
+		ConfigurationSection cPart = jailConfig.getConfigurationSection("jailed");
+		if (cPart == null) {
+			return new ArrayList<String>();
+		} else {
+			return new ArrayList<String>(cPart.getKeys(false));
+		}
 	}
 	
 	

@@ -2,8 +2,10 @@ package me.naithantu.SlapHomebrew.Commands.Staff;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
+import me.naithantu.SlapHomebrew.Commands.Basics.SpawnCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Util.Util;
 
@@ -149,6 +151,29 @@ public class XRayCommand extends AbstractCommand {
 			color = ChatColor.GREEN;
 		}	
 		return line + color + percentage + "% " + lineEnd;
+	}
+	
+	/**
+	 * TabComplete on this command
+	 * @param sender The sender of the command
+	 * @param args given arguments
+	 * @return List of options
+	 */
+	public static List<String> tabComplete(CommandSender sender, String[] args) {
+		if (!Util.testPermission(sender, "xray")) return createEmptyList(); //No perm
+		
+		if (args.length == 1) { //First argument, list players
+			return listAllPlayers(sender.getName());
+		} else if (args.length == 2) { //Return worlds
+			return filterResults(
+				createNewList("world", "world_survival2", "world_survival3", SpawnCommand.getResourceWorldName()),
+				args[1]
+			);
+		} else if (args.length == 3) { //All, only options
+			return createNewList("all");
+		} else {
+			return createEmptyList();
+		}
 	}
 	
 

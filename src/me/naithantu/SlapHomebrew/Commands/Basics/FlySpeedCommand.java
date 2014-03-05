@@ -1,5 +1,7 @@
 package me.naithantu.SlapHomebrew.Commands.Basics;
 
+import java.util.List;
+
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -28,6 +30,16 @@ public class FlySpeedCommand extends AbstractCommand {
 		p.setFlySpeed(fSpeed); //Set speed
 		hMsg("Fly speed has been set to " + speed); //Msg player
 		return true;
+	}
+	
+	/**
+	 * TabComplete on this command
+	 * @param sender The sender of the command
+	 * @param args given arguments
+	 * @return List of options
+	 */
+	public static List<String> tabComplete(CommandSender sender, String[] args) {
+		return createNewList("1", "2", "3");		
 	}
 
 }

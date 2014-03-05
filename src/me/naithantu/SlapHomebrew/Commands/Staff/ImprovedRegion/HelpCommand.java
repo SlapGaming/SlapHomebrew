@@ -37,19 +37,20 @@ public class HelpCommand extends AbstractImprovedRegionCommand {
 				
 			case 2:
 				sendHelpLine("flag <Region ID> <Flag> <Flag Parameter(s)>", "Add/Remove a flag");
+				sendHelpLine("seengroup [Region ID]", "Get the last seen date of all players on the region.");
 				sendHelpLine("info [Region ID] [sel]", "Get the information about a region [Also Select it]");
 				sendHelpLine("list <Player | All> [Page]", "Get a list of all regions (of a player)");
-				sendHelpLine("setpriority <Region ID> <Priority>", "Change the priority of a region");
 				break;
 				
 			case 3:
+				sendHelpLine("setpriority <Region ID> <Priority>", "Change the priority of a region");
 				sendHelpLine("redefine <Region ID>", "Redefine a region");
 				sendHelpLine("removemember <Region ID> <Member 1> [Member 2]..", "Remove 1 or more members");
 				sendHelpLine("removeowner <Region ID> <Owner 1> [Owner 2]..", "Remove 1 or more owners");
-				sendHelpLine("select [Region ID]", "Select a region");
 				break;
 				
 			case 4:
+				sendHelpLine("select [Region ID]", "Select a region");
 				sendHelpLine("teleport <Region ID> [sel]", "Teleport to a region");
 				break;
 			}

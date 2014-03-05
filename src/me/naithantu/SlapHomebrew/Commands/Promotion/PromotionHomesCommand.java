@@ -1,5 +1,7 @@
 package me.naithantu.SlapHomebrew.Commands.Promotion;
 
+import java.util.List;
+
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
@@ -62,6 +64,22 @@ public class PromotionHomesCommand extends AbstractCommand {
 	@Override
 	protected void testPermission(String perm) throws CommandException {
 		super.testPermission("promotion.homes." + perm);
+	}
+	
+	/**
+	 * TabComplete on this command
+	 * @param sender The sender of the command
+	 * @param args given arguments
+	 * @return List of options
+	 */
+	public static List<String> tabComplete(CommandSender sender, String[] args) {
+		if (args.length == 2) {
+			return filterResults(createNewList("addhomes", "removehomes", "gethomes"), args[1]); //Return sub commands
+		} else if (args.length == 3) {
+			return listAllPlayers(sender.getName()); //Return online players
+		} else {
+			return createEmptyList(); //Everything behind that ignore
+		}
 	}
 
 }

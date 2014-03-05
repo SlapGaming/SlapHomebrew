@@ -1,5 +1,7 @@
 package me.naithantu.SlapHomebrew.Commands.VIP;
 
+import java.util.List;
+
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
@@ -75,6 +77,22 @@ public class VipCommand extends AbstractCommand {
 			return false;
 		}
 		return true;
+	}
+	
+	/**
+	 * TabComplete on this command
+	 * @param sender The sender of the command
+	 * @param args given arguments
+	 * @return List of options
+	 */
+	public static List<String> tabComplete(CommandSender sender, String[] args) {
+		if (args.length == 1) {
+			return filterResults(
+				createNewList("help", "grant"),
+				args[0]
+			);
+		}
+		return createEmptyList();
 	}
 
 }

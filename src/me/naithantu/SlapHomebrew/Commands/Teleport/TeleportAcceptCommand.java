@@ -1,13 +1,16 @@
 package me.naithantu.SlapHomebrew.Commands.Teleport;
 
 import java.util.HashMap;
+import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.PlayerExtension.PlayerTeleporter.AbstractTeleportRequest;
+import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
 import me.naithantu.SlapHomebrew.PlayerExtension.SlapPlayer;
 import me.naithantu.SlapHomebrew.Util.Util;
 
@@ -42,6 +45,21 @@ public class TeleportAcceptCommand extends AbstractCommand {
 			request.accept();
 		}
 		return true;
+	}
+	
+	/**
+	 * TabComplete on this command
+	 * @param sender The sender of the command
+	 * @param args given arguments
+	 * @return List of options
+	 */
+	public static List<String> tabComplete(CommandSender sender, String[] args) {
+		List<String> list = createEmptyList();
+		if (sender instanceof Player && args.length == 1) { //If a player
+			list.addAll(PlayerControl.getPlayer(sender.getName()).getTeleporter().getIncomingRequests().keySet()); //Add options
+			list = filterResults(list, args[0]);
+		}
+		return list;
 	}
 
 }

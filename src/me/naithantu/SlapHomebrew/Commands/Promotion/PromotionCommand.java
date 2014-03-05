@@ -1,5 +1,7 @@
 package me.naithantu.SlapHomebrew.Commands.Promotion;
 
+import java.util.List;
+
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 
@@ -81,6 +83,38 @@ public class PromotionCommand extends AbstractCommand {
 	@Override
 	protected void testPermission(String perm) throws CommandException {
 		super.testPermission("promotion." + perm);
+	}
+	
+	/**
+	 * TabComplete on this command
+	 * @param sender The sender of the command
+	 * @param args given arguments
+	 * @return List of options
+	 */
+	public static List<String> tabComplete(CommandSender sender, String[] args) {
+		if (!Util.testPermission(sender, "permission")) return createEmptyList(); //No permission
+		
+		if (args.length == 1) { //First argument
+			return filterResults(createNewList("addmoney", "givemoney", "money", "homes", "vip", "ranks"), args[0]); //Add commands & Filter
+		} else {
+			switch(args[0].toLowerCase()) {
+			case "givemoney": case "addmoney": case "money": //Money command given
+				if (args.length == 2) {
+					return listAllPlayers(sender.getName()); //List players
+				} else {
+					return null;
+				}
+			case "homes": case "home": //Homes
+				return PromotionHomesCommand.tabComplete(sender, args);
+			case "vip": //Vip
+				return PromotionVIPCommand.tabComplete(sender, args);
+			case "rank": case "ranks": //Ranks
+				return PromotionRankCommand.tabComplete(sender, args);
+			default:
+				Util.badMsg(sender, "Invalid first argument.");
+			}
+		}
+		return null;
 	}
 
 }

@@ -1,5 +1,7 @@
 package me.naithantu.SlapHomebrew.Commands.Staff;
 
+import java.util.List;
+
 import org.bukkit.command.CommandSender;
 
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
@@ -46,5 +48,20 @@ public class VipForumCommand extends AbstractCommand {
 		}
 		return true;
 	}
-
+	
+	/**
+	 * TabComplete on this command
+	 * @param sender The sender of the command
+	 * @param args given arguments
+	 * @return List of options
+	 */
+	public static List<String> tabComplete(CommandSender sender, String[] args) {
+		if (!Util.testPermission(sender, "vipforum") || args.length > 1) return createEmptyList();
+		
+		return filterResults(
+			createNewList("check", "done", "finish"),
+			args[0]
+		);
+	}
+	
 }
