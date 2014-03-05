@@ -76,11 +76,7 @@ public class SlapCommand extends AbstractCommand {
 		//Values
 		OfflinePlayer offPlayer; EntityPlayer nmsPlayer; Player targetPlayer;
 		
-		switch (args[0].toLowerCase()) {
-		case "a":
-			new TabFidling().run(getPlayer());
-			break;
-		
+		switch (args[0].toLowerCase()) {		
 		case "reload": //Reload the plugin
 			testPermission("manage");
 			Bukkit.getPluginManager().disablePlugin(plugin);
