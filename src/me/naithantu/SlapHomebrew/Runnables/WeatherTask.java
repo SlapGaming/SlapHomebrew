@@ -24,7 +24,7 @@ public class WeatherTask extends BukkitRunnable {
 		random = new Random();
 		for (World w : plugin.getServer().getWorlds()) {
 			String worldname = w.getName().toLowerCase();
-			if (worldname.contains("resource") || worldname.equals("world") || worldname.equals("world_survival2")) {
+			if (worldname.contains("resource") || worldname.equals("world") || worldname.equals("world_survival2") || worldname.equals("world_survival3")) {
 				worlds.add(w);
 			}
 		}

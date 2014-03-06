@@ -31,7 +31,7 @@ public class FireworkCommand extends AbstractCommand {
 				//Set back location
 				player.getTeleporter().setBackLocation(player.p().getLocation());
 				//Teleport player
-				player.p().teleport(new Location(plugin.getServer().getWorld("world_survival2"), -4700, 65, -4608));
+				player.p().teleport(new Location(plugin.getServer().getWorld("world_survival3"), -4700, 65, -4608));
 			} else {
 				throw new CommandException("here is no firework show running.");
 			}

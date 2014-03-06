@@ -27,7 +27,7 @@ public class FireworkShow extends AbstractController {
 	public FireworkShow() {
 		pillars = new HashMap<>();
 		effects = new HashMap<>();
-		world = plugin.getServer().getWorld("world_survival2");
+		world = plugin.getServer().getWorld("world_survival3");
 		createPillars();
 		createEffects();
 	}
