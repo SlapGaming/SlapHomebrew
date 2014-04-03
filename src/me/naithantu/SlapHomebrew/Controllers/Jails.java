@@ -1,13 +1,11 @@
 package me.naithantu.SlapHomebrew.Controllers;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 import me.naithantu.SlapHomebrew.Runnables.JailChecker;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
-import me.naithantu.SlapHomebrew.Util.DateUtil;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.Bukkit;
@@ -165,7 +163,7 @@ public class Jails extends AbstractController {
 		Location loc = parseLocationConfig(jailConfig, "jails." + jail + ".location");
 		if (loc != null) {
 			jailedPlayer.teleport(loc);
-			String timeLeftMessage = parseTimeLeft(new Date(timeLeft));
+			String timeLeftMessage = Util.getTimePlayedString(timeLeft);
 			jailedPlayer.sendMessage(new String[] {Util.getHeader() + "You have been jailed. Reason: " + ChatColor.GREEN + reason, Util.getHeader() + "Time left in jail: " + timeLeftMessage, ChatColor.GRAY + "Use /timeleft to see howmuch time you have left in jail."});
 			for (Player onlinePlayer : plugin.getServer().getOnlinePlayers()) {
 				if (!onlinePlayer.getName().equals(jailedPlayer.getName())) onlinePlayer.sendMessage(Util.getHeader() + jailedPlayer.getName() + " has been jailed.");
@@ -241,13 +239,13 @@ public class Jails extends AbstractController {
 		long timeLeft;
 		if (jailConfig.contains(personInConfig + "timeleft")) timeLeft = jailConfig.getLong(personInConfig + "timeleft");
 		else timeLeft = jailConfig.getLong(personInConfig + "releaseon") - System.currentTimeMillis();
-		sender.sendMessage(new String[] {Util.getHeader() + jailedPlayer + " is in jail: " + jailConfig.getString(personInConfig + "jail") + ". Time left: " + parseTimeLeft(new Date(timeLeft)), Util.getHeader() + "Reason: " +
+		sender.sendMessage(new String[] {Util.getHeader() + jailedPlayer + " is in jail: " + jailConfig.getString(personInConfig + "jail") + ". Time left: " + Util.getTimePlayedString(timeLeft), Util.getHeader() + "Reason: " +
 				ChatColor.GREEN + jailConfig.getString(personInConfig + "reason")});
 	}
 	
 	public void getJailInfo(Player jailedPlayer) {
 		String personInConfig = "jailed." + jailedPlayer.getName() + ".";
-		jailedPlayer.sendMessage(new String[] {Util.getHeader() + "You are jailed. Time left: " + parseTimeLeft(new Date(jailConfig.getLong(personInConfig + "releaseon") - System.currentTimeMillis())), Util.getHeader() + "Reason: " +
+		jailedPlayer.sendMessage(new String[] {Util.getHeader() + "You are jailed. Time left: " + Util.getTimePlayedString(jailConfig.getLong(personInConfig + "releaseon") - System.currentTimeMillis()) , Util.getHeader() + "Reason: " +
 				ChatColor.GREEN + jailConfig.getString(personInConfig + "reason")});
 	}
 	
@@ -286,20 +284,7 @@ public class Jails extends AbstractController {
 		}
 		return loc;
 	}
-	
-	public String parseTimeLeft(Date d) {
-		String timeLeftString = DateUtil.format("HH:mm:ss", d);
-		String timeLeftMessage = "Unkown.";
-		if (timeLeftString.matches("00:00:[0-9][0-9]")) {
-			timeLeftMessage = Integer.parseInt(timeLeftString.substring(6, 8)) + " seconds.";
-		} else if (timeLeftString.matches("00:[0-9][0-9]:[0-9][0-9]")) {
-			timeLeftMessage = Integer.parseInt(timeLeftString.substring(3, 5)) + " minutes and " + Integer.parseInt(timeLeftString.substring(6, 8)) + " seconds.";
-		} else if (timeLeftString.matches("[0-9][0-9]:[0-9][0-9]:[0-9][0-9]")) {
-			timeLeftMessage = Integer.parseInt(timeLeftString.substring(0, 2)) + " hours, " + Integer.parseInt(timeLeftString.substring(3, 5)) + " minutes and " + Integer.parseInt(timeLeftString.substring(6, 8)) + " seconds.";
-		}
-		return timeLeftMessage;
-	}
-	
+		
 	public void shutdown(){
 		jailChecker.cancel();
 		for (Player onlinePlayer : plugin.getServer().getOnlinePlayers()) {
