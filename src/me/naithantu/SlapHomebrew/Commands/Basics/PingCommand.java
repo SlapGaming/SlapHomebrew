@@ -2,7 +2,7 @@ package me.naithantu.SlapHomebrew.Commands.Basics;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.v1_7_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_7_R2.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
