@@ -1,8 +1,13 @@
 package me.naithantu.SlapHomebrew.Controllers;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
+import me.naithantu.SlapHomebrew.Util.Util;
+import nl.stoux.slapbridged.bukkit.SlapBridged;
+import nl.stoux.slapbridged.objects.OtherPlayer;
+import nl.stoux.slapbridged.objects.OtherServer;
 
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -71,9 +76,28 @@ public class TabController extends AbstractController {
 		if (vips.size() > 0) tabSize = tabSize + vips.size() + 1;
 		if (members.size() > 0) tabSize = tabSize + members.size() + 1;
 		if (builders.size() > 0) tabSize = tabSize + builders.size() + 1;
+		
+		List<OtherServer> otherServers = null;
+		int otherPlayers = 0;
+		if (plugin.hasSlapBridged()) { //See if API available
+			if ((otherPlayers = SlapBridged.getAPI().getTotalPlayersOnline()) > 0) {
+				tabSize++;
+			}
+			
+			otherServers = SlapBridged.getAPI().getOtherServers(); //Get other servers
+			for (OtherServer server : otherServers) { //Loop thru servers 
+				if (server.getNrOfPlayersOnline() > 0) { //If any players online
+					tabSize += server.getNrOfPlayersOnline() + 1;
+				} else {
+					tabSize += 2; //Name + "No players"
+				}
+			}
+		}
+		
 		if (tabSize == 0) return;
+		
 		int x = 0;
-		int playersOnline = plugin.getServer().getOnlinePlayers().length;
+		int playersOnline = getOnlinePlayers();
 		String[] tab = new String[tabSize];
 		boolean fOps; boolean fAdmins; boolean fMods; boolean fSpecials; boolean fVips; boolean fMembers; boolean fBuilders;
 		fOps = fAdmins = fMods = fSpecials = fVips = fMembers = fBuilders = true;
@@ -105,8 +129,27 @@ public class TabController extends AbstractController {
 			if (fBuilders) { fBuilders = false; tab[x] = ChatColor.DARK_GREEN + "-- Builders --"; x++; }
 			tab[x] = ChatColor.DARK_GREEN + p; x++; 
 			}
+		
+		//Check other servers
+		if (otherServers != null) {
+			if (otherPlayers > 0) {
+				tab[x++] = ChatColor.WHITE + "     " + ChatColor.WHITE;
+			}
+			for (OtherServer otherServer : otherServers) {
+				tab[x++] = Util.colorize(otherServer.getTabName()); //Set Server name
+				String color = Util.colorize(otherServer.getTabName().substring(0, 2)); //Get color
+				if (otherServer.getNrOfPlayersOnline() > 0) { //If players online
+					for (OtherPlayer p : otherServer.getPlayers().values()) {
+						tab[x++] = color + p.getPlayername();
+					}
+				} else {
+					tab[x++] = color + "No players";
+				}
+			}
+		}
+		
 		for (Player onlinePlayer : plugin.getServer().getOnlinePlayers()) {
-			updateTab(onlinePlayer, tab, playersOnline, maxPlayers);
+			updateTab(onlinePlayer, tab, playersOnline, (maxPlayers > playersOnline ? maxPlayers : maxPlayers * 2));
 		}
 		TabAPI.updateAll();
 	}
@@ -148,6 +191,20 @@ public class TabController extends AbstractController {
 		if (!tabApiSetup) return; //Return if not setup
 		String playerName = p.getName();
 		removeFromGroups(playerName);
+		plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
+			@Override
+			public void run() {
+				createTab();
+			}
+		}, 2);
+	}
+	
+	/**
+	 * Other server Tab Activity
+	 */
+	public void otherServerActivity() {
+		if (!tabApiSetup) return; //Return if not setup
+		
 		plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
 			@Override
 			public void run() {
@@ -274,6 +331,18 @@ public class TabController extends AbstractController {
 	 */
 	public int getMaxPlayers() {
 		return maxPlayers;
+	}
+	
+	/**
+	 * Get the number of online players from all servers
+	 * @return online players
+	 */
+	public int getOnlinePlayers() {
+		int players = Util.getOnlinePlayers().length;
+		if (plugin.hasSlapBridged()) { //If API available
+			players += SlapBridged.getAPI().getTotalPlayersOnline();
+		}
+		return players;
 	}
 	
     @Override

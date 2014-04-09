@@ -7,6 +7,7 @@ import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
 import me.naithantu.SlapHomebrew.Util.Util;
+import nl.stoux.slapbridged.bukkit.SlapBridged;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -135,6 +136,21 @@ public class ChatChannels extends AbstractController {
 		return allowed;
 	}
 	
+	/**
+	 * Send a message to a chat channel
+	 * @param channel The channel
+	 * @param player The Player
+	 * @param message The message
+	 */
+	public void sendToChannel(String channel, String player, String message) {
+		//Get channel
+		Channel c = channels.get(channel);
+		if (channel == null) return;
+		
+		//Send chat
+		c.sendChat(player, message);
+	}
+	
 	private class Channel {
 		
 		private String format;
@@ -158,7 +174,20 @@ public class ChatChannels extends AbstractController {
 			if (args.length == 0) {
 				throw new UsageException(permission + " [message]");
 			}
-			Util.messagePermissionHolders(permission, format + ChatColor.WHITE + " <" + ChatColor.LIGHT_PURPLE + sender.getName() + ChatColor.WHITE + "> " + Util.buildString(args, " ", 0));
+			String message =  Util.buildString(args, " ", 0);
+			Util.messagePermissionHolders(permission, format + ChatColor.WHITE + " <" + ChatColor.LIGHT_PURPLE + sender.getName() + ChatColor.WHITE + "> " + message);
+			if (plugin.hasSlapBridged()) { //Check if API available
+				SlapBridged.getAPI().ChatChannelMessage(permission, sender.getName(), message);
+			}
+		}
+		
+		/**
+		 * Send a chat message to all members of this channel
+		 * @param player The player who send it
+		 * @param message The message
+		 */
+		public void sendChat(String player, String message) {
+			Util.messagePermissionHolders(permission, format + ChatColor.WHITE + " <" + ChatColor.LIGHT_PURPLE + player + ChatColor.WHITE + "> " + message);
 		}
 		
 	}

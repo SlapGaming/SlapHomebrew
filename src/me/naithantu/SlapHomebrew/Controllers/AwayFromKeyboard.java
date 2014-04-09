@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.AFKLogger;
+import nl.stoux.slapbridged.bukkit.SlapBridged;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -32,12 +33,20 @@ public class AwayFromKeyboard extends AbstractController {
     	} else {
     		plugin.getServer().broadcastMessage(ChatColor.WHITE + player + " is now AFK. Reason: " + reason);
     	}
+    	
+    	if (plugin.hasSlapBridged()) { //If API available
+    		SlapBridged.getAPI().PlayerGoesAFK(player, reason); //Send AFK
+    	}
     }
     
     public void leaveAfk(String player){
     	afkReasons.remove(player);
     	AFKLogger.logPlayerLeftAFK(player);
     	plugin.getServer().broadcastMessage(ChatColor.WHITE + player + " is no longer AFK");
+    	
+    	if (plugin.hasSlapBridged()) { //If API available
+    		SlapBridged.getAPI().PlayerLeavesAFK(player); //Leave AFk
+    	}
     }
     
     public boolean isAfk(String player){

@@ -21,6 +21,7 @@ import me.naithantu.SlapHomebrew.Util.Log;
 import me.naithantu.SlapHomebrew.Util.SQLPool;
 import me.naithantu.SlapHomebrew.Util.Util;
 import net.milkbowl.vault.economy.Economy;
+import nl.stoux.slapbridged.bukkit.SlapBridged;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -93,6 +94,7 @@ public class SlapHomebrew extends JavaPlugin {
 	private Economy economy;
 	private WorldGuardPlugin worldGuard;
 	private LogBlock logBlock;
+	private SlapBridged slapBridged;
 	
 	/**
 	 * SQL Pool
@@ -227,6 +229,12 @@ public class SlapHomebrew extends JavaPlugin {
 			logBlock = (LogBlock) logBlockPlugin;
 		}
 		
+		//Get SlapBridged
+		Plugin bridgedPlugin = pm.getPlugin("SlapBridged");
+		if (bridgedPlugin != null && bridgedPlugin.isEnabled() && bridgedPlugin instanceof SlapBridged) {
+			slapBridged = (SlapBridged) bridgedPlugin;
+		}
+		
 		//Create SQL Pool
 		pool = new SQLPool();
 	}
@@ -314,6 +322,10 @@ public class SlapHomebrew extends JavaPlugin {
 				new ProjectileLaunchListener(),
 				new VehicleListener(horses)
 		);
+		
+		if (slapBridged != null) {
+			register(new SlapBridgedListener());
+		}
 	}
 	
 	/**
@@ -537,6 +549,10 @@ public class SlapHomebrew extends JavaPlugin {
 	
 	public LogBlock getLogBlock() {
 		return logBlock;
+	}
+	
+	public boolean hasSlapBridged() {
+		return (slapBridged != null);
 	}
 	
 	
