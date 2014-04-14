@@ -156,6 +156,7 @@ public class SlapHomebrew extends JavaPlugin {
 	public void onDisable() {
 		getServer().getScheduler().cancelTasks(this);
 		disableSavers();
+		disableListeners();
 		disableControllers();
 		disableStatics();
 		pool.shutdown();
@@ -354,6 +355,12 @@ public class SlapHomebrew extends JavaPlugin {
 	
 	private void disableSavers() {
 		saveHashSet(tpBlocks, "tpblocks");
+	}
+	
+	private void disableListeners() {
+		//Disable the chat listeners | Currently the only one.
+		//TODO change this system to automaticly disable all listeners. No matter if they have anything to disable (default behaviour)
+		PlayerChatListener.getInstance().disable();
 	}
 	
 	private void disableControllers() {

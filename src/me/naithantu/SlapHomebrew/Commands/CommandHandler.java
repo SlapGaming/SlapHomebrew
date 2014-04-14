@@ -75,6 +75,7 @@ public class CommandHandler {
 		case "links":			commandObj = new LinksCommand(sender, args);					break;
 		case "list":			commandObj = new ListCommand(sender, args);						break;
 		case "mail":			commandObj = new MailCommand(sender, args);						break;
+		case "me":				commandObj = new MeCommand(sender, args);						break;
 		case "mention":			commandObj = new MentionCommand(sender, args);					break;
 		case "message":			commandObj = new MessageCommand(sender, args);					break;
 		case "minecart":		commandObj = new MinecartCommand(sender, args);					break;

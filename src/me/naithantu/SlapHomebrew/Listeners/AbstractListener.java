@@ -12,4 +12,12 @@ public abstract class AbstractListener implements Listener {
 		plugin = SlapHomebrew.getInstance();
 	}
 
+	/**
+	 * Disable any functionalties in this listener
+	 * This does NOT unregister it
+	 * 
+	 * Standard implementation is nothing
+	 */
+	public void disable() {}
+	
 }

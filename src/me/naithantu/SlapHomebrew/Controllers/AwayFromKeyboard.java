@@ -35,7 +35,7 @@ public class AwayFromKeyboard extends AbstractController {
     	}
     	
     	if (plugin.hasSlapBridged()) { //If API available
-    		SlapBridged.getAPI().PlayerGoesAFK(player, reason); //Send AFK
+    		SlapBridged.getAPI().playerGoesAFK(player, reason); //Send AFK
     	}
     }
     
@@ -45,7 +45,7 @@ public class AwayFromKeyboard extends AbstractController {
     	plugin.getServer().broadcastMessage(ChatColor.WHITE + player + " is no longer AFK");
     	
     	if (plugin.hasSlapBridged()) { //If API available
-    		SlapBridged.getAPI().PlayerLeavesAFK(player); //Leave AFk
+    		SlapBridged.getAPI().playerLeavesAFK(player); //Leave AFk
     	}
     }
     

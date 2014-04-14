@@ -177,7 +177,7 @@ public class ChatChannels extends AbstractController {
 			String message =  Util.buildString(args, " ", 0);
 			Util.messagePermissionHolders(permission, format + ChatColor.WHITE + " <" + ChatColor.LIGHT_PURPLE + sender.getName() + ChatColor.WHITE + "> " + message);
 			if (plugin.hasSlapBridged()) { //Check if API available
-				SlapBridged.getAPI().ChatChannelMessage(permission, sender.getName(), message);
+				SlapBridged.getAPI().chatChannelMessage(permission, sender.getName(), message);
 			}
 		}
 		

@@ -1,7 +1,10 @@
 package me.naithantu.SlapHomebrew.Listeners.Player;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,6 +18,9 @@ import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
 import me.naithantu.SlapHomebrew.PlayerExtension.SlapPlayer;
 import me.naithantu.SlapHomebrew.Util.Log;
 import me.naithantu.SlapHomebrew.Util.Util;
+import nl.stoux.slapbridged.bukkit.SlapBridged;
+import nl.stoux.slapbridged.objects.OtherPlayer;
+import nl.stoux.slapbridged.objects.OtherServer;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
@@ -27,12 +33,15 @@ import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 public class PlayerChatListener extends AbstractListener {
 	
+	//Singleton Instance
+	private static PlayerChatListener instance;
+	
 	private AwayFromKeyboard afk;
 	private Jails jails;
 	private ChatChannels chatChannels;
 	private Mention mention;
 	    
-    private Pattern pattern;
+    private static Pattern pattern;
 	
 	public PlayerChatListener(AwayFromKeyboard afk, Jails jails, ChatChannels chatChannels, Mention mention){
 		this.afk = afk;
@@ -40,7 +49,11 @@ public class PlayerChatListener extends AbstractListener {
 		this.chatChannels = chatChannels;
 		this.mention = mention;
 		
+		//Create pattern
         pattern = Pattern.compile("@{1}\\w+");
+        
+        //Set this as instance
+        instance = this;
 	}
 	
 	@EventHandler
@@ -120,93 +133,233 @@ public class PlayerChatListener extends AbstractListener {
 		
 		//@Person: Check Event is not Cancelled, if it contains @, If the player is allowed to do this permission wise & check if the player is not banned
 		if (!event.isCancelled() && ucMessage.contains("@") && Util.testPermission(player, "mention") && !mention.isBanned(playerName)) { 
-			Matcher matcher = pattern.matcher(ucMessage); //Match the sentence
-			
-			ArrayList<Object> messageParts = null; //Null sets, so they don't get created if not needed
-			HashSet<Player> notifyPlayers = null;
-			
-			int start = 0;
-			
-			while (matcher.find()) { //Find all occurences
-				String name = ucMessage.substring(matcher.start() + 1, matcher.end()); //Get Name (Without the @)
-				Player p = plugin.getServer().getPlayer(name); //Get player
-				if (p != null) { //Check if it exists
-					
-					if (messageParts == null) { //Check if created
-						 notifyPlayers= new HashSet<>(); //New set for players
-						 messageParts = new ArrayList<>(); //New set for split up message
-					}
-					
-					if (matcher.start() != 0) { //Check if not starts with @[name]
-						messageParts.add(ucMessage.substring(start, matcher.start())); //Add part of String as part
-					}
-					
-					messageParts.add(p); //Add player as part
-					notifyPlayers.add(p); //Add player to HashSet for notification sounds
-					
-					start = matcher.end(); //Set new start
-				}
-			}
-			if (messageParts != null && message.length() > start) { //If more letters && Message has been split
-				messageParts.add(ucMessage.substring(start));  				
+			//Check if SlapBridged variant should handle it or not
+			boolean slapBridged = plugin.hasSlapBridged();
+			if (slapBridged) {
+				slapBridged = SlapBridged.getAPI().isConnected();
 			}
 			
-			if (messageParts != null) { //If message has been split
-				event.setCancelled(true); //Cancel event, everyone gets a different message
+			if (slapBridged) {
+				//=> SlapBridged should handle it
+				bridgedMention(SlapBridged.getAPI().getBridge().getThisServer().getPlayers().get(player.getName()), event.getMessage(), event);
+			} else {
+				//=> Normal version should handle it
+				Matcher matcher = pattern.matcher(ucMessage); //Match the sentence
 				
-				//Determine namePrefix;
-				String name = "<";
-				PermissionUser pexUser = PermissionsEx.getUser(player); //Get PexUser
-				if (pexUser != null) { //If existing user
-					if (pexUser.getPrefix() != null) { //If has prefix
-						name += pexUser.getPrefix(); //Add prefix
+				ArrayList<Object> messageParts = null; //Null sets, so they don't get created if not needed
+				HashSet<Player> notifyPlayers = null;
+				
+				int start = 0;
+				
+				while (matcher.find()) { //Find all occurences
+					String name = ucMessage.substring(matcher.start() + 1, matcher.end()); //Get Name (Without the @)
+					Player p = plugin.getServer().getPlayer(name); //Get player
+					if (p != null) { //Check if it exists
+						
+						if (messageParts == null) { //Check if created
+							 notifyPlayers= new HashSet<>(); //New set for players
+							 messageParts = new ArrayList<>(); //New set for split up message
+						}
+						
+						if (matcher.start() != 0) { //Check if not starts with @[name]
+							messageParts.add(ucMessage.substring(start, matcher.start())); //Add part of String as part
+						}
+						
+						messageParts.add(p); //Add player as part
+						notifyPlayers.add(p); //Add player to HashSet for notification sounds
+						
+						start = matcher.end(); //Set new start
 					}
 				}
-				name += player.getName();
-				if (pexUser != null) { //If existing user
-					if (pexUser.getSuffix() != null) {
-						name += pexUser.getSuffix();
-					}
-				}
-				name += "> ";
-				name = ChatColor.translateAlternateColorCodes('&', name); //Transform -> ChatColors
-				
-				//Make annoying sound for people who got notified
-				for (Player p : notifyPlayers) {
-					if (!mention.hasSoundOff(p.getName())) { //Check if player has annoying sounds on
-						p.playSound(p.getLocation(), Sound.ITEM_PICKUP, 10, 1);
-						p.playSound(p.getLocation(), Sound.ORB_PICKUP, 10, 1);
-					}
+				if (messageParts != null && message.length() > start) { //If more letters && Message has been split
+					messageParts.add(ucMessage.substring(start));  				
 				}
 				
-				//Log
-				Log.info("Chat:" + name + " " + event.getMessage());
-				
-				//Check if colorize
-				boolean colorize = Util.testPermission(player, "staff");
-				
-				for (Player p : Util.getOnlinePlayers()) { //Send message to all players
-					String sendMessage = name;
-					boolean isSender = (p == player); //Check if the player = the sender
-					for (Object o : messageParts) {
-						if (o instanceof String) {
-							sendMessage += (String) o;
-						} else if (o instanceof Player) {
-							Player mentionedPlayer = (Player) o;
-							if (mentionedPlayer == p) { //The reciever of this message is the person who is mentioned
-								sendMessage += ChatColor.YELLOW;
-							} else if (isSender) { //The reciever of this message is the sender
-								sendMessage += ChatColor.GRAY + "" + ChatColor.ITALIC;
-							} else { //The reciever of this message is not involved
-								sendMessage += ChatColor.GRAY;
-							}
-							sendMessage += "@" + mentionedPlayer.getName() + ChatColor.RESET;
+				if (messageParts != null) { //If message has been split
+					event.setCancelled(true); //Cancel event, everyone gets a different message
+					
+					//Determine namePrefix;
+					String name = "<";
+					PermissionUser pexUser = PermissionsEx.getUser(player); //Get PexUser
+					if (pexUser != null) { //If existing user
+						if (pexUser.getPrefix() != null) { //If has prefix
+							name += pexUser.getPrefix(); //Add prefix
 						}
 					}
-					p.sendMessage(colorize ? ChatColor.translateAlternateColorCodes('&', sendMessage) : sendMessage); //Send message (Colorize if needed)
+					name += player.getName();
+					if (pexUser != null) { //If existing user
+						if (pexUser.getSuffix() != null) {
+							name += pexUser.getSuffix();
+						}
+					}
+					name += "> ";
+					name = ChatColor.translateAlternateColorCodes('&', name); //Transform -> ChatColors
+					
+					//Make annoying sound for people who got notified
+					for (Player p : notifyPlayers) {
+						if (!mention.hasSoundOff(p.getName())) { //Check if player has annoying sounds on
+							p.playSound(p.getLocation(), Sound.ITEM_PICKUP, 10, 1);
+							p.playSound(p.getLocation(), Sound.ORB_PICKUP, 10, 1);
+						}
+					}
+					
+					//Log
+					Log.info("Chat:" + name + " " + event.getMessage());
+					
+					//Send to SlapBridged
+					if (plugin.hasSlapBridged()) {
+						SlapBridged.getAPI().playerUsesMention(event.getPlayer().getName(), event.getMessage());
+					}
+					
+					
+					//Check if colorize
+					boolean colorize = Util.testPermission(player, "staff");
+					
+					for (Player p : Util.getOnlinePlayers()) { //Send message to all players
+						String sendMessage = name;
+						boolean isSender = (p == player); //Check if the player = the sender
+						for (Object o : messageParts) {
+							if (o instanceof String) {
+								sendMessage += (String) o;
+							} else if (o instanceof Player) {
+								Player mentionedPlayer = (Player) o;
+								if (mentionedPlayer == p) { //The reciever of this message is the person who is mentioned
+									sendMessage += ChatColor.YELLOW;
+								} else if (isSender) { //The reciever of this message is the sender
+									sendMessage += ChatColor.GRAY + "" + ChatColor.ITALIC;
+								} else { //The reciever of this message is not involved
+									sendMessage += ChatColor.GRAY;
+								}
+								sendMessage += "@" + mentionedPlayer.getName() + ChatColor.RESET;
+							}
+						}
+						p.sendMessage(colorize ? ChatColor.translateAlternateColorCodes('&', sendMessage) : sendMessage); //Send message (Colorize if needed)
+					}
 				}
 			}
 		}
+	}
+	
+	/**
+	 * A player mentions another player on another server
+	 * May NOT be called without SlapBridged or without being connected.
+	 * @param player The player who send the @ Mention
+	 * @param message The message
+	 * @param event An {@link AsyncPlayerChatEvent} event. This can be left null.
+	 */
+	public void bridgedMention(OtherPlayer player, String message, AsyncPlayerChatEvent event) {
+		Matcher matcher = pattern.matcher(message); //Match the sentence
+		
+		//Create sets
+		ArrayList<Object> messageParts = new ArrayList<>();
+		HashSet<Player> notifyPlayers = new HashSet<>();
+				
+		//Get this server
+		OtherServer thisServer = SlapBridged.getAPI().getBridge().getThisServer();
+		
+		//Get all players
+		//	=> Get all servers
+		Collection<OtherServer> servers = SlapBridged.getAPI().getOtherServers();
+		servers.add(thisServer);
+		
+		//	=> Create new map. K: Lowercase name => OtherPlayer
+		HashMap<String, OtherPlayer> players = new HashMap<>();
+		//	=> Loop thru servers => Players
+		for (OtherServer server : servers) {
+			for (Entry<String, OtherPlayer> entry : server.getPlayers().entrySet()) {
+				players.put(entry.getKey().toLowerCase(), entry.getValue());
+			}
+		}
+		
+		//Loop thru matched findings
+		int start = 0;
+		while (matcher.find()) { //Find all occurences
+			String name = message.substring(matcher.start() + 1, matcher.end()); //Get Name (Without the @)
+			OtherPlayer p = players.get(name.toLowerCase());
+			if (p != null) { //Check if the player exists
+				
+				if (matcher.start() != 0) { //Check if not starts with @[name]
+					messageParts.add(message.substring(start, matcher.start())); //Add part of String as part
+				}
+				
+				messageParts.add(p); //Add player as part
+				
+				//Check if player is on this server
+				if (thisServer.getPlayers().containsKey(p.getPlayername())) {
+					//=> Add to notify set
+					plugin.getServer().getPlayer(p.getPlayername());
+				}
+				
+				start = matcher.end(); //Set new start
+			}
+		}
+		
+		if (messageParts != null && message.length() > start) { //If more letters && Message has been split
+			messageParts.add(message.substring(start));  				
+		}
+		
+		if (messageParts != null) { //If message has been split			
+			//Create name prefix
+			String name = ChatColor.translateAlternateColorCodes('&', "<" + player.getPrefix() + player.getPlayername() + "> "); //Create name => Transform -> ChatColors
+			
+			//Make annoying sound for people who got notified
+			for (Player p : notifyPlayers) {
+				if (!mention.hasSoundOff(p.getName())) { //Check if player has annoying sounds on
+					p.playSound(p.getLocation(), Sound.ITEM_PICKUP, 10, 1);
+					p.playSound(p.getLocation(), Sound.ORB_PICKUP, 10, 1);
+				}
+			}
+			
+			//Log
+			Log.info("Bridged Mention: <" + name + ">: " + message);
+			
+			//Check if event given
+			if (event != null) {
+				//=> Cancel & Send to SlapBridged (as it must have come from this server)
+				event.setCancelled(true);
+				SlapBridged.getAPI().playerUsesMention(player.getPlayername(), message);
+			}
+			
+			//Check if colorize
+			boolean colorize = player.hasColoredChat();
+			
+			//Send message to all players on this server
+			for (Player p : Util.getOnlinePlayers()) {
+				String sendMessage = name;
+				boolean isSender = (p.getName().equals(player.getPlayername())); //Check if the player = the sender
+				for (Object o : messageParts) {
+					if (o instanceof String) {
+						sendMessage += (String) o;
+					} else if (o instanceof OtherPlayer) {
+						String mentionedPlayer = ((OtherPlayer) o).getPlayername();
+						if (p.getName().equals(mentionedPlayer)) { //The reciever of this message is the person who is mentioned
+							sendMessage += ChatColor.YELLOW;
+						} else if (isSender) { //The reciever of this message is the sender
+							sendMessage += ChatColor.GRAY + "" + ChatColor.ITALIC;
+						} else { //The reciever of this message is not involved
+							sendMessage += ChatColor.GRAY;
+						}
+						sendMessage += "@" + mentionedPlayer + ChatColor.RESET;
+					}
+				}
+				p.sendMessage(colorize ? ChatColor.translateAlternateColorCodes('&', sendMessage) : sendMessage); //Send message (Colorize if needed)
+			}
+		}
+	}
+	
+	
+	@Override
+	public void disable() {
+		//Remove static
+		pattern = null;
+	}
+	
+	/**
+	 * Get the instance
+	 * @return the instance
+	 */
+	public static PlayerChatListener getInstance() {
+		return instance;
 	}
 	
 	

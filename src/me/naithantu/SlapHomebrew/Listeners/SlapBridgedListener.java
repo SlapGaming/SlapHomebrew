@@ -1,15 +1,22 @@
 package me.naithantu.SlapHomebrew.Listeners;
 
+import me.naithantu.SlapHomebrew.Listeners.Player.PlayerChatListener;
 import me.naithantu.SlapHomebrew.Util.Util;
-import nl.stoux.slapbridged.bukkit.events.BridgedPlayerChatEvent;
+import nl.stoux.slapbridged.bukkit.SlapBridged;
 import nl.stoux.slapbridged.bukkit.events.BridgedPlayerJoinEvent;
+import nl.stoux.slapbridged.bukkit.events.BridgedPlayerMeEvent;
+import nl.stoux.slapbridged.bukkit.events.BridgedPlayerMentionEvent;
 import nl.stoux.slapbridged.bukkit.events.BridgedPlayerQuitEvent;
+import nl.stoux.slapbridged.bukkit.events.BridgedPlayerWaveEvent;
 import nl.stoux.slapbridged.bukkit.events.BridgedServerConnectsEvent;
 import nl.stoux.slapbridged.bukkit.events.BridgedServerDisconnectsEvent;
 import nl.stoux.slapbridged.bukkit.events.ChatChannelEvent;
-import nl.stoux.slapbridged.bukkit.events.NewModreqEvent;
+import nl.stoux.slapbridged.bukkit.events.ModreqEvent;
+import nl.stoux.slapbridged.bukkit.events.ModreqEvent.ModreqType;
 import nl.stoux.slapbridged.bukkit.events.ServerJoinGridEvent;
 import nl.stoux.slapbridged.bukkit.events.ServerQuitGridEvent;
+import nl.stoux.slapbridged.objects.OtherPlayer;
+import nl.stoux.slapbridged.objects.OtherServer;
 
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
@@ -23,8 +30,34 @@ public class SlapBridgedListener extends AbstractListener {
 	}
 	
 	@EventHandler
-	public void onCrossServerModreq(NewModreqEvent event) {
-		Util.messagePermissionHolders("staff", ChatColor.GREEN + "New Modreq on: " + ChatColor.translateAlternateColorCodes('&', event.getServer().getChatPrefix()) + ChatColor.GREEN + " | By: " + event.getPlayer().getPlayername() + " | Request: " + event.getRequest());
+	public void onCrossServerModreq(ModreqEvent event) {
+		String message = ChatColor.GREEN + "";
+		
+		//Modreq type
+		switch (event.getType()) {
+		case NEW:
+			message = "New Modreq (ID: #" + event.getFollowID() + ")";
+			break;
+		case CLAIM:
+			message = "Modreq (ID: #" + event.getFollowID() + ") claimed by " + event.getByMod();
+			break;
+		case DONE:
+			message = "Modreq (ID: #" + event.getFollowID() + ") finished by " + event.getByMod();
+			break;
+		}
+		
+		//Add on server
+		message += " on: " + Util.colorize(event.getServer().getChatPrefix()) + ChatColor.GREEN;
+		
+		//Add optional text based on type
+		if (event.getType() == ModreqType.NEW) {
+			message += ChatColor.GREEN + " | By: " + event.getPlayer().getPlayername() + " | Request: " + event.getRequest();
+		} else {
+			message += ".";
+		}
+		
+		//Message permission holders
+		Util.messagePermissionHolders("staff", message); 
 	}
 	
 	//Player connection
@@ -53,11 +86,81 @@ public class SlapBridgedListener extends AbstractListener {
 		plugin.getTabController().otherServerActivity();
 	}
 	
-	
-	
-	//Chat
+	//Social
 	@EventHandler
-	public void onBridgedPlayerChat(BridgedPlayerChatEvent event) {
-		//TODO Deal with @Mention
+	public void onPlayerMention(BridgedPlayerMentionEvent event) {
+		PlayerChatListener.getInstance().bridgedMention(event.getPlayer(), event.getMessage(), null);
 	}
+	
+	@EventHandler
+	public void onPlayerUsesMeCommand(BridgedPlayerMeEvent event) {
+		//Create message start
+		String start = ChatColor.GRAY + " * ";
+		//	=> Add player name
+		start += getColoredPlayername(event.getPlayer()) + ChatColor.GRAY + " ";
+		
+		//Broadcast message
+		Util.broadcast( 
+			event.getPlayer().hasColoredChat() ? Util.colorize(start + event.getMessage()) : Util.colorize(start) + event.getMessage()
+		);
+	}
+	
+	@EventHandler
+	public void onPlayerWave(BridgedPlayerWaveEvent event) {
+		//Create message start
+		String gray = ChatColor.GRAY.toString();
+		String message = gray + " ** " + ChatColor.WHITE;
+		
+		//Add waving player
+		message += getColoredPlayername(event.getWavingPlayer());
+		
+		//Mid-section
+		message += ChatColor.GRAY + " waves to ";
+		
+		//Check if waving to a player or everyone
+		if (event.isWaveToEveryone()) {
+			//=> Waving to everyone
+			message += ChatColor.GOLD + "Everyone";
+		} else {
+			//=> Waving to a player
+			OtherPlayer other = SlapBridged.getAPI().getBridge().getThisServer().getPlayers().get(event.getWavedToPlayer()); //Check if on this server
+			if (other == null) { //=> Otherplayer is on a different server
+				for (OtherServer server : SlapBridged.getAPI().getOtherServers()) { //=> Loop thru servers
+					other = server.getPlayers().get(event.getWavedToPlayer()); //Get player
+					if (other != null) { //Found the player, break loop
+						break;
+					}
+				}
+			}
+			
+			//Double check
+			if (other == null) {
+				//=> Did not find the player. Abort.
+				return;
+			}
+			
+			//Add colored name
+			message += getColoredPlayername(other);
+		}
+		
+		//Last section & Broadcast
+		message += ChatColor.GRAY + " **";
+		Util.broadcast(message);
+	}
+	
+	/**
+	 * Get the colored playername of a player
+	 * @param player The player
+	 */
+	public String getColoredPlayername(OtherPlayer player) {
+		String name;
+		if (player.getPrefix() != null && player.getPrefix().length() > 1) {
+			name = Util.colorize(player.getPrefix().substring(0, 2));
+		} else {
+			name = ChatColor.WHITE.toString();
+		}
+		name += player.getPlayername();
+		return name;
+	}
+	
 }
