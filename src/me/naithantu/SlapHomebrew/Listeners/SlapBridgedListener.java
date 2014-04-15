@@ -95,7 +95,7 @@ public class SlapBridgedListener extends AbstractListener {
 	@EventHandler
 	public void onPlayerUsesMeCommand(BridgedPlayerMeEvent event) {
 		//Create message start
-		String start = ChatColor.GRAY + " * ";
+		String start = ChatColor.GRAY + " ** ";
 		//	=> Add player name
 		start += getColoredPlayername(event.getPlayer()) + ChatColor.GRAY + " ";
 		

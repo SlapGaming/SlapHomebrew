@@ -86,6 +86,7 @@ public class CommandHandler {
 		case "pay":				commandObj = new PayCommand(sender, args);						break;
 		case "ping":			commandObj = new PingCommand(sender, args);						break;
 		case "plot":			commandObj = new PlotCommand(sender, args);						break;
+		case "potato":			commandObj = new ChatCommand(sender, "potatochat", args);		break;
 		case "potion":			commandObj = new PotionCommand(sender, args);					break;
 		case "promotion":		commandObj = new PromotionCommand(sender, args);				break;
 		case "ragequit":		commandObj = new RageQuitCommand(sender, args);					break;
@@ -123,7 +124,6 @@ public class CommandHandler {
 		case "world":			commandObj = new WorldCommand(sender, args);					break;
 		case "worldguards":		commandObj = new WorldguardsCommand(sender, args);				break;
 		case "worthlist":		commandObj = new WorthListCommand(sender, args);				break;
-		case "x":/*PotatoChat*/	commandObj = new ChatCommand(sender, "potatochat", args);		break;
 		case "xray":			commandObj = new XRayCommand(sender, args);						break;
 		}
 		

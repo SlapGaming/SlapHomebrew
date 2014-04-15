@@ -3,7 +3,7 @@ main: me.naithantu.SlapHomebrew.SlapHomebrew
 depend: [Essentials, Vault, PermissionsEx]
 softdepend: [TabAPI, ReportRTS, MCBans, SlapBridged]
 authors: [naithantu, Stoux2]
-version: 3.8.0
+version: 3.8.1
 description: A custom plugin which adds lots of extra features to the SlapGaming minecraft server.
 commands:
   vip:
@@ -175,13 +175,13 @@ commands:
     usage: "Usage: /improvedregion help"
     aliases: [irg, improvedrg, iregion]
   guide: #Guide chat
-    aliases: [g, gc, ac, helpop]
+    aliases: [g, gc, helpop]
   mod: #Mod chat
     aliases: [mc]
   admin: #Admin chat
-    aliases: [a, amsg]
-  x: #Potato chat
-    aliases: [pc]
+    aliases: [a, amsg, ac]
+  potato: #Potato chat
+    aliases: [pc, x]
   chattoggle:
     aliases: [togglechat, tc, ct]
   mention:

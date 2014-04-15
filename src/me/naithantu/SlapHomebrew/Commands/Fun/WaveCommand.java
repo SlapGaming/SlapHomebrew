@@ -62,7 +62,7 @@ public class WaveCommand extends AbstractCommand {
 									toName = playername;
 									//	=> Set colored name (get prefix first)
 									if (player.getPrefix() != null && player.getPrefix().length() > 1) {
-										toColoredName += Util.colorize(player.getPrefix());
+										toColoredName += Util.colorize(player.getPrefix().substring(0, 2));
 									} else {
 										toColoredName += ChatColor.WHITE;
 									}

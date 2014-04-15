@@ -27,7 +27,7 @@ public class MeCommand extends AbstractCommand {
 		if (args.length < 1) return false; //Usage
 		
 		//Base message
-		String message = ChatColor.GRAY + " * ";
+		String message = ChatColor.GRAY + " ** ";
 		
 		//Get user & Prefix => Add to message
 		PermissionUser user = PermissionsEx.getUser(p);

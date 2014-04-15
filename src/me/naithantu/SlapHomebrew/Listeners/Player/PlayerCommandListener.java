@@ -180,9 +180,8 @@ public class PlayerCommandListener extends AbstractListener {
 		if (!event.isCancelled()) {
 			switch (commandMessage[0].substring(1).toLowerCase()) {
 			case "roll": case "afk": case "suicide": case "me": case "j": case "jumpto": //Standard ignored
-			case "g": case "gc": case "ac": case "helpop": //GuideChat
-			case "a": case "amsg": case "mc": //ModChat
-			case "x": case "pc": //PotatoChat
+			case "g": case "gc": case "helpop": case "guide": case "mod": case "mc": case "a": case "amsg": case "ac": case "admin": //Guide, Mod & Admin Chat
+			case "potato": case "x": case "pc": //PotatoChat
 				//Ignore these commands
 				break;
 			case "r": case "reply": case "mail": case "tell": case "t": case "m": case "msg":
