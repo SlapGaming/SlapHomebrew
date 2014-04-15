@@ -73,6 +73,10 @@ public class WaveCommand extends AbstractCommand {
 						}
 						if (!toName.equals("")) break; //Break server loop if found
 					}
+				} else {
+					//Player found
+					toName = toPlayer.getName();
+					toColoredName = getName(toPlayer);
 				}
 				
 				//Final check
