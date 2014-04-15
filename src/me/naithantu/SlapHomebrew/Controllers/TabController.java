@@ -78,9 +78,9 @@ public class TabController extends AbstractController {
 		if (builders.size() > 0) tabSize = tabSize + builders.size() + 1;
 		
 		List<OtherServer> otherServers = null;
-		int otherPlayers = 0;
+		int otherServersSize = 0;
 		if (plugin.hasSlapBridged()) { //See if API available
-			if ((otherPlayers = SlapBridged.getAPI().getTotalPlayersOnline()) > 0) {
+			if ((otherServersSize = SlapBridged.getAPI().getOtherServers().size()) > 0) {
 				tabSize++;
 			}
 			
@@ -132,7 +132,7 @@ public class TabController extends AbstractController {
 		
 		//Check other servers
 		if (otherServers != null) {
-			if (otherPlayers > 0) {
+			if (otherServersSize > 0) {
 				tab[x++] = ChatColor.WHITE + "     " + ChatColor.WHITE;
 			}
 			for (OtherServer otherServer : otherServers) {
