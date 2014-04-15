@@ -78,15 +78,17 @@ public class PlayerDeathListener extends AbstractListener {
 	public void onPlayerDeath(PlayerDeathEvent event) {
 		//Drop player heads in pvp world.
 		if (event.getEntity().getWorld().getName().equals("world_pvp")) {
-			Entity killer;
+			Entity killer = null;
 			if (event.getEntity().getKiller() instanceof Projectile) {
 				Projectile projectile = (Projectile) event.getEntity().getKiller();
-				killer = projectile.getShooter();
+				if (projectile.getShooter() instanceof Entity) {
+					killer = (Entity) projectile.getShooter();
+				}
 			} else {
 				killer = event.getEntity().getKiller();
 			}
 
-			if (killer instanceof Player) {
+			if (killer != null && killer instanceof Player) {
 				Random random = new Random();
 				int randomNumber = random.nextInt(100) + 1;
 				Configuration config = plugin.getConfig();

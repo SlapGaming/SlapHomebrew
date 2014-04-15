@@ -3,13 +3,13 @@ package me.naithantu.SlapHomebrew.Controllers.FancyMessage;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.server.v1_7_R2.NBTTagCompound;
+import net.minecraft.server.v1_7_R3.NBTTagCompound;
 
 import org.bukkit.Achievement;
 import org.bukkit.ChatColor;
 import org.bukkit.craftbukkit.libs.com.google.gson.JsonArray;
 import org.bukkit.craftbukkit.libs.com.google.gson.JsonObject;
-import org.bukkit.craftbukkit.v1_7_R2.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_7_R3.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 
 public class FancyMessage {

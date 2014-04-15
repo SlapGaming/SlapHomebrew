@@ -32,7 +32,9 @@ public class EntityDamageByEntityListener extends AbstractListener {
 		Entity damager = event.getDamager();
 		if(damager instanceof Projectile){
 			Projectile projectile = (Projectile) damager;
-			damager = projectile.getShooter();
+			if (projectile.getShooter() instanceof Entity) {
+				damager = (Entity) projectile.getShooter();
+			}
 		}
 		
 		if (damager != null && damager instanceof Player) {
