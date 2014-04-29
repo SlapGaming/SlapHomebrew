@@ -1,7 +1,6 @@
 package me.naithantu.SlapHomebrew.Commands;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -11,7 +10,7 @@ import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
 import me.naithantu.SlapHomebrew.Controllers.Lottery;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
-import me.naithantu.SlapHomebrew.Controllers.TabController.TabGroup;
+import me.naithantu.SlapHomebrew.Controllers.TabController;
 import me.naithantu.SlapHomebrew.Controllers.MessageStringer.MultiChatCombiner;
 import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
 import me.naithantu.SlapHomebrew.PlayerExtension.SlapPlayer;
@@ -49,8 +48,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitTask;
 
-import ru.tehkode.permissions.PermissionUser;
-import ru.tehkode.permissions.bukkit.PermissionsEx;
 import fr.ribesg.bukkit.ntheendagain.NTheEndAgain;
 
 public class SlapCommand extends AbstractCommand {
@@ -107,9 +104,10 @@ public class SlapCommand extends AbstractCommand {
 			plugin.getTabController().playerSwitchGroup(updateTabPlayer);
 			break;
 			
-		case "cleartab": //Force reset the tab.
+		case "reloadtab": case "cleartab": //Force reset the tab.
 			testPermission("updatetab");
-			plugin.getTabController().reEnable();
+			boolean reloadConfig = args[0].equalsIgnoreCase("reloadtab");
+			plugin.getTabController().onEnable(reloadConfig);
 			break;
 			
 		case "maxplayers": case "setmaxplayers": //Set max players (in tab & list)
@@ -143,26 +141,31 @@ public class SlapCommand extends AbstractCommand {
 			hMsg("/spawn rw has been set to: world_resource" + worldnumber);
 			break;
 			
-		case "tabgroup": //Set|Check the TabGroup of a SuperAdmin
-			testPermission("tabgroup");
-			if (args.length != 2 && args.length != 3) throw new UsageException("slap tabgroup [Player] <group> " + ChatColor.GRAY + "(See /slap tabgroups for groups)");
+		case "tabsection": case "tabgroup": //Set|Check the TabSection of a player
+			testPermission("tabsection");
+			if (args.length != 2 && args.length != 3) throw new UsageException("slap TabSection [Player] <TabSection> " + ChatColor.GRAY + "(See /slap tabsections for the sections)");
 			offPlayer = getOfflinePlayer(args[1]);
-			PermissionUser pexUser = PermissionsEx.getUser(offPlayer.getName());
-			if (pexUser == null || !pexUser.getGroups()[0].getName().equals("SuperAdmin")) throw new CommandException("This player is not a SuperAdmin.");
-			if (args.length == 2) { //Checking tabgroup
-				TabGroup group = plugin.getPlayerLogger().getSuperAdminGroup(offPlayer.getName());
-				if (group == null) throw new CommandException("This player is in the owners Tab (Not registered)");
-				hMsg("This player is in the TabGroup: " + group.toString());
-			} else { //Seting tabgroup
-				if (!plugin.getPlayerLogger().setSuperAdminGroup(offPlayer.getName(), args[2])) throw new CommandException("nvalid group. See: /slap tabgroups");
-				hMsg("Group has been set.");
-				if (offPlayer.getPlayer() != null) plugin.getTabController().playerSwitchGroup(offPlayer.getPlayer()); //Refresh Tab if player is online
+			
+			//Get TabController
+			TabController tabController = plugin.getTabController();
+			
+			if (args.length == 2) { //Checking TabSection
+				String tabSection = tabController.getTabSectionForPlayer(offPlayer.getName()); //Get the TabSection the player is in
+				if (tabSection == null) {
+					hMsg(offPlayer.getName() + " is in their default TabSection.");
+				} else {
+					hMsg(offPlayer.getName() + " is in the TabSection: " + tabSection);
+				}
+			} else { //Setting TabSection
+				if (!tabController.isTabSection(args[2])) throw new CommandException("This is not a valid TabSection. Check: /slap TabSections");
+				tabController.setTabSectionForPlayer(offPlayer.getName(), args[2]);
+				hMsg("Player is now in TabSection " + tabController.getTabSectionForPlayer(offPlayer.getName()));
 			}
 			break;
 			
-		case "tabgroups": //Get a list of all the tabgroups
-			testPermission("tabgroup");
-			hMsg("Tabgroups: " + Arrays.toString(TabGroup.values()));
+		case "tabsections": case "tabgroups": //Get a list of all the tabgroups
+			testPermission("tabsection");
+			hMsg("TabSections: " + Util.buildString(plugin.getTabController().getTabSections(), ", "));
 			break;
 			
 		case "commandinfo": case "command": //Get the plugin this command belongs to

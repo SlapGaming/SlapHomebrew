@@ -270,7 +270,7 @@ public class SlapHomebrew extends JavaPlugin {
 		 controllers.add(mention = new Mention());
 		 controllers.add(playerLogger = new PlayerLogger());
 		 controllers.add(afk = new AwayFromKeyboard());
-		 controllers.add(tabController = new TabController(playerLogger));
+		 controllers.add(tabController = new TabController());
 		 controllers.add(toldStatus = new ToldStatus());
 		 controllers.add(vip = new Vip(tabController));
 		 controllers.add(whitelist = new Whitelist());
