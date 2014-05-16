@@ -141,7 +141,7 @@ public class PlayerChatListener extends AbstractListener {
 			
 			if (slapBridged) {
 				//=> SlapBridged should handle it
-				bridgedMention(SlapBridged.getAPI().getBridge().getThisServer().getPlayers().get(player.getName()), event.getMessage(), event);
+				bridgedMention(SlapBridged.getAPI().getBridge().getThisServer().getPlayers().get(player.getName()), null, event.getMessage(), event);
 			} else {
 				//=> Normal version should handle it
 				Matcher matcher = pattern.matcher(ucMessage); //Match the sentence
@@ -244,10 +244,11 @@ public class PlayerChatListener extends AbstractListener {
 	 * A player mentions another player on another server
 	 * May NOT be called without SlapBridged or without being connected.
 	 * @param player The player who send the @ Mention
+	 * @param otherServer The other server this mention came from. This can be left null.
 	 * @param message The message
 	 * @param event An {@link AsyncPlayerChatEvent} event. This can be left null.
 	 */
-	public void bridgedMention(OtherPlayer player, String message, AsyncPlayerChatEvent event) {
+	public void bridgedMention(OtherPlayer player, OtherServer otherServer, String message, AsyncPlayerChatEvent event) {
 		Matcher matcher = pattern.matcher(message); //Match the sentence
 		
 		//Create sets
@@ -318,6 +319,11 @@ public class PlayerChatListener extends AbstractListener {
 				//=> Cancel & Send to SlapBridged (as it must have come from this server)
 				event.setCancelled(true);
 				SlapBridged.getAPI().playerUsesMention(player.getPlayername(), message);
+			}
+			
+			//Check otherserver if given
+			if (otherServer != null) {
+				name = otherServer.getChatPrefix() + name;
 			}
 			
 			//Check if colorize

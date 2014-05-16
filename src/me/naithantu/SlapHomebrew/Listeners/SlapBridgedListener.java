@@ -89,7 +89,7 @@ public class SlapBridgedListener extends AbstractListener {
 	//Social
 	@EventHandler
 	public void onPlayerMention(BridgedPlayerMentionEvent event) {
-		PlayerChatListener.getInstance().bridgedMention(event.getPlayer(), event.getMessage(), null);
+		PlayerChatListener.getInstance().bridgedMention(event.getPlayer(), event.getServer(), event.getMessage(), null);
 	}
 	
 	@EventHandler
