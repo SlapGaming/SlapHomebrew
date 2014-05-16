@@ -3,7 +3,7 @@ main: me.naithantu.SlapHomebrew.SlapHomebrew
 depend: [Essentials, Vault, PermissionsEx]
 softdepend: [TabAPI, ReportRTS, MCBans, SlapBridged]
 authors: [naithantu, Stoux2]
-version: 3.8.1
+version: 3.8.2
 description: A custom plugin which adds lots of extra features to the SlapGaming minecraft server.
 commands:
   vip:
@@ -260,3 +260,7 @@ commands:
     description: Describe an action/emotion
     usage: "Usage: /me <message>"
     aliases: [action, describe]
+  serverbroadcast:
+    description: Broadcast a message over all servers
+    usage: "Usage: /serverbroadcast <message>"
+    aliases: [crossbroadcast, sbroadcast, cbroadcast]

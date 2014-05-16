@@ -7,6 +7,7 @@ import java.util.List;
 import me.naithantu.SlapHomebrew.Runnables.JailChecker;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 import me.naithantu.SlapHomebrew.Util.Util;
+import nl.stoux.slapbridged.bukkit.SlapBridged;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -166,7 +167,13 @@ public class Jails extends AbstractController {
 			String timeLeftMessage = Util.getTimePlayedString(timeLeft);
 			jailedPlayer.sendMessage(new String[] {Util.getHeader() + "You have been jailed. Reason: " + ChatColor.GREEN + reason, Util.getHeader() + "Time left in jail: " + timeLeftMessage, ChatColor.GRAY + "Use /timeleft to see howmuch time you have left in jail."});
 			for (Player onlinePlayer : plugin.getServer().getOnlinePlayers()) {
-				if (!onlinePlayer.getName().equals(jailedPlayer.getName())) onlinePlayer.sendMessage(Util.getHeader() + jailedPlayer.getName() + " has been jailed.");
+				if (!onlinePlayer.getName().equals(jailedPlayer.getName())) {
+					onlinePlayer.sendMessage(Util.getHeader() + jailedPlayer.getName() + " has been jailed.");
+				}
+			}
+			//Broadcast to other servers
+			if (plugin.hasSlapBridged()) {
+				SlapBridged.getAPI().broadcastMessage(jailedPlayer.getName() + " has been jailed.", true, true);
 			}
 			return true;
 		} else return false;

@@ -102,6 +102,7 @@ public class TabHandler {
 		case "ride":			l = RideCommand.tabComplete(sender, args);						break;
 		case "roll":			/* No futher usage */											break;
 		case "searchregion":	l = SearchregionCommand.tabComplete(sender, args);				break;
+		case "serverbroadcast":	l = listCrossServerPlayers(args);								break;
 		case "sethome":			/* No futher usage */											break;
 		case "sgm":				/* No futher usage */											break;
 		case "skick":			/* No futher usage */											break;
