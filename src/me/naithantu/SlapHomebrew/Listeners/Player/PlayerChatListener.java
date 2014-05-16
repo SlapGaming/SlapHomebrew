@@ -301,7 +301,7 @@ public class PlayerChatListener extends AbstractListener {
 		
 		if (messageParts != null) { //If message has been split			
 			//Create name prefix
-			String name = ChatColor.translateAlternateColorCodes('&', "<" + player.getPrefix() + player.getPlayername() + ChatColor.WHITE + "> "); //Create name => Transform -> ChatColors
+			String name = "<" + player.getPrefix() + player.getPlayername() + ChatColor.WHITE + "> "; //Create name => Transform -> ChatColors
 			
 			//Make annoying sound for people who got notified
 			for (Player p : notifyPlayers) {
@@ -325,6 +325,9 @@ public class PlayerChatListener extends AbstractListener {
 			if (otherServer != null) {
 				name = otherServer.getChatPrefix() + name;
 			}
+			
+			//Colors
+			name = ChatColor.translateAlternateColorCodes('&', name);
 			
 			//Check if colorize
 			boolean colorize = player.hasColoredChat();
