@@ -191,6 +191,31 @@ public class TabController extends AbstractController {
 			return null;
 		}
 	}
+	
+	/**
+	 * Remove a player from a TabSection
+	 * @param player The playername
+	 * @return is removed (not removed when not in a tab section)
+	 */
+	public boolean removeTabSectionForPlayer(String player) {
+		//To lowercase
+		String playerLC = player.toLowerCase();
+		if (playerExceptions.containsKey(playerLC)) { //Check if indeed in a tabsection
+			//Remove from map & yaml
+			playerExceptions.remove(playerLC);
+			config.set("PlayerExceptions." + playerLC, null);
+			yaml.saveConfig();
+			
+			//Check if player is online
+			Player onlinePlayer = plugin.getServer().getPlayer(player);
+			if (onlinePlayer != null) { //Player is online
+				playerSwitchGroup(onlinePlayer); //Switch groups
+			}
+			return true;
+		} else {
+			return false;
+		}
+	}
 		
 	/**
 	 * Add a player to the TabSections

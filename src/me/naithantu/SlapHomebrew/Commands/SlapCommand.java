@@ -157,15 +157,20 @@ public class SlapCommand extends AbstractCommand {
 					hMsg(offPlayer.getName() + " is in the TabSection: " + tabSection);
 				}
 			} else { //Setting TabSection
-				if (!tabController.isTabSection(args[2])) throw new CommandException("This is not a valid TabSection. Check: /slap TabSections");
-				tabController.setTabSectionForPlayer(offPlayer.getName(), args[2]);
-				hMsg("Player is now in TabSection " + tabController.getTabSectionForPlayer(offPlayer.getName()));
+				if (args[2].equalsIgnoreCase("delete") || args[2].equalsIgnoreCase("remove")) { //Check if removing from TabSections
+					boolean removed = tabController.removeTabSectionForPlayer(offPlayer.getName());
+					hMsg(offPlayer.getName() + " is " + (removed ? "back in their default TabSection." : "not in a TabSection."));
+				} else {
+					if (!tabController.isTabSection(args[2])) throw new CommandException("This is not a valid TabSection. Check: /slap TabSections");
+					tabController.setTabSectionForPlayer(offPlayer.getName(), args[2]);
+					hMsg(offPlayer.getName() + " is now in TabSection " + tabController.getTabSectionForPlayer(offPlayer.getName()));
+				}
 			}
 			break;
 			
 		case "tabsections": case "tabgroups": //Get a list of all the tabgroups
 			testPermission("tabsection");
-			hMsg("TabSections: " + Util.buildString(plugin.getTabController().getTabSections(), ", "));
+			hMsg("TabSections: " + Util.buildString(plugin.getTabController().getTabSections(), ", ") + ChatColor.GRAY + ", remove");
 			break;
 			
 		case "commandinfo": case "command": //Get the plugin this command belongs to
