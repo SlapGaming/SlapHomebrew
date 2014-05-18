@@ -20,7 +20,7 @@ public class ReplyCommand extends AbstractCommand {
 
 	@Override
 	public boolean handle() throws CommandException {
-		testPermission("msg"); //Test perms
+		testPermission("privatemsg"); //Test perms
 		if (args.length == 0) throw new UsageException("reply <Message..>"); //Usage
 		
 		//Get SlapPlayer
