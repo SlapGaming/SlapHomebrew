@@ -30,7 +30,7 @@ public class WaveCommand extends AbstractCommand {
 		
 		String gray = ChatColor.GRAY.toString(); //Short for grays due to heavy usage
 				
-		if (args[0].equalsIgnoreCase("everyone")) { //If waving to everyone
+		if (args[0].equalsIgnoreCase("everyone") || args[0].equalsIgnoreCase("all")) { //If waving to everyone
 			Util.broadcast(gray + " ** " + getName(fromPlayer) + gray + " waves to " + ChatColor.GOLD + "Everyone" + gray + " **");
 			
 			//SlapBridged event
