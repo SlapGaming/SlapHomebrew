@@ -59,7 +59,7 @@ public class PlayerCommandListener extends AbstractListener {
 			event.setCancelled(true);
 			return;
 			
-		case "/plugins": case "pl": //Plugins -> /sPlugins
+		case "/plugins": case "/pl": //Plugins -> /sPlugins
 			if (!Util.testPermission(player, "spluginsoverride")) {
 				player.chat("/splugins");
 				event.setCancelled(true);
