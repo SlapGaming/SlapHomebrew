@@ -7,6 +7,8 @@ import me.naithantu.SlapHomebrew.Commands.Chat.ChatToggleCommand;
 import me.naithantu.SlapHomebrew.Commands.Chat.FancyChatCommand;
 import me.naithantu.SlapHomebrew.Commands.Chat.LinksCommand;
 import me.naithantu.SlapHomebrew.Commands.Chat.MentionCommand;
+import me.naithantu.SlapHomebrew.Commands.Chat.MsgCommand;
+import me.naithantu.SlapHomebrew.Commands.Chat.ReplyCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Fun.*;
 import me.naithantu.SlapHomebrew.Commands.Games.*;
@@ -81,6 +83,7 @@ public class CommandHandler {
 		case "minecart":		commandObj = new MinecartCommand(sender, args);					break;
 		case "mobcheck":		commandObj = new MobcheckCommand(sender, args);					break;
 		case "mod":				commandObj = new ChatCommand(sender, "modchat", args);			break;
+		case "msg":				commandObj = new MsgCommand(sender, args);						break;
 		case "note":			commandObj = new NoteCommand(sender, args);						break;
 		case "onlinetime":		commandObj = new OnlineTimeCommand(sender, args);				break;
 		case "pay":				commandObj = new PayCommand(sender, args);						break;
@@ -91,6 +94,7 @@ public class CommandHandler {
 		case "promotion":		commandObj = new PromotionCommand(sender, args);				break;
 		case "ragequit":		commandObj = new RageQuitCommand(sender, args);					break;
 		case "rainbow":			commandObj = new RainbowCommand(sender, args);					break;
+		case "reply":			commandObj = new ReplyCommand(sender, args);					break;
 		case "ride":			commandObj = new RideCommand(sender, args);						break;
 		case "roll":			commandObj = new RollCommand(sender, args);						break;
 		case "searchregion":	commandObj = new SearchregionCommand(sender, args);				break;

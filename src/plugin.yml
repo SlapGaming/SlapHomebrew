@@ -3,7 +3,7 @@ main: me.naithantu.SlapHomebrew.SlapHomebrew
 depend: [Essentials, Vault, PermissionsEx]
 softdepend: [TabAPI, ReportRTS, MCBans, SlapBridged]
 authors: [naithantu, Stoux2]
-version: 3.8.2
+version: 3.8.4
 description: A custom plugin which adds lots of extra features to the SlapGaming minecraft server.
 commands:
   vip:
@@ -264,3 +264,11 @@ commands:
     description: Broadcast a message over all servers
     usage: "Usage: /serverbroadcast <message>"
     aliases: [crossbroadcast, sbroadcast, cbroadcast]
+  msg:
+    description: Private message another player
+    usage: "Usage: /msg [Player] <message>"
+    aliases: [m, t, w, tell, whisper]
+  reply:
+    description: Respond to the last player you contacted using private messages
+    usage: "Usage: /reply <message>"
+    aliases: [r]

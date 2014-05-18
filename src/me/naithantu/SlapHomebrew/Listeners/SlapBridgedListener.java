@@ -1,11 +1,15 @@
 package me.naithantu.SlapHomebrew.Listeners;
 
+import me.naithantu.SlapHomebrew.Commands.Chat.MsgCommand;
 import me.naithantu.SlapHomebrew.Listeners.Player.PlayerChatListener;
+import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
+import me.naithantu.SlapHomebrew.PlayerExtension.SlapPlayer;
 import me.naithantu.SlapHomebrew.Util.Util;
 import nl.stoux.slapbridged.bukkit.SlapBridged;
 import nl.stoux.slapbridged.bukkit.events.BridgedPlayerJoinEvent;
 import nl.stoux.slapbridged.bukkit.events.BridgedPlayerMeEvent;
 import nl.stoux.slapbridged.bukkit.events.BridgedPlayerMentionEvent;
+import nl.stoux.slapbridged.bukkit.events.BridgedPlayerMessageEvent;
 import nl.stoux.slapbridged.bukkit.events.BridgedPlayerQuitEvent;
 import nl.stoux.slapbridged.bukkit.events.BridgedPlayerWaveEvent;
 import nl.stoux.slapbridged.bukkit.events.BridgedServerConnectsEvent;
@@ -146,6 +150,29 @@ public class SlapBridgedListener extends AbstractListener {
 		//Last section & Broadcast
 		message += ChatColor.GRAY + " **";
 		Util.broadcast(message);
+	}
+	
+	@EventHandler
+	public void onPlayerSendMessage(BridgedPlayerMessageEvent event) {
+		//Get final message (colored or not)
+		String finalMessage = (event.isColorMessage() ? ChatColor.translateAlternateColorCodes('&', event.getMessage()) : event.getMessage());
+		
+		//Try to find sending player
+		SlapPlayer fromPlayer = PlayerControl.getPlayer(event.getFromPlayer());
+		if (fromPlayer != null) {
+			fromPlayer.setLastReply(event.getToPlayer()); //Set last reply
+			fromPlayer.sendMessage("[" + ChatColor.GOLD + "Me" + ChatColor.WHITE + " -> " + ChatColor.GOLD + event.getToPlayer() + ChatColor.WHITE + "] " + finalMessage);
+		}
+		
+		//Try to find receiving player
+		SlapPlayer toPlayer = PlayerControl.getPlayer(event.getToPlayer());
+		if (toPlayer != null) {
+			toPlayer.setLastReply(event.getFromPlayer());
+			toPlayer.sendMessage("[" + ChatColor.GOLD + event.getFromPlayer() + ChatColor.WHITE + " -> " + ChatColor.GOLD + "Me" + ChatColor.WHITE + "] " + finalMessage);
+		}
+		
+		//SocialSpy
+		MsgCommand.socialSpy(event.getFromPlayer(), event.getToPlayer(), finalMessage);
 	}
 	
 	/**

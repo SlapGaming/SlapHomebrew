@@ -89,6 +89,7 @@ public class TabHandler {
 		case "minecart":		/* No futher usage */											break;
 		case "mobcheck":		/* Going to redo the command first */ 							break;
 		case "mod":				l = listCrossServerPlayers(args);								break;
+		case "msg":				l = listCrossServerPlayers(args);								break;
 		case "note":			/* Usage here */												break;
 		case "onlinetime":		l = OnlineTimeCommand.tabComplete(sender, args);				break;
 		case "pay":				/* No futher usage */											break;
@@ -100,6 +101,7 @@ public class TabHandler {
 		case "ragequit":		/* No futher usage */											break;
 		case "rainbow":			l = RainbowCommand.tabComplete(sender, args);					break;
 		case "ride":			l = RideCommand.tabComplete(sender, args);						break;
+		case "reply":			l = listCrossServerPlayers(args);								break;
 		case "roll":			/* No futher usage */											break;
 		case "searchregion":	l = SearchregionCommand.tabComplete(sender, args);				break;
 		case "serverbroadcast":	l = listCrossServerPlayers(args);								break;
@@ -188,27 +190,23 @@ public class TabHandler {
 	 * Migrate the Tab functions for the Mail command & for the Home command from essentials to SlapHomebrew
 	 * @param hb The Main plugin
 	 */
-	public static void migrateEssentialTabCommands(SlapHomebrew hb) {
+	public static void migrateEssentialTabCommands(final SlapHomebrew hb) {
 		Essentials ess = hb.getEssentials();
 		
-		PluginCommand essMail = ess.getCommand("mail");
-		PluginCommand essHome = ess.getCommand("home");
-		
-		migrateCommand(essMail, hb);
-		migrateCommand(essHome, hb);
-	}
-	
-	private static void migrateCommand(PluginCommand essCommand, final SlapHomebrew hb) {
-		essCommand.setTabCompleter(new TabCompleter() {
+		String[] commands = {"mail", "home", "msg", "r"};
+		for (String command : commands) { //Loop thru command names
+			PluginCommand essCommand = ess.getCommand(command); //Get the command
 			
-			@Override
-			public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-				return hb.onTabComplete(sender, command, alias, args);
-			}
-		});
+			//Migrate the command
+			essCommand.setTabCompleter(new TabCompleter() {
+				
+				@Override
+				public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+					return hb.onTabComplete(sender, command, alias, args);
+				}
+			});
+			
+		}
 	}
-
-	
-	
-	
+		
 }

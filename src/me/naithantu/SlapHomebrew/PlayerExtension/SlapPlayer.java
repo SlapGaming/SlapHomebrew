@@ -50,6 +50,12 @@ public class SlapPlayer {
 	 */
 	private Location deathLocation;
 	
+	/**
+	 * Msg command info
+	 */
+	private String lastReply;
+	
+	
 	public SlapPlayer(Player p) {
 		//Player
 		player = p;
@@ -351,5 +357,25 @@ public class SlapPlayer {
 	public Location getDeathLocation() {
 		return deathLocation;
 	}
+	
+	/*
+	 * Msg command
+	 */
+	/**
+	 * Set the last player who send/received a message to/from this player
+	 * @param lastReply The playername
+	 */
+	public void setLastReply(String lastReply) {
+		this.lastReply = lastReply;
+	}
+	
+	/**
+	 * Get the name of the last player who send/received a message to/from this player
+	 * @return the name of the player or null
+	 */
+	public String getLastReply() {
+		return lastReply;
+	}
+	
 	
 }

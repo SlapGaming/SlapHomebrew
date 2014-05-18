@@ -184,7 +184,7 @@ public class PlayerCommandListener extends AbstractListener {
 			case "potato": case "x": case "pc": //PotatoChat
 				//Ignore these commands
 				break;
-			case "r": case "reply": case "mail": case "tell": case "t": case "m": case "msg":
+			case "mail":
 				playerLogger.sendToCommandSpies(playerName, event.getMessage(), true); 
 				break;
 			default:
