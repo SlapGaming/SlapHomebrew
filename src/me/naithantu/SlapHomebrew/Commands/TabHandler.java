@@ -100,8 +100,8 @@ public class TabHandler {
 		case "promotion":		l = PromotionCommand.tabComplete(sender, args);					break;
 		case "ragequit":		/* No futher usage */											break;
 		case "rainbow":			l = RainbowCommand.tabComplete(sender, args);					break;
-		case "ride":			l = RideCommand.tabComplete(sender, args);						break;
 		case "reply":			l = listCrossServerPlayers(args);								break;
+		case "ride":			l = RideCommand.tabComplete(sender, args);						break;
 		case "roll":			/* No futher usage */											break;
 		case "searchregion":	l = SearchregionCommand.tabComplete(sender, args);				break;
 		case "serverbroadcast":	l = listCrossServerPlayers(args);								break;
