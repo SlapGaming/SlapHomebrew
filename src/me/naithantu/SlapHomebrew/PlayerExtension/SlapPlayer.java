@@ -1,6 +1,7 @@
 package me.naithantu.SlapHomebrew.PlayerExtension;
 
 import me.naithantu.SlapHomebrew.Controllers.MessageStringer.MessageCombiner;
+import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -65,7 +66,7 @@ public class SlapPlayer {
 		doingCommand = false;
 		toggledRegion = false;
 		rideOnRightClick = false;
-		moved = false;
+		moved = Util.testPermission(p, "staff");
 		rageQuit = false;
 		
 		//Activity
