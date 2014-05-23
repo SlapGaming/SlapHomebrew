@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
@@ -59,7 +60,7 @@ public class TimecheckCommand extends AbstractCommand {
 					@Override
 					public void run() {
 						HashMap<String, PermissionUser> playerToUser = new HashMap<>();
-						PermissionGroup[] groups = PermissionsEx.getPermissionManager().getGroups(); //Get all groups
+						List<PermissionGroup> groups = PermissionsEx.getPermissionManager().getGroupList(); //Get all groups
 						for (PermissionGroup group : groups) { //Switch thru groups
 							String groupname = group.getName().toLowerCase(); //To LC
 							switch (groupname) {
@@ -123,10 +124,13 @@ public class TimecheckCommand extends AbstractCommand {
 				Util.runASync(new Runnable() {
 					@Override
 					public void run() {
-						PermissionUser[] permissionUsers = group.getUsers(); //Get users
-						String[] userArray = new String[permissionUsers.length];
-						for (int x = 0; x < permissionUsers.length; x++) { //Move to StringArray
-							userArray[x] = permissionUsers[x].getName();
+						Set<PermissionUser> permissionUsers = group.getUsers(); //Get users
+						String[] userArray = new String[permissionUsers.size()];
+						
+						int x = 0;
+						for (PermissionUser user : permissionUsers) {
+							userArray[x] = user.getName();
+							x++;
 						}
 						HashMap<String, Long> map = logger.getPlayedTimes(userArray, groupDates[0], groupDates[1]); //Get played times, from all players
 						ArrayList<LeaderboardEntry> lb = logger.createSortLeaderboardEntries(map); //Sort
