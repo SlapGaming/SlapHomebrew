@@ -110,6 +110,7 @@ public class TabHandler {
 		case "skick":			/* No futher usage */											break;
 		case "slap":			/* Usage here */												break;
 		case "sparta":			/* No futher usage */											break;
+		case "spartapads":		/* TODO */														break;
 		case "spawn":			l = SpawnCommand.tabComplete(sender, args);						break;
 		case "splugins":		/* No futher usage */											break;
 		case "stafflist":		l = StaffListCommand.tabComplete(sender, args);					break;

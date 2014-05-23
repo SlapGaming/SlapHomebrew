@@ -3,6 +3,8 @@ package me.naithantu.SlapHomebrew.Listeners.Player;
 import me.naithantu.SlapHomebrew.Commands.SlapCommand;
 import me.naithantu.SlapHomebrew.Controllers.Horses;
 import me.naithantu.SlapHomebrew.Controllers.Jails;
+import me.naithantu.SlapHomebrew.Controllers.SpartaPads;
+import me.naithantu.SlapHomebrew.Controllers.SpartaPads.SpartaPad;
 import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
 import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
 import me.naithantu.SlapHomebrew.Util.Util;
@@ -25,9 +27,12 @@ public class PlayerInteractListener extends AbstractListener {
 	
 	private Horses horses;
 	private Jails jails;
+	private SpartaPads spartaPads;
 
-	public PlayerInteractListener(Horses horses, Jails jails) {
+	public PlayerInteractListener(Horses horses, Jails jails, SpartaPads spartaPads) {
 		this.jails = jails;
+		this.horses = horses;
+		this.spartaPads = spartaPads;
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -121,6 +126,15 @@ public class PlayerInteractListener extends AbstractListener {
 					}
 				}
 			}
-		}		
+		} else if (event.getAction() == Action.PHYSICAL) { //If Physical action
+			Material material = event.getClickedBlock().getType();
+			if (material == Material.WOOD_PLATE || material == Material.STONE_PLATE || material == Material.IRON_PLATE || material == Material.GOLD_PLATE) { //Check if on a plate
+				Location blockLocation = event.getClickedBlock().getLocation();
+				if (spartaPads.isSpartaPad(blockLocation)) { //If a spartaPad
+					SpartaPad pad = spartaPads.getSpartaPad(blockLocation);
+					pad.launch(player); //Launch the player
+				}
+			}
+		}
 	}
 }

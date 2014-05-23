@@ -3,7 +3,7 @@ main: me.naithantu.SlapHomebrew.SlapHomebrew
 depend: [Essentials, Vault, PermissionsEx]
 softdepend: [TabAPI, ReportRTS, MCBans, SlapBridged]
 authors: [naithantu, Stoux2]
-version: 3.8.4
+version: 3.9.0
 description: A custom plugin which adds lots of extra features to the SlapGaming minecraft server.
 commands:
   vip:
@@ -272,3 +272,7 @@ commands:
     description: Respond to the last player you contacted using private messages
     usage: "Usage: /reply <message>"
     aliases: [r]
+  spartapads:
+    description: Control command for the SpartaPads
+    usage: "Usage: /spartpads help"
+    aliases: [spads, spad, spartapad]

@@ -81,6 +81,7 @@ public class SlapHomebrew extends JavaPlugin {
 	private Mention mention;
     private PlayerControl playerControl;
 	private PlayerLogger playerLogger;
+	private SpartaPads spartaPads;
 	private TabController tabController;
 	private ToldStatus toldStatus;
 	private Vip vip;
@@ -270,6 +271,7 @@ public class SlapHomebrew extends JavaPlugin {
 		 controllers.add(mention = new Mention());
 		 controllers.add(playerLogger = new PlayerLogger());
 		 controllers.add(afk = new AwayFromKeyboard());
+		 controllers.add(spartaPads = new SpartaPads());
 		 controllers.add(tabController = new TabController());
 		 controllers.add(toldStatus = new ToldStatus());
 		 controllers.add(vip = new Vip(tabController));
@@ -307,7 +309,7 @@ public class SlapHomebrew extends JavaPlugin {
 				new PlayerCommandListener(afk, jails, playerLogger),
 				new PlayerDeathListener(playerLogger),
 				new PlayerInteractEntityListener(horses),
-				new PlayerInteractListener(horses, jails),
+				new PlayerInteractListener(horses, jails, spartaPads),
 				new PlayerInventoryEvent(lottery),
 				new PlayerJoinListener(mail, jails, tabController, homes),
 				new PlayerLoginListener(whitelist),
@@ -491,6 +493,10 @@ public class SlapHomebrew extends JavaPlugin {
 	
 	public PlayerLogger getPlayerLogger() {
 		return playerLogger;
+	}
+	
+	public SpartaPads getSpartaPads() {
+		return spartaPads;
 	}
 	
 	public TabController getTabController() {

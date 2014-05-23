@@ -7,6 +7,9 @@ import java.util.logging.Level;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -60,6 +63,58 @@ public class YamlStorage {
 		}
 		if (!file.exists()) {
 			this.plugin.saveResource(fileName, false);
+		}
+	}
+	
+	/**
+	 * Put a location in a config file
+	 * @param config The config file
+	 * @param savePath The path where to save it
+	 * @param location The location
+	 */
+	public static void putLocationInConfig(FileConfiguration config, String savePath, Location location) {
+		//Coords
+		config.set(savePath + ".x", location.getX());
+		config.set(savePath + ".y", location.getY());
+		config.set(savePath + ".z", location.getZ());
+		
+		//Extra info
+		config.set(savePath + ".yaw", (double) location.getYaw());
+		config.set(savePath + ".pitch", (double) location.getPitch());
+		
+		//Worldname
+		config.set(savePath + ".world", location.getWorld().getName());
+	}
+	
+	/**
+	 * Load the location from a config
+	 * @param config The config
+	 * @param loadPath The path to the location
+	 * @return the Location or null
+	 */
+	public static Location loadLocationFromConfig(FileConfiguration config, String loadPath) {
+		//Check if path exists
+		if (!config.contains(loadPath)) return null;
+		
+		try {
+			//Get world
+			String worldname = config.getString(loadPath + ".world");
+			World w = Bukkit.getWorld(worldname);
+			if (w == null) return null;
+			
+			//Get coords
+			double x = config.getDouble(loadPath + ".x");
+			double y = config.getDouble(loadPath + ".y");
+			double z = config.getDouble(loadPath + ".z");
+			
+			//Extra info
+			float yaw = (float) config.getDouble(loadPath + ".yaw");
+			float pitch = (float) config.getDouble(loadPath + ".pitch");
+			
+			//Create location
+			return new Location(w, x, y, z, yaw, pitch);
+		} catch (Exception e) {
+			return null;
 		}
 	}
 }

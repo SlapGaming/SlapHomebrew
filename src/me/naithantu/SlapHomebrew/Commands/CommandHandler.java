@@ -104,6 +104,7 @@ public class CommandHandler {
 		case "skick":			commandObj = new SKickCommand(sender, args);					break;
 		case "slap":			commandObj = new SlapCommand(sender, args);						break;
 		case "sparta":			commandObj = new SpartaCommand(sender, args);					break;
+		case "spartapads":		commandObj = new SpartaPadsCommand(sender, args);				break;
 		case "spawn":			commandObj = new SpawnCommand(sender, args);					break;
 		case "splugins":		commandObj = new PluginsCommand(sender, args);					break;
 		case "stafflist":		commandObj = new StaffListCommand(sender, args);				break;
