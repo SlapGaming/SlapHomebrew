@@ -2,6 +2,7 @@ package me.naithantu.SlapHomebrew.Controllers;
 
 import java.util.HashMap;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -167,7 +168,9 @@ public class SpartaPads extends AbstractController {
 		
 		//Set the multiplier if there's any
 		if (multiplier != null) {
-			creationPad.setMultiplier(multiplier);
+			creationPad.multiplier = multiplier;
+		} else {
+			creationPad.multiplier = 1;
 		}
 		
 		//Put in map
@@ -190,7 +193,8 @@ public class SpartaPads extends AbstractController {
 		}
 		
 		//Set the target & calculate the vector
-		creationPad.setTargetLocation(targetLocation);
+		creationPad.targetLocation = targetLocation;
+		creationPad.calculateVector();
 		
 		//Remove from creatingMap
 		creatingSpartaPads.remove(creator);
@@ -389,7 +393,7 @@ public class SpartaPads extends AbstractController {
 		 * @param message the message
 		 */
 		public void setMessage(String message) {
-			this.message = message;
+			this.message = ChatColor.translateAlternateColorCodes('&', message);
 			
 			//Set in config
 			config.set("pads." + ID + ".message", message);
