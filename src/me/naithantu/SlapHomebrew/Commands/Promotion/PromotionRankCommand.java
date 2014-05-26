@@ -182,7 +182,7 @@ public class PromotionRankCommand extends AbstractCommand {
 		public void toRank(PermissionUser user) {
 			if (this == TrialMod) {
 				user.setGroups(new String[]{"Mod"});
-				user.setPrefix("&c[Trial-Mod] ", null);
+				user.setPrefix("&b[Trial-Mod] ", null);
 				user.addPermission("-slaphomebrew.sgm");
 				user.addPermission("-essentials.gamemode");
 				user.addPermission("-myinv.bypass.world.*");
@@ -203,7 +203,7 @@ public class PromotionRankCommand extends AbstractCommand {
 				user.removePermission("-myinv.bypass.world.*");
 				user.removePermission("-mv.bypass.gamemode.*");
 				user.removePermission("-slaphomebrew.gamesinventory");
-
+				user.setPrefix("", null);
 			}
 		}
 		
