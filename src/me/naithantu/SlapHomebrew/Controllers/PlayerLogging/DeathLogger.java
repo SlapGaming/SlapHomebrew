@@ -4,17 +4,21 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map.Entry;
 
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
+import me.naithantu.SlapHomebrew.Util.DateUtil;
 import me.naithantu.SlapHomebrew.Util.SQLPool;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -302,6 +306,88 @@ public class DeathLogger extends AbstractLogger implements Listener {
 			}
 		});		
 	}
+
+    /**
+     * Send the CommandSender the current kills leaderboard
+     * @param p The CommandSender
+     * @param thisMonth only get the leaderboard for this month
+     * @throws CommandException if DeathLogging is currently disabled
+     */
+    public static void sendKillsLeaderboard(final CommandSender p, final boolean thisMonth) throws CommandException {
+        if (instance == null) { //Check if initialized
+            AbstractCommand.removeDoingCommand(p);
+            throw new CommandException("DeathLogging is currently disabled.");
+        }
+
+        Util.runASync(new Runnable() {
+            @Override
+            public void run() {
+                //Get a connection
+                Connection con = SQLPool.getConnection();
+                try {
+                    //Monthly strings
+                    String monthly = "";
+                    long since = 0;
+                    if (thisMonth) {
+                        //Get a format of the current month + year based on Date now.
+                        String formatted = DateUtil.format("MM-yyyy");
+                        //=> Reverse the process only not giving a day, thus forcing it to go to the first of the month.
+                        Date reversed = DateUtil.parse("MM-yyyy", formatted);
+                        //=> Get unix timestamp
+                        since = reversed.getTime();
+
+                        //Set montly string
+                        monthly = "WHERE `death_time` > ? ";
+                    }
+
+                    //Prepare statement
+                    PreparedStatement lbPrep = con.prepareStatement(
+                        "SELECT COUNT(*) as `kills`, `killed_by` as `killer` FROM `logger_kills` " + monthly + "GROUP BY `killed_by` ORDER BY `kills` DESC LIMIT 0,10;"
+                    );
+
+                    //Check for Monthly
+                    if (thisMonth) {
+                        lbPrep.setLong(1, since);
+                    }
+
+                    //Excecute query
+                    ResultSet lbRS = lbPrep.executeQuery();
+                    String[] results = new String[10];
+                    int resultPosition = 0;
+
+                    //=> Loop thru results
+                    while (lbRS.next()) {
+                        //Get data
+                        int kills = lbRS.getInt(1);
+                        String player = lbRS.getString(2);
+
+                        //Create sentence
+                        String sentence = ChatColor.GREEN + String.valueOf(resultPosition + 1) + ". " + ChatColor.GOLD + player + ChatColor.WHITE + " - " + kills + (kills == 1 ? " kill" : " kills");
+                        results[resultPosition++] = sentence;
+                    }
+
+                    //=> Check if there were any results
+                    if (resultPosition == 0) {
+                        results[0] = "There is nothing here =(";
+                    }
+
+                    //Send messages
+                    Util.msg(p, ChatColor.YELLOW + "--- " + ChatColor.GOLD + "Kills Leaderboard" + ChatColor.YELLOW + " ---" + (thisMonth ? ChatColor.WHITE + " (This Month)" : ""));
+                    for (String result : results) {
+                        if (result == null) break; //Break for loop if nothing to show anymore.
+                        p.sendMessage(result);
+                    }
+                } catch (SQLException | ParseException e) {
+                    Util.badMsg(p, "An error occurred!");
+                    e.printStackTrace(); //Debug
+                } finally {
+                    SQLPool.returnConnection(con); //Return connection
+                    AbstractCommand.removeDoingCommand(p);
+                }
+            }
+        });
+
+    }
 	
 	/**
 	 * Add a kill to map

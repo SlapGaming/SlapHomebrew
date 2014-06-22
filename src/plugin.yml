@@ -3,7 +3,7 @@ main: me.naithantu.SlapHomebrew.SlapHomebrew
 depend: [Essentials, Vault, PermissionsEx]
 softdepend: [TabAPI, ReportRTS, MCBans, SlapBridged]
 authors: [naithantu, Stoux2]
-version: 3.9.0
+version: 3.9.1
 description: A custom plugin which adds lots of extra features to the SlapGaming minecraft server.
 commands:
   vip:
@@ -162,8 +162,8 @@ commands:
     description: Get the number of deaths since the 5th of Januari 2014
     usage: "Usage: /deaths"
   kills:
-    description: Get the number of kills since the 5th of Januari 2014
-    usage: "Usage: /kills"
+    description: Get the number of kills since the 5th of Januari 2014 or a (monthly) leaderboard
+    usage: "Usage: /kills <Leaderboard [Monthly]>"
   onlinetime:
     description: Get your time spent on the server since the 5th of Januari 2014
     usage: "Usage: /onlinetime <Leaderboard>"

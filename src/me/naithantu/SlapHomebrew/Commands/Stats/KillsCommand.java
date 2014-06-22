@@ -1,5 +1,6 @@
 package me.naithantu.SlapHomebrew.Commands.Stats;
 
+import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -16,11 +17,38 @@ public class KillsCommand extends AbstractCommand {
 	@Override
 	public boolean handle() throws CommandException {
 		testPermission("kills");
-		Player p = getPlayer();
-		
+
+        //Check if the player is still executing a DB command
 		checkDoingCommand();
+
+        //Default params
+        boolean leaderboard = false;
+        boolean monthly = false;
+        //Check params
+        if (args.length > 0) {
+            switch (args[0].toLowerCase()) {
+                case "lb": case "leaderboard":
+                    leaderboard = true;
+                    if (args.length > 1) { //Will accept any second param
+                        monthly = true;
+                    }
+                    break;
+
+                default:
+                    throw new UsageException("kills leaderboard/lb [monthly]");
+            }
+        }
+
+        //Player is going to do a DB request
 		addDoingCommand();
-		DeathLogger.sendPlayerKills(p);
+
+        //Make the request @ the DeathLogger.
+		if (!leaderboard) {
+            Player p = getPlayer();
+            DeathLogger.sendPlayerKills(p);
+        } else {
+            DeathLogger.sendKillsLeaderboard(sender, monthly);
+        }
 		return true;
 	}
 
