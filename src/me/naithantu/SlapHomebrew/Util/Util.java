@@ -601,7 +601,7 @@ public class Util {
                         case "m":case "minute":case"minutes":case "mins":
                             amount = amount * 60;
                         case "s":case "second":case "seconds":case "secs":
-                            amount = amount * 60;
+                            amount = amount * 1000;
                             break;
                         default:
                             throw new CommandException("Unknown unit: " + digits + " (Possible: days/hours/minutes/seconds)");

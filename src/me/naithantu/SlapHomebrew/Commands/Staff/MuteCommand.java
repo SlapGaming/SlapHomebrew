@@ -106,7 +106,7 @@ public class MuteCommand extends AbstractCommand {
         muteController.setMuted(UUID, reason, mutedBy, mutedTill);
 
         //Notify sender
-        hMsg(offPlayer.getName() + " has been muted " + (mutedTill == -1 ? "permanently." : "till " + DateUtil.format("dd-MM-yyyy HH:mm") + "."));
+        hMsg(offPlayer.getName() + " has been muted " + (mutedTill == -1 ? "permanently." : "till " + ChatColor.GREEN + DateUtil.format("dd-MM-yyyy HH:mm", mutedTill) + ChatColor.WHITE + "."));
 
         //Notify player if online
         if (offPlayer.getPlayer() != null) {
