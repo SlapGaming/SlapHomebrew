@@ -84,6 +84,7 @@ public class CommandHandler {
 		case "mobcheck":		commandObj = new MobcheckCommand(sender, args);					break;
 		case "mod":				commandObj = new ChatCommand(sender, "modchat", args);			break;
 		case "msg":				commandObj = new MsgCommand(sender, args);						break;
+        case "mute":            commandObj = new MuteCommand(sender, args);                     break;
 		case "note":			commandObj = new NoteCommand(sender, args);						break;
 		case "onlinetime":		commandObj = new OnlineTimeCommand(sender, args);				break;
 		case "pay":				commandObj = new PayCommand(sender, args);						break;
@@ -123,6 +124,7 @@ public class CommandHandler {
 		case "tphere":			commandObj = new TeleportHereCommand(sender, args);				break;
 		case "tprequests":		commandObj = new TeleportRequests(sender, args);				break;		
 		case "unjail":			commandObj = new UnjailCommand(sender, args);					break;
+        case "unmute":          commandObj = new UnmuteCommand(sender, args);                   break;
 		case "vip":				commandObj = new VipCommand(sender, args);						break;
 		case "vipforum":		commandObj = new VipForumCommand(sender, args);					break;
 		case "wave":			commandObj = new WaveCommand(sender, args);						break;

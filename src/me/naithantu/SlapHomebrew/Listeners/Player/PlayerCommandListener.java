@@ -2,6 +2,7 @@ package me.naithantu.SlapHomebrew.Listeners.Player;
 
 import me.naithantu.SlapHomebrew.Controllers.AwayFromKeyboard;
 import me.naithantu.SlapHomebrew.Controllers.Jails;
+import me.naithantu.SlapHomebrew.Controllers.MuteController;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogger;
 import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
 import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
@@ -20,11 +21,13 @@ public class PlayerCommandListener extends AbstractListener {
 	private AwayFromKeyboard afk;
 	private Jails jails;
 	private PlayerLogger playerLogger;
+    private MuteController muteController;
 	
-	public PlayerCommandListener(AwayFromKeyboard afk, Jails jails, PlayerLogger playerLogger){
+	public PlayerCommandListener(AwayFromKeyboard afk, Jails jails, PlayerLogger playerLogger, MuteController muteController){
 		this.afk = afk;
 		this.jails = jails;
 		this.playerLogger = playerLogger;
+        this.muteController = muteController;
 	}
 	
 	@EventHandler
@@ -139,7 +142,22 @@ public class PlayerCommandListener extends AbstractListener {
 					player.sendMessage(ChatColor.GRAY + "You are jailed. Use /timeleft to check your time left in jail.");
 				}
 			}
-		}				
+		}
+
+        //Cancel certain commands if muted
+        if (muteController.isMuted(player.getUniqueId().toString())) {
+            switch(commandMessage[0].substring(1)) {
+                case "msg":case "m":case "tell":case "r":case "reply":
+                case "me":case "action":
+                case "wave":case "waves":
+                case "afk":
+                case "mail":
+                    event.setCancelled(true);
+                    player.sendMessage(ChatColor.GRAY + "You are muted. Use /muted for more info.");
+                    return;
+            }
+
+        }
 		
 		//Leave AFK on certain Commands
 		String[] command = event.getMessage().toLowerCase().split(" ");

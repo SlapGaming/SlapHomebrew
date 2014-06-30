@@ -90,6 +90,7 @@ public class TabHandler {
 		case "mobcheck":		/* Going to redo the command first */ 							break;
 		case "mod":				l = listCrossServerPlayers(args);								break;
 		case "msg":				l = listCrossServerPlayers(args);								break;
+        case "mute":            /* TODO */                                                      break;
 		case "note":			/* Usage here */												break;
 		case "onlinetime":		l = OnlineTimeCommand.tabComplete(sender, args);				break;
 		case "pay":				/* No futher usage */											break;
@@ -129,6 +130,7 @@ public class TabHandler {
 		case "tphere":			/* No futher usage */											break;
 		case "tprequests":		/* No futher usage */											break;		
 		case "unjail":			l = UnjailCommand.tabComplete(sender, args);					break;
+        case "unmute":          /* TODO */                                                      break;
 		case "vip":				l = VipCommand.tabComplete(sender, args);						break;
 		case "vipforum":		l = VipForumCommand.tabComplete(sender, args);					break;
 		case "wave":			l = listCrossServerPlayers(args);								break;

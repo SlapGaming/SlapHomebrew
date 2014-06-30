@@ -79,6 +79,7 @@ public class SlapHomebrew extends JavaPlugin {
 	private Lottery lottery;
 	private Mail mail;
 	private Mention mention;
+    private MuteController muteController;
     private PlayerControl playerControl;
 	private PlayerLogger playerLogger;
 	private SpartaPads spartaPads;
@@ -199,6 +200,7 @@ public class SlapHomebrew extends JavaPlugin {
 	private void initializeStatics() {
 		instance = this;
 		Log.intialize(getLogger());
+        Util.initialize();
 		DateUtil.initialize();
 	}
 	
@@ -269,6 +271,7 @@ public class SlapHomebrew extends JavaPlugin {
 		 controllers.add(lottery = new Lottery());
 		 controllers.add(mail = new Mail());
 		 controllers.add(mention = new Mention());
+         controllers.add(muteController = new MuteController());
 		 controllers.add(playerLogger = new PlayerLogger());
 		 controllers.add(afk = new AwayFromKeyboard());
 		 controllers.add(spartaPads = new SpartaPads());
@@ -305,8 +308,8 @@ public class SlapHomebrew extends JavaPlugin {
 				new EntityDamageByEntityListener(horses),
 				new EntityDamageListener(jails),
 				new PlayerChangedWorldListener(lottery, mail),
-				new PlayerChatListener(afk, jails, chatChannels, mention),
-				new PlayerCommandListener(afk, jails, playerLogger),
+				new PlayerChatListener(afk, jails, chatChannels, mention, muteController),
+				new PlayerCommandListener(afk, jails, playerLogger, muteController),
 				new PlayerDeathListener(playerLogger),
 				new PlayerInteractEntityListener(horses),
 				new PlayerInteractListener(horses, jails, spartaPads),
@@ -351,8 +354,9 @@ public class SlapHomebrew extends JavaPlugin {
 	
 	private void disableStatics() {
 		instance = null;
-		Log.shutdown();
 		DateUtil.destruct();
+        Util.destruct();
+        Log.shutdown();
 	}
 	
 	private void disableSavers() {
@@ -482,8 +486,12 @@ public class SlapHomebrew extends JavaPlugin {
 	public Mention getMention() {
 		return mention;
 	}
-	
-	public Jails getJails() {
+
+    public MuteController getMuteController() {
+        return muteController;
+    }
+
+    public Jails getJails() {
 		return jails;
 	}
 	

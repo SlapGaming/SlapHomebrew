@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import com.sun.javaws.exceptions.InvalidArgumentException;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Controllers.Flag;
@@ -43,6 +46,25 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 public class Util {
+
+    //Pattern for adding time, see {@link Util#parseToDate(String) parseToDate}
+    private static Pattern addTimePattern;
+
+    /**
+     * Initialize the util
+     */
+    public static void initialize() {
+        addTimePattern = Pattern.compile("[0-9]+[a-z]+", Pattern.CASE_INSENSITIVE);
+    }
+
+    /**
+     * Destruct the Util
+     */
+    public static void destruct() {
+        addTimePattern = null;
+    }
+
+
 	
 	public static String getHeader() {
 		return ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE;
@@ -246,7 +268,7 @@ public class Util {
      */
     public static String getTimePlayedString(long l) {
     	String returnString = "";
-    	int t = 0; 
+    	int t;
     	l = l / 1000;
     	if (l < 60) {
     		t = 1; //Seconds
@@ -274,7 +296,7 @@ public class Util {
     		returnString += l + (l == 1 ? " sec." : " secs");
     		break;
     	default:
-    		returnString = "Unkown";
+    		returnString = "Unknown";
     	}
     	return returnString;
     }
@@ -520,6 +542,78 @@ public class Util {
      */
     public static OfflinePlayer getOfflinePlayer(String playername) {
     	return Bukkit.getOfflinePlayer(playername);
+    }
+
+
+    /**
+     * Parse a string into a date.
+     *
+     * Supported values:
+     *  - 'Permanent' or any shortened version (will return -1)
+     *  - '[Number][Unit]' multiple times.
+     *      This will take the current time and add the given values
+     *      Eg: 3d5h
+     *
+     * @param arg The given argument
+     * @return the timestamp or -1 if permanent
+     * @throws CommandException if not able to parse the argument
+     */
+    public static long parseToDate(String arg) throws CommandException {
+        switch (arg.toLowerCase()) {
+            //All cases for Permanent
+            case "infinite":case "inf":
+            case "perm":case "permanent":case "permanently":case "perma":
+                return -1;
+
+            //Try to parse arg
+            default:
+                if (!arg.matches("([0-9]+[a-z]+)+")) { //Check if matches
+                    throw new CommandException("Invalid format. Should be: [Amount][Unit]");
+                }
+
+                //Time in seconds, that needs to be added
+                long addTime = 0;
+
+                //=> Match
+                Matcher matcher = addTimePattern.matcher(arg);
+                while (matcher.find()) {
+                    //Get substring (1x pattern)
+                    String amountUnit = arg.substring(matcher.start(), matcher.end());
+
+                    int till = 0;
+                    char[] chars =  amountUnit.toCharArray();
+                    for(int i = 0; i < chars.length; i++) {
+                        char f = chars[i];
+                        if (!Character.isDigit(f)) {
+                            till = i;
+                            break;
+                        }
+                    }
+
+                    //Parse into values
+                    long amount = Long.parseLong(amountUnit.substring(0, till));
+                    String digits = amountUnit.substring(till, amountUnit.length());
+                    switch(digits.toLowerCase()) {
+                        case "d":case "day":case "days":
+                            amount = amount * 24;
+                        case "h":case "hour":case "hours":
+                            amount = amount * 60;
+                        case "m":case "minute":case"minutes":case "mins":
+                            amount = amount * 60;
+                        case "s":case "second":case "seconds":case "secs":
+                            amount = amount * 60;
+                            break;
+                        default:
+                            throw new CommandException("Unknown unit: " + digits + " (Possible: days/hours/minutes/seconds)");
+                    }
+
+                    //=> Add to total
+                    addTime += (amount * 1000); //Add amount in millis
+                }
+
+                //Return current time + calculated time
+                return System.currentTimeMillis() + addTime;
+        }
     }
     
     public static BukkitTask runASync(Runnable runnable) {

@@ -3,7 +3,7 @@ main: me.naithantu.SlapHomebrew.SlapHomebrew
 depend: [Essentials, Vault, PermissionsEx]
 softdepend: [TabAPI, ReportRTS, MCBans, SlapBridged]
 authors: [naithantu, Stoux2]
-version: 3.9.1
+version: 3.9.2
 description: A custom plugin which adds lots of extra features to the SlapGaming minecraft server.
 commands:
   vip:
@@ -276,3 +276,10 @@ commands:
     description: Control command for the SpartaPads
     usage: "Usage: /spartpads help"
     aliases: [spads, spad, spartapad]
+  mute:
+    description: Command to mute players
+    usage: "Usage: /mute help"
+    aliases: [muted]
+  unmute:
+    description: Command to unmute players
+    usage: "Usage: /unmute <Player>"
