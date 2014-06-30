@@ -78,7 +78,6 @@ public class TabHandler {
 		case "jail":			l = JailCommand.tabComplete(sender, args);						break;
 		case "jails":			/* No futher usage */											break;
 		case "kills":			/* No futher usage */											break;
-		case "lag":				/* No futher usage */											break;
 		case "leave":			/* No futher usage */											break;
 		case "links":			/* No futher usage */											break;
 		case "list":			/* No futher usage */											break;

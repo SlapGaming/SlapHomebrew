@@ -72,7 +72,6 @@ public class CommandHandler {
 		case "jail":			commandObj = new JailCommand(sender, args);						break;
 		case "jails":			commandObj = new JailCommand(sender, new String[]{"list"}); 	break;
 		case "kills":			commandObj = new KillsCommand(sender, args);					break;
-		case "lag":				commandObj = new LagCommand(sender, args);						break;
 		case "leave":			commandObj = new LeaveCommand(sender, args);					break;
 		case "links":			commandObj = new LinksCommand(sender, args);					break;
 		case "list":			commandObj = new ListCommand(sender, args);						break;

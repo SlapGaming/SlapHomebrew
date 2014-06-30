@@ -24,10 +24,28 @@ public class PingCommand extends AbstractCommand {
 			p = getPlayer();
 			testPermission("ping");
 		}
-		
+
+        //Server status
+        double tps = plugin.getLag().getTPS();
+        String status = ChatColor.YELLOW + "Server Status: ";
+
+        if (tps == 20.0) {
+            status += ChatColor.GREEN + "Perfect!";
+        } else if (tps >= 17 && tps <= 23) {
+            status += ChatColor.GREEN + "All Good!";
+        } else if (tps >= 14 && tps <= 26) {
+            status += ChatColor.GOLD + "Small Hiccup.";
+        } else {
+            status += ChatColor.RED + "Struggling.";
+        }
+
+        status += " (" + ((double) Math.round(tps * 10) / 10) + " Ticks)";
+        msg(status);
+
+        //Ping status
 		int ping = ((CraftPlayer) p).getHandle().ping; //Get the player's ping
 		if (ping == 0) { //Not calculated yet
-			hMsg("Your ping hasn't been calculated yet! Try again later!");
+			msg(ChatColor.YELLOW + (sender == p ? "Your" : p.getName() + "'s") + " ping hasn't been calculated yet! Try again later!");
 		} else {
 			ping = ping / 2;
 			ChatColor cc;
@@ -42,7 +60,7 @@ public class PingCommand extends AbstractCommand {
 			} else { //Horrible ping
 				cc = ChatColor.DARK_RED;
 			}
-			hMsg((sender == p ? "Your" : p.getName() + "'s") + " ping (Connection latency) is: " + cc + ping + "ms " + ChatColor.GRAY + "(lower is better)"); //Message
+			msg(ChatColor.YELLOW + (sender == p ? "Your" : p.getName() + "'s") + " ping: " + cc + ping + "ms " + ChatColor.GRAY + "(Green = good, Red = bad)"); //Message
 		}
 		return true;
 	}
