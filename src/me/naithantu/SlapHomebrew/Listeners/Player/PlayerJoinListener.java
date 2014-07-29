@@ -12,6 +12,7 @@ import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
 import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
 import me.naithantu.SlapHomebrew.Util.Util;
 
+import nl.stoux.slapbridged.bukkit.SlapBridged;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -67,6 +68,9 @@ public class PlayerJoinListener extends AbstractListener {
 					plugin.getServer().broadcastMessage(Util.getHeader() + "Welcome " + ChatColor.GREEN + player.getName() + ChatColor.WHITE + " to the SlapGaming Minecraft Server. If you need help please contact a " + ChatColor.GOLD + "Guide" + ChatColor.WHITE + ", " +
 							ChatColor.AQUA + "Mod" + ChatColor.WHITE + " or " + ChatColor.RED + "Admin" + ChatColor.WHITE +
 							" by typing " + ChatColor.RED + "/modreq [message]" + ChatColor.WHITE + "!");
+
+                    //Notify other servers
+                    SlapBridged.getAPI().broadcastMessage("Welcome " + ChatColor.GREEN + player.getName() + ChatColor.WHITE + " to the SlapGaming Minecraft Server!", true, true);
 				}
 				
 				//Abort if the player went offline already
