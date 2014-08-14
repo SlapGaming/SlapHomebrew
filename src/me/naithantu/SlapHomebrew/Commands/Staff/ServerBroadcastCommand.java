@@ -1,7 +1,5 @@
 package me.naithantu.SlapHomebrew.Commands.Staff;
 
-import nl.stoux.slapbridged.bukkit.SlapBridged;
-
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
@@ -25,11 +23,7 @@ public class ServerBroadcastCommand extends AbstractCommand {
 		//Create broadcast
 		String message = "[&cServer-Broadcast&f] &a" + Util.buildString(args, " ", 0);
 		Util.broadcast(ChatColor.translateAlternateColorCodes('&', message));
-		
-		//Send to other servers
-		if (plugin.hasSlapBridged()) {
-			SlapBridged.getAPI().broadcastMessage(message, false, false);
-		}
+
 		return true;
 	}
 

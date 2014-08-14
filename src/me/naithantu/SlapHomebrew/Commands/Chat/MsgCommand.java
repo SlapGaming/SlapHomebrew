@@ -9,8 +9,6 @@ import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
 import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
 import me.naithantu.SlapHomebrew.PlayerExtension.SlapPlayer;
 import me.naithantu.SlapHomebrew.Util.Util;
-import nl.stoux.slapbridged.bukkit.SlapBridged;
-import nl.stoux.slapbridged.objects.OtherServer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -43,18 +41,6 @@ public class MsgCommand extends AbstractCommand {
 			String toPlayerLC = toPlayer.toLowerCase();
 			if (toPlayerLC.startsWith(targetLC)) {
 				targetPlayers.add(toPlayer);
-			}
-		}
-		
-		//	=> If Bridged, add other servers
-		if (plugin.hasSlapBridged()) {
-			for (OtherServer server : SlapBridged.getAPI().getOtherServers()) {
-				for (String toPlayer : server.getPlayers().keySet()) {
-					String toPlayerLC = toPlayer.toLowerCase();
-					if (toPlayerLC.startsWith(targetLC)) {
-						targetPlayers.add(toPlayer);
-					}
-				}
 			}
 		}
 		
@@ -109,12 +95,7 @@ public class MsgCommand extends AbstractCommand {
 			//Show the player the same message
 			player.sendMessage("[" + ChatColor.GOLD + sendingPlayer + ChatColor.WHITE + " -> " + ChatColor.GOLD + "Me" + ChatColor.WHITE + "] " + coloredMessage);
 		}
-				
-		//Send it to other servers
-		if (SlapHomebrew.getInstance().hasSlapBridged()) {
-			SlapBridged.getAPI().playerSendsMsg(sendingPlayer, toPlayerName, message, colors);
-		}
-		
+
 		//SocialSpy
 		socialSpy(sendingPlayer, toPlayerName, coloredMessage);
 	}

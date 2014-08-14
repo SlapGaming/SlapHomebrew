@@ -5,9 +5,6 @@ import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
 import me.naithantu.SlapHomebrew.PlayerExtension.SlapPlayer;
 import me.naithantu.SlapHomebrew.Util.Util;
-import nl.stoux.slapbridged.bukkit.SlapBridged;
-import nl.stoux.slapbridged.objects.OtherPlayer;
-import nl.stoux.slapbridged.objects.OtherServer;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -31,25 +28,13 @@ public class ReplyCommand extends AbstractCommand {
 		if (replyPlayer == null) throw new CommandException("There is no one to reply to!");
 		
 		//Try to find the player
-		OtherPlayer oTargetPlayer = null;
 		Player targetPlayer = null;
 		
 		//	=> This server
 		targetPlayer = plugin.getServer().getPlayer(replyPlayer);
 		
-		//	=> other servers
-		if (targetPlayer == null && plugin.hasSlapBridged()) {
-			for (OtherServer server : SlapBridged.getAPI().getOtherServers()) {
-				OtherPlayer p = server.getPlayers().get(replyPlayer);
-				if (p != null) {
-					oTargetPlayer = p;
-					break;
-				}
-			}
-		}
-		
 		//Check if the player is found
-		if (oTargetPlayer == null && targetPlayer == null) {
+		if (targetPlayer == null) {
 			slapPlayer.setLastReply(null); //Reset last reply
 			throw new CommandException("There is no one to reply to!");
 		}

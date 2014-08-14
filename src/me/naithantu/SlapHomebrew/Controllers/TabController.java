@@ -7,9 +7,6 @@ import java.util.TreeSet;
 
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 import me.naithantu.SlapHomebrew.Util.Util;
-import nl.stoux.slapbridged.bukkit.SlapBridged;
-import nl.stoux.slapbridged.objects.OtherPlayer;
-import nl.stoux.slapbridged.objects.OtherServer;
 
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
@@ -313,31 +310,10 @@ public class TabController extends AbstractController {
 			}
 		}
 		
-		//	=> If SlapBridged, also add other servers
-		List<OtherServer> otherServers = null;
-		int otherServersSize = 0;
-		if (plugin.hasSlapBridged()) { //See if API available
-			if ((otherServersSize = SlapBridged.getAPI().getOtherServers().size()) > 0) {
-				tabSize++;
-			}
-			
-			otherServers = SlapBridged.getAPI().getOtherServers(); //Get other servers
-			for (OtherServer server : otherServers) { //Loop thru servers 
-				if (server.getNrOfPlayersOnline() > 0) { //If any players online
-					tabSize += server.getNrOfPlayersOnline() + 1;
-				} else {
-					tabSize += 2; //Name + "No players"
-				}
-			}
-		}
-		
 		if (tabSize == 0) return; //Nothing to show | Should be impossible
 		
 		//Get total number of players online
 		int playersOnline = Util.getOnlinePlayers().length;
-		if (plugin.hasSlapBridged()) { //If API available
-			playersOnline += SlapBridged.getAPI().getTotalPlayersOnline();
-		}
 		
 		//Create tab array
 		int x = 0;
@@ -350,26 +326,6 @@ public class TabController extends AbstractController {
 			tab[x++] = section.prependColor + section.header; //Set header 
 			for (String player : section.players) { //Add players
 				tab[x++] = section.prependColor + player;
-			}
-		}
-		
-		//	=> Add other servers
-		if (otherServers != null) {
-			if (otherServersSize > 0) { //Add a space between the servers
-				tab[x++] = ChatColor.WHITE + "     " + ChatColor.WHITE;
-			}
-			
-			//Loop thru Servers
-			for (OtherServer otherServer : otherServers) {
-				tab[x++] = Util.colorize(otherServer.getTabName()); //Set Server name
-				String color = Util.colorize(otherServer.getTabName().substring(0, 2)); //Get color
-				if (otherServer.getNrOfPlayersOnline() > 0) { //If players online
-					for (OtherPlayer p : otherServer.getPlayers().values()) {
-						tab[x++] = color + p.getPlayername();
-					}
-				} else {
-					tab[x++] = color + "No players";
-				}
 			}
 		}
 		

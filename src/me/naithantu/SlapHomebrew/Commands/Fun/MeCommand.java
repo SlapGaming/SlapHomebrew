@@ -1,7 +1,5 @@
 package me.naithantu.SlapHomebrew.Commands.Fun;
 
-import nl.stoux.slapbridged.bukkit.SlapBridged;
-
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -44,11 +42,7 @@ public class MeCommand extends AbstractCommand {
 		
 		//Broadcast
 		Util.broadcast(message);
-		
-		//SlapBridged
-		if (plugin.hasSlapBridged()) {
-			SlapBridged.getAPI().playerUsesMeCommand(p.getName(), buildString);
-		}		
+
 		return true;
 	}
 

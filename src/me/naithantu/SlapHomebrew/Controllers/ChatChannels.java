@@ -7,7 +7,6 @@ import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
 import me.naithantu.SlapHomebrew.Util.Util;
-import nl.stoux.slapbridged.bukkit.SlapBridged;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -176,9 +175,6 @@ public class ChatChannels extends AbstractController {
 			}
 			String message =  Util.buildString(args, " ", 0);
 			Util.messagePermissionHolders(permission, format + ChatColor.WHITE + " <" + ChatColor.LIGHT_PURPLE + sender.getName() + ChatColor.WHITE + "> " + message);
-			if (plugin.hasSlapBridged()) { //Check if API available
-				SlapBridged.getAPI().chatChannelMessage(permission, sender.getName(), message);
-			}
 		}
 		
 		/**

@@ -2,9 +2,6 @@ package me.naithantu.SlapHomebrew.Listeners.Player;
 
 import java.util.Collection;
 
-import nl.stoux.slapbridged.bukkit.SlapBridged;
-import nl.stoux.slapbridged.objects.OtherServer;
-
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -26,11 +23,6 @@ public class PlayerTabCompleteListener extends AbstractListener {
 			
 			//See if the completor string contains @, otherwise ignore it
 			if (completor.substring(0, 1).equals("@")) {
-				//=> Get SlapBridged is available
-				boolean bridged = SlapHomebrew.getInstance().hasSlapBridged();
-				if (bridged) {
-					bridged = SlapBridged.getAPI().isConnected();
-				}
 				
 				//Check if a name is given
 				if (completor.length() == 1) {
@@ -38,15 +30,7 @@ public class PlayerTabCompleteListener extends AbstractListener {
 					for (Player p : Util.getOnlinePlayers()) {
 						suggestions.add("@" + p.getName());
 					}
-					
-					//	=> If bridged, add all players from other servers
-					if (bridged) {
-						for (OtherServer server : SlapBridged.getAPI().getOtherServers()) {
-							for (String player : server.getPlayers().keySet()) {
-								suggestions.add("@" + player);
-							}
-						}
-					}
+
 				} else {
 					//	=> Name given, add players but filter them
 					String name = completor.substring(1); //Get start of name
@@ -58,19 +42,6 @@ public class PlayerTabCompleteListener extends AbstractListener {
 						if (playername.length() >= length) { //Check if current @[name] isn't longer than the player name
 							if (name.equalsIgnoreCase(playername.substring(0, length))) { //Check if matches
 								suggestions.add("@" + playername); //Add to suggestions
-							}
-						}
-					}
-					
-					//	=> Add players from other servers if bridged
-					if (bridged) {
-						for (OtherServer server : SlapBridged.getAPI().getOtherServers()) { //Loop thru servers
-							for (String playername : server.getPlayers().keySet()) { //Loop thru players form that server
-								if (playername.length() >= length) { //Check if current @[name] isn't longer than the player name
-									if (name.equalsIgnoreCase(playername.substring(0, length))) { //Check if matches
-										suggestions.add("@" + playername); //Add to suggestions
-									}
-								}
 							}
 						}
 					}
