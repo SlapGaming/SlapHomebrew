@@ -161,10 +161,10 @@ public class PlayerCommandListener extends AbstractListener {
 		
 		//Leave AFK on certain Commands
 		String[] command = event.getMessage().toLowerCase().split(" ");
-		if (afk.isAfk(playerName)) {
+		if (afk.isAfk(player)) {
 			switch(command[0]) {
 			case "/me": case "/pay": case "/modreq": case "/r": case "/msg": 
-				afk.leaveAfk(playerName);
+				afk.leaveAfk(player);
 				break;
 			}
 		}
@@ -175,8 +175,8 @@ public class PlayerCommandListener extends AbstractListener {
 			case "/tpa": case "/tpahere":
 				Player tempPlayer = Bukkit.getPlayer(commandMessage[1]);
 				if (tempPlayer != null) {
-					if (afk.isAfk(tempPlayer.getName())){
-						afk.sendAfkReason(event.getPlayer(), tempPlayer.getName());
+					if (afk.isAfk(tempPlayer)){
+						afk.sendAfkReason(player, tempPlayer);
 					}
 				}
 				break;
@@ -187,8 +187,8 @@ public class PlayerCommandListener extends AbstractListener {
 			if (commandMessage[0].equals("/msg")) { //AFK response
 				Player tempPlayer = Bukkit.getPlayer(commandMessage[1]);
 				if (tempPlayer != null) {
-					if (afk.isAfk(tempPlayer.getName())){
-						afk.sendAfkReason(event.getPlayer(), tempPlayer.getName());
+					if (afk.isAfk(tempPlayer)){
+						afk.sendAfkReason(player, tempPlayer);
 					}
 				}
 			}

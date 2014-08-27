@@ -249,13 +249,13 @@ public class Util {
 	}
     
     /**
-     * Test if an offline player has a certain permission
-     * @param offPlayer The offlineplayer
+     * Test if an (offline) player has a certain permission
+     * @param UUID The player's UUID
      * @param perm The permission perpended with slaphomebrew.
      * @return has permission
      */
-    public static boolean checkPermission(OfflinePlayer offPlayer, String perm) {
-    	PermissionUser user = PermissionsEx.getUser(offPlayer.getName());
+    public static boolean checkPermission(String UUID, String perm) {
+    	PermissionUser user = PermissionsEx.getPermissionManager().getUser(UUID);
     	if (user == null) return false;
     	return (user.has("slaphomebrew." + perm));
     }

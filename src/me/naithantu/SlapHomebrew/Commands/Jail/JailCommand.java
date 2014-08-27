@@ -3,6 +3,7 @@ package me.naithantu.SlapHomebrew.Commands.Jail;
 import java.util.Arrays;
 import java.util.List;
 
+import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
@@ -26,7 +27,7 @@ public class JailCommand extends AbstractCommand {
 		testPermission("jail"); //Test permission
 		if (args.length == 0) return false; //Check usage
 		
-		OfflinePlayer offPlayer;
+		UUIDControl.UUIDProfile offPlayer;
 		
 		//Get jails controller
 		Jails jails = plugin.getJails();
@@ -75,8 +76,8 @@ public class JailCommand extends AbstractCommand {
 		case "info": //Get info about a jail sentence. Players who are able to jail are also able to get info -> /jail info [player]
 			if (args.length != 2) throw new UsageException("jail info [player"); //Check usage
 			offPlayer = getOfflinePlayer(args[1]); //Get player
-			if (jails.isInJail(offPlayer.getName())) {
-				jails.getJailInfo(sender, offPlayer.getName());
+			if (jails.isInJail(offPlayer.getCurrentName())) { //TODO Move to UUID
+				jails.getJailInfo(sender, offPlayer.getCurrentName());
 			} else {
 				throw new CommandException(ErrorMsg.notInJail);
 			}
@@ -86,11 +87,11 @@ public class JailCommand extends AbstractCommand {
 			if (args.length <= 4) return false;
 			
 			offPlayer = getOfflinePlayer(args[0]); //Get the player
-			String playername = offPlayer.getName();
+			String playername = offPlayer.getCurrentName();
 			String jail = args[1].toLowerCase();
 			
 			if (jails.isInJail(playername)) throw new CommandException("Player is already jailed."); //Check if jailed
-			if (Util.checkPermission(offPlayer, "jail.exempt")) throw new CommandException("This player cannot be jailed."); //Check if can be jailed
+			if (Util.checkPermission(offPlayer.getUUID(), "jail.exempt")) throw new CommandException("This player cannot be jailed."); //Check if can be jailed
 			if (!jails.jailExists(jail)) throw new CommandException(ErrorMsg.invalidJail); //Check if jail exists
 			
 			int time = parseInt(args[2]); //Parse the time

@@ -5,12 +5,16 @@ import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
 import me.naithantu.SlapHomebrew.Controllers.MuteController;
+import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import me.naithantu.SlapHomebrew.Util.DateUtil;
 import me.naithantu.SlapHomebrew.Util.Util;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.UUID;
 
 /**
  * Created by Leon on 28-6-14.
@@ -64,11 +68,10 @@ public class MuteCommand extends AbstractCommand {
                 if (args.length != 2) throw new UsageException("mute info <Player>"); //Usage
 
                 //Get player
-                OfflinePlayer offPlayer = getOfflinePlayer(args[1]);
-                String UUID = offPlayer.getUniqueId().toString();
+                UUIDControl.UUIDProfile offPlayer = getOfflinePlayer(args[1]);
 
                 //Get status
-                sendMutedStatus(UUID, offPlayer.getName() + " is");
+                sendMutedStatus(offPlayer.getUUID(), offPlayer.getCurrentName() + " is");
                 return true;
 
             case "help": //Help page
@@ -80,15 +83,12 @@ public class MuteCommand extends AbstractCommand {
         if (args.length < 3) throw new UsageException("mute <Player> <Perm | 3days5hours2seconds (or similar)> <Reason>");
 
         //Get player
-        OfflinePlayer offPlayer = getOfflinePlayer(args[0]);
+        UUIDControl.UUIDProfile offPlayer = getOfflinePlayer(args[0]);
 
         //=> Check if the player can be muted
-        if (Util.checkPermission(offPlayer, "mute.exempt")) {
+        if (Util.checkPermission(offPlayer.getUUID(), "mute.exempt")) {
             throw new CommandException("This player cannot be muted.");
         }
-
-        //=> Get UUID
-        String UUID = offPlayer.getUniqueId().toString();
 
         //Parse mute duration
         long mutedTill = Util.parseToDate(args[1]);
@@ -103,14 +103,15 @@ public class MuteCommand extends AbstractCommand {
         }
 
         //Mute player
-        muteController.setMuted(UUID, reason, mutedBy, mutedTill);
+        muteController.setMuted(offPlayer.getUUID(), reason, mutedBy, mutedTill);
 
         //Notify sender
-        hMsg(offPlayer.getName() + " has been muted " + (mutedTill == -1 ? "permanently." : "till " + ChatColor.GREEN + DateUtil.format("dd-MM-yyyy HH:mm", mutedTill) + ChatColor.WHITE + "."));
+        hMsg(offPlayer.getCurrentName() + " has been muted " + (mutedTill == -1 ? "permanently." : "till " + ChatColor.GREEN + DateUtil.format("dd-MM-yyyy HH:mm", mutedTill) + ChatColor.WHITE + "."));
 
         //Notify player if online
-        if (offPlayer.getPlayer() != null) {
-            Util.msg(offPlayer.getPlayer(), "You have been muted. Use /muted for more info.");
+        Player p = Bukkit.getPlayer(UUID.fromString(offPlayer.getUUID()));
+        if (p != null) {
+            Util.msg(p, "You have been muted. Use /muted for more info.");
         }
 
         return true;

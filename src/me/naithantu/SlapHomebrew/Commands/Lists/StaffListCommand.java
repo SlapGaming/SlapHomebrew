@@ -83,7 +83,7 @@ public class StaffListCommand extends AbstractCommand {
 					continue;
 				}
 				PermissionUser user =  PermissionsEx.getUser(player);
-				if (afk.isAfk(player.getName())) {
+				if (afk.isAfk(player)) {
 					addToList(user.getPrefix() + player.getName() + afkString);
 				} else {
 					addToList(user.getPrefix() + player.getName());

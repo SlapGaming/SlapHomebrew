@@ -1,9 +1,6 @@
 package me.naithantu.SlapHomebrew.Controllers;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.TreeSet;
+import java.util.*;
 
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 import me.naithantu.SlapHomebrew.Util.Util;
@@ -109,8 +106,8 @@ public class TabController extends AbstractController {
 		playerExceptions = new HashMap<>();
 		ConfigurationSection exceptionSection = config.getConfigurationSection("PlayerExceptions");
 		if (exceptionSection != null) { //Players given
-			for (String player : exceptionSection.getKeys(false)) { //Loop thru players
-				playerExceptions.put(player.toLowerCase(), exceptionSection.getString(player).toLowerCase()); //Put in map, lowercase both
+			for (String playerUUID : exceptionSection.getKeys(false)) { //Loop thru players
+				playerExceptions.put(playerUUID, exceptionSection.getString(playerUUID).toLowerCase()); //Put in map, lowercase both
 			}
 		}
 	}
@@ -145,23 +142,22 @@ public class TabController extends AbstractController {
 	/**
 	 * Set the TabSection for a player.
 	 * This method assumes the TabSection is an existing one.
-	 * @param player The player
+	 * @param UUID The player's UUID
 	 * @param tabSection The TabSection
 	 */
-	public void setTabSectionForPlayer(String player, String tabSection) {
+	public void setTabSectionForPlayer(String UUID, String tabSection) {
 		//To lowercase
-		String playerLC = player.toLowerCase();
 		String tabSectionLC = tabSection.toLowerCase();
 		
 		//Put in map
-		playerExceptions.put(playerLC, tabSectionLC);
+		playerExceptions.put(UUID, tabSectionLC);
 		
 		//Save in config
-		config.set("PlayerExceptions." + playerLC, tabSectionLC);
+		config.set("PlayerExceptions." + UUID, tabSectionLC);
 		yaml.saveConfig();
 		
 		//Check if player is online
-		Player onlinePlayer = plugin.getServer().getPlayer(player);
+		Player onlinePlayer = plugin.getServer().getPlayer(java.util.UUID.fromString(UUID));
 		if (onlinePlayer != null) { //Player is online
 			playerSwitchGroup(onlinePlayer); //Switch groups
 		}
@@ -169,14 +165,13 @@ public class TabController extends AbstractController {
 	
 	/**
 	 * Get the TabSection a certain player is in
-	 * @param player The player
+	 * @param UUID The player's UUID
 	 * @return The name of the TabSection (appended with "Doesn't exist" if the TabSection doesn't exist) or null if the player isn't in a TabSection.
 	 */
-	public String getTabSectionForPlayer(String player) {
+	public String getTabSectionForPlayer(String UUID) {
 		//To lowercase
-		String playerLC = player.toLowerCase();
-		if (playerExceptions.containsKey(playerLC)) { //See if the player has an exception
-			String tabSection = playerExceptions.get(playerLC); //Get the tabsection
+		if (playerExceptions.containsKey(UUID)) { //See if the player has an exception
+			String tabSection = playerExceptions.get(UUID); //Get the tabsection
 			//Check if the TabSection exists
 			if (tabSectionsMap.containsKey(tabSection)) {
 				return tabSectionsMap.get(tabSection).name;
@@ -191,20 +186,18 @@ public class TabController extends AbstractController {
 	
 	/**
 	 * Remove a player from a TabSection
-	 * @param player The playername
+	 * @param UUID The player's UUID
 	 * @return is removed (not removed when not in a tab section)
 	 */
-	public boolean removeTabSectionForPlayer(String player) {
-		//To lowercase
-		String playerLC = player.toLowerCase();
-		if (playerExceptions.containsKey(playerLC)) { //Check if indeed in a tabsection
+	public boolean removeTabSectionForPlayer(String UUID) {
+		if (playerExceptions.containsKey(UUID)) { //Check if indeed in a tabsection
 			//Remove from map & yaml
-			playerExceptions.remove(playerLC);
-			config.set("PlayerExceptions." + playerLC, null);
+			playerExceptions.remove(UUID);
+			config.set("PlayerExceptions." + UUID, null);
 			yaml.saveConfig();
 			
 			//Check if player is online
-			Player onlinePlayer = plugin.getServer().getPlayer(player);
+			Player onlinePlayer = plugin.getServer().getPlayer(java.util.UUID.fromString(UUID));
 			if (onlinePlayer != null) { //Player is online
 				playerSwitchGroup(onlinePlayer); //Switch groups
 			}
@@ -216,23 +209,23 @@ public class TabController extends AbstractController {
 		
 	/**
 	 * Add a player to the TabSections
-	 * @param playername The name of the player
+	 * @param p The player
 	 */
-	private void addToGroup(String playername) {
-		String playernameLC = playername.toLowerCase(); //To lowercase
-		if (playerExceptions.containsKey(playernameLC)) { //See if the player has a group exception
-			String targetGroup = playerExceptions.get(playernameLC); //Get the target group
+	private void addToGroup(Player p) {
+        String UUID = p.getUniqueId().toString();
+		if (playerExceptions.containsKey(UUID)) { //See if the player has a group exception
+			String targetGroup = playerExceptions.get(UUID); //Get the target group
 			if (tabSectionsMap.containsKey(targetGroup)) { //See if group exists
-				tabSectionsMap.get(targetGroup).players.add(playername); //Add to players
+				tabSectionsMap.get(targetGroup).players.add(p.getName()); //Add to players
 			}
 		} else { //Not an exception. Default behaviour based on rank
-			PermissionUser user = PermissionsEx.getUser(playername);
+			PermissionUser user = PermissionsEx.getPermissionManager().getUser(java.util.UUID.fromString(UUID));
 			if (user != null) { //User exists
 				PermissionGroup[] groups = user.getGroups(); //Get groups
 				if (groups != null && groups.length > 0) { //Has a group
 					String targetGroup = groups[0].getName().toLowerCase(); //Get name => To LC
 					if (tabSectionsMap.containsKey(targetGroup)) { //TabSection exists
-						tabSectionsMap.get(targetGroup).players.add(playername);
+						tabSectionsMap.get(targetGroup).players.add(p.getName());
 					}
 				}
 			}
@@ -242,12 +235,12 @@ public class TabController extends AbstractController {
 	
 	/**
 	 * Remove a player from a group
-	 * @param playername The name of the player
+	 * @param p The player
 	 */
-	private void removeFromGroup(String playername) {
+	private void removeFromGroup(Player p) {
 		//Loop thru the TabSections to find the player
 		for (TabSection section : tabSections) {
-			if (section.players.remove(playername)) { //If the player has been removed (means they were in this group)
+			if (section.players.remove(p.getName())) { //If the player has been removed (means they were in this group)
 				return; //Stop looping
 			}
 		}
@@ -262,8 +255,8 @@ public class TabController extends AbstractController {
 		
 		//Remove & Re-Add to groups
 		String playername = player.getName();
-		removeFromGroup(playername);
-		addToGroup(playername);
+		removeFromGroup(player);
+		addToGroup(player);
 		
 		//Refresh Tab
 		refreshTab();
@@ -395,7 +388,7 @@ public class TabController extends AbstractController {
 		if (!tabApiSetup) return; //TabAPI not setup
 		
 		//Add to group & refresh
-		addToGroup(p.getName());
+		addToGroup(p);
 		refreshTab();
 	}
 	
@@ -407,7 +400,7 @@ public class TabController extends AbstractController {
 		if (!tabApiSetup) return; //TabAPI not setup
 		
 		//Remove from group & refresh
-		removeFromGroup(p.getName());
+		removeFromGroup(p);
 		refreshTab();
 	}
 	
@@ -436,7 +429,7 @@ public class TabController extends AbstractController {
 		Player[] players = Util.getOnlinePlayers();
 		if (players.length > 0) {
 			for (Player player : players) { //Loop thru players
-				addToGroup(player.getName()); //Add to group
+				addToGroup(player); //Add to group
 			}
 		}
 	}

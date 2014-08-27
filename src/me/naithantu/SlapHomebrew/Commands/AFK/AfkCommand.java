@@ -24,28 +24,28 @@ public class AfkCommand extends AbstractCommand {
 		if (args.length == 1) {
 			if (args[0].equals("-prevent")) {
 				testPermission("afk.prevent"); //Check if correct permssion
-				boolean preventAfk = afk.hasPreventAFK(playername); //Check if prevent AFK is on 
+				boolean preventAfk = afk.hasPreventAFK(p); //Check if prevent AFK is on
 				
 				//Change current AFK Prevent state
-				if (preventAfk) afk.removeFromPreventAFK(playername);
-				else afk.setPreventAFK(playername);
+				if (preventAfk) afk.removeFromPreventAFK(p);
+				else afk.setPreventAFK(p);
 				
 				hMsg("Prevent AFK is " + (preventAfk ? "off." : "on.")); //Send current status message
 				return true;
 			}
 		}
 		
-		if (!afk.isAfk(playername)) {
+		if (!afk.isAfk(p)) {
 			//Player currently not AFK -> Go AFK
 			if (args.length == 0) {
 				//No reason
-				afk.goAfk(playername, "AFK");
+				afk.goAfk(p, "AFK");
 			} else if (args.length > 0) {				
-				afk.goAfk(playername, Util.buildString(args, " ", 0));
+				afk.goAfk(p, Util.buildString(args, " ", 0));
 			}
 		} else {
 			//Player AFK -> Leave AFK
-			afk.leaveAfk(playername);
+			afk.leaveAfk(p);
 		}
 		return true;
 	}

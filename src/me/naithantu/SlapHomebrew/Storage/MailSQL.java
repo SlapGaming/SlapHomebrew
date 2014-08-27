@@ -22,24 +22,13 @@ public class MailSQL {
     
     /* Tables */
     private void createTables(){
-    	Connection con = SQLPool.getConnection(); //Get connection
-    	try {
-    		Statement tempStatement = con.createStatement();
-    		tempStatement.executeUpdate("CREATE TABLE IF NOT EXISTS `messages` ( `message_id` int(10) NOT NULL AUTO_INCREMENT, `message` varchar(1000) NOT NULL, PRIMARY KEY (`message_id`) ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;");
-    		tempStatement.executeUpdate("CREATE TABLE IF NOT EXISTS `recieved_mail` (`mail_id` int(10) NOT NULL, `sender` varchar(255) DEFAULT NULL, `reciever` varchar(255) DEFAULT NULL, `date` datetime NOT NULL, `has_read` tinyint(1) NOT NULL, `removed` tinyint(1) NOT NULL, `marked` tinyint(1) NOT NULL, `response_to` varchar(10) DEFAULT NULL, `message_id` int(10) NOT NULL, PRIMARY KEY (`mail_id`,`reciever`), KEY `message_id` (`message_id`) ) ENGINE=InnoDB DEFAULT CHARSET=latin1; ");
-    		tempStatement.executeUpdate("CREATE TABLE IF NOT EXISTS `send_mail` ( `mail_id` int(10) NOT NULL, `sender` varchar(255) DEFAULT NULL, `reciever` varchar(255) DEFAULT NULL, `date` datetime NOT NULL, `response_to` varchar(10) DEFAULT NULL, `message_id` int(10) NOT NULL, PRIMARY KEY (`mail_id`,`sender`), KEY `message_id` (`message_id`) ) ENGINE=InnoDB DEFAULT CHARSET=latin1;");   		
-    	} catch (SQLException e) {
-    		//Fatal error
-    		logError(e.getMessage());
-    	} finally {
-    		SQLPool.returnConnection(con);
-    	}
+
     }
     
     
     
     //Send Mail
-    public boolean sendMail(String sender, String reciever, String message, String responseToIdInSend, String responseToIdInRecieved){  	
+    public boolean sendMail(String sender, String reciever, String message, String responseToIdInSend, String responseToIdInRecieved){
     	boolean messageFailed; int messageID = -1;
     	//Create message
     	Connection con = SQLPool.getConnection(); //Get connection

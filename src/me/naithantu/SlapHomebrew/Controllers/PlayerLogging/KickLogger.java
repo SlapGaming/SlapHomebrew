@@ -2,9 +2,12 @@ package me.naithantu.SlapHomebrew.Controllers.PlayerLogging;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -21,9 +24,9 @@ public class KickLogger extends AbstractLogger implements Listener {
 	private HashSet<Batchable> kicks;
 	private HashMap<String, String> kickedByMap;
 	
-	private String sqlQuery = 
-			"INSERT INTO `mcecon`.`logger_kicks` (`player`, `kicked_time`, `kicked_by`, `reason`) " +
-			"VALUES (?, ?, ?, ?);";
+	private String sqlQuery =
+            "INSERT INTO `sh_logger_kicks`(`user_id`, `kicked_time`, `kicked_by`, `reason`) " +
+            "VALUES (?, ?, ?, ?);";
 	
 	public KickLogger() {
 		super();
@@ -54,27 +57,19 @@ public class KickLogger extends AbstractLogger implements Listener {
 	
 	@Override
 	public void createTables() throws SQLException {
-		executeUpdate(
-			"CREATE TABLE IF NOT EXISTS `logger_kicks` ( " +
-			"`player` varchar(20) NOT NULL, " +
-			"`kicked_time` bigint(20) NOT NULL, " +
-			"`kicked_by` varchar(20) DEFAULT NULL, " +
-			"`reason` varchar(1000) DEFAULT NULL, " +
-			"KEY `player` (`player`,`kicked_time`,`kicked_by`) " +
-			") ENGINE=InnoDB DEFAULT CHARSET=latin1;"
-		);
+
 	}
 		
 	@EventHandler(priority=EventPriority.MONITOR)
 	public void onKick(PlayerKickEvent event) {
 		if (!event.isCancelled()) {
-			String player = event.getPlayer().getName(); //Get the kicked player
+			String UUID = event.getPlayer().getUniqueId().toString(); //Get the kicked player
 			String by = null;
-			if (kickedByMap.containsKey(player)) { //If kicked by a person thru a different command (like /skick)
-				by = kickedByMap.get(player); //Get from map
-				kickedByMap.remove(player); //And remove from map
+			if (kickedByMap.containsKey(UUID)) { //If kicked by a person thru a different command (like /skick)
+				by = kickedByMap.get(UUID); //Get from map
+				kickedByMap.remove(UUID); //And remove from map
 			}
-			addKick(new PlayerKicked(event.getPlayer().getName(), System.currentTimeMillis(), by, event.getReason())); //Add the kick
+			addKick(new PlayerKicked(UUID, System.currentTimeMillis(), by, event.getReason())); //Add the kick
 		}
 	}
 		
@@ -88,24 +83,25 @@ public class KickLogger extends AbstractLogger implements Listener {
 			batch();
 		}
 	}
-	
-	/**
-	 * Add a kicked by player to the map (will be caught/used in the KickEvent
-	 * @param player The player that is kicked
-	 * @param kickedByPlayer The player that kicked the other
-	 */
-	public void addPlayerKickedBy(String player, String kickedByPlayer) {
-		kickedByMap.put(player, kickedByPlayer);
-	}
-	
+
+    /**
+     * Add a kicked by player to the map
+     * @param UUID The UUID of the kicked player
+     * @param kickedByUUID The UUID of the player who kicked the other one
+     */
+    private void addPlayerKickedBy(String UUID, String kickedByUUID) {
+        kickedByMap.put(UUID, kickedByUUID);
+    }
+
 	/**
 	 * Log a kicked by player.
 	 * In example: Log who kicked a player using /skick
 	 * @param player The player that is kicked
-	 * @param kickedByPlayer The player that kicked the other
+	 * @param kickedBy The commandsender that kicked the player
 	 */
-	public static void logPlayerKickedBy(String player, String kickedByPlayer) {
-		if (instance != null) instance.addPlayerKickedBy(player, kickedByPlayer);
+	public static void logPlayerKickedBy(Player player, CommandSender kickedBy) {
+        String kickedByUUID = (kickedBy instanceof Player ? ((Player) kickedBy).getUniqueId().toString() : "CONSOLE");
+		if (instance != null) instance.addPlayerKickedBy(player.getUniqueId().toString(), kickedByUUID);
 	}
 	
 	@Override
@@ -120,35 +116,62 @@ public class KickLogger extends AbstractLogger implements Listener {
 	}
 	
 	private class PlayerKicked implements Batchable {
-		
-		String player;
+
+        int userID;
+		String UUID;
 		long kickedTime;
-		String kickedBy;
+        Integer kickedByID;
+		String kickedByUUID;
 		String kickReason;
 		
-		public PlayerKicked(String player, long kickedTime, String kickedBy, String kickReason) {
-			super();
-			this.player = player;
+		public PlayerKicked(String UUID, long kickedTime, String kickedByUUID, String kickReason) {
+			this.UUID = UUID;
 			this.kickedTime = kickedTime;
-			this.kickedBy = kickedBy;
+			this.kickedByUUID = kickedByUUID;
 			this.kickReason = kickReason;
 		}
 
 		@Override
 		public void addBatch(PreparedStatement preparedStatement) throws SQLException {
-			preparedStatement.setString(1, player);
+			preparedStatement.setInt(1, userID);
 			preparedStatement.setLong(2, kickedTime);
-			preparedStatement.setString(3, kickedBy);
+            if (kickedByUUID == null) {
+                preparedStatement.setNull(3, Types.INTEGER);
+            } else {
+                preparedStatement.setInt(3, kickedByID);
+            }
 			preparedStatement.setString(4, kickReason);
 		}
-	}
+
+        @Override
+        public boolean isBatchable() {
+            //Check the main user
+            if (((userID = getUserID(UUID)) == -1)) {
+                return false;
+            }
+
+            //Check the KickedBy param
+            if (kickedByUUID != null) {
+                return ((kickedByID = getUserID(kickedByUUID)) != -1);
+            }
+
+            //All good
+            return true;
+        }
+    }
 	
 	private class MCBansListener implements Listener {
 		
 		@EventHandler(priority=EventPriority.MONITOR)
 		public void onKick(com.mcbans.firestar.mcbans.events.PlayerKickEvent event) {
 			if (!event.isCancelled()) {
-				addPlayerKickedBy(event.getPlayer(), event.getSender());
+                String senderUUID = "";
+                if ("CONSOLE".equalsIgnoreCase(event.getSender())) {
+                    senderUUID = "CONSOLE";
+                } else {
+                    senderUUID = event.getSenderUUID().toString();
+                }
+				addPlayerKickedBy(event.getPlayerUUID().toString(), senderUUID);
 			}
 		}
 		

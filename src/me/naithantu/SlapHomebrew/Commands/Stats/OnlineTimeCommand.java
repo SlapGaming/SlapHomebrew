@@ -7,6 +7,7 @@ import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.SessionLogger;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.SessionLogger.LeaderboardEntry;
+import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.ChatColor;
@@ -38,12 +39,7 @@ public class OnlineTimeCommand extends AbstractCommand {
 						int rank = 1;
 						hMsg(ChatColor.YELLOW + "--- " + ChatColor.GOLD + "Onlinetime Leaderboard" + ChatColor.YELLOW + " ---");
 						for (LeaderboardEntry entry : entries) { //Loop thru entries
-							String playername;
-							try {
-								playername = getOfflinePlayer(entry.getPlayernameLC()).getName(); //Try to get the caps sensitive playername
-							} catch (CommandException e) {
-								playername = entry.getPlayernameLC(); //Get lowercase playername
-							}
+							String playername = UUIDControl.getInstance().getUUIDProfile(entry.getUUID()).getCurrentName();
 							sender.sendMessage(ChatColor.GREEN + String.valueOf(rank) + ". " + ChatColor.GOLD + playername +  ChatColor.WHITE + " - " + Util.getTimePlayedString(entry.getPlaytime())); //Send score
 							rank++; //Increment rank
 						}

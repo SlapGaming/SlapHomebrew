@@ -14,6 +14,7 @@ import me.naithantu.SlapHomebrew.Listeners.*;
 import me.naithantu.SlapHomebrew.Listeners.Entity.*;
 import me.naithantu.SlapHomebrew.Listeners.Player.*;
 import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
+import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 import me.naithantu.SlapHomebrew.Timing.HandlerControl;
 import me.naithantu.SlapHomebrew.Util.DateUtil;
@@ -232,7 +233,15 @@ public class SlapHomebrew extends JavaPlugin {
 		}
 
 		//Create SQL Pool
-		pool = new SQLPool();
+        String host = config.getString("sql.host");
+        int port = config.getInt("sql.port");
+        String db = config.getString("sql.db");
+        String user = config.getString("sql.user");
+        String pass = config.getString("sql.password");
+		pool = new SQLPool(host, port, db, user, pass);
+
+        //UUID Control
+        UUIDControl.initializeUUIDControl();
 	}
 
 	private void initializeYamlStoragesConfigs() {

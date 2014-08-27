@@ -57,7 +57,7 @@ public class ListCommand extends AbstractCommand {
 				}
 			}
 			
-			if (afk.isAfk(player)) afkString += " [AFK]"; //Check if AFK
+			if (afk.isAfk(getOnlinePlayer(player, true))) afkString += " [AFK]"; //Check if AFK
 			coloredNames[x++] = colorPrefix + player + afkString;
 		}
 		

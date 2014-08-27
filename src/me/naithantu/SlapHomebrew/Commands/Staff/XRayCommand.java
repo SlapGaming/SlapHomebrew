@@ -53,7 +53,7 @@ public class XRayCommand extends AbstractCommand {
 			return true;
 		}
 				
-		final String playername = getOfflinePlayer(args[0]).getName(); //Get player
+		final String playername = getOfflinePlayer(args[0]).getCurrentName(); //Get player
 		final World world;
 		
 		if (args.length == 1) { //No world specified -> get CommandSender's world

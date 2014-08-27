@@ -13,6 +13,7 @@ import java.util.Map.Entry;
 
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
+import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import me.naithantu.SlapHomebrew.Util.DateUtil;
 import me.naithantu.SlapHomebrew.Util.SQLPool;
 import me.naithantu.SlapHomebrew.Util.Util;
@@ -33,10 +34,10 @@ public class DeathLogger extends AbstractLogger implements Listener {
 	private HashSet<String> suiciders;
 	
 	private HashSet<Batchable> deaths;
-	private String deathsSQL = "INSERT INTO `mcecon`.`logger_deaths` (`player`, `death_time`, `deathcause`) VALUES (?, ?, ?);";
+	private String deathsSQL = "INSERT INTO `sh_logger_deaths`(`user_id`, `death_time`, `deathcause`) VALUES (?, ?, ?)";
 	
 	private HashSet<Batchable> kills;
-	private String killsSQL = "INSERT INTO `mcecon`.`logger_kills` (`killed_player`, `death_time`, `killed_by`) VALUES (?, ?, ?);";
+	private String killsSQL = "INSERT INTO `sh_logger_kills`(`killed_player`, `death_time`, `killed_by`) VALUES (?, ?, ?)";
 	
 	public DeathLogger() {
 		super();
@@ -52,24 +53,28 @@ public class DeathLogger extends AbstractLogger implements Listener {
 	public void onPlayerDeath(PlayerDeathEvent event) {
 		Player killedPlayer = event.getEntity();
 		EntityDamageEvent damageEvent = killedPlayer.getLastDamageCause();
+
 		if (damageEvent != null) { //Check if hurt
-			String playername = killedPlayer.getName();
-			String causeReason;
-			
-			DamageCause cause = damageEvent.getCause(); //Get cause
+            String killedUUID = killedPlayer.getUniqueId().toString(); //Get
+			int killedUserID = getUserID(killedUUID);
+
+			DamageCause damageCause = damageEvent.getCause(); //Get cause
 			Player killer = killedPlayer.getKiller(); //Get the killer, if there is one
 			long matchedTime = System.currentTimeMillis(); //Get time for matched time (Death & Kill)
-			
-			if (suiciders.contains(playername)) { //If player /suicided
-				suiciders.remove(playername); //Remove from set
-				causeReason = "SUICIDE";
+
+            //The death cause as String
+            String cause;
+
+			if (suiciders.contains(killedUUID)) { //If player /suicided
+				suiciders.remove(killedUUID); //Remove from set
+                cause = "SUICIDE";
 			} else if (killer != null) { //If player got killed by another player
-				causeReason = "PLAYER";
-				kills.add(new PlayerKilled(killedPlayer.getName(), matchedTime, killer.getName())); //Add the kill
+                cause = "PLAYER";
+				kills.add(new PlayerKilled(killedUserID, matchedTime, getUserID(killer.getUniqueId().toString()))); //Add the kill
 			} else { //Other reason
-				causeReason = cause.toString();
+                cause = damageCause.toString();
 			}
-			deaths.add(new PlayerDeath(killedPlayer.getName(), matchedTime, causeReason)); //Add the death
+			deaths.add(new PlayerDeath(killedUserID, matchedTime, cause)); //Add the death
 			
 			if (deaths.size() > 25 || kills.size() > 25) {
 				batch();
@@ -91,11 +96,11 @@ public class DeathLogger extends AbstractLogger implements Listener {
 	
 	/**
 	 * A player commits suicide
-	 * @param playername The player
+	 * @param UUID The player's UUID
 	 */
-	public static void playerCommitsSuicide(String playername) {
+	public static void playerCommitsSuicide(String UUID) {
 		if (instance != null) {
-			instance.suiciders.add(playername); //Add to map
+			instance.suiciders.add(UUID); //Add to map
 		}
 	}
 	
@@ -113,26 +118,32 @@ public class DeathLogger extends AbstractLogger implements Listener {
 			
 			@Override
 			public void run() {
+                //Map containing DeathCause -> NrOfDeaths
 				HashMap<String, Integer> deathMap = new HashMap<>();
 				String playername = p.getName();
-				
+                int playerID = getUserID(p.getUniqueId().toString());
+
+                //Keep track of the number of total deaths
 				int totalDeaths = 0;
-				
-				for (Batchable batchable : instance.deaths) { //Loop thru deaths still waiting to be batched
+
+                //Loop thru deaths still waiting to be batched
+				for (Batchable batchable : instance.deaths) {
 					PlayerDeath death = (PlayerDeath) batchable;
-					if (death.player.equalsIgnoreCase(playername)) { 
+					if (death.player == playerID) {
 						addToDeathMap(deathMap, death.deathCause, 1);
 						totalDeaths++;
 					}
 				}
+
 				Connection con = SQLPool.getConnection(); //Get connection
 				try {
-					PreparedStatement prep = con.prepareStatement( //Prepare Statement to get Deaths from SQL
-						"SELECT COUNT(*) as `Deaths`, `deathcause` FROM `logger_deaths` WHERE `player` = ? GROUP BY `deathcause`;"
+                    //Prepare Statement to get Deaths from SQL
+					PreparedStatement prep = con.prepareStatement(
+                        "SELECT COUNT(*) as `deaths`, `deathcause` FROM `sh_logger_deaths` WHERE `user_id` = ? GROUP BY `deathcause`;"
 					);
 					prep.setString(1, playername);
-					ResultSet deathRS = prep.executeQuery(); //Execute
-					
+
+                    ResultSet deathRS = prep.executeQuery(); //Execute
 					while (deathRS.next()) { //Loop thru results
 						int deathNrs = deathRS.getInt(1);
 						String cause = deathRS.getString(2);
@@ -182,7 +193,7 @@ public class DeathLogger extends AbstractLogger implements Listener {
 	 */
 	private static String getReason(String cause) {
 		String reason = null;
-		if (cause.equalsIgnoreCase("player")) { //If cause = by player
+		if (cause.equalsIgnoreCase("PLAYER")) { //If cause = by player
 			reason = "Killed by players";
 		} else { //Standard death reason
 			try {
@@ -227,36 +238,41 @@ public class DeathLogger extends AbstractLogger implements Listener {
 			AbstractCommand.removeDoingCommand(p);
 			throw new CommandException("DeathLogging is currently disabled.");
 		}
+
+        //Get the UserID
+        final int userID = getUserID(p.getUniqueId().toString());
+
 		Util.runASync(new Runnable() {
 			@Override
 			public void run() {
 				ArrayList<PlayerKilled> kills = new ArrayList<>();
-				String playername = p.getName();
-				
-				for (Batchable batchable : instance.kills) { //Loop thru unbatched kills
+
+                //Loop thru unbatched kills
+				for (Batchable batchable : instance.kills) {
 					PlayerKilled kill = (PlayerKilled) batchable;
-					if (kill.killedBy.equalsIgnoreCase(playername) || kill.killedPlayer.equalsIgnoreCase(playername)) { //Add to arraylist if player = sender
+					if (kill.killedBy ==  userID || kill.killedPlayer == userID) { //Add to arraylist if player = sender
 						kills.add(kill);
 					}
 				}
+
 				Connection con = SQLPool.getConnection(); //Get connection
 				try {
 					PreparedStatement prep = con.prepareStatement( //Query for getting kills out of SQL
-						"SELECT `killed_player`, `killed_by` FROM `logger_kills` WHERE `killed_player` = ? OR `killed_by` = ?;"
+						"SELECT `killed_player`, `killed_by` FROM `sh_logger_kills` WHERE `killed_player` = ? OR `killed_by` = ?;"
 					);
-					prep.setString(1, playername);
-					prep.setString(2, playername);
+					prep.setInt(1, userID);
+					prep.setInt(2, userID);
 					ResultSet killRS = prep.executeQuery();
 					while (killRS.next()) { //Loop thru results
-						kills.add(instance.new PlayerKilled(killRS.getString(1), 0, killRS.getString(2))); //Add to kills
+						kills.add(instance.new PlayerKilled(killRS.getInt(1), 0, killRS.getInt(2))); //Add to kills
 					}
 					
 					//Maps
-					HashMap<String, Integer> playerKilled = new HashMap<>();
-					HashMap<String, Integer> playerGotKilled = new HashMap<>();
+					HashMap<Integer, Integer> playerKilled = new HashMap<>();
+					HashMap<Integer, Integer> playerGotKilled = new HashMap<>();
 					
 					for (PlayerKilled kill : kills) { //Loop thru kills
-						if (kill.killedBy.equalsIgnoreCase(playername)) { //Player killed another player, add to that map
+						if (kill.killedBy == userID) { //Player killed another player, add to that map
 							addToKillMap(playerKilled, kill.killedPlayer);
 						} else { //Player got killed
 							addToKillMap(playerGotKilled, kill.killedBy); 
@@ -264,8 +280,10 @@ public class DeathLogger extends AbstractLogger implements Listener {
 					}
 					
 					//Loop thru stuff for Killed By
-					int numberOfTimesKilled = 0; int mostKilledByKills = 0; String mostKilledBy = null;
-					for (Entry<String, Integer> entry : playerGotKilled.entrySet()) {
+					int numberOfTimesKilled = 0,
+                        mostKilledByKills = 0,
+                        mostKilledBy = 0;
+					for (Entry<Integer, Integer> entry : playerGotKilled.entrySet()) {
 						numberOfTimesKilled += entry.getValue();
 						if (mostKilledByKills < entry.getValue()) {
 							mostKilledByKills = entry.getValue();
@@ -274,26 +292,28 @@ public class DeathLogger extends AbstractLogger implements Listener {
 					}
 					
 					//Same thing for Kills
-					int numberOfKills = 0; int mostKills = 0; String mostKillsOn = null;
-					for (Entry<String, Integer> entry : playerKilled.entrySet()) {
+					int numberOfKills = 0,
+                        mostKills = 0,
+                        mostKillsOn = 0;
+					for (Entry<Integer, Integer> entry : playerKilled.entrySet()) {
 						numberOfKills += entry.getValue();
 						if (mostKills < entry.getValue()) {
 							mostKills = entry.getValue();
 							mostKillsOn = entry.getKey();
 						}
 					}
-					
-					
+
+
 					if (numberOfKills == 0 && numberOfTimesKilled == 0) { //No kills, nor has been killed
 						Util.msg(p, "You haven't killed anyone, nor have you been killed since this was implemented.");
 					} else {
 						//Send kills
 						Util.msg(p, "You have killed " + numberOfKills + (numberOfKills == 1 ? " person." : " people and have been killed " + numberOfTimesKilled + (numberOfTimesKilled == 1 ? " time." : " times.")));
 						if (mostKills > 1) {
-							p.sendMessage(ChatColor.GOLD + "  \u2517\u25B6 " + ChatColor.GRAY + "Most killed: " + mostKillsOn + " (" + mostKills + " times)");
+							p.sendMessage(ChatColor.GOLD + "  \u2517\u25B6 " + ChatColor.GRAY + "Most killed: " + getPlayernameOnID(mostKillsOn) + " (" + mostKills + " times)");
 						}
 						if (numberOfTimesKilled > 1) {
-							p.sendMessage(ChatColor.GOLD + "  \u2517\u25B6 " + ChatColor.GRAY + "Most killed by: " + mostKilledBy + " (" + mostKilledByKills + " times)");
+							p.sendMessage(ChatColor.GOLD + "  \u2517\u25B6 " + ChatColor.GRAY + "Most killed by: " + getPlayernameOnID(mostKilledBy) + " (" + mostKilledByKills + " times)");
 						}
 					}
 				} catch (SQLException e) {
@@ -342,7 +362,7 @@ public class DeathLogger extends AbstractLogger implements Listener {
 
                     //Prepare statement
                     PreparedStatement lbPrep = con.prepareStatement(
-                        "SELECT COUNT(*) as `kills`, `killed_by` as `killer` FROM `logger_kills` " + monthly + "GROUP BY `killed_by` ORDER BY `kills` DESC LIMIT 0,10;"
+                        "SELECT COUNT(*) as `kills`, `killed_by` as `killer` FROM `sh_logger_kills` " + monthly + "GROUP BY `killed_by` ORDER BY `kills` DESC LIMIT 0,10;"
                     );
 
                     //Check for Monthly
@@ -359,10 +379,10 @@ public class DeathLogger extends AbstractLogger implements Listener {
                     while (lbRS.next()) {
                         //Get data
                         int kills = lbRS.getInt(1);
-                        String player = lbRS.getString(2);
+                        int playerID = lbRS.getInt(2);
 
                         //Create sentence
-                        String sentence = ChatColor.GREEN + String.valueOf(resultPosition + 1) + ". " + ChatColor.GOLD + player + ChatColor.WHITE + " - " + kills + (kills == 1 ? " kill" : " kills");
+                        String sentence = ChatColor.GREEN + String.valueOf(resultPosition + 1) + ". " + ChatColor.GOLD + getPlayernameOnID(playerID) + ChatColor.WHITE + " - " + kills + (kills == 1 ? " kill" : " kills");
                         results[resultPosition++] = sentence;
                     }
 
@@ -392,44 +412,29 @@ public class DeathLogger extends AbstractLogger implements Listener {
 	/**
 	 * Add a kill to map
 	 * @param map The map
-	 * @param player The player
+	 * @param playerID The player's ID
 	 */
-	private static void addToKillMap(HashMap<String, Integer> map, String player) {
+	private static void addToKillMap(HashMap<Integer, Integer> map, int playerID) {
 		int kills = 1;
-		if (map.containsKey(player)) {
-			kills += map.get(player);
+		if (map.containsKey(playerID)) {
+			kills += map.get(playerID);
 		}
-		map.put(player, kills);
+		map.put(playerID, kills);
 	}
 	
 	
 	@Override
 	protected void createTables() throws SQLException {
-		executeUpdate( //Create deaths table
-			"CREATE TABLE IF NOT EXISTS `logger_deaths` ( " +
-			"`player` varchar(255) NOT NULL, " +
-			"`death_time` bigint(20) NOT NULL, " +
-			"`deathcause` varchar(255) NOT NULL, " +
-			"KEY `player` (`player`,`death_time`) " +
-			") ENGINE=InnoDB DEFAULT CHARSET=latin1;"
-		);
-		executeUpdate( //Create kills table
-			"CREATE TABLE IF NOT EXISTS `logger_kills` ( " +
-			"`killed_player` varchar(255) NOT NULL, " +
-			"`death_time` bigint(20) NOT NULL, " +
-			"`killed_by` varchar(255) NOT NULL, " +
-			"KEY `killed_player` (`killed_player`,`death_time`,`killed_by`) " +
-			") ENGINE=InnoDB DEFAULT CHARSET=latin1;"
-		);
+		//TODO
 	}
 	
 	private class PlayerKilled implements Batchable {
 		
-		String killedPlayer;
+		int killedPlayer;
 		long time;
-		String killedBy;
+		int killedBy;
 		
-		public PlayerKilled(String killedPlayer, long time, String killedBy) {
+		public PlayerKilled(int killedPlayer, long time, int killedBy) {
 			this.killedPlayer = killedPlayer;
 			this.time = time;
 			this.killedBy = killedBy;
@@ -437,20 +442,32 @@ public class DeathLogger extends AbstractLogger implements Listener {
 		
 		@Override
 		public void addBatch(PreparedStatement preparedStatement) throws SQLException {
-			preparedStatement.setString(1, killedPlayer);
+			preparedStatement.setInt(1, killedPlayer);
 			preparedStatement.setLong(2, time);
-			preparedStatement.setString(3, killedBy);
+			preparedStatement.setInt(3, killedBy);
 		}
-		
-	}
+
+        @Override
+        public boolean isBatchable() {
+            //Always true, going to assume there's no possibility that the player can die before the MySQL Queries can finish.
+            //EDGY AS FUCK
+            return true;
+        }
+    }
 	
 	private class PlayerDeath implements Batchable {
-		
-		String player;
+
+        int player;
 		long time;
 		String deathCause;
-		
-		public PlayerDeath(String player, long time, String deathCause) {
+
+        /**
+         * A new PlayerDeath (event) to be registered in the DB
+         * @param player The UserID of the player
+         * @param time The time of death
+         * @param deathCause The cause of death
+         */
+		public PlayerDeath(int player, long time, String deathCause) {
 			this.player = player;
 			this.time = time;
 			this.deathCause = deathCause;
@@ -458,12 +475,17 @@ public class DeathLogger extends AbstractLogger implements Listener {
 		
 		@Override
 		public void addBatch(PreparedStatement preparedStatement) throws SQLException {
-			preparedStatement.setString(1, player);
+			preparedStatement.setInt(1, player);
 			preparedStatement.setLong(2, time);
 			preparedStatement.setString(3, deathCause);
 		}
-		
-	}
+
+        @Override
+        public boolean isBatchable() {
+            //See PlayerKilled -> isBatchable
+            return true;
+        }
+    }
 
 	@Override
 	public void shutdown() {

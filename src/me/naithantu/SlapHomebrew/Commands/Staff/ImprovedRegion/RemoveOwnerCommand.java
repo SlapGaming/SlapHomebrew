@@ -30,7 +30,7 @@ public class RemoveOwnerCommand extends AbstractImprovedRegionCommand {
 		
 		ArrayList<String> offPlayers = new ArrayList<>();
 		for (int x = 2; x < args.length; x++) { //Get players
-			offPlayers.add(getOfflinePlayer(args[x]).getName());
+			offPlayers.add(getOfflinePlayer(args[x]).getCurrentName());
 		}
 		
 		if (offPlayers.size() == 0) throw new CommandException("No players found!");

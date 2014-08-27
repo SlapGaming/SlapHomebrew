@@ -1,17 +1,14 @@
 package me.naithantu.SlapHomebrew.Commands.Staff;
 
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.SessionLogger;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.SessionLogger.LeaderboardEntry;
+import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import me.naithantu.SlapHomebrew.Util.DateUtil;
 import me.naithantu.SlapHomebrew.Util.Util;
 
@@ -59,8 +56,11 @@ public class TimecheckCommand extends AbstractCommand {
 				Util.runASync(new Runnable() {
 					@Override
 					public void run() {
-						HashMap<String, PermissionUser> playerToUser = new HashMap<>();
+                        //Create lists
+						HashSet<UUIDControl.UUIDProfile> profiles = new HashSet<>();
+                        HashMap<String, PermissionUser> uuidToUser = new HashMap<>();
 						List<PermissionGroup> groups = PermissionsEx.getPermissionManager().getGroupList(); //Get all groups
+
 						for (PermissionGroup group : groups) { //Switch thru groups
 							String groupname = group.getName().toLowerCase(); //To LC
 							switch (groupname) {
@@ -68,23 +68,29 @@ public class TimecheckCommand extends AbstractCommand {
 								if (!guides) break;
 							case "superadmin": case "admin": case "mod":
 								for (PermissionUser user : group.getUsers()) { //Get all users
-									playerToUser.put(user.getName().toLowerCase(), user); //Put in map with group
+                                    //Get Profile
+                                    UUIDControl.UUIDProfile profile = UUIDControl.getInstance().getUUIDProfile(user.getIdentifier());
+                                    //Put in Map & Set
+                                    profiles.add(profile);
+                                    uuidToUser.put(profile.getUUID(), user);
 								}
 								break;
 							}
 						}
-						String[] players = playerToUser.keySet().toArray(new String[playerToUser.size()]); //Create players array
-						HashMap<String, Long> playedMap = logger.getPlayedTimes(players, staffDates[0], staffDates[1]); //Get played times
+
+                        //Create an array of all Profiles
+                        UUIDControl.UUIDProfile[] profileArray = profiles.toArray(new UUIDControl.UUIDProfile[profiles.size()]);
+						HashMap<String, Long> playedMap = logger.getPlayedTimes(profileArray, staffDates[0], staffDates[1]); //Get played times
 						ArrayList<LeaderboardEntry> entries = logger.createSortLeaderboardEntries(playedMap); //Create Leaderboard out the times
 						hMsg("Staff onlinetimes. " + (guides ? " (With guides)" : "")); //Hmsg
 						int rank = 1;
 						for (LeaderboardEntry entry : entries) { //Start sending the players
 							String prefix = "";
-							PermissionUser user = playerToUser.get(entry.getPlayernameLC()); //Get user
+							PermissionUser user = uuidToUser.get(entry.getUUID()); //Get user
 							if (user.getPrefix() != null) { //Has prefix
 								prefix = user.getPrefix(); //Get prefix
 							}
-							playerToUser.remove(entry.getPlayernameLC()); //Remove from map
+							uuidToUser.remove(entry.getUUID()); //Remove from map
 							
 							sender.sendMessage( //Send message
 								ChatColor.GREEN + String.valueOf(rank) + ". " + 
@@ -94,7 +100,7 @@ public class TimecheckCommand extends AbstractCommand {
 							rank++;
 						}
 						
-						for (PermissionUser user : playerToUser.values()) { //Send any players that haven't played
+						for (PermissionUser user : uuidToUser.values()) { //Send any players that haven't played
 							String prefix = "";
 							if (user.getPrefix() != null) { //Has prefix
 								prefix = user.getPrefix(); //Get prefix
@@ -125,12 +131,14 @@ public class TimecheckCommand extends AbstractCommand {
 					@Override
 					public void run() {
 						Set<PermissionUser> permissionUsers = group.getUsers(); //Get users
-						String[] userArray = new String[permissionUsers.size()];
-						
+						UUIDControl.UUIDProfile[] userArray = new UUIDControl.UUIDProfile[permissionUsers.size()];
+
+                        UUIDControl uuidControl = UUIDControl.getInstance();
+
 						int x = 0;
 						for (PermissionUser user : permissionUsers) {
-							userArray[x] = user.getName();
-							x++;
+                            userArray[x] = uuidControl.getUUIDProfile(user.getIdentifier());
+                            x++;
 						}
 						HashMap<String, Long> map = logger.getPlayedTimes(userArray, groupDates[0], groupDates[1]); //Get played times, from all players
 						ArrayList<LeaderboardEntry> lb = logger.createSortLeaderboardEntries(map); //Sort
@@ -176,22 +184,21 @@ public class TimecheckCommand extends AbstractCommand {
 			break;
 			
 		default: //Get time for a player
-			OfflinePlayer offPlayer = getOfflinePlayer(args[0]); //Get player
+			final UUIDControl.UUIDProfile offPlayer = getOfflinePlayer(args[0]); //Get player
 			final Date[] playerDates = parseDates(1); //Parse dates, if given
-			final String playername = offPlayer.getName();
 			addDoingCommand(); //Add doing command
 			Util.runASync(new Runnable() {
 				@Override
 				public void run() {
-					long time = logger.getPlayedTime(playername, playerDates[0], playerDates[1]); //Get time
+					long time = logger.getPlayedTime(offPlayer, playerDates[0], playerDates[1]); //Get time
 					if (time == 0) { //If not played
 						if (playerDates[0] == null) { //No timeframe given
-							Util.badMsg(sender, playername + " hasn't played yet since the 5th of january.");
+							Util.badMsg(sender, offPlayer.getCurrentName() + " hasn't played yet since the 5th of january.");
 						} else {
-							Util.badMsg(sender, playername + " hasn't played in this timeframe.");
+							Util.badMsg(sender, offPlayer.getCurrentName() + " hasn't played in this timeframe.");
 						}
 					} else { //Send playedtime
-						hMsg(playername + " has played " + Util.getTimePlayedString(time));
+						hMsg(offPlayer.getCurrentName() + " has played " + Util.getTimePlayedString(time));
 					}
 					removeDoingCommand();
 				}
@@ -237,12 +244,7 @@ public class TimecheckCommand extends AbstractCommand {
 	private void sendLeaderboard(ArrayList<LeaderboardEntry> lb) {
 		int rank = 1;
 		for (LeaderboardEntry entry : lb) { //Loop thru entries
-			String playername;
-			try {
-				playername = getOfflinePlayer(entry.getPlayernameLC()).getName(); //Get offline player => Name
-			} catch (CommandException e) {
-				playername = entry.getPlayernameLC(); //LC name
-			}
+			String playername = UUIDControl.getInstance().getUUIDProfile(entry.getUUID()).getCurrentName();
 			sender.sendMessage(ChatColor.GREEN + String.valueOf(rank) + ". " + ChatColor.GOLD + playername +  ChatColor.WHITE + " - " + Util.getTimePlayedString(entry.getPlaytime())); //Send score
 			rank++;
 		}

@@ -23,7 +23,7 @@ public class SKickCommand extends AbstractCommand {
 		Player player = getOnlinePlayer(args[0], false); //Get the player to be kicked
 		String reason = (args.length == 1 ? "You have been kicked!" : Util.buildString(args, " ", 1)); //Build reason (if reason given)
 		
-		KickLogger.logPlayerKickedBy(player.getName(), sender.getName()); //Log
+		KickLogger.logPlayerKickedBy(player, sender); //Log
 		
 		player.kickPlayer(reason); //Kick player
 		hMsg(player.getName() + " has been kicked"); 

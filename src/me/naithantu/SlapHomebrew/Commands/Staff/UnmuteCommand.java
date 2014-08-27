@@ -4,6 +4,7 @@ import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
 import me.naithantu.SlapHomebrew.Controllers.MuteController;
+import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 
@@ -29,17 +30,16 @@ public class UnmuteCommand extends AbstractCommand {
         if (args.length != 1) throw new UsageException("unmute <Player>"); //Usage
 
         //Parse player
-        OfflinePlayer player = getOfflinePlayer(args[0]);
-        String UUID = player.getUniqueId().toString();
+        UUIDControl.UUIDProfile player = getOfflinePlayer(args[0]);
 
         //Unmute player
-        boolean unmuted = muteController.unmute(UUID);
+        boolean unmuted = muteController.unmute(player.getUUID());
 
         //Notify sender
         if (unmuted) {
-            hMsg(player.getName() + " has been unmuted.");
+            hMsg(player.getCurrentName() + " has been unmuted.");
         } else {
-            throw new CommandException(player.getName() + " isn't muted.");
+            throw new CommandException(player.getCurrentName() + " isn't muted.");
         }
         return true;
     }

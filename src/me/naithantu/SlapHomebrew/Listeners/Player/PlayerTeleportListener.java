@@ -33,8 +33,8 @@ public class PlayerTeleportListener extends AbstractListener {
 		}
 		
 		//Remove AFK if AFK
-		if (afk.isAfk(playername)) {
-			afk.leaveAfk(playername);
+		if (afk.isAfk(player)) {
+			afk.leaveAfk(player);
 		}
 		
 		//Set last activity

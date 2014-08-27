@@ -2,6 +2,7 @@ package me.naithantu.SlapHomebrew.Commands.Jail;
 
 import java.util.List;
 
+import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
@@ -26,10 +27,11 @@ public class UnjailCommand extends AbstractCommand {
 		//Get jails controller
 		Jails jails = plugin.getJails();
 		
-		OfflinePlayer offPlayer = getOfflinePlayer(args[0]); //Get player
-		if (jails.isInJail(offPlayer.getName())) { //Check if in jail
-			jails.releasePlayerFromJail(offPlayer.getName()); //Unjail
-			hMsg("Player " + offPlayer.getName() + " unjailed.");
+		UUIDControl.UUIDProfile offPlayer = getOfflinePlayer(args[0]); //Get player
+        String currentName = offPlayer.getCurrentName();
+		if (jails.isInJail(currentName)) { //Check if in jail
+			jails.releasePlayerFromJail(currentName); //Unjail
+			hMsg("Player " + currentName + " unjailed.");
 		} else {
 			throw new CommandException(ErrorMsg.notInJail);
 		}

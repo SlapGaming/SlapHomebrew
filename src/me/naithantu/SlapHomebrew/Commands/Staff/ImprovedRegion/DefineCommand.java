@@ -35,7 +35,7 @@ public class DefineCommand extends AbstractImprovedRegionCommand {
 		if (args.length > 2) { //Owners specified
 			DefaultDomain domain = new DefaultDomain();
 			for (int x = 2; x < args.length; x++) { //Get players
-				domain.addPlayer(getOfflinePlayer(args[x]).getName());
+				domain.addPlayer(getOfflinePlayer(args[x]).getCurrentName());
 			}
 			region.setOwners(domain); //Set owners
 		}

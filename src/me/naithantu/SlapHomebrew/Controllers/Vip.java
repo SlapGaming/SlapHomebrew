@@ -6,12 +6,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Map.Entry;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import me.naithantu.SlapHomebrew.Commands.Exception.AlreadyVIPException;
 import me.naithantu.SlapHomebrew.Commands.Exception.NotVIPException;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.PromotionLogger;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.VipForumControl;
+import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 import me.naithantu.SlapHomebrew.Util.DateUtil;
 import me.naithantu.SlapHomebrew.Util.Log;
@@ -31,12 +33,12 @@ public class Vip extends AbstractController {
 	
 	/**
 	 * HashMap containing players who have VIP till a specified date
-	 * K:[Name of Player] => V:[Time (in milliseconds) when the VIP ends]
+	 * K:[UUID of Player] => V:[Time (in milliseconds) when the VIP ends]
 	 */
 	private ConcurrentHashMap<String, Long> temporaryVIPs;
 	
 	/**
-	 * HashSet containing all the lifetime players
+	 * HashSet containing all the lifetime players UUID's
 	 */
 	private HashSet<String> lifetimeVIPs;
 		
@@ -93,17 +95,18 @@ public class Vip extends AbstractController {
 	private void loadVIPs() {
 		Connection con = SQLPool.getConnection();
 		try {
-			ResultSet rs = con.createStatement().executeQuery("SELECT `player`, `till_time`, `lifetime` FROM `vip_time`;"); //Get All VIPs from DB
+			ResultSet rs = con.createStatement().executeQuery("SELECT `user_id`, `till_time`, `lifetime` FROM `sh_vip_time`;"); //Get All VIPs from DB
 			while (rs.next()) {
 				//Get stuff from ResultSet
-				String playername = rs.getString(1);
+				int userID = rs.getInt(1);
 				Long tillTime = rs.getLong(2);
 				boolean lifetime = rs.getBoolean(3);
+                String UUID = UUIDControl.getInstance().getUUIDProfile(userID).getUUID();
 				
 				if (lifetime) { //If lifetime VIP
-					lifetimeVIPs.add(playername); //Add to lifetime VIP set
+					lifetimeVIPs.add(UUID); //Add to lifetime VIP set
 				} else { //If not VIP
-					temporaryVIPs.put(playername, tillTime); //Add to Temporary map
+					temporaryVIPs.put(UUID, tillTime); //Add to Temporary map
 				}
 			}
 		} catch (SQLException e) {
@@ -145,39 +148,36 @@ public class Vip extends AbstractController {
 	
 	/**
 	 * Check if a player is a VIP
-	 * @param playername The player
+	 * @param UUID The player's UUID
 	 * @return is VIP
 	 */
-	public boolean isVip(String playername) {
-		playername = playername.toLowerCase(); //To LC
-		return (lifetimeVIPs.contains(playername) || temporaryVIPs.containsKey(playername)); //Check if in Map or Set
+	public boolean isVip(String UUID) {
+		return (lifetimeVIPs.contains(UUID) || temporaryVIPs.containsKey(UUID)); //Check if in Map or Set
 	}
 	
 	/**
 	 * Check if a player is lifetime VIP
-	 * @param playername The player
+	 * @param UUID The player's UUID
 	 * @return is lifetime VIP
 	 */
-	public boolean isLifetimeVIP(String playername) {
-		playername = playername.toLowerCase(); //To LC
-		return (lifetimeVIPs.contains(playername)); //Check if lifetime VIP
+	public boolean isLifetimeVIP(String UUID) {
+		return (lifetimeVIPs.contains(UUID)); //Check if lifetime VIP
 	}
 	
 	/**
 	 * Get the time when the player's VIP ends.
 	 * Will return -1 if the player is lifetime VIP.
-	 * @param playername The player
+	 * @param UUID The player's UUID
 	 * @return The system time when the player's VIP ends or -1 if the player is lifetime VIP
 	 * @throws NotVIPException if the player is not VIP
 	 */
-	public long getVIPExpiration(String playername) throws NotVIPException{
-		playername = playername.toLowerCase(); //To LC
-		if (lifetimeVIPs.contains(playername)) {
+	public long getVIPExpiration(String UUID) throws NotVIPException{
+		if (lifetimeVIPs.contains(UUID)) {
 			return -1L;
-		} else if (temporaryVIPs.containsKey(playername)) {
-			return temporaryVIPs.get(playername);
+		} else if (temporaryVIPs.containsKey(UUID)) {
+			return temporaryVIPs.get(UUID);
 		} else {
-			throw new NotVIPException(playername);
+			throw new NotVIPException(UUID);
 		}
 	}
 	
@@ -189,84 +189,80 @@ public class Vip extends AbstractController {
 	
 	/**
 	 * Add the specified number of VIP days to the player
-	 * @param playername The player
+	 * @param UUID The player's UUID
 	 * @param days The number of days
 	 * @return rank changed
 	 * @throws AlreadyVIPException if the player is already a lifetime VIP
 	 */
-	public boolean addVipDays(String playername, int days) throws AlreadyVIPException {
-		playername = playername.toLowerCase(); //To LC
+	public boolean addVipDays(String UUID, int days) throws AlreadyVIPException {
 		long vipEnds;
-		if (lifetimeVIPs.contains(playername)) { //Player is lifetime VIP
+		if (lifetimeVIPs.contains(UUID)) { //Player is lifetime VIP
 			throw new AlreadyVIPException(true);
-		} else if (temporaryVIPs.containsKey(playername)) { //Player is temporary VIP 
-			vipEnds = temporaryVIPs.get(playername); //Get current end
+		} else if (temporaryVIPs.containsKey(UUID)) { //Player is temporary VIP
+			vipEnds = temporaryVIPs.get(UUID); //Get current end
 			if (vipEnds < System.currentTimeMillis()) { //If end is in the past, update current end to now. 
 				vipEnds = System.currentTimeMillis();
 			}
 			vipEnds += daysToMilliseconds(days); //Add days
-			temporaryVIPs.put(playername, vipEnds); //Update in map
+			temporaryVIPs.put(UUID, vipEnds); //Update in map
 		} else { //Player not VIP yet
 			vipEnds = System.currentTimeMillis() + daysToMilliseconds(days); //Calculate new end time
-			temporaryVIPs.put(playername, vipEnds); //Put in map
+			temporaryVIPs.put(UUID, vipEnds); //Put in map
 		}
-		updateVipTime(playername, vipEnds, false); //Update VIP time
-		return checkRank(Util.getOfflinePlayer(playername)); //Check the rank
+		updateVipTime(UUID, vipEnds, false); //Update VIP time
+		return checkRank(UUID); //Check the rank
 	}
 	
 	/**
 	 * Set the number of VIP days for a player
-	 * @param playername The player
+	 * @param UUID The player's UUID
 	 * @param days The number of days
 	 * @return rank changed
 	 */
-	public boolean setVipDays(String playername, int days) {
-		playername = playername.toLowerCase(); //To LC
-		if (lifetimeVIPs.contains(playername)) { //If currently lifetime VIP, remove
-			lifetimeVIPs.remove(playername);
+	public boolean setVipDays(String UUID, int days) {
+		if (lifetimeVIPs.contains(UUID)) { //If currently lifetime VIP, remove
+			lifetimeVIPs.remove(UUID);
 		}
 		long vipEnds = System.currentTimeMillis() + daysToMilliseconds(days); //New Vip ends time
-		temporaryVIPs.put(playername, vipEnds); //Put in temp vip
-		updateVipTime(playername, vipEnds, false); //Update VIP time
-		return checkRank(Util.getOfflinePlayer(playername)); //Check the rank
+		temporaryVIPs.put(UUID, vipEnds); //Put in temp vip
+		updateVipTime(UUID, vipEnds, false); //Update VIP time
+		return checkRank(UUID); //Check the rank
 	}
 	
 	/**
 	 * Give the player lifetime VIP
-	 * @param playername The player
+	 * @param UUID The player's UUID
 	 * @return rank changed
 	 * @throws AlreadyVIPException if the player is already lifetime VIP
 	 */
-	public boolean setLifetimeVIP(String playername) throws AlreadyVIPException {
-		playername = playername.toLowerCase(); //To LC
-		if (lifetimeVIPs.contains(playername)) { //Check if already VIP
+	public boolean setLifetimeVIP(String UUID) throws AlreadyVIPException {
+		if (lifetimeVIPs.contains(UUID)) { //Check if already VIP
 			throw new AlreadyVIPException(true);
 		}
-		if (temporaryVIPs.containsKey(playername)) { //Check if a temporary VIP
-			temporaryVIPs.remove(playername);
+		if (temporaryVIPs.containsKey(UUID)) { //Check if a temporary VIP
+			temporaryVIPs.remove(UUID);
 		}
-		lifetimeVIPs.add(playername); //Add to lifetime map
-		updateVipTime(playername, null, true); //Update VIP time to Lifetime
-		return checkRank(Util.getOfflinePlayer(playername)); //Check the rank
+		lifetimeVIPs.add(UUID); //Add to lifetime map
+		updateVipTime(UUID, null, true); //Update VIP time to Lifetime
+		return checkRank(UUID); //Check the rank
 	}
 	
 	/**
 	 * Remove the player's VIP
-	 * @param playername The player
+	 * @param UUID The player's UUID
 	 * @return Rank changed
 	 * @throws NotVIPException if player is not a VIP
 	 */
-	public boolean removeVIP(String playername) throws NotVIPException {
-		playername = playername.toLowerCase(); //To LC1
-		if (lifetimeVIPs.contains(playername)) { //Check if lifetime VIP
-			lifetimeVIPs.remove(playername);
-		} else if (temporaryVIPs.containsKey(playername)) { //Check if temporary VIP
-			temporaryVIPs.remove(playername);
+	public boolean removeVIP(String UUID) throws NotVIPException {
+		if (lifetimeVIPs.contains(UUID)) { //Check if lifetime VIP
+			lifetimeVIPs.remove(UUID);
+		} else if (temporaryVIPs.containsKey(UUID)) { //Check if temporary VIP
+			temporaryVIPs.remove(UUID);
 		} else { //Not a VIP
-			throw new NotVIPException(playername);
+			throw new NotVIPException(UUID);
 		}
-		removeVipFromDB(playername); //Remove VIP from a player
-		return checkRank(Util.getOfflinePlayer(playername)); //Check the rank
+		removeVipFromDB(UUID); //Remove VIP from a player
+		return checkRank(UUID); //Check the rank
 	}
 	
 	/**
@@ -282,15 +278,14 @@ public class Vip extends AbstractController {
 	 * Check if the player's rank is still correct.
 	 * This will promote/demote the player if needed, based on their VIP status.
 	 * This will also log the promotion/demotion, if there was any.
-	 * @param p The player.
-	 * @param log [0] = Log the change in the DB (Standard true), [1] = Change group in TAB (Standard true)
+	 * @param UUID The player's UUID
+	 * @param logChange [0] = Log the change in the DB (Standard true), [1] = Change group in TAB (Standard true)
 	 * @return rank changed
 	 */
-	public boolean checkRank(OfflinePlayer p, boolean... logChange) {
-		String playername = p.getName().toLowerCase();
-		PermissionUser user = PermissionsEx.getUser(playername); //Get player
+	public boolean checkRank(String UUID, boolean... logChange) {
+		PermissionUser user = PermissionsEx.getPermissionManager().getUser(UUID); //Get player
 		if (user == null) { //Check if not null.
-			Log.warn("Tried to check rank for " + playername + ", but User was null.");
+			Log.warn("Tried to check rank for " + UUID + ", but User was null.");
 			return false;
 		}
 		
@@ -305,7 +300,7 @@ public class Vip extends AbstractController {
 		}
 				
 		String groupname = user.getGroupsNames()[0]; //Get groupname
-		boolean isVIP = isVip(playername); //Check if VIP
+		boolean isVIP = isVip(UUID); //Check if VIP
 		
 		switch(groupname.toLowerCase()) { //Switch group
 		case "builder": case "member": //Player is Builder or Member
@@ -337,10 +332,10 @@ public class Vip extends AbstractController {
 			return false;
 		} else { //Group changed
 			if (log) { //Log in DB
-				PromotionLogger.logRankChange(p.getName(), groupname, newGroupname, !isVIP, "Rank Check"); //Log the rank change
+				PromotionLogger.logRankChange(UUID, groupname, newGroupname, !isVIP, "Rank Check"); //Log the rank change
 			}
 			if (tabGroup) { //Change Tab Group
-				Player onlinePlayer = p.getPlayer();
+				Player onlinePlayer = Bukkit.getPlayer(java.util.UUID.fromString(UUID));
 				if (onlinePlayer != null) { //If player is online
 					tabController.playerSwitchGroup(onlinePlayer); //Switch group in TAB
 				}
@@ -378,42 +373,27 @@ public class Vip extends AbstractController {
 	 * @return succes
 	 */
 	private boolean createTable() {
-		Connection con = SQLPool.getConnection();
-		try {
-			con.createStatement().executeUpdate(
-				"CREATE TABLE IF NOT EXISTS `vip_time` ( " +
-					"`player` varchar(20) NOT NULL, " +
-					"`till_time` bigint(20) DEFAULT NULL, " +
-					"`lifetime` tinyint(1) NOT NULL, " +
-				"PRIMARY KEY (`player`) " +
-				") ENGINE=InnoDB DEFAULT CHARSET=latin1;");
-			return true;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
-		} finally {
-			SQLPool.returnConnection(con);
-		}
+        return true;
 	}
 	
 	/**
 	 * Insert/Update the VIP time for a player in the DB
-	 * @param playername The player
+	 * @param UUID The player's UUID
 	 * @param tillTime The time when it ends, or null if lifetime
 	 * @param lifetime is lifetime
 	 */
-	private void updateVipTime(final String playername, final Long tillTime, final boolean lifetime) {
+	private void updateVipTime(final String UUID, final Long tillTime, final boolean lifetime) {
 		Util.runASync(new Runnable() {
 			@Override
 			public void run() {
 				Connection con = SQLPool.getConnection();
 				try {
 					PreparedStatement prep = con.prepareStatement(
-						"INSERT INTO `mcecon`.`vip_time` (`player`, `till_time`, `lifetime`) VALUES (?, ?, ?) " +
+						"INSERT INTO `sh_vip_time` (`user_id`, `till_time`, `lifetime`) VALUES (?, ?, ?) " +
 						"ON DUPLICATE KEY UPDATE `till_time` = ?, `lifetime` = ?;"
 					);
 					//Insert
-					prep.setString(1, playername);
+					prep.setInt(1, UUIDControl.getInstance().getUUIDProfile(UUID).getUserID());
 					if (lifetime) {
 						prep.setNull(2, java.sql.Types.BIGINT);
 					} else {
@@ -433,7 +413,7 @@ public class Vip extends AbstractController {
 					prep.executeUpdate();
 				} catch (SQLException e) {
 					e.printStackTrace();
-					plugin.getMail().sendConsoleMail(Bukkit.getConsoleSender(), "Stoux2", "Warning! Failed to update vip time. Player: " + playername + " | Till: " + tillTime + " | Lifetime: " + lifetime);
+					plugin.getMail().sendConsoleMail(Bukkit.getConsoleSender(), "Stoux2", "Warning! Failed to update vip time. Player: " + UUID + " | Till: " + tillTime + " | Lifetime: " + lifetime);
 				} finally {
 					SQLPool.returnConnection(con);
 				}
@@ -443,20 +423,20 @@ public class Vip extends AbstractController {
 
 	/**
 	 * Remove VIP from a player
-	 * @param playername The player
+	 * @param UUID The player's UUID
 	 */
-	private void removeVipFromDB(final String playername) {
+	private void removeVipFromDB(final String UUID) {
 		Util.runASync(new Runnable() {
 			@Override
 			public void run() {
 				Connection con = SQLPool.getConnection(); //Get connection
 				try {
-					PreparedStatement prep = con.prepareStatement("DELETE FROM `mcecon`.`vip_time` WHERE `vip_time`.`player` = ?"); //Prep statement
-					prep.setString(1, playername); //Set name
+					PreparedStatement prep = con.prepareStatement("DELETE FROM `sh_vip_time` WHERE `user_id` = ?"); //Prep statement
+					prep.setInt(1, UUIDControl.getInstance().getUUIDProfile(UUID).getUserID()); //Set name
 					prep.executeUpdate(); //Execute update
 				} catch (SQLException e) {
 					e.printStackTrace();
-					plugin.getMail().sendConsoleMail(Bukkit.getConsoleSender(), "Stoux2", "Warning! Failed to remove VIP. Player: " + playername); //Warn Stoux if failed
+					plugin.getMail().sendConsoleMail(Bukkit.getConsoleSender(), "Stoux2", "Warning! Failed to remove VIP. Player: " + UUID); //Warn Stoux if failed
 				} finally {
 					SQLPool.returnConnection(con); //Return the connection
 				}
@@ -486,27 +466,26 @@ public class Vip extends AbstractController {
 	
 	/**
 	 * Get VIP Grant uses left
-	 * @param playername The player
+	 * @param UUID The player's UUID
 	 * @return number of uses left
 	 * @throws NotVIPException if player is not a VIP
 	 */
-	public int getVipGrantUsesLeft(String playername) throws NotVIPException {
-		playername = playername.toLowerCase();
-		if (!isVip(playername)) throw new NotVIPException();
-		return 3 - config.getInt("usedgrant." + playername);
+	public int getVipGrantUsesLeft(String UUID) throws NotVIPException {
+		if (!isVip(UUID)) throw new NotVIPException();
+		return 3 - config.getInt("usedgrant." + Util.sanitizeYamlString(UUID));
 	}
 	
 	/**
 	 * Use a VIP Grant
-	 * @param playername The player
+	 * @param UUID The player's UUID
 	 * @return number of uses left
 	 * @throws NotVIPException if player is not a VIP
 	 */
-	public int useVipGrant(String playername) throws NotVIPException {
-		playername = playername.toLowerCase(); //to LC
-		if (!isVip(playername)) throw new NotVIPException(); //Check if VIP
-		int uses = config.getInt("usedgrant." + playername); //Get number of uses
-		config.set("usedgrant." + playername, ++uses); //Increate the use
+	public int useVipGrant(String UUID) throws NotVIPException {
+		if (!isVip(UUID)) throw new NotVIPException(); //Check if VIP
+        String sanitizedUUID = Util.sanitizeYamlString(UUID);
+		int uses = config.getInt("usedgrant." + sanitizedUUID); //Get number of uses
+		config.set("usedgrant." + sanitizedUUID, ++uses); //Increate the use
 		return 3 - uses; //Return number of uses left
 	}
 

@@ -1,9 +1,6 @@
 package me.naithantu.SlapHomebrew.Controllers.PlayerLogging;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -50,7 +47,7 @@ public class PlotControl extends AbstractLogger {
 		Connection con = SQLPool.getConnection(); //Get con
 		try {
 			//Get current iteration
-			ResultSet itRS = con.createStatement().executeQuery("SELECT MAX(`iteration`) FROM `logger_plots`;");
+			ResultSet itRS = con.createStatement().executeQuery("SELECT MAX(`iteration`) FROM `sh_logger_plots`;");
 			itRS.next();
 			currentIteration = itRS.getInt(1);
 			if (itRS.wasNull()) { //No entries in the DB -> Set everything to 1
@@ -60,7 +57,7 @@ public class PlotControl extends AbstractLogger {
 			}
 			
 			//Get Max ID
-			PreparedStatement prep = con.prepareStatement("SELECT MAX(`id`) FROM `logger_plots` WHERE `iteration` = ?;");
+			PreparedStatement prep = con.prepareStatement("SELECT MAX(`log_id`) FROM `sh_logger_plots` WHERE `iteration` = ?;");
 			prep.setInt(1, currentIteration); //Set current iteration
 			ResultSet idRS = prep.executeQuery(); //Execute the Query
 			idRS.next();
@@ -68,14 +65,14 @@ public class PlotControl extends AbstractLogger {
 			
 			//Get unfinished plot marks
 			ResultSet plotMarksRS = con.createStatement().executeQuery(
-				"SELECT `iteration`, `id`, `marked_by`, `comment`, `mark_time`, `world`, `x`, `y`, `z` " +
-				"FROM `logger_plots` WHERE `handled_by` IS NULL;"
+				"SELECT `iteration`, `log_id`, `marked_by`, `comment`, `mark_time`, `world`, `loc_x`, `loc_y`, `loc_z` " +
+				"FROM `sh_logger_plots` WHERE `handled_by` IS NULL;"
 			);
 			while (plotMarksRS.next()) {
 				PlotMark plotMark = new PlotMark( //Create new PlotMark
 					plotMarksRS.getInt(1), 
 					plotMarksRS.getInt(2),
-					plotMarksRS.getString(3),
+					plotMarksRS.getInt(3),
 					plotMarksRS.getString(4),
 					plotMarksRS.getLong(5),
 					plotMarksRS.getString(6),
@@ -96,13 +93,7 @@ public class PlotControl extends AbstractLogger {
 
 	@Override
 	protected void createTables() throws SQLException {
-		executeUpdate(
-			"CREATE TABLE IF NOT EXISTS `logger_plots` ( " +
-			"`iteration` int(11) NOT NULL, `id` int(11) NOT NULL, `marked_by` varchar(255) NOT NULL, `comment` varchar(255) DEFAULT NULL, `mark_time` bigint(20) NOT NULL, " +
-			"`world` varchar(255) NOT NULL, `x` double(10,3) NOT NULL, `y` double(7,3) NOT NULL, `z` double(10,3) NOT NULL, " +
-			"`handled_by` varchar(255) DEFAULT NULL, `handled_time` bigint(20) DEFAULT NULL, `handled_comment` varchar(255) DEFAULT NULL, " +
-			"PRIMARY KEY (`iteration`,`id`) ) ENGINE=InnoDB DEFAULT CHARSET=latin1;"
-		);
+
 	}
 
 	@Override
@@ -230,15 +221,15 @@ public class PlotControl extends AbstractLogger {
 				Connection con = SQLPool.getConnection();
 				try {
 					PreparedStatement prep = con.prepareStatement(
-						"INSERT INTO `mcecon`.`logger_plots` (" +
-						"`iteration`, `id`, `marked_by`, `comment`, `mark_time`, `world`, `x`, `y`, `z`) " +
+						"INSERT INTO `sh_logger_plots` (" +
+						"`iteration`, `log_id`, `marked_by`, `comment`, `mark_time`, `world`, `loc_x`, `loc_y`, `loc_z`) " +
 						"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);"
 					);
 					
 					//Set values
 					prep.setInt(1, nPM.iteration);
 					prep.setInt(2, nPM.id);
-					prep.setString(3, nPM.byPlayer);
+					prep.setInt(3, nPM.byPlayer);
 					prep.setString(4, nPM.comment);
 					prep.setLong(5, nPM.time);
 					prep.setString(6, nPM.world);
@@ -293,7 +284,7 @@ public class PlotControl extends AbstractLogger {
 			
 			checkDoingCommand(p, true);
 			
-			uPM.handledBy = p.getName();
+			uPM.handledBy = getUserID(p.getUniqueId().toString());
 			uPM.handledTime = System.currentTimeMillis();
 			uPM.handledComment = comment;
 			
@@ -309,11 +300,15 @@ public class PlotControl extends AbstractLogger {
 					Connection con = SQLPool.getConnection(); //Get connection
 					try {
 						PreparedStatement prep = con.prepareStatement(
-							"UPDATE `logger_plots` SET `handled_by` = ?, `handled_time` = ?, `handled_comment` = ? " +
-							"WHERE `iteration` = ? && `id` = ?;"
+							"UPDATE `sh_logger_plots` SET `handled_by` = ?, `handled_time` = ?, `handled_comment` = ? " +
+							"WHERE `iteration` = ? && `log_id` = ?;"
 						);
 						//New Data
-						prep.setString(1, uPM.handledBy);
+                        if (uPM.handledBy == null) {
+                            prep.setNull(1, Types.INTEGER);
+                        } else {
+                            prep.setInt(1, uPM.handledBy);
+                        }
 						prep.setLong(2, uPM.handledTime);
 						prep.setString(3, uPM.handledComment);
 						//Where clause
@@ -351,18 +346,19 @@ public class PlotControl extends AbstractLogger {
 	 */
 	private PlotMark getPlotMarkSQL(Connection con, int iteration, int id) throws SQLException, CommandException {
 		PreparedStatement prep = con.prepareStatement(
-			"SELECT `marked_by`, `comment`, `mark_time`, `world`, `x`, `y`, `z`, `handled_by`, `handled_time`, `handled_comment` " +
-			"FROM `logger_plots` WHERE `iteration` = ? && `id` = ?;"
+			"SELECT `marked_by`, `comment`, `mark_time`, `world`, `loc_x`, `loc_y`, `loc_z`, `handled_by`, `handled_time`, `handled_comment` " +
+			"FROM `sh_logger_plots` WHERE `iteration` = ? && `log_id` = ?;"
 		);
 		prep.setInt(1, iteration);
 		prep.setInt(2, id);
 		ResultSet rs = prep.executeQuery(); //Execute query
 		if (!rs.next()) throw new CommandException("No PlotMark found with ID: " + id + ChatColor.GRAY + " (Iteration: " + iteration + ")"); //If nothing found -> Throw error
-		
+
+        int handledBy = 0;
 		return new PlotMark(
 			iteration, //Iteration
 			id, //Id
-			rs.getString(1), //Marked by
+			rs.getInt(1), //Marked by
 			rs.getString(2), //Comment - Can be null
 			rs.getLong(3), //Marked time
 			rs.getString(4), //World
@@ -371,7 +367,7 @@ public class PlotControl extends AbstractLogger {
 			rs.getDouble(7), //Z
 			
 			//Handled stuff -- All can be null
-			rs.getString(8), //Handled by 
+            ((handledBy = rs.getInt(8)) == 0 ? null : handledBy), //Handled by
 			rs.getLong(9), //handled time
 			rs.getString(10) //Handled comment
 		);
@@ -467,7 +463,7 @@ public class PlotControl extends AbstractLogger {
 		int id;
 		
 		long time;
-		String byPlayer;
+		int byPlayer;
 		String comment;
 		
 		String world;
@@ -476,10 +472,10 @@ public class PlotControl extends AbstractLogger {
 		double z;
 		
 		long handledTime;
-		String handledBy;
+		Integer handledBy;
 		String handledComment;
 		
-		public PlotMark(int iteration, int id, String byPlayer, String comment, long time, String world, double x, double y, double z) {
+		public PlotMark(int iteration, int id, int byPlayer, String comment, long time, String world, double x, double y, double z) {
 			this.iteration = iteration;
 			this.id = id;
 			this.time = time;
@@ -495,7 +491,7 @@ public class PlotControl extends AbstractLogger {
 			this.iteration = currentIteration;
 			this.id = ++currentID;
 			this.time = System.currentTimeMillis();
-			this.byPlayer = p.getName();
+			this.byPlayer = getUserID(p.getUniqueId().toString());
 			this.comment = comment;
 			Location loc = p.getLocation();
 			this.world = loc.getWorld().getName();
@@ -504,7 +500,7 @@ public class PlotControl extends AbstractLogger {
 			this.z = loc.getZ();
 		}
 		
-		public PlotMark(int iteration, int id, String byPlayer, String comment, long time, String world, double x, double y, double z, String handledBy, long handled, String handledComment) {
+		public PlotMark(int iteration, int id, int byPlayer, String comment, long time, String world, double x, double y, double z, Integer handledBy, long handled, String handledComment) {
 			this.iteration = iteration;
 			this.id = id;
 			this.time = time;
@@ -548,13 +544,13 @@ public class PlotControl extends AbstractLogger {
 			p.sendMessage(
 				ChatColor.WHITE + "ID: " + ChatColor.GREEN + ((currentIteration == iteration) ? "#"+id : "#" + iteration + "." + id) +
 				ChatColor.WHITE + " - Time: " + ChatColor.GOLD + DateUtil.format("dd MMM. HH:mm zzz", time) +
-				ChatColor.WHITE + " - By: " + ChatColor.GREEN + byPlayer					
+				ChatColor.WHITE + " - By: " + ChatColor.GREEN + getPlayernameOnID(byPlayer)
 			);
 			if (comment != null) { //If a comment specified
 				p.sendMessage(ChatColor.GRAY + " \u2517\u25B6 Comment: " + comment);
 			}
 			if (handledBy != null) { //If handled
-				p.sendMessage("  \u2517\u25B6 Handled by: " + ChatColor.GREEN + handledBy + ChatColor.WHITE + " - Time: " + ChatColor.GOLD + DateUtil.format("dd MMM. HH:mm zzz", handledTime)); //Send handled info
+				p.sendMessage("  \u2517\u25B6 Handled by: " + ChatColor.GREEN + getPlayernameOnID(handledBy) + ChatColor.WHITE + " - Time: " + ChatColor.GOLD + DateUtil.format("dd MMM. HH:mm zzz", handledTime)); //Send handled info
 				if (handledComment != null) { //Check if comment
 					p.sendMessage(ChatColor.GRAY + "   \u2517\u25B6 Comment: " + handledComment);
 				}

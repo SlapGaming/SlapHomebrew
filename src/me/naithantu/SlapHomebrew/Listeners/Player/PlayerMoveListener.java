@@ -94,8 +94,8 @@ public class PlayerMoveListener extends AbstractListener {
 			}
 
 			// Remove AFK
-			if (afk.isAfk(playername)) {
-				afk.leaveAfk(playername);
+			if (afk.isAfk(player)) {
+				afk.leaveAfk(player);
 			}
 		}
 

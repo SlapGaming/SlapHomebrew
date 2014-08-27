@@ -17,11 +17,25 @@ public class SQLPool extends AbstractController {
 	private ArrayList<Connection> connections; //Connections
 	
 	private static boolean setup;
-	
+
+    private String host;
+    private int port;
+    private String db;
+    private String user;
+    private String password;
+
 	/**
 	 * Create a new SQL Pool
 	 */
-	public SQLPool() {
+	public SQLPool(String host, int port, String db, String user, String password) {
+        //SQL Login data
+        this.host = host;
+        this.port = port;
+        this.db = db;
+        this.user = user;
+        this.password = password;
+
+        //Create the connections
 		connections = new ArrayList<>();
 		for (int x = 0; x < 5; x++) { //Create connections
 			Connection con = createConnection();
@@ -81,7 +95,7 @@ public class SQLPool extends AbstractController {
 	 */
 	private Connection createConnection() {
 		try {
-			return DriverManager.getConnection("jdbc:mysql://localhost:3306/mcecon","mecon", "B9eCusTa");
+			return DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + db, user, password);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;

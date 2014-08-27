@@ -3,6 +3,7 @@ package me.naithantu.SlapHomebrew.Commands.Basics;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
+import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.ChatColor;
@@ -38,8 +39,8 @@ public class PayCommand extends AbstractCommand {
 		
 		Economy eco = plugin.getEconomy(); //Get Economy
 		
-		OfflinePlayer offPlayer = getOfflinePlayer(args[0]); //Check if valid player
-		String receiver = offPlayer.getName();
+		UUIDControl.UUIDProfile offPlayer = getOfflinePlayer(args[0]); //Check if valid player
+		String receiver = offPlayer.getCurrentName();
 		if (!eco.hasAccount(receiver)) throw new CommandException("This player is not able to recieve money."); //Check if reciever has an account
 		
 		double senderBalance = eco.getBalance(sender.getName()); //Get sender balance

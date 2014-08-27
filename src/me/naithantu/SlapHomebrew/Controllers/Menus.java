@@ -218,11 +218,11 @@ public class Menus extends AbstractController {
 
 	private void handleVipMenu(IconMenu.OptionClickEvent event) {
 		final Player player = event.getPlayer();
-		String playername = player.getName();
+		String UUID = player.getUniqueId().toString();
 		try {
 			//Get uses left
 			Vip vip = plugin.getVip(); //Get VIP
-			int usesLeft = vip.getVipGrantUsesLeft(playername);
+			int usesLeft = vip.getVipGrantUsesLeft(UUID);
 			if (usesLeft <= 0) {
 				Util.badMsg(player, ErrorMsg.alreadyUsedVipGrant.toString());
 				return;
@@ -281,7 +281,7 @@ public class Menus extends AbstractController {
 			}
 	
 			//use the grant
-			usesLeft = vip.useVipGrant(playername);
+			usesLeft = vip.useVipGrant(UUID);
 			player.getInventory().addItem(event.getItemClicked());
 			
 			//Message		

@@ -1,15 +1,20 @@
 package me.naithantu.SlapHomebrew.Commands;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+import me.naithantu.SlapHomebrew.Commands.Exception.NoMessageException;
+import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
 import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
 import me.naithantu.SlapHomebrew.PlayerExtension.SlapPlayer;
+import me.naithantu.SlapHomebrew.Util.DateUtil;
 import me.naithantu.SlapHomebrew.Util.Util;
 
+import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
@@ -164,14 +169,37 @@ public abstract class AbstractCommand {
 	/**
 	 * Get an offline player
 	 * @param playername The player's name
-	 * @return The offlineplayer
+	 * @return The UUIDProfile
 	 * @throws CommandException if offline player has never played on this server before
 	 */
-	protected OfflinePlayer getOfflinePlayer(String playername) throws CommandException {
-		OfflinePlayer offPlayer = plugin.getServer().getOfflinePlayer(playername);
-		if (offPlayer.getPlayer() != null) return offPlayer;
-		if (!offPlayer.hasPlayedBefore()) throw new CommandException("There is no player with the name '" + playername + "' on this server!");
-		return offPlayer;
+	protected UUIDControl.UUIDProfile getOfflinePlayer(String playername) throws CommandException {
+        //Get UUIDControl
+        UUIDControl control = UUIDControl.getInstance();
+
+        //Get UserIDs with this playername
+        Collection<Integer> ids = control.getUserIDs(playername);
+        if (ids.isEmpty()) {
+            //No players with this name
+            throw new CommandException("There is no player that has ever used this name.");
+        } else {
+            //Multiple players with this name. Check if one is currently using it.
+            UUIDControl.UUIDProfile profile = null;
+            for (int id : ids) {
+                UUIDControl.UUIDProfile foundProfile = control.getUUIDProfile(id);
+                if (foundProfile.getCurrentName().equalsIgnoreCase(playername)) { //If currently being used profile
+                    return foundProfile;
+                }
+            }
+            //No user is currently using the name
+            hMsg("No user is currently using that name! Did you mean:");
+            for (int id : ids) {
+                UUIDControl.UUIDProfile foundProfile = control.getUUIDProfile(id);
+                UUIDControl.NameProfile nameProfile = foundProfile.getNames().get(0);
+                msg(ChatColor.GOLD + "   ┗▶ " + ChatColor.WHITE + nameProfile.getPlayername() + ChatColor.GRAY + " (since " + DateUtil.format("dd/MM/yyyy", nameProfile.getKnownSince()) + ")");
+            }
+            //Message is already send, throw NoMessageException
+            throw new NoMessageException();
+        }
 	}
 	
 	/*

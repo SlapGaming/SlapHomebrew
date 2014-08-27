@@ -8,6 +8,7 @@ import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
 import me.naithantu.SlapHomebrew.Controllers.Mail;
 import me.naithantu.SlapHomebrew.Controllers.Mail.MailGroups;
+import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import me.naithantu.SlapHomebrew.Storage.MailSQL;
 import me.naithantu.SlapHomebrew.Storage.MailSQL.CheckType;
 import me.naithantu.SlapHomebrew.Util.Util;
@@ -28,15 +29,15 @@ public class MailCommand extends AbstractCommand {
 		if (!(sender instanceof Player)) { //Console can send mails
  			if (args.length < 3 || !args[0].equalsIgnoreCase("send")) throw new UsageException("/mail send [player] [mail..]"); //Check usage
  			
- 			OfflinePlayer offPlayer = getOfflinePlayer(args[1]); //Get player
- 			plugin.getMail().sendConsoleMail(sender, offPlayer.getName(), createMailMessage()); //Send mail
+ 			UUIDControl.UUIDProfile offPlayer = getOfflinePlayer(args[1]); //Get player
+ 			plugin.getMail().sendConsoleMail(sender, offPlayer.getCurrentName(), createMailMessage()); //Send mail
 			return true;
 		}
 
 		Player p = getPlayer();
 		testPermission("mail");
 		
-		OfflinePlayer offPlayer; int mailID, page;
+		UUIDControl.UUIDProfile offPlayer; int mailID, page;
 		
 		Mail mail = plugin.getMail(); //Get mail
 				
@@ -50,7 +51,7 @@ public class MailCommand extends AbstractCommand {
 			if (args[1].equalsIgnoreCase("server") || args[1].equalsIgnoreCase("console")) throw new CommandException(ErrorMsg.mailServer); //Cannot mail server
 			
 			offPlayer = getOfflinePlayer(args[1]);
-			mail.sendMail(p, offPlayer.getName(), createMailMessage());
+			mail.sendMail(p, offPlayer.getCurrentName(), createMailMessage());
 			break;
 		case "reply":
 			testPermission("mail.send"); //Test perm
@@ -61,7 +62,7 @@ public class MailCommand extends AbstractCommand {
 				mail.replyToMailID(p, mailID, createMailMessage());
 			} else { //Contains non numbers -> Assuming Player
 				offPlayer = getOfflinePlayer(args[1]);
-				mail.replyToPlayer(p, offPlayer.getName(), createMailMessage());
+				mail.replyToPlayer(p, offPlayer.getCurrentName(), createMailMessage());
 			}
 			break;	
 		case "read":
@@ -79,7 +80,7 @@ public class MailCommand extends AbstractCommand {
 					mail.readMail(p, "CONSOLE");
 				} else {
 					offPlayer = getOfflinePlayer(args[1]);
-					mail.readMail(p, offPlayer.getName());
+					mail.readMail(p, offPlayer.getCurrentName());
 				}
 			}
 			break;
@@ -132,7 +133,7 @@ public class MailCommand extends AbstractCommand {
 				page = parseIntPositive(args[2]);
 			}
 			offPlayer = getOfflinePlayer(args[1]); //Get player
-			mail.searchPlayerConversation(p, offPlayer.getName(), page);
+			mail.searchPlayerConversation(p, offPlayer.getCurrentName(), page);
 			break;
 		case "mark":
 			mailID = parseMailID(UsageType.MARK);
@@ -146,13 +147,13 @@ public class MailCommand extends AbstractCommand {
 			testPermission("mail.block");
 			if (args.length == 1) throwUsage(UsageType.BLOCK);
 			offPlayer = getOfflinePlayer(args[1]);
-			mail.blockPlayer(p, offPlayer.getName());
+			mail.blockPlayer(p, offPlayer.getCurrentName());
 			break;
 		case "unblock":
 			testPermission("mail.block");
 			if (args.length == 1) throwUsage(UsageType.UNBLOCK);
 			offPlayer = getOfflinePlayer(args[1]);
-			mail.unblockPlayer(p, offPlayer.getName());
+			mail.unblockPlayer(p, offPlayer.getCurrentName());
 			break;
 		case "blocklist":
 			testPermission("mail.block");
@@ -212,11 +213,11 @@ public class MailCommand extends AbstractCommand {
 			switch (args[2].toLowerCase()) {
 			case "read":
 				mailID = parseIntPositive(args[3]);
-				mail.readMailOther(p, offPlayer.getName(), mailID, sendMail);
+				mail.readMailOther(p, offPlayer.getCurrentName(), mailID, sendMail);
 				break;
 			case "check":
 				page = parseIntPositive(args[3]);
-				mail.checkMailOther(p, offPlayer.getName(), (sendMail ? CheckType.SEND : CheckType.RECIEVED), page);
+				mail.checkMailOther(p, offPlayer.getCurrentName(), (sendMail ? CheckType.SEND : CheckType.RECIEVED), page);
 				break;
 			default:
 				throw new CommandException("Types: check/read");

@@ -27,7 +27,7 @@ public class RegionLogger extends AbstractLogger {
 	private HashSet<Batchable> changes;
 	
 	private String sqlQuery = 
-			"INSERT INTO `mcecon`.`logger_regions` (`world`, `region`, `changed_time`, `changed_by`, `changer_is_a`, `type`, `parameter`) " +
+			"INSERT INTO `sh_logger_regions` (`world`, `regionname`, `changed_time`, `changed_by`, `changer_is_a`, `type`, `parameters`) " +
 			"VALUES (?, ?, ?, ?, ?, ?, ?);";
 	
 	public RegionLogger() {
@@ -39,33 +39,20 @@ public class RegionLogger extends AbstractLogger {
 	
 	@Override
 	public void createTables() throws SQLException {
-		executeUpdate(
-			"CREATE TABLE IF NOT EXISTS `logger_regions` ( " +
-			"`world` varchar(255) NOT NULL, " +
-			"`region` varchar(255) NOT NULL, " +
-			"`changed_time` bigint(20) NOT NULL, " +
-			"`changed_by` varchar(20) NOT NULL, " +
-			"`changer_is_a` enum('staff','owner','member','') NOT NULL, " +
-			"`type` enum('addmember','removemember','addowner','removeowner','create','remove','flag','priority','redefine') NOT NULL, " +
-			"`parameter` varchar(255) DEFAULT NULL, " +
-			"KEY `region` (`region`), " +
-			"KEY `changed_time` (`changed_time`), " +
-			"KEY `world` (`world`) " +
-			") ENGINE=InnoDB DEFAULT CHARSET=latin1;"
-		);
+
 	}
 		
 	/**
 	 * Add a change to the MySQL DB
 	 * @param world The world the region is in
 	 * @param region The name of the region
-	 * @param changedBy The name of the player who changed the region
+	 * @param UUID The UUID of the player who changed the region
 	 * @param changer The type of the player who changed the region (Staff, Owner, Member)
 	 * @param changeType The type of the change
 	 * @param parameters The paramaters given to the change (players, flags, etc)
 	 */
-	private void addChange(String world, String region, String changedBy, ChangerIsA changer, ChangeType changeType, String parameters) {
-		RegionChange change = new RegionChange(world, region, System.currentTimeMillis(), changedBy, changer, changeType, parameters);
+	private void addChange(String world, String region, String UUID, ChangerIsA changer, ChangeType changeType, String parameters) {
+		RegionChange change = new RegionChange(world, region, System.currentTimeMillis(), UUID, changer, changeType, parameters);
 		changes.add(change);
 		if (changes.size() >= 5 && plugin.isEnabled()) {
 			batch();
@@ -81,7 +68,7 @@ public class RegionLogger extends AbstractLogger {
 	 * @param parameters Extra parameters. Can be null.
 	 */
 	public static void logRegionChange(ProtectedRegion region, Player changedBy, ChangerIsA changer, ChangeType changeType, String parameters) {
-		if (instance != null) instance.addChange(changedBy.getWorld().getName(), region.getId(), changedBy.getName(), changer, changeType, parameters);
+		if (instance != null) instance.addChange(changedBy.getWorld().getName(), region.getId(), changedBy.getUniqueId().toString(), changer, changeType, parameters);
 	}
 	
 	
@@ -104,7 +91,7 @@ public class RegionLogger extends AbstractLogger {
 				Connection con = SQLPool.getConnection();
 				try {
 					PreparedStatement prep = con.prepareStatement( //Prep Statement for getting changes
-						"SELECT `changed_time`, `changed_by`, `changer_is_a`, `type`, `parameter` FROM `logger_regions` " +
+						"SELECT `changed_time`, `changed_by`, `changer_is_a`, `type`, `parameter` FROM `sh_logger_regions` " +
 						"WHERE `world` = ? AND `region` = ?;"
 					);
 					prep.setString(1, world);
@@ -155,16 +142,17 @@ public class RegionLogger extends AbstractLogger {
 		String world;
 		String region;
 		long changedTime;
-		String changedBy;
+        int changedBy;
+		String changedByUUID;
 		ChangerIsA aType;
 		ChangeType type;
 		String parameters;
 		
-		public RegionChange(String world, String region, long changedTime, String changedBy, ChangerIsA aType, ChangeType type, String parameters) {
+		public RegionChange(String world, String region, long changedTime, String changedByUUID, ChangerIsA aType, ChangeType type, String parameters) {
 			this.world = world;
 			this.region = region;
 			this.changedTime = changedTime;
-			this.changedBy = changedBy;
+			this.changedByUUID = changedByUUID;
 			this.aType = aType;
 			this.type = type;
 			this.parameters = parameters;
@@ -175,7 +163,7 @@ public class RegionLogger extends AbstractLogger {
 			preparedStatement.setString(1, world);
 			preparedStatement.setString(2, region);
 			preparedStatement.setLong(3, changedTime);
-			preparedStatement.setString(4, changedBy);
+			preparedStatement.setInt(4, changedBy);
 			preparedStatement.setString(5, aType.toString());
 			preparedStatement.setString(6, type.toString());
 			preparedStatement.setString(7, parameters);
@@ -221,8 +209,12 @@ public class RegionLogger extends AbstractLogger {
 			}
 			return s;
 		}
-				
-	}
+
+        @Override
+        public boolean isBatchable() {
+            return ((changedBy = getUserID(changedByUUID)) != -1);
+        }
+    }
 	
 	/**
 	 * A type of region change

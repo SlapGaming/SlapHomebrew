@@ -131,8 +131,8 @@ public class PlayerChatListener extends AbstractListener {
 		}
 		
 		//Check for AFK
-		if (afk.isAfk(playerName)) {
-			afk.leaveAfk(playerName);
+		if (afk.isAfk(player)) {
+			afk.leaveAfk(player);
 		}
 	}
 

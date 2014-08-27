@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.HashSet;
 
+import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 
@@ -47,6 +48,22 @@ public abstract class AbstractLogger extends AbstractController {
 		if (set.size() == 0) return;
 		final HashSet<Batchable> batch = new HashSet<>(set);
 		set.clear();
+
+        //Check which ones can be batched
+        for (Batchable b : batch) {
+            if (!b.isBatchable()) {
+                set.add(b);
+            }
+        }
+        //=> Remove any batchables that cannot be batched
+        for (Batchable b : set) {
+            batch.remove(b);
+        }
+
+        //Check batch size
+        if (batch.isEmpty()) {
+            return;
+        }
 		
 		boolean inSync = false;
 		if (sync.length > 0) {
@@ -88,7 +105,30 @@ public abstract class AbstractLogger extends AbstractController {
 	
 	
 	protected abstract void createTables() throws SQLException;
-	
+
+    /**
+     * Get the UserID for a UUID.
+     * @param UUID The UUID of the player
+     * @return the user id or -1 if there's no profile found
+     */
+    public static int getUserID(String UUID) {
+        UUIDControl.UUIDProfile profile = UUIDControl.getInstance().getUUIDProfile(UUID);
+        return (profile == null ? -1 : profile.getUserID());
+    }
+
+    /**
+     * Get a Player's name based on their UserID
+     * @param userID The ID
+     * @return The playername or null
+     */
+    public static String getPlayernameOnID(int userID) {
+        UUIDControl.UUIDProfile profile = UUIDControl.getInstance().getUUIDProfile(userID);
+        if (profile == null) {
+            return null;
+        }
+        return profile.getCurrentName();
+    }
+
 	/**
 	 * Execute an update on a normal statement
 	 * @param query The query
@@ -109,6 +149,6 @@ public abstract class AbstractLogger extends AbstractController {
 	public boolean isEnabled() {
 		return enabled;
 	}
-	
+
 
 }

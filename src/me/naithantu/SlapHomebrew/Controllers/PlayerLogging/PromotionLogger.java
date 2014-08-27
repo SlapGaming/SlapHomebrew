@@ -9,8 +9,8 @@ public class PromotionLogger extends AbstractLogger {
 	private static PromotionLogger instance;
 	
 	private HashSet<Batchable> batch;
-	
-	private String sqlQuery = "INSERT INTO `mcecon`.`logger_promotions` (`player`, `time`, `from_rank`, `to_rank`, `type`, `promoted_by`) VALUES (?, ?, ?, ?, ?, ?);";
+
+    private String sqlQuery = "INSERT INTO `sh_logger_promotions`(`promoted_player`, `timestamp`, `from_rank`, `to_rank`, `type`, `promoted_by`) VALUES (?, ?, ?, ?, ?, ?);";
 	
 	public PromotionLogger() {
 		super();
@@ -27,36 +27,26 @@ public class PromotionLogger extends AbstractLogger {
 
 	@Override
 	protected void createTables() throws SQLException {
-		executeUpdate(
-			"CREATE TABLE IF NOT EXISTS `logger_promotions` ( " +
-				"`player` varchar(20) NOT NULL, " +
-				"`time` bigint(20) NOT NULL, " +
-				"`from_rank` varchar(255) NOT NULL, " +
-				"`to_rank` varchar(255) NOT NULL, " +
-				"`type` enum('promoted','demoted') NOT NULL, " +
-				"`promoted_by` varchar(255) DEFAULT NULL, " +
-			"PRIMARY KEY (`player`,`time`) " +
-			") ENGINE=InnoDB DEFAULT CHARSET=latin1;"
-		);
+
 	}
 	
 	/**
 	 * Add a rank change to the batch
-	 * @param playername The player's name
+	 * @param UUID The player's name
 	 * @param fromRank From rank
 	 * @param toRank To rank
 	 * @param promotion Was a promotion
 	 * @param promotedBy promoted by/what. Can be null
 	 */
-	public static void logRankChange(String playername, String fromRank, String toRank, boolean promotion, String promotedBy) {
-		if (instance != null) instance.addRankChange(playername, fromRank, toRank, promotion, promotedBy);
+	public static void logRankChange(String UUID, String fromRank, String toRank, boolean promotion, String promotedBy) {
+		if (instance != null) instance.addRankChange(UUID, fromRank, toRank, promotion, promotedBy);
 	}
 	
 	/**
 	 * See {@link PromotionLogger#logRankChange(String, String, String, boolean, String)}
 	 */
-	private void addRankChange(String playername, String fromRank, String toRank, boolean promotion, String promotedBy) {
-		Promotion promo = new Promotion(playername, System.currentTimeMillis(), fromRank, toRank, promotion, promotedBy);
+	private void addRankChange(String UUID, String fromRank, String toRank, boolean promotion, String promotedBy) {
+		Promotion promo = new Promotion(UUID, System.currentTimeMillis(), fromRank, toRank, promotion, promotedBy);
 		batch.add(promo);
 	}
 
@@ -68,15 +58,16 @@ public class PromotionLogger extends AbstractLogger {
 	
 	private class Promotion implements Batchable {
 		
-		private String player;
+		private int userID;
+        private String UUID;
 		private long promotedTime;
 		private String fromRank;
 		private String toRank;
 		private boolean promotion;
 		private String promotedBy;
 		
-		public Promotion(String player, long promotedTime, String fromRank, String toRank, boolean promotion, String promotedBy) {
-			this.player = player;
+		public Promotion(String UUID, long promotedTime, String fromRank, String toRank, boolean promotion, String promotedBy) {
+			this.UUID = UUID;
 			this.promotedTime = promotedTime;
 			this.fromRank = fromRank;
 			this.toRank = toRank;
@@ -86,14 +77,18 @@ public class PromotionLogger extends AbstractLogger {
 		
 		@Override
 		public void addBatch(PreparedStatement preparedStatement) throws SQLException {
-			preparedStatement.setString(1, player);
+			preparedStatement.setInt(1, userID);
 			preparedStatement.setLong(2, promotedTime);
 			preparedStatement.setString(3, fromRank);
 			preparedStatement.setString(4, toRank);
 			preparedStatement.setString(5, (promotion ? "promoted" : "demoted"));
 			preparedStatement.setString(6, promotedBy);
 		}
-		
-	}
+
+        @Override
+        public boolean isBatchable() {
+            return ((userID = getUserID(UUID)) != -1);
+        }
+    }
 
 }

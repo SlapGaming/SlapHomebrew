@@ -5,6 +5,7 @@ import java.util.List;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Controllers.Horses;
+import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.ChatColor;
@@ -38,8 +39,8 @@ public class HorseCommand extends AbstractCommand {
 	public boolean handle() throws CommandException {
 		if (args.length == 2 && args[0].equalsIgnoreCase("addhorses")) {
 			testPermission("addhorses");
-			OfflinePlayer offPlayer = getOfflinePlayer(args[1]);
-			horses.playerDonatedForHorses(offPlayer.getName());
+			UUIDControl.UUIDProfile offPlayer = getOfflinePlayer(args[1]);
+			horses.playerDonatedForHorses(offPlayer.getCurrentName());
 		}
 		
 		Player player = getPlayer(); //Get player

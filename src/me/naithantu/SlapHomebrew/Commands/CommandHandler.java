@@ -10,6 +10,7 @@ import me.naithantu.SlapHomebrew.Commands.Chat.MentionCommand;
 import me.naithantu.SlapHomebrew.Commands.Chat.MsgCommand;
 import me.naithantu.SlapHomebrew.Commands.Chat.ReplyCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
+import me.naithantu.SlapHomebrew.Commands.Exception.NoMessageException;
 import me.naithantu.SlapHomebrew.Commands.Fun.*;
 import me.naithantu.SlapHomebrew.Commands.Games.*;
 import me.naithantu.SlapHomebrew.Commands.Homes.HomeCommand;
@@ -136,10 +137,12 @@ public class CommandHandler {
 		
 		if (commandObj != null) {
 			try {
-				boolean handled = commandObj.handle();
-				if (!handled) {
-					Util.badMsg(sender, cmd.getUsage());
-				}
+                boolean handled = commandObj.handle();
+                if (!handled) {
+                    Util.badMsg(sender, cmd.getUsage());
+                }
+            } catch (NoMessageException e) {
+                //Special kind of CommandException. No message is needed.
 			} catch (CommandException e) {
 				Util.badMsg(sender, ChatColor.RED + e.getMessage());
 			}

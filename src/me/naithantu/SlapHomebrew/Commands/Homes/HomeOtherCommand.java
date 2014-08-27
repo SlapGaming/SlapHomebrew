@@ -2,6 +2,7 @@ package me.naithantu.SlapHomebrew.Commands.Homes;
 
 import java.util.List;
 
+import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -26,8 +27,8 @@ public class HomeOtherCommand extends AbstractCommand {
 		testPermission("homeother");
 		if (args.length != 2) throw new UsageException("homeother [Player] <[Homename] | list>"); //Usage
 		
-		OfflinePlayer offPlayer = getOfflinePlayer(args[0]); //Get player
-		String playername = offPlayer.getName();
+		UUIDControl.UUIDProfile offPlayer = getOfflinePlayer(args[0]); //Get player
+		String playername = offPlayer.getCurrentName();
 		
 		Homes homes = plugin.getHomes();
 		if (args[1].equalsIgnoreCase("list")) { //Get list of all homes

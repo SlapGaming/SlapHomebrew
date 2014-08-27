@@ -2,6 +2,7 @@ package me.naithantu.SlapHomebrew.Commands.Promotion;
 
 import java.util.List;
 
+import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 
@@ -29,7 +30,7 @@ public class PromotionCommand extends AbstractCommand {
 			throw new UsageException(usage);
 		}
 		
-		OfflinePlayer offPlayer; String playername;
+		UUIDControl.UUIDProfile offPlayer; String playername;
 		
 		switch (args[0].toLowerCase()) {
 		case "givemoney": case "addmoney": case "money": //Give the player money
@@ -37,10 +38,10 @@ public class PromotionCommand extends AbstractCommand {
 			if (args.length != 3) throw new UsageException("promotion givemoney [Player] [Amount]");
 			offPlayer = getOfflinePlayer(args[1]); //Get Player
 			double amount = parseIntPositive(args[2]); //Parse amount
-			playername = offPlayer.getName();
+			playername = offPlayer.getCurrentName();
 			
 			String vipBonus = "";
-			PermissionUser user = PermissionsEx.getUser(playername); //Get Pex User
+			PermissionUser user = PermissionsEx.getPermissionManager().getUser(offPlayer.getUUID()); //Get Pex User
 			if (user != null) {
 				switch (user.getGroupsNames()[0].toLowerCase()) {
 				case "vip": case "vipguide": case "mod": case "admin": //If VIP or staff

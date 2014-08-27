@@ -56,40 +56,37 @@ public class Whitelist extends AbstractController {
 	
 	/**
 	 * Add a player to the whitelist
-	 * @param playername The player
+	 * @param UUID The player's UUID
 	 * @throws CommandException if already added
 	 */
-	public void addPlayer(String playername) throws CommandException {
-		String plc = playername.toLowerCase();
-		if (allowedPlayers.contains(plc)) {
+	public void addPlayer(String UUID) throws CommandException {
+		if (allowedPlayers.contains(UUID)) {
 			throw new CommandException("This player is already added to the whitelist.");
 		}
-		allowedPlayers.add(plc);
+		allowedPlayers.add(UUID);
 		savePlayers();
 	}
 		
 	/**
 	 * Remove a player from the whitelist
-	 * @param playername The player
+	 * @param UUID The player's UUID
 	 * @throws CommandException if not added
 	 */
-	public void removePlayer(String playername) throws CommandException {
-		String plc = playername.toLowerCase();
-		if (!allowedPlayers.contains(plc)) {
+	public void removePlayer(String UUID) throws CommandException {
+		if (!allowedPlayers.contains(UUID)) {
 			throw new CommandException("This player is not whitelisted.");
 		}
-		allowedPlayers.remove(plc);
+		allowedPlayers.remove(UUID);
 		savePlayers();
 	}
 	
 	/**
 	 * Check if a player is whitelisted
-	 * @param playername The player
+	 * @param UUID The player's UUID
 	 * @return whitelisted
 	 */
-	public boolean isWhitelisted(String playername) {
-		String plc = playername.toLowerCase();
-		return allowedPlayers.contains(plc);
+	public boolean isWhitelisted(String UUID) {
+		return allowedPlayers.contains(UUID);
 	}
 	
 	/**

@@ -24,8 +24,9 @@ public class SuicideCommand extends AbstractCommand {
 			throw new CommandException("You are already dead o.O");
 		} else {
 			p.sendMessage(ChatColor.GRAY + "Goodbye world D:");
+            String UUID = p.getUniqueId().toString();
 			plugin.getPlayerLogger().commitsSuicide(p.getName());
-			DeathLogger.playerCommitsSuicide(p.getName());
+			DeathLogger.playerCommitsSuicide(UUID);
 			p.setHealth(0);
 		}
 		return true;

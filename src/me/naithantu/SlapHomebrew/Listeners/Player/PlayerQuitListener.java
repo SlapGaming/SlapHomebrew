@@ -37,7 +37,7 @@ public class PlayerQuitListener extends AbstractListener {
 		String playername = player.getName();
 		
 		//Remove from AFK
-		afk.removeAfk(playername);
+		afk.removeAfk(player);
 		
 		//Check if player is in jail
 		if (jails.isInJail(playername)) {

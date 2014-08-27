@@ -29,16 +29,15 @@ public class AFKChecker extends BukkitRunnable {
 	@Override
 	public void run() {
 		Long systemTime = System.currentTimeMillis();
-		for (Player p :plugin.getServer().getOnlinePlayers()) {
-			String name = p.getName();
-			if (!afk.hasPreventAFK(name)) {
+		for (Player p : plugin.getServer().getOnlinePlayers()) {
+			if (!afk.hasPreventAFK(p)) {
 				long lastActive = PlayerControl.getPlayer(p).getLastActivity();
-				if (!afk.isAfk(name)) {
+				if (!afk.isAfk(p)) {
 					if (lastActive != 0) {
 						long lastActiveSeconds = systemTime - lastActive;
 						if (lastActiveSeconds > allowedInactive) {
 							//Go AFK
-							afk.goAfk(name, "Inactive for more than " + allowedMinutes + " minutes.");
+							afk.goAfk(p, "Inactive for more than " + allowedMinutes + " minutes.");
 						} else if (lastActiveSeconds > inactiveWarning && lastActiveSeconds < (inactiveWarning + (15 * 1000))) {
 							//Warn for AFK
 							Util.badMsg(p, "You will Auto-AFK in 1 minute.");

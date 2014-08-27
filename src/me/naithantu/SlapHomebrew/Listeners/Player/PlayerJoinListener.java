@@ -10,6 +10,7 @@ import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.PlotControl;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.VipForumControl;
 import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
 import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
+import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.ChatColor;
@@ -38,6 +39,9 @@ public class PlayerJoinListener extends AbstractListener {
 	public void onPlayerLogin(PlayerJoinEvent event) {
 		final Player player = event.getPlayer();
 
+        //UUID Control
+        UUIDControl.getInstance().onLogin(player);
+
 		//Add player to PlayerControl
 		PlayerControl.getInstance().addSlapPlayer(player);
 		
@@ -48,7 +52,7 @@ public class PlayerJoinListener extends AbstractListener {
 		if (player.getWorld().getName().equals("world_start")) {
 			player.setAllowFlight(true);
 		}
-				
+
 		//Add to Tab
 		tabController.playerJoin(player);
 		

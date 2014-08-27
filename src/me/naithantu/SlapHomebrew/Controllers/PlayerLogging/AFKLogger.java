@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import me.naithantu.SlapHomebrew.Util.SQLPool;
 
 public class AFKLogger extends AbstractLogger {
@@ -16,8 +17,8 @@ public class AFKLogger extends AbstractLogger {
 	private HashMap<String, AFKSession> activeSessions;
 	private HashSet<Batchable> finishedSessions;
 	
-	private String query = 
-			"INSERT INTO `mcecon`.`logger_afk` (`player`, `went_afk`, `left_afk`, `reason`) " +
+	private String query =
+			"INSERT INTO `sh_logger_afk` (`user_id`, `went_afk`, `left_afk`, `reason`) " +
 			"VALUES (?, ?, ?, ?);";
 	
 	public AFKLogger() {
@@ -30,53 +31,45 @@ public class AFKLogger extends AbstractLogger {
 	
 	@Override
 	public void createTables() throws SQLException {
-		executeUpdate(
-			"CREATE TABLE IF NOT EXISTS `logger_afk` ( " +
-			"`player` varchar(50) NOT NULL, " +
-			"`went_afk` bigint(20) NOT NULL, " +
-			"`left_afk` bigint(20) NOT NULL, " +
-			"`reason` varchar(255) DEFAULT NULL, " +
-			"KEY `player` (`player`) " +
-			") ENGINE=InnoDB DEFAULT CHARSET=latin1;"
-		);
+		//TODO
 	}
 	
 	/**
 	 * A player enters an AFK Session
-	 * @param player The player
+	 * @param UUID The player's UUID
 	 * @param reason The reason (can be null)
 	 */
-	public static void logPlayerGoesAFK(String player, String reason) {
-		if (instance != null) instance.playerGoesAFK(player, reason);		
+	public static void logPlayerGoesAFK(String UUID, String reason) {
+		if (instance != null) instance.playerGoesAFK(UUID, reason);
 	}
 	
 	/**
 	 * A player enters an AFK Session
-	 * @param player The player
-	 * @param reason The reason (can be null)
+	 * @param UUID The player's UUID
+	 * @param reason The reason or null
 	 */
-	private void playerGoesAFK(String player, String reason) {
-		AFKSession session = new AFKSession(player, reason);
-		activeSessions.put(player, session);		
+	private void playerGoesAFK(String UUID, String reason) {
+		AFKSession session = new AFKSession(UUID, reason);
+		activeSessions.put(UUID, session);
 	}
 	
 	/**
 	 * A player leaves their AFK Session
-	 * @param player The player
+	 * @param UUID The player's UUID
 	 */
-	public static void logPlayerLeftAFK(String player) {
-		if (instance != null) instance.playerLeftAFK(player);
+	public static void logPlayerLeftAFK(String UUID) {
+		if (instance != null) instance.playerLeftAFK(UUID);
 	}
-	
+
 	/**
 	 * A player leaves their AFK Session
-	 * @param player The player
+	 * @param UUID The player's UUID
 	 */
-	private void playerLeftAFK(String player) {
-		AFKSession session = activeSessions.get(player); //Get the session
+	private void playerLeftAFK(String UUID) {
+		AFKSession session = activeSessions.get(UUID); //Get the session
 		if (session == null) return; //Shouldn't be called
 		session.leftAFK(); //Time Leave AFK
-		activeSessions.remove(player); //Remove from active sessions
+		activeSessions.remove(UUID); //Remove from active sessions
 		finishedSessions.add(session); //Add to finished sessions
 		
 		if (finishedSessions.size() >= 20 && plugin.isEnabled()) {
@@ -87,33 +80,35 @@ public class AFKLogger extends AbstractLogger {
 	/**
 	 * Get the AFK time for a player
 	 * Should be called in A-Sync
-	 * @param playername The player
+	 * @param profile The player's UUIDProfile
 	 * @return time afk, or -1 if failed
 	 */
-	public static long getAFKTime(final String playername) {
+	public static long getAFKTime(final UUIDControl.UUIDProfile profile) {
 		if (instance == null) { //Check if initialzed
 			return -1L;
 		}
 		long afkTime = 0;
+        int userID = profile.getUserID();
+        String UUID = profile.getUUID();
 		
 		for (Batchable batchable : instance.finishedSessions) { //Get from unbatched
 			AFKSession session = (AFKSession) batchable;
-			if (session.player.equalsIgnoreCase(playername)) { //Check if session is about player
+            if (session.userID == userID) { //Check if session is about player
 				afkTime += (session.leftAFK - session.wentAFK); //Add to time
 			}
 		}
 		Connection con = SQLPool.getConnection(); //Get a connection
 		try {
 			PreparedStatement prep = con.prepareStatement( //Get from DB
-				"SELECT SUM(`left_afk`) - SUM(`went_afk`) FROM `logger_afk` WHERE `player` = ?;"
+				"SELECT SUM(`left_afk`) - SUM(`went_afk`) FROM `sh_logger_afk` WHERE `user_id` = ?;"
 			); 
-			prep.setString(1, playername);
+			prep.setInt(1, userID);
 			ResultSet afkRS = prep.executeQuery(); //Execute
 			if (afkRS.next()) { //If given
 				afkTime += afkRS.getLong(1); //Add to time
 			}
-			if (instance.activeSessions.containsKey(playername)) { //Check if currently AFK
-				afkTime += (System.currentTimeMillis() - instance.activeSessions.get(playername).wentAFK);
+			if (instance.activeSessions.containsKey(UUID)) { //Check if currently AFK
+				afkTime += (System.currentTimeMillis() - instance.activeSessions.get(UUID).wentAFK);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -136,14 +131,16 @@ public class AFKLogger extends AbstractLogger {
 	}
 	
 	private class AFKSession implements Batchable {
-		
-		String player;
+
+        int userID;
+		String UUID;
 		long wentAFK;
 		long leftAFK;
 		String reason;
 		
-		public AFKSession(String player, String reason) {
-			this.player = player;
+		public AFKSession(String UUID, String reason) {
+            this.userID = -1;
+			this.UUID = UUID;
 			this.reason = reason;
 			wentAFK = System.currentTimeMillis();
 		}
@@ -154,11 +151,17 @@ public class AFKLogger extends AbstractLogger {
 		
 		@Override
 		public void addBatch(PreparedStatement preparedStatement) throws SQLException {
-			preparedStatement.setString(1, player);
+			preparedStatement.setInt(1, userID);
 			preparedStatement.setLong(2, wentAFK);
 			preparedStatement.setLong(3, leftAFK);
 			preparedStatement.setString(4, reason);
 		}
-	}
+
+        @Override
+        public boolean isBatchable() {
+            userID = getUserID(UUID);
+            return (userID != -1);
+        }
+    }
 	
 }

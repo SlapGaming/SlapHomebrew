@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
+import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import me.naithantu.SlapHomebrew.Util.DateUtil;
 import me.naithantu.SlapHomebrew.Util.Log;
 import me.naithantu.SlapHomebrew.Util.SQLPool;
@@ -25,7 +26,7 @@ public class VipForumControl extends AbstractLogger {
 	
 	//SQL Statements
 	private String sqlQuery = 
-		"INSERT INTO `mcecon`.`vip_forum` (`iteration`, `id`, `player`, `added_time`, `promotion`, `handled_by_staff`, `handled_time`, `comment`) " +
+		"INSERT INTO `sh_vip_forum` (`iteration`, `log_id`, `forum_player`, `added_time`, `promotion`, `handled_by_staff`, `handled_time`, `comment`) " +
 			"VALUES (?, ?, ?, ?, ?, ?, ?, ?) " +
 		"ON DUPLICATE KEY UPDATE `handled_by_staff` = ?, `handled_time` = ?, `comment` = ?;";
 	
@@ -64,7 +65,7 @@ public class VipForumControl extends AbstractLogger {
 		Connection con = SQLPool.getConnection(); //Get a connection
 		try {
 			//Get Highest current iteration
-			ResultSet rs = con.createStatement().executeQuery("SELECT MAX(`iteration`) FROM `vip_forum`;");
+			ResultSet rs = con.createStatement().executeQuery("SELECT MAX(`iteration`) FROM `sh_vip_forum`;");
 			rs.next(); //Next!
 			currentIteration = rs.getInt(1); //Get Iteration
 			if (rs.wasNull()) {  //If was null, set to default
@@ -74,7 +75,7 @@ public class VipForumControl extends AbstractLogger {
 			}
 			
 			//Get highest ID from this current iteration
-			PreparedStatement prep = con.prepareStatement("SELECT MAX(`id`) FROM `vip_forum` WHERE `iteration` = ?;");
+			PreparedStatement prep = con.prepareStatement("SELECT MAX(`log_id`) FROM `sh_vip_forum` WHERE `iteration` = ?;");
 			prep.setInt(1, currentIteration); //Set current iteration
 			ResultSet idRS = prep.executeQuery(); //Execute the Query
 			idRS.next(); //Next!
@@ -82,13 +83,13 @@ public class VipForumControl extends AbstractLogger {
 			
 			//Get unfinished plot marks
 			ResultSet unfinishedRS = con.createStatement().executeQuery(
-				"SELECT `iteration`, `id`, `player`, `added_time`, `promotion` FROM `vip_forum` WHERE `handled_by_staff` IS NULL;"
+				"SELECT `iteration`, `log_id`, `forum_player`, `added_time`, `promotion` FROM `sh_vip_forum` WHERE `handled_by_staff` IS NULL;"
 			);
 			while (unfinishedRS.next()) { //Foreach unfinished promotion
 				ForumPromotion fp = new ForumPromotion( //Create new Promotion 
 						unfinishedRS.getInt(1),
 						unfinishedRS.getInt(2),
-						unfinishedRS.getString(3),
+						UUIDControl.getInstance().getUUIDProfile(unfinishedRS.getInt(3)).getUUID(),
 						unfinishedRS.getLong(4),
 						unfinishedRS.getBoolean(5),
 						null,
@@ -122,22 +123,22 @@ public class VipForumControl extends AbstractLogger {
 	
 	/**
 	 * Log a new Forum promotion
-	 * @param player The player
+	 * @param UUID The player's UUID
 	 * @param promotion The promotion
 	 */
-	public static void logForumPromotion(String player, boolean promotion) {
+	public static void logForumPromotion(String UUID, boolean promotion) {
 		if (instance != null) {
-			instance.addForumPromotion(player, promotion);
+			instance.addForumPromotion(UUID, promotion);
 		} else {
-			Log.info("[Forum Promotion] Player " + player + " needs to be " + (promotion ? "promoted." : "demoted."));
+			Log.info("[Forum Promotion] Player " + UUID + " needs to be " + (promotion ? "promoted." : "demoted."));
 		}
 	}
 	
 	/**
 	 * See {@link VipForumControl#logForumPromotion(String, boolean)}
 	 */
-	private void addForumPromotion(final String player, final boolean promotion) {
-		ForumPromotion fp = new ForumPromotion(currentIteration, ++currentID, player, System.currentTimeMillis(), promotion, null, null, null);
+	private void addForumPromotion(final String UUID, final boolean promotion) {
+		ForumPromotion fp = new ForumPromotion(currentIteration, ++currentID, UUID, System.currentTimeMillis(), promotion, null, null, null);
 		batch.add(fp); //Add to batch
 		addToUnfinishedMap(fp); //Add to unfinished map
 	}
@@ -193,23 +194,23 @@ public class VipForumControl extends AbstractLogger {
 	 * Finish a pending forum promotion
 	 * Uses the current iteration
 	 * @param ID The ID
-	 * @param handledBy Handled by CommandSender 
+	 * @param handledByUUID Handled by CommandSender's UUID
 	 * @param comment Optional comment
 	 * @throws CommandException if no pending FP with this ID
 	 */
-	public void finishPendingPromotion(int ID, String handledBy, String comment) throws CommandException {
-		finishPendingPromotion(currentIteration, ID, handledBy, comment);
+	public void finishPendingPromotion(int ID, String handledByUUID, String comment) throws CommandException {
+		finishPendingPromotion(currentIteration, ID, handledByUUID, comment);
 	}
 	
 	/**
 	 * Finish a pending Forum Promotion
 	 * @param iteration The iteration
 	 * @param ID The ID
-	 * @param handledBy Handled by CommandSender
+	 * @param handledByUUID Handled by CommandSender's UUID
 	 * @param comment Optional comment
 	 * @throws CommandException if no pending FP with this ID
 	 */
-	public void finishPendingPromotion(int iteration, int ID, String handledBy, String comment) throws CommandException {
+	public void finishPendingPromotion(int iteration, int ID, String handledByUUID, String comment) throws CommandException {
 		ForumPromotion fp;
 		try {
 			fp = unfinishedForumPromotions.get(iteration).get(ID); //Get ForumPromotion
@@ -217,8 +218,8 @@ public class VipForumControl extends AbstractLogger {
 		} catch (NullPointerException e) {
 			throw new CommandException("There is no pending forum promotion with ID: #" + ID + ChatColor.GRAY + " (Iteration #" + iteration + ")");
 		}
-		//Set paramaters
-		fp.handledBy = handledBy;
+		//Set parameters
+		fp.handledByUUID = handledByUUID;
 		fp.handledTime = System.currentTimeMillis();
 		fp.comment = comment;
 		
@@ -243,19 +244,7 @@ public class VipForumControl extends AbstractLogger {
 
 	@Override
 	protected void createTables() throws SQLException {
-		executeUpdate(
-			"CREATE TABLE IF NOT EXISTS `vip_forum` ( " +
-				"`iteration` int(11) NOT NULL, " +
-				"`id` int(11) NOT NULL, " +
-				"`player` varchar(255) NOT NULL, " +
-				"`added_time` bigint(20) NOT NULL, " +
-				"`promotion` tinyint(1) NOT NULL, " +
-				"`handled_by_staff` varchar(255) DEFAULT NULL, " +
-				"`handled_time` bigint(20) DEFAULT NULL, " +
-				"`comment` varchar(1000) DEFAULT NULL, " +
-			"PRIMARY KEY (`iteration`,`id`) " +
-			") ENGINE=InnoDB DEFAULT CHARSET=latin1;"
-		);
+
 	}
 
 	@Override
@@ -268,21 +257,23 @@ public class VipForumControl extends AbstractLogger {
 		
 		private int iteration;
 		private int ID;
-		
-		private String player;
+
+        private int userID;
+		private String UUID;
 		private long promotionTime;
 		private boolean promotion;
-		private String handledBy;
+        private int handledByID;
+		private String handledByUUID;
 		private Long handledTime;
 		private String comment;
 		
-		public ForumPromotion(int iteration, int ID, String player, long promotionTime, boolean promotion, String handledBy, Long handledTime, String comment) {
+		public ForumPromotion(int iteration, int ID, String UUID, long promotionTime, boolean promotion, String handledByUUID, Long handledTime, String comment) {
 			this.iteration = iteration;
 			this.ID = ID;
-			this.player = player;
+			this.UUID = UUID;
 			this.promotionTime = promotionTime;
 			this.promotion = promotion;
-			this.handledBy = handledBy;
+			this.handledByUUID = handledByUUID;
 			this.handledTime = handledTime;
 			this.comment = comment;
 		}
@@ -294,18 +285,26 @@ public class VipForumControl extends AbstractLogger {
 			preparedStatement.setInt(2, ID);
 			
 			//Insert -> Main stuff
-			preparedStatement.setString(3, player);
+			preparedStatement.setInt(3, userID);
 			preparedStatement.setLong(4, promotionTime);
 			preparedStatement.setBoolean(5, promotion);
 			
 			//Insert -> Extra stuff (most likely null)
-			preparedStatement.setString(6, handledBy);
+            if (handledByUUID == null) {
+                preparedStatement.setNull(6, Types.INTEGER);
+            } else {
+                preparedStatement.setInt(6, handledByID);
+            }
 			if (handledTime == null) { preparedStatement.setNull(7, Types.BIGINT); }
 			else { preparedStatement.setLong(7, handledTime); }
 			preparedStatement.setString(8, comment);
 			
 			//Update
-			preparedStatement.setString(9, handledBy);
+            if (handledByUUID == null) {
+                preparedStatement.setNull(9, Types.INTEGER);
+            } else {
+                preparedStatement.setInt(9, handledByID);
+            }
 			if (handledTime == null) { preparedStatement.setNull(10, Types.BIGINT); }
 			else { preparedStatement.setLong(10, handledTime); }
 			preparedStatement.setString(11, comment);
@@ -319,10 +318,10 @@ public class VipForumControl extends AbstractLogger {
 			cs.sendMessage(
 				ChatColor.WHITE + "ID: " + ChatColor.GREEN + ((currentIteration == iteration) ? "#"+ ID : "#" + iteration + "." + ID) +
 				ChatColor.WHITE + " - Time: " + ChatColor.GOLD + DateUtil.format("dd MMM. HH:mm zzz", promotionTime) +
-				ChatColor.WHITE + " - " + (promotion ? ChatColor.GREEN + "Promote " : ChatColor.RED + "Demote") + ChatColor.GOLD + " " + player
+				ChatColor.WHITE + " - " + (promotion ? ChatColor.GREEN + "Promote " : ChatColor.RED + "Demote") + ChatColor.GOLD + " " + getPlayernameOnID(userID)
 			);
-			if (handledBy != null) {
-				cs.sendMessage(" \u2517\u25B6 Handled by: " + ChatColor.GREEN + handledBy + ChatColor.WHITE + " - Time: " + ChatColor.GOLD + DateUtil.format("dd MMM. HH:mm zzz", handledTime)); //Send handled info
+			if (handledByID > 0) {
+				cs.sendMessage(" \u2517\u25B6 Handled by: " + ChatColor.GREEN + getPlayernameOnID(handledByID) + ChatColor.WHITE + " - Time: " + ChatColor.GOLD + DateUtil.format("dd MMM. HH:mm zzz", handledTime)); //Send handled info
 				if (comment != null) {
 					cs.sendMessage(ChatColor.GRAY + "  \u2517\u25B6 Comment: " + comment);
 				}
@@ -335,7 +334,22 @@ public class VipForumControl extends AbstractLogger {
 			if (iterationDiff != 0) return iterationDiff; //If not same iteration
 			return ID - o.ID; //Otherwise ID
 		}
-		
-	}
+
+        @Override
+        public boolean isBatchable() {
+            //Check the main user
+            if (((userID = getUserID(UUID)) == -1)) {
+                return false;
+            }
+
+            //Check the KickedBy param
+            if (handledByUUID != null) {
+                return ((handledByID = getUserID(handledByUUID)) != -1);
+            }
+
+            //All good
+            return true;
+        }
+    }
 
 }

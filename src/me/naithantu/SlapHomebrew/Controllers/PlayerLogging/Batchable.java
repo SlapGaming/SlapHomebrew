@@ -13,4 +13,10 @@ public interface Batchable {
 	 */
 	public void addBatch(PreparedStatement preparedStatement) throws SQLException;
 
+    /**
+     * Check if the batchable is ready to be added to the database
+     * @return is batchable
+     */
+    public boolean isBatchable();
+
 }

@@ -48,19 +48,7 @@ public class ModreqLogger extends AbstractLogger implements Listener {
 	
 	@Override
 	public void createTables() throws SQLException {
-		executeUpdate(
-			"CREATE TABLE IF NOT EXISTS `logger_modreqs` ( " +
-			"`iteration` int(11) NOT NULL, " +
-			"`modreq_id` int(11) NOT NULL, " +
-			"`issued_time` bigint(20) NOT NULL, " +
-			"`issued_by_player` varchar(20) NOT NULL, " +
-			"`request` varchar(1000) NOT NULL, " +
-			"`handled_time` bigint(20) DEFAULT NULL, " +
-			"`handled_by_staff` varchar(20) DEFAULT NULL, " +
-			"PRIMARY KEY (`iteration`,`modreq_id`), " +
-			"KEY `issued_time` (`issued_time`,`issued_by_player`,`handled_by_staff`) " +
-			") ENGINE=InnoDB DEFAULT CHARSET=latin1;"
-		);
+
 	}
 	
 	/**
@@ -159,7 +147,11 @@ public class ModreqLogger extends AbstractLogger implements Listener {
 			preparedStatement.setLong(8, handledTime);
 			preparedStatement.setString(9, handledByStaff);
 		}
-		
-	}
+
+        @Override
+        public boolean isBatchable() {
+            return false;
+        }
+    }
 
 }

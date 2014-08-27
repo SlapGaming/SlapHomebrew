@@ -6,6 +6,7 @@ import java.util.Map;
 
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.AFKLogger;
 
+import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -19,77 +20,114 @@ public class AwayFromKeyboard extends AbstractController {
 		afkReasons = new HashMap<>();
 		preventAFK = new HashSet<>();
 	}
-	
-    public void goAfk(String player, String reason){
-    	if (afkReasons.containsKey(player)){
-    		afkReasons.remove(player);
+
+    /**
+     * A player goes AFK
+     * @param player The player
+     * @param reason The reason
+     */
+    public void goAfk(Player player, String reason){
+        String UUID = player.getUniqueId().toString();
+        String playername = player.getName();
+    	if (afkReasons.containsKey(UUID)){
+    		afkReasons.remove(UUID);
     	}
-    	afkReasons.put(player, reason);
+    	afkReasons.put(UUID, reason);
     	boolean noReason = reason.equals("AFK");
-    	AFKLogger.logPlayerGoesAFK(player, (noReason ? null : reason)); //Log
+    	AFKLogger.logPlayerGoesAFK(UUID, (noReason ? null : reason)); //Log
     	if (noReason) {
-    		plugin.getServer().broadcastMessage(ChatColor.WHITE + player + " is now AFK.");
+    		plugin.getServer().broadcastMessage(ChatColor.WHITE + playername + " is now AFK.");
     	} else {
-    		plugin.getServer().broadcastMessage(ChatColor.WHITE + player + " is now AFK. Reason: " + reason);
+    		plugin.getServer().broadcastMessage(ChatColor.WHITE + playername + " is now AFK. Reason: " + reason);
     	}
     }
-    
-    public void leaveAfk(String player){
-    	afkReasons.remove(player);
-    	AFKLogger.logPlayerLeftAFK(player);
-    	plugin.getServer().broadcastMessage(ChatColor.WHITE + player + " is no longer AFK");
+
+    /**
+     * A player leaves AFK
+     * @param player The player
+     */
+    public void leaveAfk(Player player){
+        String UUID = player.getUniqueId().toString();
+    	afkReasons.remove(UUID);
+    	AFKLogger.logPlayerLeftAFK(UUID);
+    	plugin.getServer().broadcastMessage(ChatColor.WHITE + player.getName() + " is no longer AFK");
     }
-    
-    public boolean isAfk(String player){
-    	boolean returnBool = false;
-    	if (afkReasons.get(player) != null) {
-    		returnBool = true;
-    	}
-    	return returnBool;
+
+    /**
+     * Check if a player is AFK
+     * @param player The player
+     * @return is AFK
+     */
+    public boolean isAfk(Player player){
+        return afkReasons.containsKey(player.getUniqueId().toString());
     }
-    
-    public String getAfkReason(String player){
-    	return afkReasons.get(player);
+
+    /**
+     * Get the AFK reason for a player
+     * @param player The player
+     * @return the reason or null
+     */
+    public String getAfkReason(Player player){
+    	return afkReasons.get(player.getUniqueId().toString());
     }
-    
-    public void sendAfkReason(Player sender, String afkPerson){
-    	String reason = getAfkReason(afkPerson);
+
+
+    /**
+     * Send an AFK reason to the player
+     * @param sender The sender
+     * @param afkPlayer The target player
+     */
+    public void sendAfkReason(Player sender, Player afkPlayer){
+    	String reason = getAfkReason(afkPlayer);
+        String playername = afkPlayer.getName();
     	if (reason.equals("AFK")){
-    		sender.sendMessage(ChatColor.RED + afkPerson + " might not respond. Reason: " + ChatColor.WHITE + "Away From Keyboard");
+    		sender.sendMessage(ChatColor.RED + playername + " might not respond. Reason: " + ChatColor.WHITE + "Away From Keyboard");
     	} else {
-    		sender.sendMessage(ChatColor.RED + afkPerson + " might not respond. Reason: " + ChatColor.WHITE + reason);
+    		sender.sendMessage(ChatColor.RED + playername + " might not respond. Reason: " + ChatColor.WHITE + reason);
     	}
     }
-    
-    public void resetAfkReason(String afkPerson) {
-    	if (afkReasons.containsKey(afkPerson)) {
-    		afkReasons.remove(afkPerson);
-    	}
-    	afkReasons.put(afkPerson, "AFK");
-    }
-    
-    public void removeAfk(String afkPerson){
-    	if (afkReasons.containsKey(afkPerson)) {
-    		AFKLogger.logPlayerLeftAFK(afkPerson);
-    		afkReasons.remove(afkPerson);
+
+    /**
+     * Remove the player's AFK
+     * @param player The player
+     */
+    public void removeAfk(Player player){
+        String UUID = player.getUniqueId().toString();
+    	if (afkReasons.containsKey(UUID)) {
+    		AFKLogger.logPlayerLeftAFK(UUID);
+    		afkReasons.remove(UUID);
     	}
     }
-    
-    public void setPreventAFK(String player) {
-    	preventAFK.add(player);
+
+    /**
+     * Add a player to the prevent AFK list
+     * @param player The player
+     */
+    public void setPreventAFK(Player player) {
+    	preventAFK.add(player.getUniqueId().toString());
     }
-    
-    public void removeFromPreventAFK(String player) {
-    	preventAFK.remove(player);
+
+    /**
+     * Remove a player from the prevent AFK list
+     * @param player The player
+     */
+    public void removeFromPreventAFK(Player player) {
+    	preventAFK.remove(player.getUniqueId().toString());
     }
-    
-    public boolean hasPreventAFK(String player) {
-    	return preventAFK.contains(player);
+
+    /**
+     * Check if a player is currently in the prevent AFK list
+     * @param player The player
+     * @return is in the prevent AFK list
+     */
+    public boolean hasPreventAFK(Player player) {
+    	return preventAFK.contains(player.getUniqueId().toString());
     }
     
     @Override
     public void shutdown() {
-    	//Not needed
+    	preventAFK.clear();
+        afkReasons.clear();
     }
 	
 

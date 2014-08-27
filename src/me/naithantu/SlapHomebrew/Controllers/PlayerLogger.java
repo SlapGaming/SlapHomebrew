@@ -46,38 +46,40 @@ public class PlayerLogger extends AbstractController {
 	/*
 	 * CommandSpy
 	 */
-	public void addCommandSpy(String player) {
-		if (commandSpy.contains(player)) return;
-		commandSpy.add(player);
+	public void addCommandSpy(String UUID) {
+		if (commandSpy.contains(UUID)) return;
+		commandSpy.add(UUID);
 		List<String> list = logConfig.getStringList("commandspy");
-		list.add(player);
+		list.add(UUID);
 		logConfig.set("commandspy", list);
 		save();
 	}
 	
-	public void removeFromCommandSpy(String player) {
-		if (!commandSpy.contains(player)) return;
-		commandSpy.remove(player);
+	public void removeFromCommandSpy(String UUID) {
+		if (!commandSpy.contains(UUID)) return;
+		commandSpy.remove(UUID);
 		List<String> list = logConfig.getStringList("commandspy");
-		list.remove(player);
+		list.remove(UUID);
 		logConfig.set("commandspy", list);
 		save();		
 	}
 	
-	public boolean isCommandSpy(String player) {
-		return commandSpy.contains(player);
+	public boolean isCommandSpy(String UUID) {
+		return commandSpy.contains(UUID);
 	}
 	
 	public void sendToCommandSpies(String player, String command, boolean social) {
-		for (String spyname : commandSpy) {
-			Player spy = plugin.getServer().getPlayer(spyname);
-			if (spy != null) {
-				if (!spyname.equals(player)) {
-					if (social) spy.sendMessage(ChatColor.GRAY + "[Social] " + player + ": " + command);
-					else spy.sendMessage(ChatColor.GRAY + "[CS] " + player + ": " + command);
-				}
-			}
-		}
+        for (Player p : Util.getOnlinePlayers()) {
+            if (commandSpy.contains(p.getUniqueId().toString())) {
+                if (!p.getName().equals(player)) {
+                    if (social) {
+                        p.sendMessage(ChatColor.GRAY + "[Social] " + player + ": " + command);
+                    } else {
+                        p.sendMessage(ChatColor.GRAY + "[CS] " + player + ": " + command);
+                    }
+                }
+            }
+        }
 	}
 
 	/*

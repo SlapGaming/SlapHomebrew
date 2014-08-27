@@ -1,7 +1,10 @@
 package me.naithantu.SlapHomebrew.Commands.Promotion;
 
 import java.util.List;
+import java.util.UUID;
 
+import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -38,7 +41,7 @@ public class PromotionRankCommand extends AbstractCommand {
 				senderRank = Rank.SuperAdmin; //Console = OP/SuperAdmin
 			}
 			
-			OfflinePlayer targetPlayer;
+			UUIDControl.UUIDProfile targetPlayer;
 			PermissionUser targetUser;
 			Rank toRank, fromRank;
 			boolean changed;
@@ -50,7 +53,7 @@ public class PromotionRankCommand extends AbstractCommand {
 				
 				//Get player info
 				targetPlayer = getOfflinePlayer(args[2]); //Get player
-				targetUser = PermissionsEx.getUser(targetPlayer.getName()); //Get user
+				targetUser = PermissionsEx.getPermissionManager().getUser(UUID.fromString(targetPlayer.getUUID())); //Get user
 				fromRank = Rank.parseRank(targetUser); //Get the current rank of that player
 				
 				//Do checks
@@ -71,16 +74,17 @@ public class PromotionRankCommand extends AbstractCommand {
 				//Change the rank
 				fromRank.fromRank(targetUser); //Remove rank leftovers
 				toRank.toRank(targetUser); //Promote to rank
-				
-				changed = plugin.getVip().checkRank(targetPlayer, false, false); //Check if any VIP changes have to be made (Guide -> VIPGuide etc)
+
+				changed = plugin.getVip().checkRank(targetPlayer.getUUID(), false, false); //Check if any VIP changes have to be made (Guide -> VIPGuide etc)
 				if (changed) { //If the VIP check changed the rank
 					toRank = Rank.parseRank(targetUser); //Parse that rank
 				}
-				PromotionLogger.logRankChange(targetPlayer.getName(), fromRank.name(), toRank.name(), true, "Command - " + sender.getName()); //Log it
-				if (targetPlayer.getPlayer() != null) { //Check if player is online
-					plugin.getTabController().playerSwitchGroup(targetPlayer.getPlayer()); //Update TAB
+				PromotionLogger.logRankChange(targetPlayer.getUUID(), fromRank.name(), toRank.name(), true, "Command - " + sender.getName()); //Log it
+                Player onPlayer = Bukkit.getPlayer(UUID.fromString(targetPlayer.getUUID()));
+                if (onPlayer != null) { //Check if player is online
+					plugin.getTabController().playerSwitchGroup(onPlayer); //Update TAB
 				}
-				hMsg("Promoted " + targetPlayer.getName() + " from " + fromRank.name() + " to " + toRank.name() + "!");
+				hMsg("Promoted " + targetPlayer.getCurrentName() + " from " + fromRank.name() + " to " + toRank.name() + "!");
 				break;
 				
 			case "demote": case "demotion": case "d": //Demote a user
@@ -89,7 +93,7 @@ public class PromotionRankCommand extends AbstractCommand {
 				
 				//Get player info
 				targetPlayer = getOfflinePlayer(args[2]); //Get player
-				targetUser = PermissionsEx.getUser(targetPlayer.getName()); //Get user
+				targetUser = PermissionsEx.getPermissionManager().getUser(targetPlayer.getUUID()); //Get user
 				fromRank = Rank.parseRank(targetUser); //Get the current rank of that player
 				toRank = Rank.parseRank(args[3]); //Parse the to rank
 				
@@ -110,16 +114,18 @@ public class PromotionRankCommand extends AbstractCommand {
 				//Change the rank
 				fromRank.fromRank(targetUser); //Remove rank leftovers
 				toRank.toRank(targetUser); //Promote to rank
-				
-				changed = plugin.getVip().checkRank(targetPlayer, false, false); //Check if any VIP changes have to be made (Guide -> VIPGuide etc)
+
+				changed = plugin.getVip().checkRank(targetPlayer.getUUID(), false, false); //Check if any VIP changes have to be made (Guide -> VIPGuide etc)
 				if (changed) { //If the VIP check changed the rank
 					toRank = Rank.parseRank(targetUser); //Parse that rank
 				}
-				PromotionLogger.logRankChange(targetPlayer.getName(), fromRank.name(), toRank.name(), false, "Command - " + sender.getName()); //Log it
-				if (targetPlayer.getPlayer() != null) { //Check if player is online
-					plugin.getTabController().playerSwitchGroup(targetPlayer.getPlayer()); //Update TAB
-				}
-				hMsg("Demoted " + targetPlayer.getName() + " from " + fromRank.name() + " to " + toRank.name() + "!");
+				PromotionLogger.logRankChange(targetPlayer.getUUID(), fromRank.name(), toRank.name(), false, "Command - " + sender.getName()); //Log it
+
+                onPlayer = Bukkit.getPlayer(UUID.fromString(targetPlayer.getUUID()));
+                if (onPlayer != null) { //Check if player is online
+                    plugin.getTabController().playerSwitchGroup(onPlayer); //Update TAB
+                }
+				hMsg("Demoted " + targetPlayer.getCurrentName() + " from " + fromRank.name() + " to " + toRank.name() + "!");
 				break;
 			
 			case "log": case "logs": case "l": //Get a log of all the promtions

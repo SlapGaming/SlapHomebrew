@@ -34,7 +34,7 @@ public class AfkInfoCommand extends AbstractCommand {
 			hMsg("--- AFK Players ---");
 			for (Player p : plugin.getServer().getOnlinePlayers()) { //Loop thru players
 				String pName = p.getName();
-				if (afkController.isAfk(pName)) { //Check if player is afk
+				if (afkController.isAfk(p)) { //Check if player is afk
 					afkPlayer = true;
 					PermissionUser pexUser = PermissionsEx.getUser(p);
 					String prefix = "";
@@ -43,7 +43,7 @@ public class AfkInfoCommand extends AbstractCommand {
 							prefix = pexUser.getPrefix().substring(0, 2);
 						}
 					}
-					msg(" Player: " + ChatColor.AQUA + ChatColor.translateAlternateColorCodes('&', prefix + pName) + ChatColor.WHITE + " - Reason: " + ChatColor.GRAY + afkController.getAfkReason(pName)); //Send AFK Reason
+					msg(" Player: " + ChatColor.AQUA + ChatColor.translateAlternateColorCodes('&', prefix + pName) + ChatColor.WHITE + " - Reason: " + ChatColor.GRAY + afkController.getAfkReason(p)); //Send AFK Reason
 				}
 			}
 			if (!afkPlayer) { //If no players AFK
@@ -52,7 +52,7 @@ public class AfkInfoCommand extends AbstractCommand {
 		} else { //Check for a single player
 			Player foundPlayer = getOnlinePlayer(args[0], false); //Get the player
 			String pName = foundPlayer.getName();
-			boolean afk = afkController.isAfk(pName);
+			boolean afk = afkController.isAfk(foundPlayer);
 			
 			PermissionUser pexUser = PermissionsEx.getUser(foundPlayer);
 			String prefix = "";
@@ -64,7 +64,7 @@ public class AfkInfoCommand extends AbstractCommand {
 			
 			hMsg("Player: " +  ChatColor.translateAlternateColorCodes('&', prefix + pName) + ChatColor.WHITE + " | AFK: " + (afk ? ChatColor.AQUA + "Yes" : ChatColor.RED + "No")); //Send AFK string
 			if (afk) { //If Player is AFK
-				String afkReason = afkController.getAfkReason(pName); //Get AFK Reason
+				String afkReason = afkController.getAfkReason(foundPlayer); //Get AFK Reason
 				if (!afkReason.equals("AFK")) { //Check if custom AFK reason
 					hMsg("AFK Reason: " + afkReason); //Send AFK Reason
 				}

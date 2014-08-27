@@ -14,6 +14,7 @@ import java.util.Map.Entry;
 
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
+import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import me.naithantu.SlapHomebrew.Util.SQLPool;
 import me.naithantu.SlapHomebrew.Util.Util;
 
@@ -29,7 +30,7 @@ public class SessionLogger extends AbstractLogger implements Listener {
 	private static SessionLogger instance;
 	
 	private String sqlQuery = 
-			"INSERT INTO `mcecon`.`logger_times` (`player`, `join_time`, `quit_time`, `ip`, `port`, `first_time`) " +
+			"INSERT INTO `sh_logger_times` (`user_id`, `join_time`, `quit_time`, `ip`, `port`, `first_time`) " +
 			"VALUES (?, ?, ?, ?, ?, ?);";
 	
 	private HashMap<String, Session> activeSessions; // Playername -> Session
@@ -51,34 +52,24 @@ public class SessionLogger extends AbstractLogger implements Listener {
 	
 	@Override
 	public void createTables() throws SQLException {
-		executeUpdate(
-			"CREATE TABLE IF NOT EXISTS `logger_times` ( " +
-			"`player` varchar(20) NOT NULL, " +
-			"`join_time` bigint(20) NOT NULL, " +
-			"`quit_time` bigint(20) NOT NULL, " +
-			"`ip` varchar(50) NOT NULL, `port` int(11) NOT NULL, " +
-			"`first_time` tinyint(1) NOT NULL DEFAULT '0', " +
-			"PRIMARY KEY (`player`,`join_time`,`quit_time`), " +
-			"KEY `ip` (`ip`) " +
-			") ENGINE=InnoDB DEFAULT CHARSET=latin1;"
-		);
+
 	}
 	
 	@EventHandler
 	public void login(PlayerJoinEvent event) {
 		Player joinedPlayer = event.getPlayer(); //Get player
-		String playername = joinedPlayer.getName(); //Get name
-		InetSocketAddress adress = joinedPlayer.getAddress(); //Get adress
-		activeSessions.put(playername, new Session(playername, adress.getHostString(), adress.getPort(), !joinedPlayer.hasPlayedBefore())); //Insert into active map
+		String UUID = joinedPlayer.getUniqueId().toString(); //Get name
+		InetSocketAddress address = joinedPlayer.getAddress(); //Get adress
+		activeSessions.put(UUID, new Session(UUID, address.getHostString(), address.getPort(), !joinedPlayer.hasPlayedBefore())); //Insert into active map
 	}
 	
 	@EventHandler
 	public void logout(PlayerQuitEvent event) {
-		String playername = event.getPlayer().getName(); //Get player
-		Session s = activeSessions.get(playername); //Get session
+		String UUID = event.getPlayer().getUniqueId().toString(); //Get player
+		Session s = activeSessions.get(UUID); //Get session
 		if (s == null) return; //Shouldn't be called
 		s.setQuitTime(); //Set quit time
-		activeSessions.remove(playername); //Remove from map
+		activeSessions.remove(UUID); //Remove from map
 		finishedSessions.add(s); //Add to set
 		if (finishedSessions.size() >= 10 && plugin.isEnabled()) {
 			batch();
@@ -98,16 +89,17 @@ public class SessionLogger extends AbstractLogger implements Listener {
 	}
 	
 	private class Session implements Batchable {
-		
-		String player;
+
+        int userID;
+		String UUID;
 		long join;
 		long quit;
 		String ip;
 		int port;
 		boolean firstTime;
 		
-		public Session(String player, String ip, int port, boolean firstTime) {
-			this.player = player;
+		public Session(String UUID, String ip, int port, boolean firstTime) {
+			this.UUID = UUID;
 			this.join = System.currentTimeMillis();
 			this.ip = ip;
 			this.port = port;
@@ -121,15 +113,19 @@ public class SessionLogger extends AbstractLogger implements Listener {
 		
 		@Override
 		public void addBatch(PreparedStatement preparedStatement) throws SQLException {
-			preparedStatement.setString(1, player);
+			preparedStatement.setInt(1, userID);
 			preparedStatement.setLong(2, join);
 			preparedStatement.setLong(3, quit);
 			preparedStatement.setString(4, ip);
 			preparedStatement.setInt(5, port);
 			preparedStatement.setBoolean(6, firstTime);
 		}
-		
-	}
+
+        @Override
+        public boolean isBatchable() {
+            return ((userID = getUserID(UUID)) != -1);
+        }
+    }
 	
 	/*
 	 ************************
@@ -170,13 +166,19 @@ public class SessionLogger extends AbstractLogger implements Listener {
 	 */
 	public static void sendPlayerTime(final Player p) throws CommandException {
 		getInstance(p);
-		
-		String playername = p.getName();
+
+        //Get info
+		String UUID = p.getUniqueId().toString();
+        UUIDControl.UUIDProfile profile = UUIDControl.getInstance().getUUIDProfile(UUID);
+        if (profile == null) {
+            throw new CommandException("Your UserID is not known yet.");
+        }
+        int userID = profile.getUserID();
 		long playtime = 0L;
 		
 		for (Batchable batchable : instance.finishedSessions) { //Loop thru unbatched sessions
 			Session finishedSession = (Session) batchable;
-			if (finishedSession.player.equalsIgnoreCase(playername)) { //If current player add time
+			if (UUID.equalsIgnoreCase(finishedSession.UUID)) { //If current player add time
 				playtime += finishedSession.quit - finishedSession.join;
 			}
 		}
@@ -184,19 +186,19 @@ public class SessionLogger extends AbstractLogger implements Listener {
 		Connection con = SQLPool.getConnection();
 		try {
 			PreparedStatement prep = con.prepareStatement( //Get Total time from DB
-				"SELECT SUM( `quit_time` ) - SUM( `join_time` ) AS `playtime` FROM `logger_times` WHERE `player` = ?;"
+				"SELECT SUM( `quit_time` ) - SUM( `join_time` ) AS `playtime` FROM `sh_logger_times` WHERE `user_id` = ?;"
 			);
-			prep.setString(1, playername);
+			prep.setInt(1, userID);
 			ResultSet timeRS = prep.executeQuery();
 			if (timeRS.next()) { //If time given
 				playtime += timeRS.getLong(1);
 			}
 			
 			//Get AFK time
-			long afk = AFKLogger.getAFKTime(playername);
+			long afk = AFKLogger.getAFKTime(profile);
 			
-			if (instance.activeSessions.containsKey(playername)) { //Add current online time
-				playtime += (System.currentTimeMillis() - instance.activeSessions.get(playername).join);
+			if (instance.activeSessions.containsKey(UUID)) { //Add current online time
+				playtime += (System.currentTimeMillis() - instance.activeSessions.get(UUID).join);
 			}
 			
 			//Send messages
@@ -235,30 +237,30 @@ public class SessionLogger extends AbstractLogger implements Listener {
 	
 	/**
 	 * Get the played times for multiple players
-	 * @param players The players to be checked
+	 * @param players The UUIDProfile's of the players that need to be checked
 	 * @param fromDate From date, can be null
 	 * @param toDate To date, can be null
 	 * @return Map with all players and their play times, possible that a player isn't in the map.
 	 */
-	public HashMap<String, Long> getPlayedTimes(String[] players, Date fromDate, Date toDate) {
+	public HashMap<String, Long> getPlayedTimes(UUIDControl.UUIDProfile[] players, Date fromDate, Date toDate) {
 		long[] times = parseDates(fromDate, toDate);
 		return getPlayedTimes(times[0], times[1], 0, players);
 	}
 	
 	/**
 	 * Get played times (between two dates)
-	 * @param player The player 
+	 * @param playerProfile The player's UUIDProfile
 	 * @param fromDate From date, if null = since start of this system.
 	 * @param toDate Till date, if null = till now.
 	 * @return time of that player, or 0 if not played
 	 */
-	public long getPlayedTime(String player, Date fromDate, Date toDate) {
+	public long getPlayedTime(UUIDControl.UUIDProfile playerProfile, Date fromDate, Date toDate) {
 		long[] times = parseDates(fromDate, toDate); //Parse times
-		HashMap<String, Long> map = getPlayedTimes(times[0], times[1], 0, player); //Get map
+		HashMap<String, Long> map = getPlayedTimes(times[0], times[1], 0, playerProfile); //Get map
 		if (map.isEmpty()) {
 			return 0;
 		} else {
-			return map.get(player.toLowerCase());
+			return map.get(playerProfile.getUUID());
 		}
 	}
 	
@@ -290,14 +292,14 @@ public class SessionLogger extends AbstractLogger implements Listener {
 	 * @param players All the players that should be searched
 	 * @return HashMap with all played times Key:[Player] => Value:[TimePlayed]
 	 */
-	private HashMap<String, Long> getPlayedTimes(long fromTime, long toTime, int limit, String... players) {
+	private HashMap<String, Long> getPlayedTimes(long fromTime, long toTime, int limit, UUIDControl.UUIDProfile... players) {
 		batch(sqlQuery, finishedSessions, true); //Batch in sync with this thread
 		
 		Connection con = SQLPool.getConnection();
 		
 		HashMap<String, Long> timesMap = new HashMap<>();
-		if (limit < 1) { //No limit
-			limit = Integer.MAX_VALUE;
+		if (limit < 1 || limit > 20) { //Limit is set to 20
+			limit = 20;
 		}
 		
 		String playersSQL = "";
@@ -309,7 +311,7 @@ public class SessionLogger extends AbstractLogger implements Listener {
 				if (!first) {
 					playersSQL += " OR "; //Add or statement
 				}
-				playersSQL += "`player` = ?"; //Add player
+				playersSQL += "`user_id` = ?"; //Add player
 				first = false;
 			}
 			playersSQL += ") ";
@@ -321,7 +323,7 @@ public class SessionLogger extends AbstractLogger implements Listener {
 				"SELECT " +
 					"`player`, " +
 					"SUM( IF(`quit_time` > ?, ?, `quit_time`) - IF(`join_time` < ?, ?, `join_time`) ) as `online_time` " +
-				"FROM `logger_times` " +
+				"FROM `sh_logger_times` " +
 				"WHERE (" +
 						"(`join_time` > ? AND `quit_time` < ?)" +
 							" OR " +
@@ -330,7 +332,7 @@ public class SessionLogger extends AbstractLogger implements Listener {
 						"(`quit_time` > ? AND `join_time` > ? AND `join_time` < ?) " +
 					") " + 
 					playersSQL + 
-				"GROUP BY `player` " +
+				"GROUP BY `user_id` " +
 				"ORDER BY `online_time` DESC " +
 				"LIMIT 0, ?;"
 			);
@@ -353,8 +355,8 @@ public class SessionLogger extends AbstractLogger implements Listener {
 			
 			//Players
 			int x = 13;
-			for (String player : players) { //Set players if there are any
-				prep.setString(x++, player);
+			for (UUIDControl.UUIDProfile player : players) { //Set players if there are any
+				prep.setInt(x++, player.getUserID());
 			}
 			
 			//Limit
@@ -377,8 +379,8 @@ public class SessionLogger extends AbstractLogger implements Listener {
 		for (Session session : new HashMap<String, Session>(activeSessions).values()) { //Look thru active sessions
 			if (checkingPlayers) { //If checking for certain players
 				boolean found = false;
-				for (String player : players) { //Loop thru given players
-					if (player.equalsIgnoreCase(session.player)) { 
+				for (UUIDControl.UUIDProfile player : players) { //Loop thru given players
+					if (player.getUUID().equalsIgnoreCase(session.UUID)) {
 						found = true; //If player found, break this loop
 						break;
 					}
@@ -390,11 +392,11 @@ public class SessionLogger extends AbstractLogger implements Listener {
 			
 			if ((join > fromTime && join < toTime) || (quit > fromTime && quit < toTime) ) { //If Join or Quit time in the TimeFrame
 				long played = (quit > toTime ? toTime : quit) - (join < fromTime ? fromTime : join); //Calculate played time
-				String plc = session.player.toLowerCase(); //to LowerCase
-				if (timesMap.containsKey(plc)) { //If already in map
-					played += timesMap.get(plc); //Add to time
+				String UUID = session.UUID; //to LowerCase
+				if (timesMap.containsKey(UUID)) { //If already in map
+					played += timesMap.get(UUID); //Add to time
 				}
-				timesMap.put(session.player.toLowerCase(), played); //Put combined time in map
+				timesMap.put(UUID, played); //Put combined time in map
 			}
 		}
 		return timesMap;
@@ -402,11 +404,11 @@ public class SessionLogger extends AbstractLogger implements Listener {
 	
 	public class LeaderboardEntry implements Comparable<LeaderboardEntry> {
 		
-		private String playernameLC;
+		private String UUID;
 		private long playtime;
 		
-		public LeaderboardEntry(String playernameLC, long playtime) {
-			this.playernameLC = playernameLC;
+		public LeaderboardEntry(String UUID, long playtime) {
+			this.UUID = UUID;
 			this.playtime = playtime;
 		}
 		
@@ -414,8 +416,8 @@ public class SessionLogger extends AbstractLogger implements Listener {
 		 * Get the player's name in LowerCase
 		 * @return the name
 		 */
-		public String getPlayernameLC() {
-			return playernameLC;
+		public String getUUID() {
+			return UUID;
 		}
 		
 		/**

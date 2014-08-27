@@ -39,8 +39,7 @@ public class SlapSecurityAgency extends AbstractController {
 		if (loggerEnabled("Death"))		add(new DeathLogger());		//Log Deaths & Kills
 	//	if (loggerEnabled("Donation")) 	add(new DonationLogger()); 	//Log Donations
 		if (loggerEnabled("Kick")) 		add(new KickLogger()); 		//Log Kicks
-		if (loggerEnabled("Modreq")) 	add(new ModreqLogger());	//Log Modreqs & their progress
-	//	if (loggerEnabled("Notes")) 	add(new NotesLogger()); 	//Log Notes (added by staff)
+	//	if (loggerEnabled("Modreq")) 	add(new ModreqLogger());	//Log Modreqs & their progress | TODO Currently broken
 		if (loggerEnabled("Promotion")) add(new PromotionLogger());	//Log promotions
 		if (loggerEnabled("Region")) 	add(new RegionLogger()); 	//Log Region Changes
 		if (loggerEnabled("Session")) 	add(new SessionLogger()); 	//Log Login Sessions
@@ -48,6 +47,7 @@ public class SlapSecurityAgency extends AbstractController {
 		//Controllers
 		if (controlEnabled("VIPForum")) add(new VipForumControl()); //Control VIP Forum promotions 
 		if (controlEnabled("Plot"))		add(new PlotControl());		//Control plot marks
+        if (controlEnabled("Notes")) 	add(new NoteControl()); 	//Control Notes (added by staff)
 		
 		if (loggers.isEmpty()) { //Check if any loggers are enabled
 			Log.warn("All loggers are disabled in the config.");

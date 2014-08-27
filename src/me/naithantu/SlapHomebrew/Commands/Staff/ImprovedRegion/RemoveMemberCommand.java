@@ -50,7 +50,7 @@ public class RemoveMemberCommand extends AbstractImprovedRegionCommand {
 		
 		ArrayList<String> offPlayers = new ArrayList<>();
 		for (int x = firstMember; x < (skipLastTwo ? args.length - 2 : args.length); x++) { //Get players
-			offPlayers.add(getOfflinePlayer(args[x]).getName());
+			offPlayers.add(getOfflinePlayer(args[x]).getCurrentName());
 		}
 		
 		if (offPlayers.size() == 0) throw new CommandException("No players found!");

@@ -22,16 +22,16 @@ public class VipCommand extends AbstractCommand {
 	@Override
 	public boolean handle() throws CommandException {
 		Player p = getPlayer();
-		String playername = p.getName();
+        String UUID = p.getUniqueId().toString();
 		
 		Vip vip = plugin.getVip(); //Get VIP
 		
 		if (args.length == 0) { //If no paramaters => Check VIP days
-			if (vip.isVip(playername)) { //Is VIP
-				if (vip.isLifetimeVIP(playername)) { //Lifetime VIP
+			if (vip.isVip(UUID)) { //Is VIP
+				if (vip.isLifetimeVIP(UUID)) { //Lifetime VIP
 					hMsg("You have lifetime VIP! :D");
 				} else { //Temporary VIP
-					long vipEnds = vip.getVIPExpiration(playername);
+					long vipEnds = vip.getVIPExpiration(UUID);
 					if (vipEnds < System.currentTimeMillis()) { //Check if VIP hasn't ended yet (will be removed pretty soon)
 						hMsg("Warning! Your VIP is about to end!");
 					} else {
@@ -44,7 +44,7 @@ public class VipCommand extends AbstractCommand {
 			return true;
 		}
 		
-		if (!vip.isVip(playername)) { //Check if VIP
+		if (!vip.isVip(UUID)) { //Check if VIP
 			throw new NotVIPException();
 		}
 		
@@ -67,7 +67,7 @@ public class VipCommand extends AbstractCommand {
 			testPermission("grant"); //Test Permission
 			testNotWorld(new String[]{"world_sonic", "world_creative", "world_pvp"}); //Check if correct world
 			
-			int usesLeft = vip.getVipGrantUsesLeft(playername);
+			int usesLeft = vip.getVipGrantUsesLeft(UUID);
 			if (usesLeft <= 0) { //Check if any uses left
 				throw new CommandException(ErrorMsg.alreadyUsedVipGrant);
 			}

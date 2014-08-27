@@ -18,8 +18,7 @@ public class PlayerLoginListener extends AbstractListener {
 	@EventHandler
 	public void onPlayerLogin(PlayerLoginEvent event) {
 		if (whitelist.isWhitelistOn()) { //If whitelist is on
-			String playername = event.getPlayer().getName();
-			if (!whitelist.isWhitelisted(playername)) { //If not whitelisted
+			if (!whitelist.isWhitelisted(event.getPlayer().getUniqueId().toString())) { //If not whitelisted
 				event.disallow(Result.KICK_WHITELIST, whitelist.getWhitelistMessage()); //Disallow
 			}
 		}
