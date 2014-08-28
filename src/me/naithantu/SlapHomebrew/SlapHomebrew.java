@@ -233,6 +233,7 @@ public class SlapHomebrew extends JavaPlugin {
 		}
 
 		//Create SQL Pool
+        config = getConfig();
         String host = config.getString("sql.host");
         int port = config.getInt("sql.port");
         String db = config.getString("sql.db");
