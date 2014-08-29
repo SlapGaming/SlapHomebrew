@@ -26,32 +26,26 @@ public class UnjailCommand extends AbstractCommand {
 		
 		//Get jails controller
 		Jails jails = plugin.getJails();
-		
-		UUIDControl.UUIDProfile offPlayer = getOfflinePlayer(args[0]); //Get player
-        String currentName = offPlayer.getCurrentName();
-		if (jails.isInJail(currentName)) { //Check if in jail
-			jails.releasePlayerFromJail(currentName); //Unjail
-			hMsg("Player " + currentName + " unjailed.");
-		} else {
-			throw new CommandException(ErrorMsg.notInJail);
-		}
+
+        //Get player
+		UUIDControl.UUIDProfile offPlayer = getOfflinePlayer(args[0]);
+
+        //Check if jailed
+        if (!jails.isJailed(offPlayer.getUUID())) throw new CommandException(ErrorMsg.notInJail);
+
+        //Unjail the player
+        Boolean unjailed = jails.unjailPlayer(offPlayer);
+
+        if (unjailed == null) {
+            hMsg("Unjailed " + offPlayer.getCurrentName() + " (will be released on next login)");
+        } else if (unjailed) {
+            hMsg("Unjailed " + offPlayer.getCurrentName());
+        } else {
+            //Shouldn't be reached.
+            throw new CommandException(ErrorMsg.notInJail);
+        }
+
 		return true;
 	}
-	
-	/**
-	 * TabComplete on this command
-	 * @param sender The sender of the command
-	 * @param args given arguments
-	 * @return List of options
-	 */
-	public static List<String> tabComplete(CommandSender sender, String[] args) {
-		if (!Util.testPermission(sender, "jail") || args.length > 1) return createEmptyList(); //No perm
-		
-		return filterResults( //Return filtered jailed players
-			SlapHomebrew.getInstance().getJails().getJailedPlayers(),
-			args[0]
-		);
-	}
-
 
 }

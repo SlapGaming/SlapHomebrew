@@ -6,6 +6,7 @@ import me.naithantu.SlapHomebrew.Util.Util;
 //Incase this ever gets deleted; Google Guava Libraries
 import net.minecraft.util.com.google.common.collect.ArrayListMultimap;
 import net.minecraft.util.com.google.common.collect.Multimap;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.sql.*;
@@ -333,9 +334,22 @@ public class UUIDControl {
             return names;
         }
 
+        /**
+         * Get a player's current username
+         * @return the username
+         */
         public String getCurrentName() {
             NameProfile currentProfile = names.get(0);
             return (currentProfile == null ? null : currentProfile.getPlayername());
+        }
+
+        /**
+         * Get the player that belongs to this UUIDProfile.
+         * This will only return a result if that player is currently online.
+         * @return The player or null
+         */
+        public Player getPlayer() {
+            return Bukkit.getPlayer(java.util.UUID.fromString(UUID));
         }
     }
 

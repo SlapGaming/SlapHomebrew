@@ -94,8 +94,8 @@ public class PlayerJoinListener extends AbstractListener {
 				}
 				
 				//Throw in jail
-				if (jails.isInJail(player.getName())) {
-					jails.switchToOnlineJail(player);
+				if (jails.isJailed(player.getUniqueId().toString())) {
+					jails.jailedPlayerLogsIn(player);
 				}
 				
 				//Check mails

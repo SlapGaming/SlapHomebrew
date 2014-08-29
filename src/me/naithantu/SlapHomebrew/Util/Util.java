@@ -1,9 +1,6 @@
 package me.naithantu.SlapHomebrew.Util;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,12 +14,7 @@ import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 import net.minecraft.server.v1_7_R3.ChatSerializer;
 import net.minecraft.server.v1_7_R3.PacketPlayOutChat;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -47,7 +39,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 public class Util {
 
-    //Pattern for adding time, see {@link Util#parseToDate(String) parseToDate}
+    //Pattern for adding time, see {@link Util#parseToTime(String) parseToTime}
     private static Pattern addTimePattern;
 
     /**
@@ -544,9 +536,76 @@ public class Util {
     	return Bukkit.getOfflinePlayer(playername);
     }
 
+    /**
+     * Turn a Location into a YML Map
+     * @param location The Location
+     * @return the YML Map
+     */
+    public static Map<String, Object> locationToYmlMap(Location location) {
+        Map<String, Object> locMap = new HashMap<>();
+        locMap.put("world", location.getWorld().getName());
+        locMap.put("loc_x", location.getX());
+        locMap.put("loc_y", location.getY());
+        locMap.put("loc_z", location.getZ());
+        locMap.put("pitch", location.getPitch());
+        locMap.put("yaw", location.getYaw());
+        return locMap;
+    }
 
     /**
-     * Parse a string into a date.
+     * Create a location from a YML Map.
+     * It will return the alt option incase the Location could not be created (invalid world).
+     * @param locMap The YML Map
+     * @param altLocation The alternative Location
+     * @return The Location (or the Alt if failed)
+     */
+    public static Location ymlMapToLocation(Map<String, Object> locMap, Location altLocation) {
+        //Check world
+        String worldname = (String) locMap.get("world");
+        World world = Bukkit.getWorld(worldname);
+        if (world == null) return altLocation;
+
+        //Create location
+        double x = (double) locMap.get("loc_x");
+        double y = (double) locMap.get("loc_y");
+        double z = (double) locMap.get("loc_z");
+        float pitch = loadFloatValueFromYmlMap(locMap.get("pitch"));
+        float yaw = loadFloatValueFromYmlMap(locMap.get("yaw"));
+
+        //Return location
+        return new Location(world, x, y, z, yaw, pitch);
+    }
+
+    /**
+     * Load a Long value from a YML Map
+     * This is necessary as the YML parser tends to read the Long as an Integer.
+     * @param longObject The long object from the YML Map
+     * @return a long value
+     */
+    public static long loadLongValueFromYmlMap(Object longObject) {
+        long returnLong;
+        if (longObject instanceof Integer) {
+            returnLong = (Integer) longObject;
+        } else {
+            returnLong = (Long) longObject;
+        }
+        return returnLong;
+    }
+
+    /**
+     * Load a Float vlaue from a YML Map
+     * This is necessary as the YML parser tends to read the Float as a Double
+     * @param floatObject The float object from the YML Map
+     * @return a float value
+     */
+    public static float loadFloatValueFromYmlMap(Object floatObject) {
+        double doubleValue = (double) floatObject;
+        float floatValue = (float) doubleValue;
+        return floatValue;
+    }
+
+    /**
+     * Parse a string into time in milliseconds (long).
      *
      * Supported values:
      *  - 'Permanent' or any shortened version (will return -1)
@@ -555,10 +614,10 @@ public class Util {
      *      Eg: 3d5h
      *
      * @param arg The given argument
-     * @return the timestamp or -1 if permanent
+     * @return the time or -1 if permanent
      * @throws CommandException if not able to parse the argument
      */
-    public static long parseToDate(String arg) throws CommandException {
+    public static long parseToTime(String arg) throws CommandException {
         switch (arg.toLowerCase()) {
             //All cases for Permanent
             case "infinite":case "inf":
@@ -601,7 +660,7 @@ public class Util {
                         case "m":case "minute":case"minutes":case "mins":
                             amount = amount * 60;
                         case "s":case "second":case "seconds":case "secs":
-                            amount = amount * 1000;
+                            amount = amount;
                             break;
                         default:
                             throw new CommandException("Unknown unit: " + digits + " (Possible: days/hours/minutes/seconds)");
@@ -612,7 +671,7 @@ public class Util {
                 }
 
                 //Return current time + calculated time
-                return System.currentTimeMillis() + addTime;
+                return addTime;
         }
     }
     

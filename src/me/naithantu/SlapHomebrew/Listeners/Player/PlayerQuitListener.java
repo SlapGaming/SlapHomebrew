@@ -40,8 +40,8 @@ public class PlayerQuitListener extends AbstractListener {
 		afk.removeAfk(player);
 		
 		//Check if player is in jail
-		if (jails.isInJail(playername)) {
-			jails.switchToOfflineJail(player);
+		if (jails.isJailed(player.getUniqueId().toString())) {
+			jails.jailedPlayerLogsOut(player);
 		}
 				
 		//Leave tab

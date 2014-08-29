@@ -45,7 +45,7 @@ public class PlayerInteractListener extends AbstractListener {
 		PlayerControl.getPlayer(player).moved();
 		
 		//Block if in jail
-		if (jails.isInJail(playername)) {
+		if (jails.isJailed(player.getUniqueId().toString())) {
 			event.setCancelled(true);
 			return;
 		}

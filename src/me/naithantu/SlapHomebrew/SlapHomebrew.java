@@ -15,6 +15,8 @@ import me.naithantu.SlapHomebrew.Listeners.Entity.*;
 import me.naithantu.SlapHomebrew.Listeners.Player.*;
 import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
 import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
+import me.naithantu.SlapHomebrew.Storage.JailSerializables.Jail;
+import me.naithantu.SlapHomebrew.Storage.JailSerializables.JailTime;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 import me.naithantu.SlapHomebrew.Timing.HandlerControl;
 import me.naithantu.SlapHomebrew.Util.DateUtil;
@@ -27,6 +29,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -116,9 +119,17 @@ public class SlapHomebrew extends JavaPlugin {
 	 **************************************
 	 * JavaPlugin methods
 	 **************************************
-	 */	
-	
-	@Override
+	 */
+
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        //Register ConfigSerializations
+        ConfigurationSerialization.registerClass(Jail.class);
+        ConfigurationSerialization.registerClass(JailTime.class);
+    }
+
+    @Override
 	public void onEnable() {
 		//Initialize
 		initializeStatics();

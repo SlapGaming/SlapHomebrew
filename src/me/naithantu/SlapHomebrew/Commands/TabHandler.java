@@ -122,7 +122,7 @@ public class TabHandler {
 		case "tpdeny":			l = TeleportAcceptCommand.tabComplete(sender, args);			break; //Exact same Tab completion as Accept command
 		case "tphere":			/* No futher usage */											break;
 		case "tprequests":		/* No futher usage */											break;		
-		case "unjail":			l = UnjailCommand.tabComplete(sender, args);					break;
+		case "unjail":			/* No futher usage */	                    					break;
         case "unmute":          /* TODO */                                                      break;
 		case "vip":				l = VipCommand.tabComplete(sender, args);						break;
 		case "vipforum":		l = VipForumCommand.tabComplete(sender, args);					break;

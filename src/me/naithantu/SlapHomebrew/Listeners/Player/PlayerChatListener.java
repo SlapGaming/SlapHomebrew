@@ -58,6 +58,7 @@ public class PlayerChatListener extends AbstractListener {
 		Player player = event.getPlayer();
 		SlapPlayer slapPlayer = PlayerControl.getPlayer(player);
 		String playerName = player.getName();
+        String UUID = player.getUniqueId().toString();
 
         //Set last activity
         slapPlayer.active();
@@ -75,8 +76,8 @@ public class PlayerChatListener extends AbstractListener {
 		}		
 		
 		//Block chat while in jail.
-		if (jails.isInJail(playerName)) {
-			if (!jails.isAllowedToChat(playerName)) {
+		if (jails.isJailed(UUID)) {
+			if (!jails.isAllowedToChat(UUID)) {
 				event.setCancelled(true);
 				player.sendMessage(ChatColor.GRAY + "You are jailed. Use /timeleft to check your time left in jail.");
 				return;

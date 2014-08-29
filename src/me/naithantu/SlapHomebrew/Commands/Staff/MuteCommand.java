@@ -10,7 +10,6 @@ import me.naithantu.SlapHomebrew.Util.DateUtil;
 import me.naithantu.SlapHomebrew.Util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -91,7 +90,7 @@ public class MuteCommand extends AbstractCommand {
         }
 
         //Parse mute duration
-        long mutedTill = Util.parseToDate(args[1]);
+        long mutedTill = System.currentTimeMillis() + Util.parseToTime(args[1]);
 
         //Build reason
         String reason = Util.buildString(args, " ", 2);

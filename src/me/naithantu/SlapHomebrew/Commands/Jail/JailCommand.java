@@ -12,6 +12,7 @@ import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
 import me.naithantu.SlapHomebrew.Controllers.Jails;
 import me.naithantu.SlapHomebrew.Util.Util;
 
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -34,7 +35,7 @@ public class JailCommand extends AbstractCommand {
 		
 		switch (args[0].toLowerCase()) {
 		case "list": //Send list of jails
-			List<String> jailList = jails.getJailList();
+			List<String> jailList = jails.getJailNames();
 			if (jailList.size() == 1) {
 				hMsg("There is 1 jail: " + jailList.get(0));
 			} else if (jailList.size() > 1) {
@@ -54,8 +55,9 @@ public class JailCommand extends AbstractCommand {
 			case 4: msgAllowed = Boolean.parseBoolean(args[3]);
 			case 3:	chatAllowed = Boolean.parseBoolean(args[2]);
 			}
-			
-			if (jails.jailExists(args[1].toLowerCase())) throw new CommandException("This jail already exists."); //Check if jail already exists
+
+            //Check if jail already exists
+			if (jails.doesJailExist(args[1])) throw new CommandException("This jail already exists.");
 			
 			jails.createJail(args[1].toLowerCase(), player.getLocation(), chatAllowed, msgAllowed); //Create the jail
 			hMsg("Created a jail with name: " + args[1] + " | Chat: " + chatAllowed + " | Msg: " + msgAllowed);
@@ -64,60 +66,72 @@ public class JailCommand extends AbstractCommand {
 		case "remove": //Remove a jail -> /jail remove [name]
 			testPermission("jail.remove");
 			if (args.length <= 1) throw new UsageException("jail remove [name]"); //Check usage
-			
-			if (jails.jailExists(args[1].toLowerCase())) { //Check if jail exists
-				jails.deleteJail(args[1].toLowerCase()); //Remove jail
-				hMsg("Jail removed.");
-			} else {
-				throw new CommandException(ErrorMsg.invalidJail);
-			}
+
+            //Check if the jail exists
+            if (!jails.doesJailExist(args[1])) throw new CommandException(ErrorMsg.invalidJail);
+
+            //Delete the jail
+            jails.deleteJail(args[1]);
+            hMsg("Jail removed.");
 			break;
+
+        case "teleport": case "tp": //Teleport to a jail
+            Player p = getPlayer();
+            testPermission("jail.teleport");
+            if (args.length <= 1) throw new UsageException("jail teleport [name]"); //Check usage
+
+            //Check if the jail exists
+            if (!jails.doesJailExist(args[1])) throw new CommandException(ErrorMsg.invalidJail);
+
+            //Get the jail location
+            p.teleport(jails.getJailLocation(args[1]));
+            hMsg("Teleported to jail: " + args[1]);
+            break;
 			
 		case "info": //Get info about a jail sentence. Players who are able to jail are also able to get info -> /jail info [player]
 			if (args.length != 2) throw new UsageException("jail info [player"); //Check usage
-			offPlayer = getOfflinePlayer(args[1]); //Get player
-			if (jails.isInJail(offPlayer.getCurrentName())) { //TODO Move to UUID
-				jails.getJailInfo(sender, offPlayer.getCurrentName());
-			} else {
-				throw new CommandException(ErrorMsg.notInJail);
-			}
+
+            //Get the player
+            offPlayer = getOfflinePlayer(args[1]);
+
+            //Check if in jail
+            if (!jails.isJailed(offPlayer.getUUID())) throw new CommandException(ErrorMsg.notInJail);
+
+            //Get JailTime info
+            jails.sendStaffJailInfo(sender, offPlayer);
 			break;
 			
-		default: //Default = Jailing people -> /Jail [player] [jail] [time] [h/m/s] [reason]
-			if (args.length <= 4) return false;
-			
-			offPlayer = getOfflinePlayer(args[0]); //Get the player
-			String playername = offPlayer.getCurrentName();
-			String jail = args[1].toLowerCase();
-			
-			if (jails.isInJail(playername)) throw new CommandException("Player is already jailed."); //Check if jailed
-			if (Util.checkPermission(offPlayer.getUUID(), "jail.exempt")) throw new CommandException("This player cannot be jailed."); //Check if can be jailed
-			if (!jails.jailExists(jail)) throw new CommandException(ErrorMsg.invalidJail); //Check if jail exists
-			
-			int time = parseInt(args[2]); //Parse the time
-			long timeInJail;
-			
-			switch (args[3].toLowerCase()) { //Parse the format
-			case "h": case "hour": case "hours":
-				timeInJail = (long) (time * 1000 * 60 * 60); break;
-			case "m": case "minute": case "min": case "minutes":
-				timeInJail = (long) (time * 1000 * 60); break;
-			case "s": case "seconds": case "sec": case "second":
-				timeInJail = (long) (time * 1000); break;
-			default:
-				throw new CommandException("This is not a valid time type. Use: hours/minutes/seconds (h/m/s)");
-			}
-			if (timeInJail > 10800000) throw new CommandException("You cannot jail someone for so long."); //Max jail time = 3 hours
-			
-			String reason = Util.buildString(args, " ", 4); //Parse reason
-			
-			Player targetPlayer = plugin.getServer().getPlayer(playername);
-			if (targetPlayer == null) { //Throw in offline jail
-				jails.putOfflinePlayerInJail(playername, reason, jail, timeInJail);
-				hMsg(playername + " will be jailed when he/she logs in.");
-			} else { //Throw in online jail
-				jails.putOnlinePlayerInJail(targetPlayer, reason, jail, timeInJail);
-			}
+		default: //Default = Jailing people -> /Jail [player] [jail] [time][h/m/s] [reason]
+			if (args.length <= 3) return false;
+
+            //Get the player
+			offPlayer = getOfflinePlayer(args[0]);
+
+            //Get the Jail name
+            String jail = args[1].toLowerCase();
+            //=> Check if the jail exists
+            if (!jails.doesJailExist(jail)) throw new CommandException(ErrorMsg.invalidJail);
+
+            //Check if the player can be jailed
+            if (Util.checkPermission(offPlayer.getUUID(), "jail.exempt")) throw new CommandException("This player cannot be jailed.");
+            //=> Or already jailed
+            if (jails.isJailed(offPlayer.getUUID())) throw new CommandException("Player is already jailed.");
+
+            //Parse Argument
+            long time = Util.parseToTime(args[2]);
+			if (time > 10800000 || time <= 0) throw new CommandException("You can only jail someone up to 3 hours."); //Max jail time = 3 hours
+
+            //Parse reason
+			String reason = Util.buildString(args, " ", 3);
+
+            //Get the jailer ID
+            String jailerUUID = (sender instanceof Player ? ((Player) sender).getUniqueId().toString() : "CONSOLE");
+            int jailerID = UUIDControl.getInstance().getUUIDProfile(jailerUUID).getUserID();
+
+            //Jail the player
+            jails.jailPlayer(offPlayer, reason, jail, time, jailerID);
+            hMsg("Jailed " + offPlayer.getCurrentName() + " for " + Util.getTimePlayedString(time) + ".");
+
 		}
 		return true;
 	}
@@ -154,7 +168,7 @@ public class JailCommand extends AbstractCommand {
 				if (args.length > 2) {
 					return null;
 				} else {
-					List<String> list = SlapHomebrew.getInstance().getJails().getJailList(); //Get all jails
+					List<String> list = SlapHomebrew.getInstance().getJails().getJailNames(); //Get all jails
 					filterResults(list, args[1]); //Filter the results
 					return list;
 				}
@@ -162,7 +176,7 @@ public class JailCommand extends AbstractCommand {
 			default:
 				switch (args.length) {
 				case 2: //Playername given -> Jail name
-					List<String> jails = SlapHomebrew.getInstance().getJails().getJailList();
+					List<String> jails = SlapHomebrew.getInstance().getJails().getJailNames();
 					filterResults(jails, args[1]);
 					return jails;
 					

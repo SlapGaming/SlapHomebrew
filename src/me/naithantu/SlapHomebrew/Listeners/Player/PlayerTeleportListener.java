@@ -25,9 +25,10 @@ public class PlayerTeleportListener extends AbstractListener {
 	public void onPlayerTeleport(PlayerTeleportEvent event) {
 		Player player = event.getPlayer();
 		String playername = player.getName();
+        String UUID = player.getUniqueId().toString();
 		
 		//Block if in jail
-		if (jails.isInsideJail(playername)) {
+		if (jails.isJailed(UUID)) {
 			event.setCancelled(true);
 			return;
 		}

@@ -120,7 +120,7 @@ commands:
     usage: "Usage: /mail help"
   jail:
     description: Jail a person.
-    usage: "Usage: /Jail [player] [jail] [time] [h/m/s] [reason]"
+    usage: "Usage: /Jail [player] [jail] [time+h/m/s] [reason]"
   jails:
     description: Get a list of all the jails.
     usage: "Usage: /jails"

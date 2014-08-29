@@ -19,7 +19,7 @@ public class EntityDamageListener extends AbstractListener {
 	public void onEntityDamage(EntityDamageEvent event) {
 		if (event.getEntity() instanceof Player) {
 			//Block if in jail
-			if (jails.isInJail(((Player)event.getEntity()).getName())) {
+			if (jails.isJailed(((Player)event.getEntity()).getUniqueId().toString())) {
 				event.setCancelled(true);
 				return;
 			}

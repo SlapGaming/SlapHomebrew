@@ -122,18 +122,19 @@ public class PlayerCommandListener extends AbstractListener {
 		slapPlayer.active();
 		
 		//Cancel commands in Jail
-		if (jails.isInJail(playerName)) {
+        String UUID = player.getUniqueId().toString();
+		if (jails.isJailed(UUID)) {
 			if (commandMessage[0].equalsIgnoreCase("/timeleft")) {
-				jails.getJailInfo(player);
+                jails.sendPlayerJailInfo(player, UUID);
 				event.setCancelled(true);
-				player.sendMessage(ChatColor.GRAY + "You are jailed. Use /timeleft to check your time left in jail.");
 			} else if (commandMessage[0].equalsIgnoreCase("/unjail")) {
 				if (!player.hasPermission("slaphomebrew.jail")) {
 					event.setCancelled(true);
+                    player.sendMessage(ChatColor.GRAY + "You are jailed. Use /timeleft to check your time left in jail.");
 				}
-			} else if (!commandMessage[0].equalsIgnoreCase("/modreq") && !commandMessage[0].equalsIgnoreCase("/ping") && !commandMessage[0].equalsIgnoreCase("/timeleft")) {
+			} else if (!commandMessage[0].equalsIgnoreCase("/modreq") && !commandMessage[0].equalsIgnoreCase("/ping")) {
 				if (commandMessage[0].equalsIgnoreCase("/msg") || commandMessage[0].equalsIgnoreCase("/m") || commandMessage[0].equalsIgnoreCase("/message") || commandMessage[0].equalsIgnoreCase("/r") || commandMessage[0].equalsIgnoreCase("/reply")) {
-					if (!jails.isAllowedToMsg(playerName)) {
+					if (!jails.isAllowedToMsg(UUID)) {
 						event.setCancelled(true);
 						player.sendMessage(ChatColor.GRAY + "You are jailed. Use /timeleft to check your time left in jail.");
 					}
