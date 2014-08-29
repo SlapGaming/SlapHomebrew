@@ -15,7 +15,6 @@ import me.naithantu.SlapHomebrew.Util.DateUtil;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -70,7 +69,7 @@ public abstract class AbstractCommand {
 	
 	/**
 	 * Check if the CommandSender is NOT in a certain world
-	 * @param worldname The name of the world
+	 * @param worldnames The name of the world
 	 * @throws CommandException if not a player or if in the world
 	 */
 	protected void testNotWorld(String... worldnames) throws CommandException {

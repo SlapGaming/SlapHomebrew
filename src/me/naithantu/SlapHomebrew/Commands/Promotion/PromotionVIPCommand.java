@@ -99,11 +99,9 @@ public class PromotionVIPCommand extends AbstractCommand {
 	public static List<String> tabComplete(CommandSender sender, String[] args) {
 		if (args.length == 2) {
 			return filterResults(createNewList("addvipdays", "setvipdays", "removevip", "lifetime", "addlifetimevip", "setlifetimevip", "days", "getdays", "getvipdays"), args[1]);
-		} else if (args.length == 3) {
-			return listAllPlayers(sender.getName());
 		} else {
-			return null;
-		}
+            return null;
+        }
 	}
 
 }
