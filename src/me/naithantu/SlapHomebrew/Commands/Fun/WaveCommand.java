@@ -11,6 +11,9 @@ import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Util.Util;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+
 public class WaveCommand extends AbstractCommand {
 
 	public WaveCommand(CommandSender sender, String[] args) {
@@ -22,7 +25,7 @@ public class WaveCommand extends AbstractCommand {
 		Player fromPlayer = getPlayer();
 		testPermission("wave");
 				
-		if (args.length != 1) return false;
+		if (args.length == 0) return false;
 		
 		String gray = ChatColor.GRAY.toString(); //Short for grays due to heavy usage
 				
@@ -30,25 +33,54 @@ public class WaveCommand extends AbstractCommand {
 			Util.broadcast(gray + " ** " + getName(fromPlayer) + gray + " waves to " + ChatColor.GOLD + "Everyone" + gray + " **");
 			
 		} else { //Waving to player
-			String toName = "";
-			String toColoredName = "";
+            ArrayList<String> toNames = new ArrayList<>();
+            for (int i = 0; i < args.length; i++) {
+                //=> Get online player. Throw error if not found
+                Player toPlayer = getOnlinePlayer(args[i], false); //Get target
+                String toName = toPlayer.getName();
 
-            //=> Get online player. Throw error if not found
-            Player toPlayer = getOnlinePlayer(args[0], false); //Get target
-            toName = toPlayer.getName();
-            toColoredName = getName(toPlayer);
-			
-			//Check if not waving to self, and if allowed to wave to self
-			if (fromPlayer.getName().equals(toName) && !Util.testPermission(fromPlayer, "wave.self")) {
-				throw new CommandException("You cannot wave to yourself..");
-			}
-			
+                //Check if not waving to self (if so, check if allowed to wave to self)
+                if (fromPlayer.getName().equals(toName) && !Util.testPermission(fromPlayer, "wave.self")) {
+                    throw new CommandException("You cannot wave to yourself..");
+                }
+
+                //Get the colored name
+                String toColoredName = getName(toPlayer);
+
+                //Check if the name hasn't been added already
+                if (toNames.contains(toColoredName)) {
+                    continue;
+                }
+
+                //Add the name
+                toNames.add(toColoredName);
+            }
+
+            //Combine the names into one string
+            String toPeople = "";
+            int length = toNames.size();
+            if (length == 1) {
+                //=> Only one person to wave to
+                toPeople = toNames.get(0);
+            } else {
+                //=> Multiple people to wave to
+                for (int i = 0; i < length; i++) {
+                    if (i == length - 1) {
+                        //=> Last name, add "and" instead of ","
+                        toPeople += ChatColor.GRAY + " and ";
+                    } else if (i > 0) {
+                        toPeople += ChatColor.GRAY + ", ";
+                    }
+                    toPeople += toNames.get(i);
+                }
+            }
+
 			//Broadcast
-			Util.broadcast(gray + " ** " + getName(fromPlayer) + gray + " waves to " + toColoredName + gray + " **");
+			Util.broadcast(gray + " ** " + getName(fromPlayer) + gray + " waves to " + toPeople + gray + " **");
 		}
 		return true;
 	}
-	
+
 	private String getName(Player p) {
 		PermissionUser user = PermissionsEx.getUser(p);
 		String name;
