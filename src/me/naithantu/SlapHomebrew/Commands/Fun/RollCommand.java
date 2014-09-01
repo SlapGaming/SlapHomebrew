@@ -48,14 +48,23 @@ public class RollCommand extends AbstractCommand {
             lottery.fakeRoll(playername);
 
             //Roll a number
-            int rolledNumber = 9001;
-            if (!playername.equalsIgnoreCase(lottery.getFakeLotteryWinner())) {
+            int rolledNumber;
+            if (playername.equalsIgnoreCase(lottery.getFakeLotteryWinner())) {
+                //=> Is the FakeLottery winner
+                if (args.length > 0) {
+                    //Parse the given argument as an int
+                    rolledNumber = parseIntPositive(args[0]);
+                } else {
+                    //Otherwise default to 0
+                    rolledNumber = 0;
+                }
+            } else {
                 //=> If the player is not the winner, roll something weird
                 rolledNumber = (-50 + lottery.getRandom().nextInt(50));
             }
 
             //Broadcast the roll
-            Util.broadcastHeader(playername + " rolled " + rolledNumber);
+            Util.broadcastHeader(playername + " rolled " + rolledNumber + "!");
         } else {
             throw new CommandException("There is currently no lottery playing!");
         }

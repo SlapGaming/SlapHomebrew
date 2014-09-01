@@ -28,9 +28,11 @@ public class SemiAFKCommand extends AbstractCommand {
 
         //Check if AFK
         if (afk.isAfk(p)) {
-            afk.goAfk(p, "Semi-AFK");
-        } else {
+            //=> Leave AFK is already AFK
             afk.leaveAfk(p);
+        } else {
+            //=> Go Semi-AFK
+            afk.goAfk(p, "Semi-AFK");
         }
 
         return true;
