@@ -15,10 +15,14 @@ public class AfkCommand extends AbstractCommand {
 	}
 
 	public boolean handle() throws CommandException {
-		Player p = getPlayer(); //Cast to player
+		Player p = getPlayer(); //Check if player
+        testPermission("afk"); //Check if able to go AFK
+
+        //Get playername
 		String playername = p.getName();
-		
-		AwayFromKeyboard afk = plugin.getAwayFromKeyboard(); //Get AFK Controller
+
+        //Get the AFK Controller
+		AwayFromKeyboard afk = plugin.getAwayFromKeyboard();
 		
 		//Prevent auto AFK | command: /afk -prevent
 		if (args.length == 1) {

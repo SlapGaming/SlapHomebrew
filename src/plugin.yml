@@ -281,3 +281,6 @@ commands:
   unmute:
     description: Command to unmute players
     usage: "Usage: /unmute <Player>"
+  semiafk:
+    description: "Go Semi-AFK"
+    usage: "Usage: /semiafk"

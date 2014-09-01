@@ -99,6 +99,7 @@ public class CommandHandler {
 		case "ride":			commandObj = new RideCommand(sender, args);						break;
 		case "roll":			commandObj = new RollCommand(sender, args);						break;
 		case "searchregion":	commandObj = new SearchregionCommand(sender, args);				break;
+        case "semiafk":         commandObj = new SemiAFKCommand(sender, args);                  break;
 		case "serverbroadcast":	commandObj = new ServerBroadcastCommand(sender, args);			break;
 		case "sethome":			commandObj = new SetHomeCommand(sender, args);					break;
 		case "sgm":				commandObj = new SgmCommand(sender, args);						break;
