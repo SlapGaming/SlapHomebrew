@@ -64,15 +64,7 @@ public class WaveCommand extends AbstractCommand {
                 toPeople = toNames.get(0);
             } else {
                 //=> Multiple people to wave to
-                for (int i = 0; i < length; i++) {
-                    if (i == length - 1) {
-                        //=> Last name, add "and" instead of ","
-                        toPeople += ChatColor.GRAY + " and ";
-                    } else if (i > 0) {
-                        toPeople += ChatColor.GRAY + ", ";
-                    }
-                    toPeople += toNames.get(i);
-                }
+                toPeople = Util.buildString(toNames, ChatColor.GRAY + ", ", ChatColor.GRAY + " & ");
             }
 
 			//Broadcast

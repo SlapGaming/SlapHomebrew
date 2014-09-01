@@ -340,6 +340,34 @@ public class Util {
 		}
 		return combined;
 	}
+
+    /**
+     * Build a string from a List of strings
+     * This one can be used if there last splitChar should be different.
+     *
+     * Example: buildString(list, ", ", " and ");
+     * Will return: "One, Two, Three and Four"
+     *
+     * @param strings The list of strings
+     * @param splitChar The string that splits the strings
+     * @param finalSplitChar The string that splits the last strings
+     * @return The combined string
+     */
+    public static String buildString(List<String> strings, String splitChar, String finalSplitChar) {
+        String combined = "";
+        //Length of the list of strings
+        int nrOfStrings = strings.size();
+        //Loop through strings
+        for (int i = 0; i < nrOfStrings; i++) {
+            if (i == (nrOfStrings - 1)) { //Last one, add the finalSplitChar
+                combined += finalSplitChar;
+            } else if (i > 0) { //If not the first nor the last, add the splitChar
+                combined += splitChar;
+            }
+            combined += strings.get(i); //Add the String
+        }
+        return combined;
+    }
     
     /**
      * Get the target block that is NOT air in the line of sight of a player
