@@ -7,6 +7,7 @@ import java.util.Map;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.AFKLogger;
 
 import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
+import me.naithantu.SlapHomebrew.Util.Util;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -27,19 +28,33 @@ public class AwayFromKeyboard extends AbstractController {
      * @param reason The reason
      */
     public void goAfk(Player player, String reason){
+        //Get the UUID & The name
         String UUID = player.getUniqueId().toString();
         String playername = player.getName();
-    	if (afkReasons.containsKey(UUID)){
-    		afkReasons.remove(UUID);
-    	}
+
+        //Put the AFK Reason in the map
     	afkReasons.put(UUID, reason);
-    	boolean noReason = reason.equals("AFK");
-    	AFKLogger.logPlayerGoesAFK(UUID, (noReason ? null : reason)); //Log
-    	if (noReason) {
-    		plugin.getServer().broadcastMessage(ChatColor.WHITE + playername + " is now AFK.");
-    	} else {
-    		plugin.getServer().broadcastMessage(ChatColor.WHITE + playername + " is now AFK. Reason: " + reason);
-    	}
+
+        //Check if no reason was given
+    	boolean withReason = !reason.equals("AFK");
+        //Check if Semi-AFK
+        boolean semiAFK = reason.equals("Semi-AFK");
+
+        //Log going AFK
+    	AFKLogger.logPlayerGoesAFK(UUID, (withReason && !semiAFK ? reason : null));
+
+        //Create broadcast
+        String broadcast = ChatColor.WHITE + playername + " is now ";
+        if (semiAFK) {
+            broadcast += "Semi-AFK.";
+        } else {
+            broadcast += "AFK.";
+            if (withReason) {
+                broadcast += " Reason: " + reason;
+            }
+        }
+        //=> Broadcast message
+        Util.broadcast(broadcast);
     }
 
     /**
@@ -47,10 +62,22 @@ public class AwayFromKeyboard extends AbstractController {
      * @param player The player
      */
     public void leaveAfk(Player player){
+        //Get UUID
         String UUID = player.getUniqueId().toString();
+
+        //Get reason & remove it
+        String reason = afkReasons.get(UUID);
     	afkReasons.remove(UUID);
+
+        //Log the leave
     	AFKLogger.logPlayerLeftAFK(UUID);
-    	plugin.getServer().broadcastMessage(ChatColor.WHITE + player.getName() + " is no longer AFK");
+
+        //Check if Semi-AFK
+        if (reason.equals("Semi-AFK")) {
+            player.sendMessage("You are no longer Semi-AFK.");
+        } else {
+            Util.broadcast(ChatColor.WHITE + player.getName() + " is no longer AFK.");
+        }
     }
 
     /**
@@ -79,12 +106,7 @@ public class AwayFromKeyboard extends AbstractController {
      */
     public void sendAfkReason(Player sender, Player afkPlayer){
     	String reason = getAfkReason(afkPlayer);
-        String playername = afkPlayer.getName();
-    	if (reason.equals("AFK")){
-    		sender.sendMessage(ChatColor.RED + playername + " might not respond. Reason: " + ChatColor.WHITE + "Away From Keyboard");
-    	} else {
-    		sender.sendMessage(ChatColor.RED + playername + " might not respond. Reason: " + ChatColor.WHITE + reason);
-    	}
+        Util.badMsg(sender, afkPlayer.getName() + " might not respond. Reason: " + reason);
     }
 
     /**
