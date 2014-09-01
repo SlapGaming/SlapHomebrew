@@ -243,7 +243,6 @@ public class HomeMenu extends AbstractController {
 
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
 				showHomeWorldMenu(world, page);
 			}
 
