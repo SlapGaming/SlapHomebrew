@@ -8,6 +8,7 @@ import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.inventory.ItemStack;
 
 public class PlayerChangedWorldListener extends AbstractListener {
 
@@ -22,15 +23,15 @@ public class PlayerChangedWorldListener extends AbstractListener {
 	@EventHandler
 	public void playerChangedWorld(PlayerChangedWorldEvent event) {
 		Player player = event.getPlayer();
-		if (lottery.inStoredPrices(player.getName())) {
-			String targetWorld = player.getWorld().getName();
-			if (!targetWorld.equals("world_sonic") && !targetWorld.equals("world_creative")) {
-				if (player.getInventory().firstEmpty() != -1) {
-					player.getInventory().addItem(lottery.getStoredPrice(player.getName()));
-					lottery.removeStoredPrice(player.getName());
-				}
-			}
-		}
+        String UUID = player.getUniqueId().toString();
+
+        //Check if the player still has lottery price
+        if (lottery.hasStoredPrice(UUID)) {
+            //Get the price
+            ItemStack price = lottery.getStoredPrice(UUID);
+            //=> Try to give the price
+            lottery.givePrice(player, price, false);
+        }
 
 		//Allow flight for double jumping in start world.
 		if (player.getWorld().getName().equals("world_start")) {

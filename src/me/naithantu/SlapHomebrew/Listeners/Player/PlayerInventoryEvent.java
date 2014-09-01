@@ -7,6 +7,7 @@ import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.ItemStack;
 
 public class PlayerInventoryEvent extends AbstractListener {
 	
@@ -22,18 +23,15 @@ public class PlayerInventoryEvent extends AbstractListener {
 			return;
 		}
 		Player targetPlayer = (Player) event.getWhoClicked();
-		String playerName = targetPlayer.getName();
-		
+		String UUID = targetPlayer.getUniqueId().toString();
+
 		//Check if player still has lottery prices
-		if (lottery.inStoredPrices(playerName)) {
-			String worldName = targetPlayer.getWorld().getName();
-			if (!worldName.equals("world_sonic") && !worldName.equals("world_creative")) {
-				if (targetPlayer.getInventory().firstEmpty() != -1) {
-					targetPlayer.getInventory().addItem(lottery.getStoredPrice(playerName));
-					lottery.removeStoredPrice(playerName);
-				}				
-			}
-		}	
+        if (lottery.hasStoredPrice(UUID)) {
+            //Get the price
+            ItemStack price = lottery.getStoredPrice(UUID);
+            //=> Try to give the price
+            lottery.givePrice(targetPlayer, price, false);
+        }
 		
 		//Set last activity
 		PlayerControl.getPlayer(targetPlayer).moved();

@@ -20,35 +20,45 @@ public class RollCommand extends AbstractCommand {
 	public boolean handle() throws CommandException {
 		Player p = getPlayer();
 		testPermission("roll");
-		
+
+        //Get the playername
 		String playername = p.getName();
-		Lottery lottery = plugin.getLottery(); //Get lottery
-		
-		if (lottery.getPlaying()) { //Check if lottery is running
-			if (!lottery.getLottery().containsKey(p.getName())) { //Check if already rolled
-				Random random = new Random();
-				int randInt = random.nextInt(101);
-				lottery.getLottery().put(playername, randInt);
-				Util.broadcastHeader(playername + " rolled " + randInt + "!");
-			} else {
-				throw new CommandException(ErrorMsg.alreadyRolled);
-			}
-		} else if (lottery.isFakeLotteryPlaying()) {
-			if (!lottery.hasAlreadyFakeRolled(playername)) {
-				if (playername.equals(lottery.getFakeLotteryWinner())) {
-					Util.broadcastHeader(playername + " rolled 100!");
-					lottery.fakeRoll(playername, 100);
-				} else {
-					Util.broadcastHeader(playername + " rolled 0!");
-					lottery.fakeRoll(playername, 0);
-				}
-			} else {
-				throw new CommandException(ErrorMsg.alreadyRolled);
-			}
-		} else {
-			throw new CommandException("There is currently no lottery playing!");
-		}
-		
+
+        //Get the lottery controller
+		Lottery lottery = plugin.getLottery();
+
+        //Check if the lottery is running
+        if (lottery.isPlaying()) {
+            //Get the player's UUID
+            String UUID = p.getUniqueId().toString();
+
+            //Check if already rolled
+            if (lottery.hasRolled(UUID)) throw new CommandException(ErrorMsg.alreadyRolled);
+
+            //Roll
+            int rolledNumber = lottery.getRandom().nextInt(101);
+            lottery.roll(UUID, rolledNumber);
+            //=> Broadcast roll
+            Util.broadcastHeader(playername + " rolled " + rolledNumber + "!");
+        } else if (lottery.isFakeLotteryPlaying()) {
+            //Check if already rolled
+            if (lottery.hasAlreadyFakeRolled(playername)) throw new CommandException(ErrorMsg.alreadyRolled);
+
+            //Add roll
+            lottery.fakeRoll(playername);
+
+            //Roll a number
+            int rolledNumber = 9001;
+            if (!playername.equalsIgnoreCase(lottery.getFakeLotteryWinner())) {
+                //=> If the player is not the winner, roll something weird
+                rolledNumber = (-50 + lottery.getRandom().nextInt(50));
+            }
+
+            //Broadcast the roll
+            Util.broadcastHeader(playername + " rolled " + rolledNumber);
+        } else {
+            throw new CommandException("There is currently no lottery playing!");
+        }
 
 		return true;
 	}

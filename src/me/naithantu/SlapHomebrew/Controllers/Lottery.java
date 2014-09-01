@@ -1,10 +1,9 @@
 package me.naithantu.SlapHomebrew.Controllers;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Random;
+import java.util.*;
 
 import me.naithantu.SlapHomebrew.Controllers.FancyMessage.FancyMessage;
+import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.Bukkit;
@@ -15,231 +14,345 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 
 public class Lottery extends AbstractController {
-	
-	public boolean lotteryPlaying = false;
-	public boolean lotteryEnabled = true;
-	public HashMap<String, Integer> lottery = new HashMap<>();
-	public HashMap<String, ItemStack> storedPrices = new HashMap<>();
-	
-	private boolean fakeLotteryPlaying = false;
+
+    public boolean lotteryEnabled;
+	public boolean lotteryPlaying;
+
+    //Map containing player's rolled amounts
+    //K:[Player's UUID] => V:[Rolled number]
+	public HashMap<String, Integer> rolls;
+
+    //Map containing player's stored prices
+    //K:[Player's UUID] => V:[The stored price]
+	public HashMap<String, ItemStack> storedPrices;
+
+
+    //Fake lottery stuff
+	private boolean fakeLotteryPlaying;
 	private String fakeLotteryWinner;
-	private HashMap<String, Integer> fakeLotteryPlayers = new HashMap<>();
-	private int taskID;
-		
-	int lotteryTimer;
-	
+	private HashSet<String> fakeLotteryPlayers;
+	private int fakeLotteryTaskID;
+
+    //String that contains the jsonMessage to roll
 	private String jsonMessage;
 
+    //Keep a random object for rolls
+    private Random random;
+
 	public Lottery() {
+        //Set bools
+        lotteryEnabled = true;
+        lotteryPlaying = false;
+        fakeLotteryPlaying = false;
+
+        //Create maps & sets
+        rolls = new HashMap<>();
+        storedPrices = new HashMap<>();
+        fakeLotteryPlayers = new HashSet<>();
+
+        //Create the jsonMessage
+        jsonMessage = new FancyMessage("[SLAP] ").color(ChatColor.GOLD).addText("The lottery has started! Click me!").runCommand("/roll").tooltip("Click to roll!").toJSONString();
+
+        //Start the lottery timer
 		lotteryTimer();
-		
-		jsonMessage = new FancyMessage("[SLAP] ").color(ChatColor.GOLD).addText("The lottery has started! Click me!").runCommand("/roll").tooltip("Click to roll!").toJSONString();
 	}
 
+    /**
+     * Start the lottery timer
+     */
 	private void lotteryTimer() {
-		lotteryTimer = Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-			public void run() {
-				fakeLotteryPlayers.clear();
-				fakeLotteryWinner = null;
-				lottery.clear();
-				if (fakeLotteryPlaying == true) {
-					Bukkit.getScheduler().cancelTask(taskID);
-					fakeLotteryPlaying = false;
-				}
-				if (lotteryEnabled == true) {
-					lotteryPlaying = true;
-					Util.broadcastJsonMessage(jsonMessage);
-					shortLotteryTimer();
-					lotteryTimer();
-				}
-			}
-		}, 72000);
-	}
-
-	private void shortLotteryTimer() {
 		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-			public void run() {
-				if (!lottery.isEmpty()) {
-					int highestNumber = -1;
-					
-					ArrayList<String> winningPlayers = new ArrayList<>();
-										
-					//Loop through the hashmap from top to bottom (keep original order!)
-					for (String playerName : lottery.keySet()) {
-						//Get number that the player rolled.
-						int rolledNumber = lottery.get(playerName);
-						if (rolledNumber == highestNumber) {
-							//Even high as the current winner
-							winningPlayers.add(playerName);
-						} else if (rolledNumber > highestNumber) {
-							//Number is higher than currently highestNumber
-							highestNumber = rolledNumber;
-							winningPlayers.clear();
-							winningPlayers.add(playerName);
-						}
-					}
-					
-					if (winningPlayers.size() == 0) {
-						//No winners
-						plugin.getServer().broadcastMessage(ChatColor.GOLD + "[SLAP]" + ChatColor.WHITE + " The lottery is over! But no one played...");
-						lottery.clear();
-						lotteryPlaying = false;
-						return;					
-					} else {
-						//Someone won!
-						int randomNumber = new Random().nextInt(101);
-						ItemStack price; String priceName;
-						
-						if (randomNumber == 0) {
-							//Jackpot = 5 Diamonds
-							price = new ItemStack(Material.DIAMOND, 5); priceName = "the jackpot! 5 diamonds!";
-						} else if (randomNumber < 6) {
-							//Cookies!
-							price = new ItemStack(Material.COOKIE, 64); priceName = "a stack of cookies!";
-						} else {
-							//A Cake
-							price = new ItemStack(Material.CAKE, 1); priceName = "a cake!";
-						}
-						
-						if (winningPlayers.size() == 1) {
-							//1 Winner
-							plugin.getServer().broadcastMessage(ChatColor.GOLD + "[SLAP]" + ChatColor.WHITE + " The lottery is over! " + winningPlayers.get(0) + " has won " + priceName);
-							givePrice(winningPlayers.get(0), price);
-						} else if (winningPlayers.size() > 1) {
-							//Multiple winners
-							String winningPlayerNames = ""; int xCount = 0; boolean first = true;
-							while (xCount < winningPlayers.size()) {
-								if (first) {
-									winningPlayerNames = winningPlayers.get(xCount);
-									first = false;
-								} else {
-									String nextPlayerString;
-									if ((xCount + 1) == winningPlayers.size()) nextPlayerString = " & "; else nextPlayerString = ", ";
-									winningPlayerNames = winningPlayerNames + nextPlayerString + winningPlayers.get(xCount);
-								}
-								xCount++;
-							}
-							plugin.getServer().broadcastMessage(ChatColor.GOLD + "[SLAP]" + ChatColor.WHITE + " The lottery is over! " + winningPlayerNames + " have won " + priceName);
-							for (String winningPlayer : winningPlayers) {
-								givePrice(winningPlayer, price);
-							}
-						}	
-					}
+            public void run() {
+                fakeLotteryPlayers.clear();
+                fakeLotteryWinner = null;
+                rolls.clear();
 
-					lottery.clear();
-					lotteryPlaying = false;
-				} else {
-					lotteryPlaying = false;
-					Bukkit.getServer().broadcastMessage(ChatColor.GOLD + "[SLAP]" + ChatColor.WHITE + " The lottery is over! But noone played...");
-				}
-			}
-		}, 1200);
+                //Check if the fake lottery is running
+                if (fakeLotteryPlaying == true) {
+                    //Stop the fake lottery
+                    Bukkit.getScheduler().cancelTask(fakeLotteryTaskID);
+                    fakeLotteryPlaying = false;
+                    Util.broadcastHeader("Second try! Restarting the lottery.");
+                }
+
+                //Check if lottery is enabled
+                if (!lotteryEnabled) return;
+
+                //Start the lottery
+                lotteryPlaying = true;
+                random = new Random();
+
+                //Broadcast the roll message
+                Util.broadcastJsonMessage(jsonMessage);
+
+                //The lottery will end in one minute
+                Util.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        lotteryEnded();
+                    }
+                }, 1200);
+
+                //Start countdown for the next Lottery
+                lotteryTimer();
+            }
+        }, 72000);
 	}
 
-	public void clearLottery() {
-		lottery.clear();
-	}
+    /**
+     * The lottery has ended.
+     * Check who has won & give prices.
+     */
+    private void lotteryEnded() {
+        //Wipe the random object
+        random = null;
 
-	public HashMap<String, Integer> getLottery() {
-		return lottery;
-	}
-	
-	public boolean toggleLottery(){
-		Bukkit.getScheduler().cancelTask(lotteryTimer);
-		return lotteryEnabled = !lotteryEnabled;
-	}
-	
-	public boolean getPlaying(){
+        //Check if any player rolled
+        if (rolls.isEmpty()) {
+            plugin.getServer().broadcastMessage(ChatColor.GOLD + "[SLAP]" + ChatColor.WHITE + " The lottery is over! But no one played...");
+            lotteryPlaying = false;
+            return;
+        }
+
+        //Check who rolled the highest
+        int highestNumber = -1;
+        ArrayList<String> winningUUIDs = new ArrayList<>();
+
+        //=> Loop through the HashMap with rolls
+        for (String UUID : rolls.keySet()) {
+            //Get number that the player rolled.
+            int rolledNumber = rolls.get(UUID);
+            if (rolledNumber == highestNumber) {
+                //Even high as the current winner
+                winningUUIDs.add(UUID);
+            } else if (rolledNumber > highestNumber) {
+                //Number is higher than currently highestNumber
+                highestNumber = rolledNumber;
+                winningUUIDs.clear();
+                winningUUIDs.add(UUID);
+            }
+        }
+
+        //Determine a price
+        int randomNumber = new Random().nextInt(101);
+        ItemStack price; String priceName;
+
+        if (randomNumber == 0) {
+            //Jackpot = 5 Diamonds
+            price = new ItemStack(Material.DIAMOND, 5); priceName = "the jackpot! 5 diamonds!";
+        } else if (randomNumber < 6) {
+            //Cookies!
+            price = new ItemStack(Material.COOKIE, 64); priceName = "a stack of cookies!";
+        } else {
+            //A Cake
+            price = new ItemStack(Material.CAKE, 1); priceName = "a cake!";
+        }
+
+        //Check if multiple winners
+        boolean multipleWinners = (winningUUIDs.size() > 1);
+
+        //Create the winning players string
+        List<String> winningPlayers = new ArrayList<String>();
+        //=> Use UUID Control to find the names
+        UUIDControl uuidControl = UUIDControl.getInstance();
+        for (String winningUUID : winningUUIDs) {
+            //=> Get the UUID Profile
+            UUIDControl.UUIDProfile profile = uuidControl.getUUIDProfile(winningUUID);
+
+            //=> Add the name to the list
+            winningPlayers.add(profile.getCurrentName());
+
+            //=> Give the price
+            Player winningPlayer = profile.getPlayer();
+            if (winningPlayer == null) {
+                //=> Player has logged out, store the price
+                storedPrices.put(winningUUID, price);
+            } else {
+                //=> Give the price
+                givePrice(winningPlayer, price, true);
+            }
+        }
+        //=> Build the winning players string
+        String winningPlayerNames = Util.buildString(winningPlayers, ", ", " & ");
+
+        //Broadcast the win
+        Util.broadcastHeader("The lottery is over! " + winningPlayerNames + " " + (multipleWinners ? "have" : "has") + " won " + priceName);
+
+        //Set lottery playing to false
+        lotteryPlaying = false;
+    }
+
+    /**
+     * Check if a lottery is currently playing
+     * @return is playing
+     */
+	public boolean isPlaying(){
 		return lotteryPlaying;
 	}
-	
-	public void startLottery(){
-		if(!lotteryPlaying){
-			lotteryPlaying = true;
-			Bukkit.getScheduler().cancelTask(lotteryTimer);
-			shortLotteryTimer();
-		}
+
+    /**
+     * Check if a player has already rolled
+     * @param UUID The player's UUID
+     * @return has rolled
+     */
+    public boolean hasRolled(String UUID) {
+        return (rolls.containsKey(UUID));
+    }
+
+    /**
+     * A player rolls
+     * @param UUID The player's UUID
+     * @param rolled The rolled number
+     */
+    public void roll(String UUID, int rolled) {
+        rolls.put(UUID, rolled);
+    }
+
+    /**
+     * Get the random instance
+     * @return the random instance
+     */
+    public Random getRandom() {
+        return random;
+    }
+
+    /**
+     * Give a price to a player
+     * If is in the worng world, it will store the price.
+     * @param targetPlayer The player
+     * @param price The Price
+     */
+	public void givePrice(Player targetPlayer, ItemStack price, boolean message) {
+        //Get the worldname
+        String worldname = targetPlayer.getWorld().getName();
+        if (worldname.contains("resource")) { //Remove number behind resource world (if the resource world)
+            worldname = "world_resource";
+        }
+
+        //Switch on the world
+        switch (worldname.toLowerCase()) {
+            //Check if in a survival world
+            case "world":case "world_survival3":case "world_resource":case "world_start":case "world_nether":case "world_the_end":
+                if (targetPlayer.getInventory().firstEmpty() != -1) {
+                    //If there's an empty spot, give the item
+                    targetPlayer.getInventory().addItem(price);
+                } else {
+                    //Player's inventory is full
+                    storedPrices.put(targetPlayer.getUniqueId().toString(), price);
+                    if (message) {
+                        Util.badMsg(targetPlayer, "You will get your prize when you make space in your inventory.");
+                    }
+                }
+                break;
+
+            default:
+                //Player is in Creative/Sonic world -> Store price
+                storedPrices.put(targetPlayer.getUniqueId().toString(), price);
+                if (message) {
+                    Util.badMsg(targetPlayer, "You will get your prize when you return to a survival world.");
+                }
+        }
 	}
-	
-	public boolean inStoredPrices(String playerName){
-		boolean returnBool = false;
-		if (storedPrices.get(playerName) != null) {
-			returnBool = true;
-		}
-		return returnBool;
-	}
-	
-	public ItemStack getStoredPrice(String playerName) {
-		ItemStack returnStack = storedPrices.get(playerName);
-		return returnStack;
-	}
-	
-	public void removeStoredPrice(String playerName) {
-		storedPrices.remove(playerName);
-	}
-	
-	public void givePrice(String playerName, ItemStack price) {
-		Player targetPlayer = plugin.getServer().getPlayer(playerName);
-		String worldName = targetPlayer.getWorld().getName();
-		if (!worldName.equals("world_sonic") && !worldName.equals("world_creative") && !worldName.equals("world_pvp")) {
-			if (targetPlayer.getInventory().firstEmpty() != -1) {
-				targetPlayer.getInventory().addItem(price);
-			} else {
-				//Player's inventory is full
-				storedPrices.put(playerName, price);
-				targetPlayer.sendMessage(ChatColor.RED + "You will get your prize when you make space in your inventory.");
-			}
-		} else {
-			//Player is in Creative/Sonic world -> Store price
-			storedPrices.put(playerName, price);
-			targetPlayer.sendMessage(ChatColor.RED + "You will get your prize when you return to a survival world.");
-		}
-	}
-	
-	/* ---Fake Lottery Stuff--- */	
+
+    /**
+     * Check if a player has a price stored
+     * @param UUID The The player's UUID
+     * @return has a price stored
+     */
+    public boolean hasStoredPrice(String UUID) {
+        return storedPrices.containsKey(UUID);
+    }
+
+    /**
+     * Get a stored price
+     * WARNING: This will remove the price from the storedPrices map
+     * @param UUID The player's UUID
+     * @return The price
+     */
+    public ItemStack getStoredPrice(String UUID) {
+        //Get the price
+        ItemStack price = storedPrices.get(UUID);
+        //=> Remove it from the map
+        storedPrices.remove(UUID);
+        //=> Return the price
+        return price;
+    }
+
+
+	/*
+	 **********************
+	 * Fake Lottery Stuff *
+	 **********************
+	 */
+    /**
+     * Start a fake lottery
+     * @param winner The name of the winner of the fake lottery
+     */
 	public void startFakeLottery(String winner){
+        //Broadcast the start
 		Util.broadcastJsonMessage(jsonMessage);
+
+        //Set values
 		fakeLotteryPlaying = true;
 		fakeLotteryWinner = winner;
 		fakeLotteryPlayers.clear();
-		BukkitTask task  = Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
-			
-			@Override
-			public void run() {
-				stopFakeLottery();
-			}
-		}, 1200);
-		taskID = task.getTaskId();
+        random = new Random();
+
+        //Start the end task
+		BukkitTask task = Util.runLater(new Runnable() {
+            @Override
+            public void run() {
+                stopFakeLottery();
+            }
+        }, 1200);
+		fakeLotteryTaskID = task.getTaskId();
 	}
-	
+
+    /**
+     * Check if a fake lottery is currently playing
+     * @return is playing
+     */
 	public boolean isFakeLotteryPlaying(){
 		return fakeLotteryPlaying;
 	}
-	
+
+    /**
+     * Get the name of the fake lottery winner
+     * @return the name
+     */
 	public String getFakeLotteryWinner(){
 		return fakeLotteryWinner;
 	}
-	
-	public boolean hasAlreadyFakeRolled(String player){
-		if (fakeLotteryPlayers.containsKey(player)) {
-			return true;
-		} else {
-			return false;
-		}
+
+    /**
+     * Check if a player has already rolled
+     * @param playername The name of the player
+     * @return has rolled
+     */
+	public boolean hasAlreadyFakeRolled(String playername){
+		return fakeLotteryPlayers.contains(playername);
 	}
-	
-	public void fakeRoll(String playerName, int roll) {
-		fakeLotteryPlayers.put(playerName, roll);
+
+    /**
+     * A player has fake rolled
+     * @param playername The name of the player
+     */
+	public void fakeRoll(String playername) {
+		fakeLotteryPlayers.add(playername);
 	}
-	
+
+    /**
+     * Stop the fake lottery
+     */
 	public void stopFakeLottery(){
-		if (fakeLotteryPlayers.containsKey(fakeLotteryWinner)) {
-			plugin.getServer().broadcastMessage(ChatColor.GOLD + "[SLAP]" + ChatColor.WHITE + " The lottery is over! " + fakeLotteryWinner + " has won a stack of diamond blocks!");
-		} else {
-			plugin.getServer().broadcastMessage(ChatColor.GOLD + "[SLAP]" + ChatColor.WHITE + " The lottery is over! " + fakeLotteryWinner + " didn't roll but wins anyways. Here's a stack of diamonds.");
-		}
+        //Broadcast the end
+        String endMessage = (fakeLotteryPlayers.contains(fakeLotteryWinner) ? " has won a a trillion cookies. Yes. A trillion." : " didn't roll, but wins anyway. Have a cookie!" );
+        Util.broadcastHeader("The lottery is over! " + fakeLotteryWinner + endMessage);
+
+        //Clear values
 		fakeLotteryPlaying = false;
 		fakeLotteryWinner = null;
+        random = null;
 	}
 	
     @Override

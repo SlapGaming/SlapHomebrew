@@ -451,7 +451,7 @@ public class SlapCommand extends AbstractCommand {
 			case "fakelottery": case "fakeroll": //Start a fake lottery
 				testPermission("fakelottery");
 				Lottery lottery = plugin.getLottery(); //Get lottery
-				if (lottery.getPlaying() || lottery.isFakeLotteryPlaying()) throw new CommandException("There is already a lottery running."); //Check if running
+				if (lottery.isPlaying() || lottery.isFakeLotteryPlaying()) throw new CommandException("There is already a lottery running."); //Check if running
 				targetPlayer = player;
 				if (args.length > 1) { //Check if target given
 					targetPlayer = getOnlinePlayer(args[1], false);
