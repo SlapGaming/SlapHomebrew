@@ -38,7 +38,7 @@ public class MultiChatCombiner extends MessageCombiner {
 		colorize();
 		
 		//Get target players
-		final HashSet<Player> players = new HashSet<Player>(Arrays.asList(Util.getOnlinePlayers()));
+		final HashSet<Player> players = new HashSet<Player>(Util.getOnlinePlayers());
 		
 		
 		//=> Move to A-Sync

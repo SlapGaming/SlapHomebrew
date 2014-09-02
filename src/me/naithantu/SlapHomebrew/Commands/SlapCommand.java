@@ -1,9 +1,6 @@
 package me.naithantu.SlapHomebrew.Commands;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import me.naithantu.SlapHomebrew.Commands.Basics.SpawnCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
@@ -16,8 +13,8 @@ import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
 import me.naithantu.SlapHomebrew.PlayerExtension.SlapPlayer;
 import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import me.naithantu.SlapHomebrew.Util.Util;
-import net.minecraft.server.v1_7_R3.EntityPlayer;
-import net.minecraft.server.v1_7_R3.PacketPlayOutSpawnEntityLiving;
+import net.minecraft.server.v1_7_R4.EntityPlayer;
+import net.minecraft.server.v1_7_R4.PacketPlayOutSpawnEntityLiving;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -31,7 +28,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
-import org.bukkit.craftbukkit.v1_7_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
@@ -369,13 +366,13 @@ public class SlapCommand extends AbstractCommand {
 								
 			case "moo": //An extension of /ess moo 
 				testPermission("moo");
-				Player[] onlinePlayers = Util.getOnlinePlayers(); //Get players
-				if (onlinePlayers.length == 0) throw new CommandException("There are no players online."); //Check for players
+				ArrayList<Player> onlinePlayers = new ArrayList<Player>(Util.getOnlinePlayers()); //Get players
+				if (onlinePlayers.isEmpty()) throw new CommandException("There are no players online."); //Check for players
 				for (Player target : onlinePlayers) { //Loop thru players & Send stuff
 					target.sendMessage(new String[] { "            (__)", "            (oo)", "   /------\\/", "  /  |      | |", " *  /\\---/\\", "    ~~    ~~", "....\"Have you mooed today?\"..." });
 					target.playSound(target.getLocation(), Sound.COW_HURT, 1, 1.0f);
 				}
-				onlinePlayers[new Random().nextInt(onlinePlayers.length)].chat("Moooooo!"); //Pick a random user & sudo it 'moo'
+				onlinePlayers.get(new Random().nextInt(onlinePlayers.size())).chat("Moooooo!"); //Pick a random user & sudo it 'moo'
 				break;
 				
 			case "firemob": //Spawn a horde of entities that are on fire
@@ -465,10 +462,10 @@ public class SlapCommand extends AbstractCommand {
 				Util.runLater(new Runnable() {
 					@Override
 					public void run() { //5 Seconds later let someone fix the table
-						Player[] onlinePlayers = Util.getOnlinePlayers();
-						if (onlinePlayers.length == 0) return; //Check if anyone online
+						ArrayList<Player> onlinePlayers = new ArrayList<Player>(Util.getOnlinePlayers());
+						if (onlinePlayers.isEmpty()) return; //Check if anyone online
 						Random r = new Random();
-						Player tPlayer = onlinePlayers[r.nextInt(onlinePlayers.length)];
+						Player tPlayer = onlinePlayers.get(r.nextInt(onlinePlayers.size()));
 						String end;
 						if (tPlayer.getName().equals(player.getName())) { //Same player
 							end = "Sorry about that..";

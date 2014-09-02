@@ -306,7 +306,7 @@ public class TabController extends AbstractController {
 		if (tabSize == 0) return; //Nothing to show | Should be impossible
 		
 		//Get total number of players online
-		int playersOnline = Util.getOnlinePlayers().length;
+		int playersOnline = Util.getOnlinePlayers().size();
 		
 		//Create tab array
 		int x = 0;
@@ -426,8 +426,8 @@ public class TabController extends AbstractController {
 		loadTabSections();
 		
 		//Add online players
-		Player[] players = Util.getOnlinePlayers();
-		if (players.length > 0) {
+		Collection<Player> players = Util.getOnlinePlayers();
+		if (!players.isEmpty()) {
 			for (Player player : players) { //Loop thru players
 				addToGroup(player); //Add to group
 			}
