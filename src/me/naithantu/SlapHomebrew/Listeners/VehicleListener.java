@@ -2,7 +2,8 @@ package me.naithantu.SlapHomebrew.Listeners;
 
 import me.naithantu.SlapHomebrew.Controllers.Horses;
 
-import org.bukkit.ChatColor;
+import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
+import me.naithantu.SlapHomebrew.Util.Util;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Vehicle;
@@ -48,14 +49,24 @@ public class VehicleListener extends AbstractListener {
 			Player player = (Player) event.getEntered();
 			Horse targetHorse = (Horse) event.getVehicle();
 			if (targetHorse.isTamed()) {
-				if (horses.hasOwner(targetHorse.getUniqueId().toString())) {
-					boolean allowed = horses.enterHorse(targetHorse.getUniqueId().toString(), (Player) event.getEntered());
-					if (!allowed && !player.hasPermission("slaphomebrew.staff")) {
-						player.sendMessage(ChatColor.RED + "You are not allowed to ride " + horses.getOwner(targetHorse.getUniqueId().toString()) + "'s horse.");
-						event.setCancelled(true);
-					}
+                //Get the UUID of the horse
+                String horseUUID = targetHorse.getUniqueId().toString();
+				if (horses.hasOwner(horseUUID)) {
+                    //Allow if staff
+                    if (Util.testPermission(player, "horse.staff")) return;
+
+                    int userID = UUIDControl.getUserID(player);
+                    //Allow if owner
+                    if (horses.getOwnerID(horseUUID) == userID) return;
+                    //Allow if on allowed list
+                    if (horses.getAllowedUserIDs(horseUUID).contains(userID)) return;
+
+                    //Not allowed
+                    Util.badMsg(player, "You are not allowed to ride this horse.");
+                    event.setCancelled(true);
 				} else {
-					player.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + "This horse is not claimed yet. Use '/horse claim' to claim it (if it's yours).");
+                    //Horse isn't owned yet
+                    horses.onTameEvent(player, targetHorse);
 				}
 			}
 		}

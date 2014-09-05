@@ -13,13 +13,18 @@ import me.naithantu.SlapHomebrew.Controllers.FancyMessage.FancyMessageControl;
 import me.naithantu.SlapHomebrew.Listeners.*;
 import me.naithantu.SlapHomebrew.Listeners.Entity.*;
 import me.naithantu.SlapHomebrew.Listeners.Player.*;
+import me.naithantu.SlapHomebrew.Listeners.World.ChunkLoadListener;
+import me.naithantu.SlapHomebrew.Listeners.World.ChunkUnloadListener;
 import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
 import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
+import me.naithantu.SlapHomebrew.Storage.HorseSerializables.MutatedHorsesCollection;
+import me.naithantu.SlapHomebrew.Storage.HorseSerializables.SavedHorse;
 import me.naithantu.SlapHomebrew.Storage.JailSerializables.Jail;
 import me.naithantu.SlapHomebrew.Storage.JailSerializables.JailTime;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 import me.naithantu.SlapHomebrew.Timing.HandlerControl;
 import me.naithantu.SlapHomebrew.Util.DateUtil;
+import me.naithantu.SlapHomebrew.Util.Helpers.HelpMenu;
 import me.naithantu.SlapHomebrew.Util.Log;
 import me.naithantu.SlapHomebrew.Util.SQLPool;
 import me.naithantu.SlapHomebrew.Util.Util;
@@ -127,6 +132,8 @@ public class SlapHomebrew extends JavaPlugin {
         //Register ConfigSerializations
         ConfigurationSerialization.registerClass(Jail.class);
         ConfigurationSerialization.registerClass(JailTime.class);
+        ConfigurationSerialization.registerClass(SavedHorse.class);
+        ConfigurationSerialization.registerClass(MutatedHorsesCollection.class);
     }
 
     @Override
@@ -212,6 +219,7 @@ public class SlapHomebrew extends JavaPlugin {
 		Log.intialize(getLogger());
         Util.initialize();
 		DateUtil.initialize();
+        HelpMenu.initialize();
 	}
 	
 	private void initializeExternals() {
@@ -315,6 +323,8 @@ public class SlapHomebrew extends JavaPlugin {
 				new BlockPlaceListener(),
 				new CreatureDeathListener(horses),
 				new CreatureSpawnListener(),
+                new ChunkLoadListener(horses),
+                new ChunkUnloadListener(horses),
 				new DispenseListener(),
 				new DuelArenaListener(duelArena),
 				new EntityChangeBlockListener(),
@@ -325,7 +335,7 @@ public class SlapHomebrew extends JavaPlugin {
 				new PlayerCommandListener(afk, jails, playerLogger, muteController),
 				new PlayerDeathListener(playerLogger),
 				new PlayerInteractEntityListener(horses),
-				new PlayerInteractListener(horses, jails, spartaPads),
+				new PlayerInteractListener(jails, spartaPads),
 				new PlayerInventoryEvent(lottery),
 				new PlayerJoinListener(mail, jails, tabController, homes),
 				new PlayerLoginListener(whitelist),
@@ -366,6 +376,7 @@ public class SlapHomebrew extends JavaPlugin {
 		DateUtil.destruct();
         Util.destruct();
         Log.shutdown();
+        HelpMenu.shutdown();
 	}
 	
 	private void disableSavers() {

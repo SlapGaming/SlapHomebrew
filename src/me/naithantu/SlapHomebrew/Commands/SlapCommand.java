@@ -20,7 +20,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
 import org.bukkit.Sound;
 import org.bukkit.World;
@@ -70,7 +69,7 @@ public class SlapCommand extends AbstractCommand {
 		//Values
 		UUIDControl.UUIDProfile offPlayer; EntityPlayer nmsPlayer; Player targetPlayer;
 		
-		switch (args[0].toLowerCase()) {		
+		switch (args[0].toLowerCase()) {
 		case "reload": //Reload the plugin
 			testPermission("manage");
 			Bukkit.getPluginManager().disablePlugin(plugin);

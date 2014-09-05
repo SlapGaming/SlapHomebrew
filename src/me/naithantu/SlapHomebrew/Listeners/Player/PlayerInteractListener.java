@@ -1,7 +1,6 @@
 package me.naithantu.SlapHomebrew.Listeners.Player;
 
 import me.naithantu.SlapHomebrew.Commands.SlapCommand;
-import me.naithantu.SlapHomebrew.Controllers.Horses;
 import me.naithantu.SlapHomebrew.Controllers.Jails;
 import me.naithantu.SlapHomebrew.Controllers.SpartaPads;
 import me.naithantu.SlapHomebrew.Controllers.SpartaPads.SpartaPad;
@@ -9,13 +8,11 @@ import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
 import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
 import me.naithantu.SlapHomebrew.Util.Util;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LeashHitch;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
@@ -24,14 +21,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 
 public class PlayerInteractListener extends AbstractListener {
-	
-	private Horses horses;
+
 	private Jails jails;
 	private SpartaPads spartaPads;
 
-	public PlayerInteractListener(Horses horses, Jails jails, SpartaPads spartaPads) {
+	public PlayerInteractListener(Jails jails, SpartaPads spartaPads) {
 		this.jails = jails;
-		this.horses = horses;
 		this.spartaPads = spartaPads;
 	}
 	
@@ -65,30 +60,6 @@ public class PlayerInteractListener extends AbstractListener {
 						event.setCancelled(true);
 					}
 				}
-				
-				if (clickedBlock == Material.FENCE) {
-					if (event.getItem().getType() == Material.LEASH) {
-						final Location loc = event.getClickedBlock().getLocation();
-						loc.setX(loc.getX() + 0.5);
-						loc.setY(loc.getY() + 0.5);
-						loc.setZ(loc.getZ() + 0.5);
-						Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
-							
-							@Override
-							public void run() {
-								for (Entity leashFence : player.getWorld().getEntities()) {
-									if (leashFence instanceof LeashHitch) {
-										if (leashFence.getLocation().equals(loc)) {
-											horses.placedLeashOnFence(leashFence.getUniqueId().toString(), playername);
-										}
-									}
-								}
-								
-							}
-						}, 1);
-					}
-				}
-				
 			} catch (NullPointerException e) {
 				System.out.println("Nullpointer caught " + event.getClickedBlock());
 			}

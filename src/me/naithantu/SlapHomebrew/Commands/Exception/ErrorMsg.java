@@ -34,7 +34,8 @@ public enum ErrorMsg {
 	invalidMailID("The specified mail ID is invalid."),
 	
 	//Horses
-	notOnAHorse("You need to be on a horse to do that!"),
+    NOT_ON_HORSE("You need to be on a horse to do that!"),
+    NOT_ON_OWNED_HORSE("You need to be on a horse that you own to do that!"),
 	
 	//VIP
 	alreadyUsedVipGrant("You have already used VIP Grant 3 times today!"),

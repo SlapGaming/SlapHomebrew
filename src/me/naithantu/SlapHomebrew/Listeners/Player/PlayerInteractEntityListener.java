@@ -1,19 +1,20 @@
 package me.naithantu.SlapHomebrew.Listeners.Player;
 
+import me.naithantu.SlapHomebrew.Commands.Basics.HorseCommand;
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Staff.TeleportMobCommand;
 import me.naithantu.SlapHomebrew.Controllers.Horses;
 import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
 import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
 import me.naithantu.SlapHomebrew.PlayerExtension.SlapPlayer;
+import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import me.naithantu.SlapHomebrew.Util.Util;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Horse.Variant;
-import org.bukkit.entity.LeashHitch;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -31,22 +32,37 @@ public class PlayerInteractEntityListener extends AbstractListener {
 	public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
 		Player player = event.getPlayer();
 		SlapPlayer slapPlayer = PlayerControl.getPlayer(player);
-		String playername = player.getName();
 		Entity clickedEntity = event.getRightClicked();
 				
 		//Set last activity
 		slapPlayer.moved();
 		
 		//Horse info click
-		if (horses.isInfoClick(playername)) {
-			if (clickedEntity.getType() == EntityType.HORSE) {
-				horses.infoHorse(player, clickedEntity.getUniqueId().toString());
-			} else {
-				player.sendMessage(ChatColor.RED + "This is not a horse.");
-			}
-			event.setCancelled(true);
-			return;
-		}
+        if (horses.isOnInfoClickList(player.getUniqueId().toString())) {
+            if (clickedEntity.getType() == EntityType.HORSE) {
+                try {
+                    //Do checks before sending info
+                    Horse horse = (Horse) clickedEntity;
+                    //=> Check if the horse is tamed
+                    if (!horse.isTamed()) throw new CommandException("This horse isn't tamed yet!");
+
+                    String horseUUID = horse.getUniqueId().toString();
+                    //=> Check if the horse has an owner
+                    if (!horses.hasOwner(horseUUID)) throw new CommandException("This horse has no owner yet! Mount it to claim it!");
+
+                    //Send horse info
+                    HorseCommand.sendHorseInfo(horses, player, horse);
+                } catch (CommandException e) {
+                    Util.badMsg(player, e.getMessage());
+                }
+            } else {
+                Util.badMsg(player, "That isn't a horse...");
+            }
+
+            //Cancel the event
+            event.setCancelled(true);
+            return;
+        }
 				
 		//Entity Ride Click
 		if (slapPlayer.isRideOnRightClick()) {
@@ -79,36 +95,34 @@ public class PlayerInteractEntityListener extends AbstractListener {
 		}
 				
 		//Ignored for staff
-		if (!player.hasPermission("slaphomebrew.staff")) {
-			
-			//Leash on Fence -- Warning: Dirty fix -- Will probably break on update
-			if (clickedEntity instanceof LeashHitch) {
-				if (!horses.isOwnerOfLeash(clickedEntity.getUniqueId().toString(), playername)) {
-					player.sendMessage(ChatColor.RED + "You are not the owner of that leash.");
-					event.setCancelled(true);
-				}
-			}
-			
-			//On horse
+		if (!Util.testPermission(player, "horse.staff")) {
+			//Check if on a horse
 			if (clickedEntity.getType() == EntityType.HORSE) {
+                //=> Get the horse info
 				Horse horse = (Horse) event.getRightClicked();
-				//Leash on horse
-				if (horses.hasOwner(horse.getUniqueId().toString())) {
-					if (!horses.enterHorse(horse.getUniqueId().toString(), player)) {
-						player.sendMessage(ChatColor.GOLD + "[SLAP] " + ChatColor.WHITE + "You're not allowed to interact with this horse.");
-						event.setCancelled(true);
-					}
-				}
+                String horseUUID = horse.getUniqueId().toString();
+
+				//Check if the horse has an owner
+                if (horses.hasOwner(horseUUID)) {
+                    //Check if the player is allowed to interact with it
+                    int playerID = UUIDControl.getUserID(player);
+                    if (!horses.isAllowedOnHorse(horseUUID, playerID)) {
+                        //=> Not allowed, cancel
+                        event.setCancelled(true);
+                        Util.badMsg(player, "You are not allowed to interact with this horse.");
+                    }
+
+                }
 			}
 		}
 		
-		//Horse egg on undead/skeleton horse -> Nope
+		//Horse egg on undead/skeleton horse = Nope
 		if (clickedEntity.getType() == EntityType.HORSE) {
 			Horse horse = (Horse) event.getRightClicked();
 			if (horse.getVariant() == Variant.SKELETON_HORSE || horse.getVariant() == Variant.UNDEAD_HORSE) {
 				if (player.getItemInHand().getType() == Material.MONSTER_EGG){ 
 					if (!event.isCancelled()) {
-						player.sendMessage(ChatColor.RED + "This horse doesn't like what you are trying to do...");
+						Util.badMsg(player, "This horse doesn't like what you are trying to do...");
 						event.setCancelled(true);
 					}
 				}

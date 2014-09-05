@@ -266,6 +266,18 @@ public class UUIDControl {
         return uuidsBeingAdded.contains(UUID);
     }
 
+    /**
+     * Get the UserID of a player
+     * @param player The player
+     * @return the ID or -1
+     */
+    public static int getUserID(Player player) {
+        UUIDProfile profile = instance.getUUIDProfile(player.getUniqueId().toString());
+        if (profile == null) return -1;
+        return profile.getUserID();
+    }
+
+
     public class UUIDProfile {
         //The ID of the UUID in the SH database
         private int userID;

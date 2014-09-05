@@ -12,6 +12,7 @@ import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
 import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
 import me.naithantu.SlapHomebrew.PlayerExtension.SlapPlayer;
 import me.naithantu.SlapHomebrew.Util.DateUtil;
+import me.naithantu.SlapHomebrew.Util.Helpers.HelpMenu;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.ChatColor;
@@ -140,6 +141,15 @@ public abstract class AbstractCommand {
 		}
 		return (Player) sender;
 	}
+
+    /**
+     * Get the UUIDProfile of the command sender
+     * @return The profile
+     */
+    protected UUIDControl.UUIDProfile getUUIDProfile() {
+        String UUID = (sender instanceof Player ? ((Player) sender).getUniqueId().toString() : "CONSOLE");
+        return UUIDControl.getInstance().getUUIDProfile(UUID);
+    }
 	
 	/**
 	 * Cast the CommandSender to Player, and get the SlapPlayer instance of that player
@@ -268,6 +278,43 @@ public abstract class AbstractCommand {
 			PlayerControl.getPlayer(sender.getName()).setDoingCommand(false);
 		}
 	}
+
+    /*
+	 *************
+	 * HelpMenus *
+	 *************
+	 */
+    /**
+     * Get this class's HelpMenu.
+     * This can only be used if #createHelpMenu has been overriden. Otherwise the result will always be null.
+     * @return The HelpMenu or null
+     */
+    protected HelpMenu getHelpMenu() {
+        //Get the HelpMenu
+        HelpMenu menu = HelpMenu.getHelpMenu(this.getClass());
+        //Check if null
+        if (menu == null) {
+            //=> Menu is null, try to create it
+            menu = createHelpMenu();
+            if (menu != null) {
+                //=> Create was implemented, store it
+                HelpMenu.addHelpMenu(this.getClass(), menu);
+            }
+        }
+
+        //Return the menu
+        return menu;
+    }
+
+    /**
+     * Create a HelpMenu.
+     * This must be overriden by Classes that want to make use of this function
+     * @return The created HelpMenu
+     */
+    protected HelpMenu createHelpMenu() {
+        return null;
+    }
+
 	
 	/*
 	 ****************

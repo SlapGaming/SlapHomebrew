@@ -4,11 +4,7 @@ import me.naithantu.SlapHomebrew.Controllers.Horses;
 import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
 
 import org.bukkit.Material;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.IronGolem;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Wither;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
@@ -48,7 +44,7 @@ public class CreatureDeathListener extends AbstractListener {
 		if (entity.getType() == EntityType.HORSE) {
 			String entityID = entity.getUniqueId().toString();
 			if (horses.hasOwner(entityID)) {
-				horses.removeHorse(entityID);
+				horses.onDeathEvent((Horse) entity);
 			}
 		}
 		

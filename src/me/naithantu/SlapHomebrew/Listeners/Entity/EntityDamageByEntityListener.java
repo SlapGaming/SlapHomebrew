@@ -5,6 +5,7 @@ import java.util.HashSet;
 import me.naithantu.SlapHomebrew.Controllers.Flag;
 import me.naithantu.SlapHomebrew.Controllers.Horses;
 import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
+import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.Location;
@@ -63,17 +64,28 @@ public class EntityDamageByEntityListener extends AbstractListener {
 		
 		//Horse protection
 		if (event.getEntityType() == EntityType.HORSE && damager instanceof Player) {
-			Player player = (Player) damager;
 			Horse horse = (Horse) event.getEntity();
-			if (horses.hasOwner(horse.getUniqueId().toString())) {
-				String owner = horses.getOwner(horse.getUniqueId().toString());
-				if (!owner.equals(player.getName())) {
-					if (!player.hasPermission("slaphomebrew.staff")) {
-						event.setCancelled(true);
-						player.sendMessage(Util.getHeader() + "You are not allowed to attack " + owner + "'s horse.");
-					}
-				}
-			}
+
+            Player player = (Player) damager;
+            //Check if the player isn't a staff member
+            if (!Util.testPermission(player, "horse.staff")) {
+                //Check if the horse has an owner
+                String horseUUID = horse.getUniqueId().toString();
+                if (horses.hasOwner(horseUUID)) {
+                    //Get the ID of the damager
+                    int damagerID = UUIDControl.getUserID(player);
+
+                    //Get the ID of the owner
+                    int ownerID = horses.getOwnerID(horseUUID);
+
+                    //Check if the owner = the player
+                    if (ownerID != damagerID) {
+                        //=> Player not allowed to attack horse that isn't theirs
+                        Util.badMsg(player, "You are not allowed to attack this horse.");
+                        event.setCancelled(true);
+                    }
+                }
+            }
 		}
 		
 		

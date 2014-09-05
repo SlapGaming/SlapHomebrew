@@ -359,7 +359,7 @@ public class Util {
         int nrOfStrings = strings.size();
         //Loop through strings
         for (int i = 0; i < nrOfStrings; i++) {
-            if (i == (nrOfStrings - 1)) { //Last one, add the finalSplitChar
+            if (i == (nrOfStrings - 1) && i != 0) { //Last one, add the finalSplitChar
                 combined += finalSplitChar;
             } else if (i > 0) { //If not the first nor the last, add the splitChar
                 combined += splitChar;
