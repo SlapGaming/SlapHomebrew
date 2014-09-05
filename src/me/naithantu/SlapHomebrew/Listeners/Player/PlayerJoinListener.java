@@ -14,6 +14,7 @@ import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -85,6 +86,9 @@ public class PlayerJoinListener extends AbstractListener {
 					pi.setItem(3, new ItemStack(Material.STONE_SPADE));
 					pi.setItem(7, new ItemStack(Material.FEATHER));
 					pi.setItem(8, new ItemStack(Material.COOKIE, 5));
+
+                    //Teleport to the start island
+                    player.teleport(plugin.getServer().getWorld("world_start").getSpawnLocation().add(0, 77, 0));
 				}
 				
 				try { //Execute /list
