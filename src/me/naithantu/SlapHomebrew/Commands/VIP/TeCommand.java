@@ -24,7 +24,7 @@ public class TeCommand extends AbstractVipCommand {
 		
 		if (plugin.getTpBlocks().contains(targetPlayername)) {
 			if (!Util.testPermission(player, "tpblockoverride") && !plugin.getConfig().getStringList("tpallow." + targetPlayername).contains(player.getName().toLowerCase())) {
-				throw new CommandException("You man not TP to that player. Use /tpa [playername] to request a teleport.");
+				throw new CommandException("You may not TP to that player. Use /tpa [playername] to request a teleport.");
 			}
 		}
 		

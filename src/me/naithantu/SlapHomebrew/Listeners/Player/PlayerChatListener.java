@@ -66,7 +66,7 @@ public class PlayerChatListener extends AbstractListener {
 		//Block chat if not moved yet
 		if (!slapPlayer.hasMoved()) {
 			if (event.getMessage().matches("connected with .* using MineChat")) { //If message is saying something like "Connected with Minechat"
-				player.kickPlayer("MineChat is not allowed on this server."); //Kick the player
+				syncKick(player, "MineChat is not allowed on this server."); //Kick the player
 				event.setCancelled(true);
 				return;
 			}
@@ -104,7 +104,7 @@ public class PlayerChatListener extends AbstractListener {
 		//Block ryuuga from saying :S
 		if (playerName.equals("ryuuga")) {
 			if (message.contains(":s")) {
-				player.kickPlayer(":S");
+				syncKick(player, ":S");
 				event.setCancelled(true);
 				return;
 			}
@@ -235,6 +235,22 @@ public class PlayerChatListener extends AbstractListener {
                 }
 
         }
+    }
+
+    /**
+     * Kick a player in Sync
+     * @param player The player
+     * @param kickReason The reason
+     */
+    private static void syncKick(final Player player, final String kickReason) {
+        Util.run(new Runnable() {
+            @Override
+            public void run() {
+                if (player.isOnline()) {
+                    player.kickPlayer(kickReason);
+                }
+            }
+        });
     }
 	
 	@Override
