@@ -37,7 +37,7 @@ public class PromotionHomesCommand extends AbstractCommand {
 			offPlayer = getOfflinePlayer(args[2]); //Get player
 			homes = parseIntPositive(args[3]);
             currentName = offPlayer.getCurrentName();
-			homeControl.addHomesToPlayer(currentName, homes); //Add homes to a player
+			homeControl.addHomesToPlayer(offPlayer.getUserID(), homes); //Add homes to a player
 			hMsg("Added " + homes + (homes == 1 ? " home" : " homes") + " to the player: " + currentName); //Msg
 			break;
 			
@@ -47,7 +47,7 @@ public class PromotionHomesCommand extends AbstractCommand {
 			offPlayer = getOfflinePlayer(args[2]); //Get player
 			homes = parseIntPositive(args[3]);
             currentName = offPlayer.getCurrentName();
-			homeControl.removeHomesFromPlayer(currentName, homes); //Try to remove homes
+			homeControl.removeHomesFromPlayer(offPlayer.getUserID(), homes); //Try to remove homes
 			hMsg("Removed " + homes + (homes == 1 ? " home " : " homes ") + " from player: " + currentName); //Message how many homes removed
 			break;
 			
@@ -56,7 +56,7 @@ public class PromotionHomesCommand extends AbstractCommand {
 			if (args.length != 3) throw new UsageException("promotion homes gethomes [Player]"); //Usage
 			offPlayer = getOfflinePlayer(args[2]); //Get player
             currentName = offPlayer.getCurrentName();
-			homes = homeControl.getNumberOfBoughtHomes(currentName); //Get number of bought homes
+			homes = homeControl.getNumberOfBoughtHomes(offPlayer.getUserID()); //Get number of bought homes
 			hMsg(currentName + " has bought " + homes + (homes == 1 ? " home." : " homes.")); //Message
 			break;
 		

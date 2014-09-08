@@ -2,6 +2,7 @@ package me.naithantu.SlapHomebrew.Commands.Homes;
 
 import java.util.List;
 
+import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -27,12 +28,13 @@ public class HomesCommand extends AbstractCommand {
 		
 		final String playername = p.getName();
 		final Homes homes = plugin.getHomes(); //Get Homes
+        final UUIDControl.UUIDProfile profile = getUUIDProfile();
 		
 		final List<String> homeList = homes.getHomes(playername); //Get homes
 		final int homesSize = homeList.size(); //Get size
 		
 		if (homesSize == 0) {
-			hMsg("You have 0 out of " + homes.getTotalNumberOfHomes(playername) + " homes."); //Send used homes
+			hMsg("You have 0 out of " + homes.getTotalNumberOfHomes(profile.getUserID()) + " homes."); //Send used homes
 		} else {
 			addDoingCommand();
 			Util.runASync(new Runnable() {
@@ -56,7 +58,7 @@ public class HomesCommand extends AbstractCommand {
 					String json = fm.toJSONString();
 					
 					//Send used homes
-					hMsg("You have " + homesSize + " out of " + homes.getTotalNumberOfHomes(playername) + " homes.");
+					hMsg("You have " + homesSize + " out of " + homes.getTotalNumberOfHomes(profile.getUserID()) + " homes.");
 					//Send clickable homes
 					Util.sendJsonMessage(p, json);					
 					

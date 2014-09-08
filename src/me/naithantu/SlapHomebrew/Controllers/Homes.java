@@ -2,9 +2,11 @@ package me.naithantu.SlapHomebrew.Controllers;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.HomeException;
+import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 import me.naithantu.SlapHomebrew.Util.Util;
 
@@ -25,7 +27,7 @@ public class Homes extends AbstractController {
 	 * HashMap containing players who have extra homes
 	 * K:[Name of Player] => V:[Number of extra homes]
 	 */
-	private HashMap<String, Integer> boughtHomes;
+	private HashMap<Integer, Integer> boughtHomes;
 	
 	/**
 	 * HashMap containing all groups & how many homes that group has acces to.
@@ -129,74 +131,72 @@ public class Homes extends AbstractController {
 	
 	/**
 	 * Get the number of allowed homes for a player
-	 * @param playername The player
+	 * @param userID The player's ID
 	 * @return number of homes
 	 */
-	public int getTotalNumberOfHomes(String playername) {
-		return getDefaultNumberOfHomes(playername) + getNumberOfBoughtHomes(playername);
+	public int getTotalNumberOfHomes(int userID) {
+		return getDefaultNumberOfHomes(userID) + getNumberOfBoughtHomes(userID);
 	}
 	
 	/**
 	 * Get the default number of homes for a player
-	 * @param playername The player
+	 * @param userID The player's ID
 	 * @return default number of homes
 	 */
-	private int getDefaultNumberOfHomes(String playername) {
-		PermissionUser user = PermissionsEx.getUser(playername); //Get user
+	private int getDefaultNumberOfHomes(int userID) {
+        UUID uuid = UUID.fromString(UUIDControl.getInstance().getUUIDProfile(userID).getUUID());
+		PermissionUser user = PermissionsEx.getPermissionManager().getUser(uuid); //Get user
 		if (user == null) return 0; //If user is null, return 0
 		return defaultNumberOfHomes.get(user.getGroups()[0].getName()); //Get DefaultNumber
 	}
 	
 	/**
 	 * Add extra homes to a player
-	 * @param playername The player
+	 * @param userID The player's ID
 	 * @param homes The number of homes
 	 */
-	public void addHomesToPlayer(String playername, int homes) {
-		String pLc = playername.toLowerCase(); //To LC
-		if (boughtHomes.containsKey(pLc)) { //Check if already homes
-			homes += boughtHomes.get(pLc); //Get homes
+	public void addHomesToPlayer(int userID, int homes) {
+		if (boughtHomes.containsKey(userID)) { //Check if already homes
+			homes += boughtHomes.get(userID); //Get homes
 		}
-		boughtHomes.put(pLc, homes); //Put in Map
-		config.set("boughthome." + pLc, homes); //Set in config
+		boughtHomes.put(userID, homes); //Put in Map
+		config.set("boughthome." + userID, homes); //Set in config
 		yaml.saveConfig();
 	}
 	
 	/**
 	 * Remove extra bought homes from a player
-	 * @param playername The player
+	 * @param userID The player's ID
 	 * @param homes The number of homes
 	 * @throws CommandException if no extra homes bought or trying to remove more homes than bought
 	 */
-	public void removeHomesFromPlayer(String playername, int homes) throws CommandException {
-		String pLc = playername.toLowerCase();
-		if (!boughtHomes.containsKey(pLc)) { //Check if bought any homes
+	public void removeHomesFromPlayer(int userID, int homes) throws CommandException {
+		if (!boughtHomes.containsKey(userID)) { //Check if bought any homes
 			throw new CommandException("This player hasn't bought any homes!");
 		}
-		int currentHomes = getNumberOfBoughtHomes(playername); //Get number of bought homes
+		int currentHomes = getNumberOfBoughtHomes(userID); //Get number of bought homes
 		if (currentHomes < homes) { //If trying to remove more homes than bought
 			throw new CommandException("The player has only bought " + currentHomes + (currentHomes == 1 ? " home." : " homes."));
 		}
 		currentHomes -= homes;
 		if (currentHomes == 0) {
-			boughtHomes.remove(pLc); //Remove from map
-			config.set("boughthome." + pLc, null); //Remove from config
+			boughtHomes.remove(userID); //Remove from map
+			config.set("boughthome." + userID, null); //Remove from config
 		} else {
-			boughtHomes.put(pLc, currentHomes); //Set new amount
-			config.set("boughthome." + pLc, currentHomes); //Set in config
+			boughtHomes.put(userID, currentHomes); //Set new amount
+			config.set("boughthome." + userID, currentHomes); //Set in config
 		}
 		yaml.saveConfig();
 	}
 	
 	/**
 	 * Get number of homes the player has bought
-	 * @param playername The player
+	 * @param userID The player's ID
 	 * @return number of homes
 	 */
-	public int getNumberOfBoughtHomes(String playername) {
-		String pLc = playername.toLowerCase();
-		if (boughtHomes.containsKey(pLc)) {
-			return boughtHomes.get(pLc);
+	public int getNumberOfBoughtHomes(int userID) {
+		if (boughtHomes.containsKey(userID)) {
+			return boughtHomes.get(userID);
 		} else {
 			return 0;
 		}
@@ -209,7 +209,7 @@ public class Homes extends AbstractController {
 		if (config.contains("boughthome")) { //See if the config contains the boughthomes section
 			ConfigurationSection boughtConfig = config.getConfigurationSection("boughthome"); //Get the section
 			for (String key : boughtConfig.getKeys(false)) { //Loop thru all players
-				boughtHomes.put(key, boughtConfig.getInt(key)); //Put the player in the map
+				boughtHomes.put(Integer.valueOf(key), boughtConfig.getInt(key)); //Put the player in the map
 			}
 		}
 	}
