@@ -177,11 +177,31 @@ public abstract class AbstractCommand {
 	
 	/**
 	 * Get an offline player
+     * This will default to only players. CONSOLE is not allowed.
 	 * @param playername The player's name
 	 * @return The UUIDProfile
 	 * @throws CommandException if offline player has never played on this server before
 	 */
-	protected UUIDControl.UUIDProfile getOfflinePlayer(String playername) throws CommandException {
+    protected UUIDControl.UUIDProfile getOfflinePlayer(String playername) throws CommandException {
+        return getOfflinePlayer(playername, false);
+    }
+
+    /**
+     * Get an offline player or Console
+     * @param playername The player's name
+     * @param allowConsole Allow console to be returned
+     * @return The profile
+     * @throws CommandException if targeting console while not allowed, or no players with that name. NoMessageException is also possible in case of multiple users.
+     */
+	protected UUIDControl.UUIDProfile getOfflinePlayer(String playername, boolean allowConsole) throws CommandException {
+        //Check if the targeted player is console
+        if (!allowConsole) {
+            //=> Check if targeting CONSOLE
+            if (playername.equalsIgnoreCase("CONSOLE")) {
+                throw new CommandException("'CONSOLE' is not a player.");
+            }
+        }
+
         //Get UUIDControl
         UUIDControl control = UUIDControl.getInstance();
 
@@ -210,6 +230,8 @@ public abstract class AbstractCommand {
             throw new NoMessageException();
         }
 	}
+
+
 	
 	/*
 	 ***********
