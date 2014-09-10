@@ -39,7 +39,7 @@ public class OnlineTimeCommand extends AbstractCommand {
 						int rank = 1;
 						hMsg(ChatColor.YELLOW + "--- " + ChatColor.GOLD + "Onlinetime Leaderboard" + ChatColor.YELLOW + " ---");
 						for (LeaderboardEntry entry : entries) { //Loop thru entries
-							String playername = UUIDControl.getInstance().getUUIDProfile(entry.getUUID()).getCurrentName();
+							String playername = UUIDControl.getInstance().getUUIDProfile(entry.getUserID()).getCurrentName();
 							sender.sendMessage(ChatColor.GREEN + String.valueOf(rank) + ". " + ChatColor.GOLD + playername +  ChatColor.WHITE + " - " + Util.getTimePlayedString(entry.getPlaytime())); //Send score
 							rank++; //Increment rank
 						}

@@ -58,7 +58,7 @@ public class TimecheckCommand extends AbstractCommand {
 					public void run() {
                         //Create lists
 						HashSet<UUIDControl.UUIDProfile> profiles = new HashSet<>();
-                        HashMap<String, PermissionUser> uuidToUser = new HashMap<>();
+                        HashMap<Integer, PermissionUser> idToUser = new HashMap<>();
 						List<PermissionGroup> groups = PermissionsEx.getPermissionManager().getGroupList(); //Get all groups
 
 						for (PermissionGroup group : groups) { //Switch thru groups
@@ -72,7 +72,7 @@ public class TimecheckCommand extends AbstractCommand {
                                     UUIDControl.UUIDProfile profile = UUIDControl.getInstance().getUUIDProfile(user.getIdentifier());
                                     //Put in Map & Set
                                     profiles.add(profile);
-                                    uuidToUser.put(profile.getUUID(), user);
+                                    idToUser.put(profile.getUserID(), user);
 								}
 								break;
 							}
@@ -80,17 +80,17 @@ public class TimecheckCommand extends AbstractCommand {
 
                         //Create an array of all Profiles
                         UUIDControl.UUIDProfile[] profileArray = profiles.toArray(new UUIDControl.UUIDProfile[profiles.size()]);
-						HashMap<String, Long> playedMap = logger.getPlayedTimes(profileArray, staffDates[0], staffDates[1]); //Get played times
+						HashMap<Integer, Long> playedMap = logger.getPlayedTimes(profileArray, staffDates[0], staffDates[1]); //Get played times
 						ArrayList<LeaderboardEntry> entries = logger.createSortLeaderboardEntries(playedMap); //Create Leaderboard out the times
 						hMsg("Staff onlinetimes. " + (guides ? " (With guides)" : "")); //Hmsg
 						int rank = 1;
 						for (LeaderboardEntry entry : entries) { //Start sending the players
 							String prefix = "";
-							PermissionUser user = uuidToUser.get(entry.getUUID()); //Get user
+							PermissionUser user = idToUser.get(entry.getUserID()); //Get user
 							if (user.getPrefix() != null) { //Has prefix
 								prefix = user.getPrefix(); //Get prefix
 							}
-							uuidToUser.remove(entry.getUUID()); //Remove from map
+							idToUser.remove(entry.getUserID()); //Remove from map
 							
 							sender.sendMessage( //Send message
 								ChatColor.GREEN + String.valueOf(rank) + ". " + 
@@ -100,7 +100,7 @@ public class TimecheckCommand extends AbstractCommand {
 							rank++;
 						}
 						
-						for (PermissionUser user : uuidToUser.values()) { //Send any players that haven't played
+						for (PermissionUser user : idToUser.values()) { //Send any players that haven't played
 							String prefix = "";
 							if (user.getPrefix() != null) { //Has prefix
 								prefix = user.getPrefix(); //Get prefix
@@ -140,7 +140,7 @@ public class TimecheckCommand extends AbstractCommand {
                             userArray[x] = uuidControl.getUUIDProfile(user.getIdentifier());
                             x++;
 						}
-						HashMap<String, Long> map = logger.getPlayedTimes(userArray, groupDates[0], groupDates[1]); //Get played times, from all players
+						HashMap<Integer, Long> map = logger.getPlayedTimes(userArray, groupDates[0], groupDates[1]); //Get played times, from all players
 						ArrayList<LeaderboardEntry> lb = logger.createSortLeaderboardEntries(map); //Sort
 						sendLeaderboard(lb); //Send
 						removeDoingCommand();
@@ -244,7 +244,7 @@ public class TimecheckCommand extends AbstractCommand {
 	private void sendLeaderboard(ArrayList<LeaderboardEntry> lb) {
 		int rank = 1;
 		for (LeaderboardEntry entry : lb) { //Loop thru entries
-			String playername = UUIDControl.getInstance().getUUIDProfile(entry.getUUID()).getCurrentName();
+			String playername = UUIDControl.getInstance().getUUIDProfile(entry.getUserID()).getCurrentName();
 			sender.sendMessage(ChatColor.GREEN + String.valueOf(rank) + ". " + ChatColor.GOLD + playername +  ChatColor.WHITE + " - " + Util.getTimePlayedString(entry.getPlaytime())); //Send score
 			rank++;
 		}

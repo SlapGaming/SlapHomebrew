@@ -306,7 +306,7 @@ public class SessionLogger extends AbstractLogger implements Listener {
 	public ArrayList<LeaderboardEntry> getLeaderboard(Date fromDate, Date toDate, int entries) {
 		int addEntries = entries + 5; //Add 5 entries, just in case
 		long[] times = parseDates(fromDate, toDate); //Parse the dates
-		HashMap<String, Long> map = getPlayedTimes(times[0], times[1], addEntries); //Get playedtimes
+		HashMap<Integer, Long> map = getPlayedTimes(times[0], times[1], addEntries); //Get playedtimes
 		ArrayList<LeaderboardEntry> lb = createSortLeaderboardEntries(map); //Create & Sort the leaderboard
 		int lbSize = lb.size(); //Get size
 		while (entries < lbSize) { //Remove any entries over given Entries
@@ -323,7 +323,7 @@ public class SessionLogger extends AbstractLogger implements Listener {
 	 * @param toDate To date, can be null
 	 * @return Map with all players and their play times, possible that a player isn't in the map.
 	 */
-	public HashMap<String, Long> getPlayedTimes(UUIDControl.UUIDProfile[] players, Date fromDate, Date toDate) {
+	public HashMap<Integer, Long> getPlayedTimes(UUIDControl.UUIDProfile[] players, Date fromDate, Date toDate) {
 		long[] times = parseDates(fromDate, toDate);
 		return getPlayedTimes(times[0], times[1], 0, players);
 	}
@@ -337,11 +337,11 @@ public class SessionLogger extends AbstractLogger implements Listener {
 	 */
 	public long getPlayedTime(UUIDControl.UUIDProfile playerProfile, Date fromDate, Date toDate) {
 		long[] times = parseDates(fromDate, toDate); //Parse times
-		HashMap<String, Long> map = getPlayedTimes(times[0], times[1], 0, playerProfile); //Get map
+		HashMap<Integer, Long> map = getPlayedTimes(times[0], times[1], 0, playerProfile); //Get map
 		if (map.isEmpty()) {
 			return 0;
 		} else {
-			return map.get(playerProfile.getUUID());
+			return map.get(playerProfile.getUserID());
 		}
 	}
 	
@@ -371,14 +371,16 @@ public class SessionLogger extends AbstractLogger implements Listener {
 	 * @param toTime Time in milliseconds
 	 * @param limit Limit the number of results (0 or lower = Infinite)
 	 * @param players All the players that should be searched
-	 * @return HashMap with all played times Key:[Player] => Value:[TimePlayed]
+	 * @return HashMap with all played times Key:[UserID] => Value:[TimePlayed]
 	 */
-	private HashMap<String, Long> getPlayedTimes(long fromTime, long toTime, int limit, UUIDControl.UUIDProfile... players) {
+	private HashMap<Integer, Long> getPlayedTimes(long fromTime, long toTime, int limit, UUIDControl.UUIDProfile... players) {
 		batch(sqlQuery, finishedSessions, true); //Batch in sync with this thread
 		
 		Connection con = SQLPool.getConnection();
-		
-		HashMap<String, Long> timesMap = new HashMap<>();
+
+        //Time map
+        //K:[UserID] => V:[Time Played]
+		HashMap<Integer, Long> timesMap = new HashMap<>();
 		if (limit < 1 || limit > 20) { //Limit is set to 20
 			limit = 20;
 		}
@@ -402,7 +404,7 @@ public class SessionLogger extends AbstractLogger implements Listener {
 		try {
 			PreparedStatement prep = con.prepareStatement( //Create Prep'd Statement
 				"SELECT " +
-					"`player`, " +
+					"`user_id`, " +
 					"SUM( IF(`quit_time` > ?, ?, `quit_time`) - IF(`join_time` < ?, ?, `join_time`) ) as `online_time` " +
 				"FROM `sh_logger_times` " +
 				"WHERE (" +
@@ -446,7 +448,7 @@ public class SessionLogger extends AbstractLogger implements Listener {
 			ResultSet rs = prep.executeQuery(); //Execute			
 			while (rs.next()) { //Loop thru results
 				timesMap.put(
-					rs.getString(1).toLowerCase(), //Get naam
+					rs.getInt(1), //Get UserID
 					rs.getLong(2) //Get playedtime
 				);
 			}
@@ -473,11 +475,11 @@ public class SessionLogger extends AbstractLogger implements Listener {
 			
 			if ((join > fromTime && join < toTime) || (quit > fromTime && quit < toTime) ) { //If Join or Quit time in the TimeFrame
 				long played = (quit > toTime ? toTime : quit) - (join < fromTime ? fromTime : join); //Calculate played time
-				String UUID = session.UUID; //to LowerCase
-				if (timesMap.containsKey(UUID)) { //If already in map
-					played += timesMap.get(UUID); //Add to time
+                int userID = UUIDControl.getInstance().getUUIDProfile(session.UUID).getUserID();
+				if (timesMap.containsKey(userID)) { //If already in map
+					played += timesMap.get(userID); //Add to time
 				}
-				timesMap.put(UUID, played); //Put combined time in map
+				timesMap.put(userID, played); //Put combined time in map
 			}
 		}
 		return timesMap;
@@ -485,23 +487,23 @@ public class SessionLogger extends AbstractLogger implements Listener {
 	
 	public class LeaderboardEntry implements Comparable<LeaderboardEntry> {
 		
-		private String UUID;
+		private Integer userID;
 		private long playtime;
 		
-		public LeaderboardEntry(String UUID, long playtime) {
-			this.UUID = UUID;
+		public LeaderboardEntry(Integer userID, long playtime) {
+			this.userID = userID;
 			this.playtime = playtime;
 		}
-		
-		/**
-		 * Get the player's name in LowerCase
-		 * @return the name
-		 */
-		public String getUUID() {
-			return UUID;
-		}
-		
-		/**
+
+        /**
+         * Get the UserID of this entry
+         * @return the User ID
+         */
+        public Integer getUserID() {
+            return userID;
+        }
+
+        /**
 		 * Get the player's playedtime
 		 * @return The playedtime
 		 */
@@ -511,7 +513,7 @@ public class SessionLogger extends AbstractLogger implements Listener {
 				
 		@Override
 		public int compareTo(LeaderboardEntry o) {
-			return (int) (o.playtime - playtime);
+			return new Long(o.playtime).compareTo(new Long(playtime));
 		}
 		
 	}
@@ -521,9 +523,9 @@ public class SessionLogger extends AbstractLogger implements Listener {
 	 * @param playedTimes The played times
 	 * @return Sorted Array
 	 */
-	public ArrayList<LeaderboardEntry> createSortLeaderboardEntries(HashMap<String, Long> playedTimes) {
+	public ArrayList<LeaderboardEntry> createSortLeaderboardEntries(HashMap<Integer, Long> playedTimes) {
 		ArrayList<LeaderboardEntry> entries = new ArrayList<>();
-		for (Entry<String, Long> entry : playedTimes.entrySet()) {
+		for (Entry<Integer, Long> entry : playedTimes.entrySet()) {
 			entries.add(
 				new LeaderboardEntry(
 					entry.getKey(),
