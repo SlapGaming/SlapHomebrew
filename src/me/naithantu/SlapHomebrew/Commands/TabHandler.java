@@ -91,6 +91,7 @@ public class TabHandler {
 		case "plot":			l = PlotCommand.tabComplete(sender, args);						break;
 		case "potato":			/* No futher usage */           								break;
 		case "potion":			/* Usage here */												break;
+        case "profiler":        /* TODO */                                                      break;
 		case "promotion":		l = PromotionCommand.tabComplete(sender, args);					break;
 		case "ragequit":		/* No futher usage */											break;
 		case "rainbow":			l = RainbowCommand.tabComplete(sender, args);					break;

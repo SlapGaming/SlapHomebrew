@@ -5,6 +5,7 @@ import me.naithantu.SlapHomebrew.Commands.Lists.ListCommand;
 import me.naithantu.SlapHomebrew.Controllers.Homes;
 import me.naithantu.SlapHomebrew.Controllers.Jails;
 import me.naithantu.SlapHomebrew.Controllers.Mail;
+import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.NoteControl;
 import me.naithantu.SlapHomebrew.Controllers.TabController;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.PlotControl;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.VipForumControl;
@@ -62,6 +63,11 @@ public class PlayerJoinListener extends AbstractListener {
 		
 		//First time join?
 		final boolean firstTime = !player.hasPlayedBefore();
+
+        //Add a note if first join
+        if (firstTime) {
+            NoteControl.addNote(player.getUniqueId().toString(), "First join.");
+        }
 		
 		Util.runLater(new Runnable() {
 			

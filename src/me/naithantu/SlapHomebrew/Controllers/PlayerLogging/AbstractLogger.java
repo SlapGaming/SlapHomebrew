@@ -111,7 +111,7 @@ public abstract class AbstractLogger extends AbstractController {
      * @param UUID The UUID of the player
      * @return the user id or -1 if there's no profile found
      */
-    public static int getUserID(String UUID) {
+    protected static int getUserID(String UUID) {
         UUIDControl.UUIDProfile profile = UUIDControl.getInstance().getUUIDProfile(UUID);
         return (profile == null ? -1 : profile.getUserID());
     }
@@ -121,7 +121,7 @@ public abstract class AbstractLogger extends AbstractController {
      * @param userID The ID
      * @return The playername or null
      */
-    public static String getPlayernameOnID(int userID) {
+    protected static String getPlayernameOnID(int userID) {
         UUIDControl.UUIDProfile profile = UUIDControl.getInstance().getUUIDProfile(userID);
         if (profile == null) {
             return null;

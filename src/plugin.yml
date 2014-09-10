@@ -284,3 +284,7 @@ commands:
   semiafk:
     description: "Go Semi-AFK"
     usage: "Usage: /semiafk"
+  profiler:
+    description: "Player history command"
+    usage: "Usage: /profiler <addnote|show|page>"
+    aliases: [muted]

@@ -1,11 +1,15 @@
 package me.naithantu.SlapHomebrew.Controllers.PlayerLogging;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Types;
+import java.sql.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
+import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
+import me.naithantu.SlapHomebrew.Util.SQLPool;
+import mkremins.fanciful.FancyMessage;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -114,8 +118,49 @@ public class KickLogger extends AbstractLogger implements Listener {
 		batch();
 		instance = null;
 	}
-	
-	private class PlayerKicked implements Batchable {
+
+    /**
+     * Get a list of all kicks of a certain player
+     * @param userID The ID of the player
+     * @return the list of kicks
+     * @throws CommandException if an error occurred
+     */
+    public static ArrayList<Profilable> getKicks(int userID) throws CommandException {
+        //Create a new List
+        ArrayList<Profilable> kicks = new ArrayList<>();
+
+        //Get a connection
+        Connection con = SQLPool.getConnection();
+        try {
+            //Get the kicks
+            PreparedStatement prep = con.prepareStatement("SELECT `kicked_time`, `kicked_by`, `reason` FROM `sh_logger_kicks` WHERE `user_id` = ?;");
+            prep.setInt(1, userID);
+
+            //Get the results
+            ResultSet rs = prep.executeQuery();
+            while (rs.next()) {
+                //Get the data
+                long kickedTime = rs.getLong(1);
+                Integer kickedBy = rs.getInt(2);
+                if (rs.wasNull()) {
+                    kickedBy = null;
+                }
+                String reason = rs.getString(3);
+
+                //Add the new Kick
+                kicks.add(instance.new PlayerKicked(userID, kickedTime, kickedBy, reason));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new CommandException("An error occurred! Notify Stoux!");
+        } finally {
+            SQLPool.returnConnection(con);
+        }
+
+        return kicks;
+    }
+
+    public class PlayerKicked extends Profilable implements Batchable {
 
         int userID;
 		String UUID;
@@ -131,7 +176,14 @@ public class KickLogger extends AbstractLogger implements Listener {
 			this.kickReason = kickReason;
 		}
 
-		@Override
+        private PlayerKicked(int userID, long kickedTime, Integer kickedByID, String kickReason) {
+            this.userID = userID;
+            this.kickedTime = kickedTime;
+            this.kickedByID = kickedByID;
+            this.kickReason = kickReason;
+        }
+
+        @Override
 		public void addBatch(PreparedStatement preparedStatement) throws SQLException {
 			preparedStatement.setInt(1, userID);
 			preparedStatement.setLong(2, kickedTime);
@@ -157,6 +209,24 @@ public class KickLogger extends AbstractLogger implements Listener {
 
             //All good
             return true;
+        }
+
+        @Override
+        public long getTimestamp() {
+            return kickedTime;
+        }
+
+        @Override
+        public FancyMessage asFancyMessage() {
+            FancyMessage kick = super.asFancyMessage().then("Kicked");
+
+            //Check if the player is kicked by a mod
+            if (kickedByID != null) {
+                kick = kick.then(" by ").then(UUIDControl.getInstance().getUUIDProfile(kickedByID).getCurrentName()).color(ChatColor.GOLD);
+            }
+
+            //Add the rest
+            return kick.then(": " + kickReason);
         }
     }
 	

@@ -65,7 +65,7 @@ public class HelpMenu {
         if (actualPageNumber > nrOfPages) actualPageNumber = nrOfPages;
 
         //Calculate the first post to start with
-        int firstLine = (actualPageNumber - 1) * 4;
+        int firstLine = (actualPageNumber - 1) * displayLines;
 
         //Send message
         sender.sendMessage(header);

@@ -15,9 +15,11 @@ import java.util.Map.Entry;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
+import me.naithantu.SlapHomebrew.Util.DateUtil;
 import me.naithantu.SlapHomebrew.Util.SQLPool;
 import me.naithantu.SlapHomebrew.Util.Util;
 
+import mkremins.fanciful.FancyMessage;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -87,8 +89,50 @@ public class SessionLogger extends AbstractLogger implements Listener {
 		batch();
 		instance = null;
 	}
+
+    /**
+     * Get a list of sessions from a player
+     * @param userID The ID of the player
+     * @param logins Output the login times
+     * @param ips Output the IP
+     * @return List of sessions
+     * @throws CommandException if an error occurred
+     */
+    public static ArrayList<Profilable> getSessions(int userID, boolean logins, boolean ips) throws CommandException {
+        //Create the new list
+        ArrayList<Profilable> sessions = new ArrayList<>();
+
+        //Get the sessions
+        Connection con = SQLPool.getConnection();
+        try {
+            //Prepare a statement
+            PreparedStatement prep = con.prepareStatement("SELECT `join_time`, `quit_time`, `ip` FROM `sh_logger_times` WHERE `user_id` = ?;");
+            prep.setInt(1, userID);
+
+            //Get results
+            ResultSet rs = prep.executeQuery();
+            while (rs.next()) {
+                //Get data
+                long join = rs.getLong(1);
+                long quit = rs.getLong(2);
+                String ip = rs.getString(3);
+
+                //Add Session
+                sessions.add(instance.new Session(userID, join, quit, ip, logins, ips));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new CommandException("An error occurred! Notify Stoux!");
+        } finally {
+            SQLPool.returnConnection(con);
+        }
+
+
+        //Return the list
+        return sessions;
+    }
 	
-	private class Session implements Batchable {
+	private class Session extends Profilable implements Batchable {
 
         int userID;
 		String UUID;
@@ -97,6 +141,10 @@ public class SessionLogger extends AbstractLogger implements Listener {
 		String ip;
 		int port;
 		boolean firstTime;
+
+        //Profilable data
+        boolean logins;
+        boolean ips;
 		
 		public Session(String UUID, String ip, int port, boolean firstTime) {
 			this.UUID = UUID;
@@ -106,8 +154,17 @@ public class SessionLogger extends AbstractLogger implements Listener {
 			this.firstTime = firstTime;
 			quit = -1;
 		}
-		
-		public void setQuitTime() {
+
+        private Session(int userID, long join, long quit, String ip, boolean logins, boolean ips) {
+            this.userID = userID;
+            this.join = join;
+            this.quit = quit;
+            this.ip = ip;
+            this.logins = logins;
+            this.ips = ips;
+        }
+
+        public void setQuitTime() {
 			this.quit = System.currentTimeMillis();
 		}
 		
@@ -124,6 +181,30 @@ public class SessionLogger extends AbstractLogger implements Listener {
         @Override
         public boolean isBatchable() {
             return ((userID = getUserID(UUID)) != -1);
+        }
+
+        @Override
+        public long getTimestamp() {
+            return join;
+        }
+
+        @Override
+        public FancyMessage asFancyMessage() {
+            FancyMessage timestamp = super.asFancyMessage();
+            if (ips && !logins) {
+                return timestamp.then("IP: " + ip);
+            }
+            //Add the login times
+            FancyMessage login = timestamp.then("Logged in from ")
+                    .then("[" + DateUtil.format("HH:mm", join) + "]").color(ChatColor.GOLD).tooltip(DateUtil.format("dd MMMM yyyy | HH:mm:ss zzz", join))
+                    .then(" till ")
+                    .then("[" + DateUtil.format("HH:mm", quit) + "]").color(ChatColor.GOLD).tooltip(DateUtil.format("dd MMMM yyyy | HH:mm:ss zzz", quit));
+
+            //Check if IP needs to be added
+            if (!ips) return login;
+
+            //=> Add the IP
+            return login.then(" [IP]").color(ChatColor.DARK_AQUA).tooltip("IP: " + ip);
         }
     }
 	

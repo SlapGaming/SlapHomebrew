@@ -90,6 +90,7 @@ public class SlapHomebrew extends JavaPlugin {
     private MuteController muteController;
     private PlayerControl playerControl;
 	private PlayerLogger playerLogger;
+    private Profiler profiler;
 	private SpartaPads spartaPads;
 	private TabController tabController;
 	private ToldStatus toldStatus;
@@ -294,6 +295,7 @@ public class SlapHomebrew extends JavaPlugin {
 		 controllers.add(mention = new Mention());
          controllers.add(muteController = new MuteController());
 		 controllers.add(playerLogger = new PlayerLogger());
+         controllers.add(profiler = new Profiler());
 		 controllers.add(afk = new AwayFromKeyboard());
 		 controllers.add(spartaPads = new SpartaPads());
 		 controllers.add(tabController = new TabController());
@@ -522,7 +524,11 @@ public class SlapHomebrew extends JavaPlugin {
 	public PlayerLogger getPlayerLogger() {
 		return playerLogger;
 	}
-	
+
+    public Profiler getProfiler() {
+        return profiler;
+    }
+
 	public SpartaPads getSpartaPads() {
 		return spartaPads;
 	}

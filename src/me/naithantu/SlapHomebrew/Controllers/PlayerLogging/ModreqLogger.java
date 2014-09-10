@@ -112,7 +112,7 @@ public class ModreqLogger extends AbstractLogger implements Listener {
 
 	@Override
 	public void shutdown() {
-		batchModreqs();
+        batch(sqlQuery, new HashSet<Batchable>(modreqBatch.values()), true);
 	}
 	
 	private class CompletedModreq implements Batchable {

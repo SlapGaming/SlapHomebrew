@@ -47,7 +47,7 @@ public class SlapSecurityAgency extends AbstractController {
 		//Controllers
 		if (controlEnabled("VIPForum")) add(new VipForumControl()); //Control VIP Forum promotions 
 		if (controlEnabled("Plot"))		add(new PlotControl());		//Control plot marks
-        if (controlEnabled("Notes")) 	add(new NoteControl()); 	//Control Notes (added by staff)
+        if (controlEnabled("Note")) 	add(new NoteControl()); 	//Control Notes (added by staff)
 		
 		if (loggers.isEmpty()) { //Check if any loggers are enabled
 			Log.warn("All loggers are disabled in the config.");
@@ -85,7 +85,7 @@ public class SlapSecurityAgency extends AbstractController {
 					current = 0;
 				}
 			}
-		}, 12000, 2400);
+		}, 12000, 600);
 	}
 	
 	/**
