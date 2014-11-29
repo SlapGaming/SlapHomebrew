@@ -10,6 +10,7 @@ import me.naithantu.SlapHomebrew.Controllers.Flag;
 import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
 import me.naithantu.SlapHomebrew.PlayerExtension.SlapPlayer;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
+import mkremins.fanciful.FancyMessage;
 import net.minecraft.server.v1_8_R1.ChatSerializer;
 import net.minecraft.server.v1_8_R1.PacketPlayOutChat;
 
@@ -456,6 +457,20 @@ public class Util {
     				ChatSerializer.a(json)
     			)
     		);
+    }
+
+    /**
+     * Send a FancyMessage to a commandsender
+     * @param sender The player/commandsender
+     * @param fancyMessage The fancymessage
+     */
+    public static void sendFancyMessage(CommandSender sender, FancyMessage fancyMessage) {
+        if (sender instanceof  Player) {
+            Player player = (Player) sender;
+            sendJsonMessage(player, fancyMessage.toJSONString());
+        } else {
+            sender.sendMessage(fancyMessage.toOldMessageFormat());
+        }
     }
     
     /**

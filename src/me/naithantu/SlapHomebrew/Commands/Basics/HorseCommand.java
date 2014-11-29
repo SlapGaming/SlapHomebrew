@@ -234,7 +234,7 @@ public class HorseCommand extends AbstractCommand {
                         //Send messages to the player
                         hMsg("List of horses " + ChatColor.GRAY + " | Mouse over [INFO] & [KILL]!");
                         for (FancyMessage fm : fancyMessages) {
-                            fm.send(sender);
+                            Util.sendFancyMessage(sender, fm);
                         }
 
                         //Remove doing heavy command
@@ -381,7 +381,7 @@ public class HorseCommand extends AbstractCommand {
                                     //=> Has a mutated left over from VIP
                                     hMsg("You have 1 mutated horse, but you aren't allowed to mutate horses anymore. Rebuy VIP or donate for horses!");
                                     //Create a FancyMessage for the horse
-                                    mutatedHorses.get(0).createFancyMessage().send(player);
+                                    Util.sendFancyMessage(player, mutatedHorses.get(0).createFancyMessage());
                                     //Command is done
                                     removeDoingCommand();
                                 }
@@ -397,7 +397,7 @@ public class HorseCommand extends AbstractCommand {
                                     hMsg("You have " + nrOfMutatedHorses + " out of " + allowedHorses + " mutated horses. " + (nrOfMutatedHorses > allowedHorses ? ChatColor.GRAY + "(Lost VIP = -1)" : ""));
                                     //Send all horses
                                     for (SavedHorse horse : mutatedHorses) {
-                                        horse.createFancyMessage().send(player);
+                                        Util.sendFancyMessage(player, horse.createFancyMessage());
                                     }
                                     //Command is done
                                     removeDoingCommand();

@@ -1,6 +1,7 @@
 package me.naithantu.SlapHomebrew.Util.Helpers;
 
 import com.earth2me.essentials.utils.StringUtil;
+import me.naithantu.SlapHomebrew.Util.Util;
 import mkremins.fanciful.FancyMessage;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
@@ -109,7 +110,7 @@ public class FancyMessageMenu {
         sender.sendMessage(header);
         for (int currentLine = 0; firstLine + currentLine < nrOfLines; currentLine++) {
             //Send the lin
-            lines.get(firstLine + currentLine).asFancyMessage().send(sender);
+            Util.sendFancyMessage(sender, lines.get(firstLine + currentLine).asFancyMessage());
 
             //Only can go up to the number of lines
             if (currentLine == (displayLines - 1)) {
@@ -137,7 +138,7 @@ public class FancyMessageMenu {
         }
 
         //=> Send footer
-        footer.send(sender);
+        Util.sendFancyMessage(sender, footer);
     }
 
     /**
