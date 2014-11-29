@@ -308,6 +308,20 @@ public class SlapCommand extends AbstractCommand {
 			targetPlayer = getOnlinePlayer(args[1], false); //Get player
 			targetPlayer.chat(Util.buildString(args, " ", 2)); //Chat as other player
 			break;
+
+        case "removedoing": //Remove a player from the DoingCommand set
+            testPermission("removedoing");
+            //Get the player
+            Player removeDoingPlayer;
+            if (args.length > 1) {
+                removeDoingPlayer = getOnlinePlayer(args[1], false);
+            } else {
+                removeDoingPlayer = getPlayer();
+            }
+            //Remove from list
+            AbstractCommand.removeDoingCommand(removeDoingPlayer);
+            hMsg("Removed " + removeDoingPlayer.getName() + " from the doing command list.");
+            break;
 			
 		default: //Player issued commands
 			final Player player = getPlayer();
