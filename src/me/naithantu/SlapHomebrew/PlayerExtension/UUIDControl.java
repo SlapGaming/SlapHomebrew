@@ -3,9 +3,8 @@ package me.naithantu.SlapHomebrew.PlayerExtension;
 import me.naithantu.SlapHomebrew.Util.Log;
 import me.naithantu.SlapHomebrew.Util.SQLPool;
 import me.naithantu.SlapHomebrew.Util.Util;
-//Incase this ever gets deleted; Google Guava Libraries
-import net.minecraft.util.com.google.common.collect.ArrayListMultimap;
-import net.minecraft.util.com.google.common.collect.Multimap;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 

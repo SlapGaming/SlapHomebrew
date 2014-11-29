@@ -4,21 +4,20 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.sun.javaws.exceptions.InvalidArgumentException;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Controllers.Flag;
 import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
 import me.naithantu.SlapHomebrew.PlayerExtension.SlapPlayer;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
-import net.minecraft.server.v1_7_R4.ChatSerializer;
-import net.minecraft.server.v1_7_R4.PacketPlayOutChat;
+import net.minecraft.server.v1_8_R1.ChatSerializer;
+import net.minecraft.server.v1_8_R1.PacketPlayOutChat;
 
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_8_R1.entity.CraftPlayer;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -473,8 +472,8 @@ public class Util {
      * Get all the online players
      * @return player array
      */
-    public static Collection<Player> getOnlinePlayers() {
-    	return (Collection<Player>) Bukkit.getServer().getOnlinePlayers();
+    public static Collection<? extends Player> getOnlinePlayers() {
+    	return Bukkit.getServer().getOnlinePlayers();
     }
     
     /**

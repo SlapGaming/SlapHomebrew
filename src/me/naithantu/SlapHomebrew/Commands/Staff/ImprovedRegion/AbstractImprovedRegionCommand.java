@@ -2,6 +2,7 @@ package me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegion;
 
 import java.util.HashSet;
 
+import com.sk89q.worldguard.protection.managers.storage.StorageException;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.FoundRegionsException;
 import me.naithantu.SlapHomebrew.Commands.Exception.IRGException;
@@ -20,7 +21,6 @@ import com.sk89q.worldedit.bukkit.selections.Polygonal2DSelection;
 import com.sk89q.worldedit.bukkit.selections.Selection;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
-import com.sk89q.worldguard.protection.databases.ProtectionDatabaseException;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.GlobalProtectedRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
@@ -287,7 +287,7 @@ public abstract class AbstractImprovedRegionCommand extends AbstractCommand {
 	protected void saveChanges() throws IRGException {
 		try {
 			rm.save();
-		} catch (ProtectionDatabaseException e) {
+		} catch (StorageException e) {
 			throw new IRGException("Failed to save regions.. Something might be horrible wrong.. Exception: " + e.getMessage());
 		}
 	}

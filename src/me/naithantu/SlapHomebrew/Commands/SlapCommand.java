@@ -13,8 +13,8 @@ import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
 import me.naithantu.SlapHomebrew.PlayerExtension.SlapPlayer;
 import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import me.naithantu.SlapHomebrew.Util.Util;
-import net.minecraft.server.v1_7_R4.EntityPlayer;
-import net.minecraft.server.v1_7_R4.PacketPlayOutSpawnEntityLiving;
+import net.minecraft.server.v1_8_R1.EntityPlayer;
+import net.minecraft.server.v1_8_R1.PacketPlayOutSpawnEntityLiving;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -27,7 +27,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
-import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_8_R1.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
@@ -174,7 +174,26 @@ public class SlapCommand extends AbstractCommand {
 			testPermission("commandinfo");
 			if (args.length != 2) throw new UsageException("slap commandinfo [command]"); //Usage
 			String commandLc = args[1].toLowerCase();
-			PluginCommand command = plugin.getServer().getPluginCommand(commandLc); //Try to get the command
+		    PluginCommand command = plugin.getServer().getPluginCommand(commandLc); //Try to get the command
+            if (command == null) { //Not found as default, check for aliases
+                for (Map.Entry<String, String[]> entry : plugin.getServer().getCommandAliases().entrySet()) {
+                    boolean found = false;
+                    //Check aliases
+                    for (String alias : entry.getValue()) {
+                        if (alias.equalsIgnoreCase(commandLc)) {
+                            found = true;
+                            break;
+                        }
+                    }
+
+                    if (found) {
+                        //This is the command
+                        command = plugin.getServer().getPluginCommand(entry.getKey());
+                        break;
+                    }
+                }
+            }
+
 			if (command == null) { //If no command found
 				throw new CommandException("No command found.");
 			}

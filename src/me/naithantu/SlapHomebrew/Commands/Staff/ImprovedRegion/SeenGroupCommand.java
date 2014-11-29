@@ -101,8 +101,9 @@ public class SeenGroupCommand extends AbstractImprovedRegionCommand {
 		User essUser = uMap.getUser(player);
 		if (essUser == null) {
 			p.sendMessage(ChatColor.RED + "Player " + player + " doesn't have an Essentials file..");
-		}
-		map.put((essUser.isOnline() ? Long.MAX_VALUE : essUser.getLastLogout()), ChatColor.translateAlternateColorCodes('&', name));
+		} else {
+            map.put((plugin.getServer().getPlayer(player) != null ? Long.MAX_VALUE : essUser.getLastLogout()), ChatColor.translateAlternateColorCodes('&', name));
+        }
 	}
 	
 	private String parseLongToDays(long l) {

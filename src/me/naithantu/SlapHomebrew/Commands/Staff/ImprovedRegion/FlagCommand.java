@@ -1,5 +1,6 @@
 package me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegion;
 
+import com.sk89q.worldguard.bukkit.commands.region.RegionPrintoutBuilder;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.IRGException;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
@@ -11,7 +12,6 @@ import me.naithantu.SlapHomebrew.Util.Util;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import com.sk89q.worldguard.bukkit.commands.RegionPrintoutBuilder;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.flags.InvalidFlagFormat;
@@ -83,7 +83,7 @@ public class FlagCommand extends AbstractImprovedRegionCommand {
 		hMsg("Region flag '" + flag.getName() + "' for region '" + region.getId() + "' has been set to '" + value + "'.");
 				
 		//Send current flags
-		RegionPrintoutBuilder printout = new RegionPrintoutBuilder(region);
+		RegionPrintoutBuilder printout = new RegionPrintoutBuilder(region, null);
         printout.append(ChatColor.GRAY);
         printout.append("(Current flags: ");
         printout.appendFlagsList(false);

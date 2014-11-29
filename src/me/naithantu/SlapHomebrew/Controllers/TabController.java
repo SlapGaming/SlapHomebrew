@@ -426,7 +426,7 @@ public class TabController extends AbstractController {
 		loadTabSections();
 		
 		//Add online players
-		Collection<Player> players = Util.getOnlinePlayers();
+		Collection<? extends Player> players = Util.getOnlinePlayers();
 		if (!players.isEmpty()) {
 			for (Player player : players) { //Loop thru players
 				addToGroup(player); //Add to group

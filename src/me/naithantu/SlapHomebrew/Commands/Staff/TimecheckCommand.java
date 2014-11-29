@@ -71,8 +71,10 @@ public class TimecheckCommand extends AbstractCommand {
                                     //Get Profile
                                     UUIDControl.UUIDProfile profile = UUIDControl.getInstance().getUUIDProfile(user.getIdentifier());
                                     //Put in Map & Set
-                                    profiles.add(profile);
-                                    idToUser.put(profile.getUserID(), user);
+                                    if (profile == null) {
+                                        profiles.add(profile);
+                                        idToUser.put(profile.getUserID(), user);
+                                    }
 								}
 								break;
 							}

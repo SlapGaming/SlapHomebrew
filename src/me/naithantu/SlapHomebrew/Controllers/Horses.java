@@ -5,8 +5,8 @@ import me.naithantu.SlapHomebrew.Storage.HorseSerializables.MutatedHorsesCollect
 import me.naithantu.SlapHomebrew.Storage.HorseSerializables.SavedHorse;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 import me.naithantu.SlapHomebrew.Util.Util;
-import net.minecraft.util.com.google.common.collect.ArrayListMultimap;
-import net.minecraft.util.com.google.common.collect.Multimap;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;

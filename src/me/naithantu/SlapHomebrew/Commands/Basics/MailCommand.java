@@ -41,7 +41,7 @@ public class MailCommand extends AbstractCommand {
 		
 		Mail mail = plugin.getMail(); //Get mail
 				
-		if (mail.isDevServer()) throw new CommandException(ErrorMsg.runningDev); //Check for Dev server
+		if (mail.isDevServer()) throw new CommandException("Mail is temporary disabled!"); //Check for Dev server
 		if (args.length == 0) return false; //Usage
 		
 		switch(args[0].toLowerCase()) { 

@@ -10,12 +10,12 @@ import me.naithantu.SlapHomebrew.Storage.HorseSerializables.SavedHorse;
 import me.naithantu.SlapHomebrew.Util.Helpers.HelpMenu;
 import me.naithantu.SlapHomebrew.Util.Util;
 import mkremins.fanciful.FancyMessage;
-import net.minecraft.server.v1_7_R4.AttributeInstance;
-import net.minecraft.server.v1_7_R4.EntityInsentient;
-import net.minecraft.server.v1_7_R4.GenericAttributes;
+import net.minecraft.server.v1_8_R1.AttributeInstance;
+import net.minecraft.server.v1_8_R1.EntityInsentient;
+import net.minecraft.server.v1_8_R1.GenericAttributes;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.v1_7_R4.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_8_R1.entity.CraftLivingEntity;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 
