@@ -87,6 +87,18 @@ public class EntityDamageByEntityListener extends AbstractListener {
                 }
             }
 		}
+
+        //Armor stand protection
+        if (event.getEntityType() == EntityType.ARMOR_STAND && damager instanceof Player) {
+            Location armorStandLoc = event.getEntity().getLocation();
+
+            //Check if the player has access to that area
+            Player player = (Player) damager;
+            if (!plugin.getworldGuard().canBuild(player, armorStandLoc)) {
+                event.setCancelled(true);
+                Util.badMsg(player, "You do not have access to that Armor Stand.");
+            }
+        }
 		
 		
 	}

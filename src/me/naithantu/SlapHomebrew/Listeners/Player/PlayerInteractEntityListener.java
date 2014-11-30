@@ -129,7 +129,13 @@ public class PlayerInteractEntityListener extends AbstractListener {
 			}
 		}
 		
-		
+		//Protect Armor Stands
+        if (clickedEntity.getType() == EntityType.ARMOR_STAND) {
+            if (!plugin.getworldGuard().canBuild(player, clickedEntity.getLocation())) {
+                event.setCancelled(true);
+                Util.badMsg(player, "You do not have access to that Armor Stand.");
+            }
+        }
 		
 	}
 		

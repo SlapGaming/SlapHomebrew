@@ -6,6 +6,7 @@ import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -14,15 +15,28 @@ public class BlockPlaceListener extends AbstractListener {
 	
 	@EventHandler
 	public void onBlockPlace(BlockPlaceEvent event) {
-		// Add metadata to skulls placed in the wither arena to find out who
-		// made a wither.
 		Block block = event.getBlock();
-		if (block.getType() == Material.SKULL) {
-			if (Util.hasFlag(plugin, block.getLocation(), Flag.ALLOWWITHERSPAWN)) {
-				block.setMetadata("slapWitherSkull", new FixedMetadataValue(
-						plugin, event.getPlayer().getName()));
-			}
-		}
+        Player player = event.getPlayer();
+
+        //Switch on material type
+        switch(block.getType()) {
+            //Add metadata to skulls placed in the wither arena to find out who made a wither.
+            case SKULL:
+                if (Util.hasFlag(plugin, block.getLocation(), Flag.ALLOWWITHERSPAWN)) {
+                    block.setMetadata("slapWitherSkull", new FixedMetadataValue(
+                            plugin, event.getPlayer().getName()));
+                }
+                break;
+
+            //Temporary Slimeblock placement prevention
+            case SLIME_BLOCK:
+                if (!player.isOp()) {
+                    Util.badMsg(event.getPlayer(), "You are not allowed to place this block (yet). Sorry!");
+                    event.setCancelled(true);
+                }
+                break;
+
+        }
 	}
 
 	@SuppressWarnings("deprecation")
