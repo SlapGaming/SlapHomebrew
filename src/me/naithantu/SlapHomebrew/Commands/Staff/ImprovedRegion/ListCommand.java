@@ -3,6 +3,7 @@ package me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegion;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
+import java.util.UUID;
 
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
@@ -23,15 +24,15 @@ public class ListCommand extends AbstractImprovedRegionCommand {
 
 	@Override
 	protected void action() throws CommandException {
-		String ownedBy = null;
+		UUID ownedBy = null;
 		int biggerThen = 2; //Parse length for pages
 		if (all) {
 			if (args.length == 1 || (args.length > 2 && args[1].equalsIgnoreCase("-p"))) throw new UsageException("irg list <Player | all>"); //Usage
 			if (!args[1].equalsIgnoreCase("all")) { //Check if all or player
-				ownedBy = getOfflinePlayer(args[1]).getCurrentName();
+				ownedBy = UUID.fromString(getOfflinePlayer(args[1]).getUUID());
 			}
 		} else {
-			ownedBy = p.getName();
+			ownedBy = p.getUniqueId();
 			biggerThen = 1;
 		}
 		
@@ -51,8 +52,8 @@ public class ListCommand extends AbstractImprovedRegionCommand {
             
             // Filtering by owner?
             if (ownedBy != null) {
-                entry.isOwner = regions.get(id).isOwner(ownedBy);
-                entry.isMember = regions.get(id).isMember(ownedBy);
+                entry.isOwner = regions.get(id).getOwners().contains(ownedBy);
+                entry.isMember = regions.get(id).getMembers().contains(ownedBy);
 
                 if (!entry.isOwner && !entry.isMember) {
                     continue; // Skip

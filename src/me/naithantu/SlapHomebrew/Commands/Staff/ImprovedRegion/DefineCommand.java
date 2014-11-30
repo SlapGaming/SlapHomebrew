@@ -14,6 +14,8 @@ import org.bukkit.entity.Player;
 import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
+import java.util.UUID;
+
 public class DefineCommand extends AbstractImprovedRegionCommand {
 	
 	public DefineCommand(Player p, String[] args) {
@@ -35,7 +37,7 @@ public class DefineCommand extends AbstractImprovedRegionCommand {
 		if (args.length > 2) { //Owners specified
 			DefaultDomain domain = new DefaultDomain();
 			for (int x = 2; x < args.length; x++) { //Get players
-				domain.addPlayer(getOfflinePlayer(args[x]).getCurrentName());
+				domain.addPlayer(UUID.fromString(getOfflinePlayer(args[x]).getUUID()));
 			}
 			region.setOwners(domain); //Set owners
 		}

@@ -47,7 +47,7 @@ public class InfoCommand extends AbstractImprovedRegionCommand {
 			region = getRegion(args[1]); //Get the region by name
 			if (!all) { //If not acces to all regions
 				String playername = p.getName();
-				if (!region.isMember(playername) && !region.isOwner(playername)) { //Check if owner or member
+				if (!region.getMembers().contains(p.getUniqueId()) && !region.getOwners().contains(p.getUniqueId())) { //Check if owner or member
 					throw new IRGException("You are not the owner or member of the specified region.");
 				}
 			}

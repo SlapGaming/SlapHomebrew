@@ -1,6 +1,7 @@
 package me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegion;
 
 import java.util.HashSet;
+import java.util.UUID;
 
 import com.sk89q.worldguard.protection.managers.storage.StorageException;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
@@ -38,7 +39,6 @@ public abstract class AbstractImprovedRegionCommand extends AbstractCommand {
 	
 	/**
 	 * Make a new iRG command in sync
-	 * @param plugin The plugin
 	 * @param p The player
 	 * @param args The args of the command
 	 */
@@ -52,7 +52,6 @@ public abstract class AbstractImprovedRegionCommand extends AbstractCommand {
 	
 	/**
 	 * Make a new iRG command with possible aSync
-	 * @param plugin The plugin
 	 * @param p The player
 	 * @param args The args of the command
 	 * @param aSync is aSync
@@ -108,7 +107,6 @@ public abstract class AbstractImprovedRegionCommand extends AbstractCommand {
 	
 	/**
 	 * Set the player's WE CUI selection
-	 * @param p The player
 	 * @param region The region
 	 */
 	protected void setPlayerSelection(ProtectedRegion region) {
@@ -198,10 +196,10 @@ public abstract class AbstractImprovedRegionCommand extends AbstractCommand {
 		HashSet<String> foundRegions = new HashSet<>();
 		
 		int highestPriority = -9001; boolean oneRegion = false;
-		String playername = p.getName();
+		UUID playerUUID = p.getUniqueId();
 		for (ProtectedRegion foundRegion : regionSet) { //Loop thru regions
-			boolean isOwner = foundRegion.isOwner(playername);
-			boolean isMember = foundRegion.isMember(playername);
+			boolean isOwner = foundRegion.getOwners().contains(playerUUID);
+			boolean isMember = foundRegion.getMembers().contains(playerUUID);
 			
 			if (!isMember && !isOwner) {
 				continue;
@@ -220,7 +218,7 @@ public abstract class AbstractImprovedRegionCommand extends AbstractCommand {
 				oneRegion = false; //No longer only one region
 			}
 		}
-		if (region == null) throw new FoundRegionsException(playername, member); //No regions found that this player can acces
+		if (region == null) throw new FoundRegionsException(p.getName(), member); //No regions found that this player can acces
 		if (!oneRegion) throw new FoundRegionsException(foundRegions); //Multiple regions with the same priority
 		return region;
 	}

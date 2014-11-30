@@ -1,12 +1,15 @@
 package me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegion;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.UUID;
 
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.RegionLogger;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.RegionLogger.ChangeType;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.RegionLogger.ChangerIsA;
+import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.ChatColor;
@@ -46,27 +49,32 @@ public class AddMemberCommand extends AbstractImprovedRegionCommand {
 				region = getHighestOwnedPriorityRegion(false);
 			}
 		}
-		
-		ArrayList<String> offPlayers = new ArrayList<>();
+
+        //Get UUIDProfiles of the players
+		ArrayList<UUIDControl.UUIDProfile> offPlayers = new ArrayList<>();
 		for (int x = firstMember; x < (skipLastTwo ? args.length - 2 : args.length); x++) { //Get players
-			offPlayers.add(getOfflinePlayer(args[x]).getCurrentName());
+			offPlayers.add(getOfflinePlayer(args[x]));
 		}
-		
+		//Check if any players added
 		if (offPlayers.size() == 0) throw new CommandException("No players found!");
-		
+
+        HashSet<String> playernames = new HashSet<>();
+        //Add the players to the region
 		DefaultDomain memberDomain = region.getMembers();
-		for (String player : offPlayers) { //Add members
-			if (!memberDomain.contains(player)) {
-				memberDomain.addPlayer(player);
+		for (UUIDControl.UUIDProfile player : offPlayers) { //Add members
+            UUID playerUUID = UUID.fromString(player.getUUID());
+			if (!memberDomain.contains(playerUUID)) {
+				memberDomain.addPlayer(playerUUID);
+                playernames.add(player.getCurrentName());
 			}
 		}
 		
 		//Save changes & Msg
 		saveChanges();
-		hMsg("Added " + ChatColor.RED + Util.buildString(offPlayers, ChatColor.YELLOW + ", " + ChatColor.RED) + ChatColor.YELLOW + " as members to region " + ChatColor.RED + region.getId());
+		hMsg("Added " + ChatColor.RED + Util.buildString(playernames, ChatColor.YELLOW + ", " + ChatColor.RED) + ChatColor.YELLOW + " as members to region " + ChatColor.RED + region.getId());
 		
 		//Log
-		RegionLogger.logRegionChange(region, p, (all ? ChangerIsA.staff : ChangerIsA.owner), ChangeType.addmember, Util.buildString(offPlayers, " "));
+		RegionLogger.logRegionChange(region, p, (all ? ChangerIsA.staff : ChangerIsA.owner), ChangeType.addmember, Util.buildString(playernames, " "));
 	}
 
 	

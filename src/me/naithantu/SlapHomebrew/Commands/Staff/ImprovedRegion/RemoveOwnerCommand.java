@@ -1,12 +1,15 @@
 package me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegion;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.UUID;
 
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.RegionLogger;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.RegionLogger.ChangeType;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.RegionLogger.ChangerIsA;
+import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.ChatColor;
@@ -28,26 +31,30 @@ public class RemoveOwnerCommand extends AbstractImprovedRegionCommand {
 		validateRegionID(args[1]); //Check if a valid region
 		ProtectedRegion region = getRegion(args[1]); //Get the region
 		
-		ArrayList<String> offPlayers = new ArrayList<>();
+		ArrayList<UUIDControl.UUIDProfile> offPlayers = new ArrayList<>();
 		for (int x = 2; x < args.length; x++) { //Get players
-			offPlayers.add(getOfflinePlayer(args[x]).getCurrentName());
+			offPlayers.add(getOfflinePlayer(args[x]));
 		}
 		
 		if (offPlayers.size() == 0) throw new CommandException("No players found!");
-		
+
+        HashSet<String> playernames = new HashSet<>();
+        //Remove the owners
 		DefaultDomain owners = region.getOwners();
-		for (String player : offPlayers) {
-			if (owners.contains(player)) {
-				owners.removePlayer(player);
+		for (UUIDControl.UUIDProfile player : offPlayers) {
+            UUID playerUUID = UUID.fromString(player.getUUID());
+			if (owners.contains(playerUUID)) {
+				owners.removePlayer(playerUUID);
+                playernames.add(player.getCurrentName());
 			}
 		}
 		
 		//Save & Msg
 		saveChanges();
-		hMsg("Removed " + ChatColor.RED + Util.buildString(offPlayers, ChatColor.YELLOW + ", " + ChatColor.RED) + ChatColor.YELLOW + " as owners from region " + ChatColor.RED + region.getId());
+		hMsg("Removed " + ChatColor.RED + Util.buildString(playernames, ChatColor.YELLOW + ", " + ChatColor.RED) + ChatColor.YELLOW + " as owners from region " + ChatColor.RED + region.getId());
 		
 		//Log
-		RegionLogger.logRegionChange(region, p, ChangerIsA.staff, ChangeType.removeowner, Util.buildString(offPlayers, " "));
+		RegionLogger.logRegionChange(region, p, ChangerIsA.staff, ChangeType.removeowner, Util.buildString(playernames, " "));
 	}
 
 }

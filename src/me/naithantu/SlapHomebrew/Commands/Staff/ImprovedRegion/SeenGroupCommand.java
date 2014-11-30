@@ -2,9 +2,10 @@ package me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegion;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.UUID;
 
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
+import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.ChatColor;
@@ -20,8 +21,8 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 public class SeenGroupCommand extends AbstractImprovedRegionCommand {
 	
 	private UserMap uMap;
-	private HashMap<Long, String> owners;
-	private HashMap<Long, String> members;;
+	private ArrayList<SeenObject> owners;
+	private ArrayList<SeenObject> members;;
 	
 	public SeenGroupCommand(Player p, String[] args) {
 		super(p, args);
@@ -46,70 +47,86 @@ public class SeenGroupCommand extends AbstractImprovedRegionCommand {
 				uMap = plugin.getEssentials().getUserMap();
 				
 				//Create new maps
-				owners = new HashMap<>();
-				members = new HashMap<>();
+				owners = new ArrayList<>();
+				members = new ArrayList<>();
 				
-				for (String owner : region.getOwners().getPlayers()) { //Parse all owners
-					parsePlayer(owners, owner);
+				for (UUID owner : region.getOwners().getUniqueIds()) { //Parse all owners
+					owners.add(parsePlayer(new SeenObject(owner)));
 				}
 				
-				for (String member : region.getMembers().getPlayers()) { //Parse all members
-					parsePlayer(members, member);
+				for (UUID member : region.getMembers().getUniqueIds()) { //Parse all members
+                    members.add(parsePlayer(new SeenObject(member)));
 				}
 				
 				if (owners.isEmpty()) { //Check if any owners
 					hMsg("This region has no owners.");
 				} else {
-					ArrayList<Long> times = new ArrayList<>(owners.keySet()); //Get all times
-					Collections.reverse(times); //Sort
+					Collections.sort(owners); //Sort
 					hMsg("Owners of region " + region.getId()); //Message
-					for (Long l : times) { //Send info
-						p.sendMessage(ChatColor.GOLD + "  \u2517\u25B6 " + owners.get(l) + " -> " + parseLongToDays(l)); //Send info
+					for (SeenObject owner : owners) { //Send info
+						p.sendMessage(ChatColor.GOLD + "  \u2517\u25B6 " + owner.displayname + " -> " + parseLongToDays(owner.lastOnline)); //Send info
 					}
 				}
 				
 				if (members.isEmpty()) { //Check if any members
 					hMsg("This region has no members.");
 				} else {
-					ArrayList<Long> times = new ArrayList<>(members.keySet());
-					Collections.reverse(times);
+					Collections.reverse(members);
 					hMsg("Members of region " + region.getId());
-					for (Long l : times) {
-						p.sendMessage(ChatColor.GOLD + "  \u2517\u25B6 " + members.get(l) + " -> " + parseLongToDays(l));
+					for (SeenObject member : members) {
+						p.sendMessage(ChatColor.GOLD + "  \u2517\u25B6 " + member.displayname + " -> " + parseLongToDays(member.lastOnline));
 					}
 				}
 			}
 		});
 		
 	}
-	
-	private void parsePlayer(HashMap<Long, String> map, String player) {
+
+    /**
+     * Parse a player's data to fill a SeenObject
+     * @param player The SeenObject with only the player's UUID
+     * @return The filled SeenObject
+     */
+	private SeenObject parsePlayer(SeenObject player) {
+        //Get the current name
+        String currentName = UUIDControl.getInstance().getUUIDProfile(player.playerUUID).getCurrentName();
+
+        //Get the prefix & suffix from PEX
 		String name = "";
-		PermissionUser pexUser = PermissionsEx.getUser(player);
+		PermissionUser pexUser = PermissionsEx.getPermissionManager().getUser(player.playerUUID);
 		if (pexUser != null) {
 			if (pexUser.getPrefix() != null) {
 				name += pexUser.getPrefix();
 			}
 		}
-		name += player;
+		name += currentName;
 		if (pexUser != null) {
 			if (pexUser.getSuffix() != null) {
 				name += pexUser.getSuffix();
 			}
 		}
-		
-		User essUser = uMap.getUser(player);
+        //=> Set in object
+        player.displayname = ChatColor.translateAlternateColorCodes('&', name);
+
+        //Get the last seen from Essentials
+		User essUser = uMap.getUser(player.playerUUID);
 		if (essUser == null) {
-			p.sendMessage(ChatColor.RED + "Player " + player + " doesn't have an Essentials file..");
+			p.sendMessage(ChatColor.RED + "Player " + currentName + " doesn't have an Essentials file..");
+            player.lastOnline = -1;
 		} else {
-            map.put((plugin.getServer().getPlayer(player) != null ? Long.MAX_VALUE : essUser.getLastLogout()), ChatColor.translateAlternateColorCodes('&', name));
+            player.lastOnline = (plugin.getServer().getPlayer(player.playerUUID) != null ? Long.MAX_VALUE : essUser.getLastLogout());
         }
+
+        //Return the object
+        return player;
 	}
 	
 	private String parseLongToDays(long l) {
 		if (l == Long.MAX_VALUE) { //Check if Max Value (Online now)
 			return "Currently online.";
-		} else {
+		} else if (l == -1) {
+            return "Unknown.";
+        } else {
 			long pastTime = System.currentTimeMillis() - l;
 			int days = (int)Math.floor(pastTime / 1000 / 86400.00);
 			if (days == 0) {
@@ -120,4 +137,19 @@ public class SeenGroupCommand extends AbstractImprovedRegionCommand {
 		}
 	}
 
+    private class SeenObject implements Comparable<SeenObject> {
+
+        private UUID playerUUID;
+        private long lastOnline;
+        private String displayname;
+
+        private SeenObject(UUID playerUUID) {
+            this.playerUUID = playerUUID;
+        }
+
+        @Override
+        public int compareTo(SeenObject o) {
+            return Long.valueOf(lastOnline).compareTo(Long.valueOf(o.lastOnline));
+        }
+    }
 }
