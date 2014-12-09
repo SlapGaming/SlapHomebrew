@@ -60,6 +60,18 @@ public class PlayerInteractListener extends AbstractListener {
 						event.setCancelled(true);
 					}
 				}
+
+                //Deny changing a mob spawner
+                if (clickedBlock == Material.MOB_SPAWNER) {
+                    if (player.getItemInHand().getType() == Material.MONSTER_EGG || player.getItemInHand().getType() == Material.MONSTER_EGG) {
+                        if (!player.isOp()) {
+                            Util.badMsg(player, "You are not allowed to change a mob spawner.");
+                            event.setCancelled(true);
+                        }
+                    }
+                }
+
+
 			} catch (NullPointerException e) {
 				System.out.println("Nullpointer caught " + event.getClickedBlock());
 			}
