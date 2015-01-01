@@ -5,6 +5,7 @@ import me.naithantu.SlapHomebrew.Controllers.Jails;
 import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
 import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
 
+import me.naithantu.SlapHomebrew.PlayerExtension.SlapPlayer;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -39,7 +40,10 @@ public class PlayerTeleportListener extends AbstractListener {
 		}
 		
 		//Set last activity
-		PlayerControl.getPlayer(player).active();
+		SlapPlayer sPlayer = PlayerControl.getPlayer(player);
+        if (sPlayer != null) {
+            sPlayer.active();
+        }
 		
 		if (event.getTo().getWorld().getName().equals("world_nether") && event.getTo().getBlockY() >= 127){ 
 			player.sendMessage(ChatColor.RED + "You may not go above the nether!");
