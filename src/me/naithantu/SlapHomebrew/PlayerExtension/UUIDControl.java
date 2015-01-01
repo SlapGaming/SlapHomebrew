@@ -350,8 +350,11 @@ public class UUIDControl {
          * @return the username
          */
         public String getCurrentName() {
-            NameProfile currentProfile = names.get(0);
-            return (currentProfile == null ? null : currentProfile.getPlayername());
+            if (!names.isEmpty()) {
+                return names.get(0).getPlayername();
+            } else {
+                return "N/A (UUID: " + getUUID() + ")";
+            }
         }
 
         /**
