@@ -1,18 +1,15 @@
 package me.naithantu.SlapHomebrew.Commands.Promotion;
 
-import java.util.List;
-
-import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.command.CommandSender;
-
-import ru.tehkode.permissions.PermissionUser;
-import ru.tehkode.permissions.bukkit.PermissionsEx;
-
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
 import me.naithantu.SlapHomebrew.Util.Util;
+import nl.stoux.SlapPlayers.Model.Profile;
+import org.bukkit.command.CommandSender;
+import ru.tehkode.permissions.PermissionUser;
+import ru.tehkode.permissions.bukkit.PermissionsEx;
+
+import java.util.List;
 
 public class PromotionCommand extends AbstractCommand {
 
@@ -30,7 +27,7 @@ public class PromotionCommand extends AbstractCommand {
 			throw new UsageException(usage);
 		}
 		
-		UUIDControl.UUIDProfile offPlayer; String playername;
+		Profile offPlayer; String playername;
 		
 		switch (args[0].toLowerCase()) {
 		case "givemoney": case "addmoney": case "money": //Give the player money

@@ -7,9 +7,9 @@ import me.naithantu.SlapHomebrew.Controllers.Horses;
 import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
 import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
 import me.naithantu.SlapHomebrew.PlayerExtension.SlapPlayer;
-import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import me.naithantu.SlapHomebrew.Util.Util;
 
+import nl.stoux.SlapPlayers.SlapPlayers;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -105,7 +105,7 @@ public class PlayerInteractEntityListener extends AbstractListener {
 				//Check if the horse has an owner
                 if (horses.hasOwner(horseUUID)) {
                     //Check if the player is allowed to interact with it
-                    int playerID = UUIDControl.getUserID(player);
+                    int playerID = SlapPlayers.getUUIDController().getProfile(player).getID();
                     if (!horses.isAllowedOnHorse(horseUUID, playerID)) {
                         //=> Not allowed, cancel
                         event.setCancelled(true);

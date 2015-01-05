@@ -29,7 +29,7 @@ public class ListCommand extends AbstractImprovedRegionCommand {
 		if (all) {
 			if (args.length == 1 || (args.length > 2 && args[1].equalsIgnoreCase("-p"))) throw new UsageException("irg list <Player | all>"); //Usage
 			if (!args[1].equalsIgnoreCase("all")) { //Check if all or player
-				ownedBy = UUID.fromString(getOfflinePlayer(args[1]).getUUID());
+				ownedBy = getOfflinePlayer(args[1]).getUUID();
 			}
 		} else {
 			ownedBy = p.getUniqueId();

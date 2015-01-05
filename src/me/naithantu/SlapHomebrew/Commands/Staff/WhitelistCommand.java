@@ -3,7 +3,7 @@ package me.naithantu.SlapHomebrew.Commands.Staff;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
+import nl.stoux.SlapPlayers.Model.Profile;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -28,7 +28,7 @@ public class WhitelistCommand extends AbstractCommand {
 		
 		Whitelist whitelist = plugin.getWhitelist();
 		
-		UUIDControl.UUIDProfile offPlayer;
+		Profile offPlayer;
 		
 		switch (args[0].toLowerCase()) {
 		case "on": //Turn whitelist on
@@ -44,14 +44,14 @@ public class WhitelistCommand extends AbstractCommand {
 		case "add": case "addplayer": //Add a player to the whitelist
 			if (args.length != 2) throw new UsageException("whitelist add [Player]"); //Usage
 			offPlayer = getOfflinePlayer(args[1]); //Check if existing user
-			whitelist.addPlayer(offPlayer.getUUID()); //Add to whitelist
+			whitelist.addPlayer(offPlayer.getUUIDString()); //Add to whitelist
 			hMsg("Added " + offPlayer.getCurrentName() + " to the whitelist.");
 			break;
 			
 		case "remove": case "removeplayer": //Remove a player from the whitelist
 			if (args.length != 2) throw new UsageException("whitelist remove [Player]"); //Usage
 			offPlayer = getOfflinePlayer(args[1]); //Check if existing user
-			whitelist.removePlayer(offPlayer.getUUID()); //Remove to whitelist
+			whitelist.removePlayer(offPlayer.getUUIDString()); //Remove to whitelist
 			hMsg("Removed " + offPlayer.getCurrentName() + " to the whitelist.");
 			break;
 			

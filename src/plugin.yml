@@ -1,9 +1,9 @@
 name: SlapHomebrew
 main: me.naithantu.SlapHomebrew.SlapHomebrew
-depend: [Essentials, Vault, PermissionsEx]
+depend: [Essentials, Vault, PermissionsEx, SlapPlayers]
 softdepend: [TabAPI, ReportRTS, MCBans, SlapBridged]
 authors: [naithantu, Stoux2]
-version: 4.1.2
+version: 4.2.0
 description: A custom plugin which adds lots of extra features to the SlapGaming minecraft server.
 commands:
   vip:

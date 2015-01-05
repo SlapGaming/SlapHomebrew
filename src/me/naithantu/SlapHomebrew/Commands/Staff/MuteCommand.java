@@ -5,9 +5,9 @@ import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
 import me.naithantu.SlapHomebrew.Controllers.MuteController;
-import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import me.naithantu.SlapHomebrew.Util.DateUtil;
 import me.naithantu.SlapHomebrew.Util.Util;
+import nl.stoux.SlapPlayers.Model.Profile;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -67,10 +67,10 @@ public class MuteCommand extends AbstractCommand {
                 if (args.length != 2) throw new UsageException("mute info <Player>"); //Usage
 
                 //Get player
-                UUIDControl.UUIDProfile offPlayer = getOfflinePlayer(args[1]);
+                Profile offPlayer = getOfflinePlayer(args[1]);
 
                 //Get status
-                sendMutedStatus(offPlayer.getUUID(), offPlayer.getCurrentName() + " is");
+                sendMutedStatus(offPlayer.getUUIDString(), offPlayer.getCurrentName() + " is");
                 return true;
 
             case "help": //Help page
@@ -82,10 +82,10 @@ public class MuteCommand extends AbstractCommand {
         if (args.length < 3) throw new UsageException("mute <Player> <Perm | 3days5hours2seconds (or similar)> <Reason>");
 
         //Get player
-        UUIDControl.UUIDProfile offPlayer = getOfflinePlayer(args[0]);
+        Profile offPlayer = getOfflinePlayer(args[0]);
 
         //=> Check if the player can be muted
-        if (Util.checkPermission(offPlayer.getUUID(), "mute.exempt")) {
+        if (Util.checkPermission(offPlayer.getUUIDString(), "mute.exempt")) {
             throw new CommandException("This player cannot be muted.");
         }
 
@@ -102,13 +102,13 @@ public class MuteCommand extends AbstractCommand {
         }
 
         //Mute player
-        muteController.setMuted(offPlayer.getUUID(), reason, mutedBy, mutedTill);
+        muteController.setMuted(offPlayer.getUUIDString(), reason, mutedBy, mutedTill);
 
         //Notify sender
         hMsg(offPlayer.getCurrentName() + " has been muted " + (mutedTill == -1 ? "permanently." : "till " + ChatColor.GREEN + DateUtil.format("dd-MM-yyyy HH:mm", mutedTill) + ChatColor.WHITE + "."));
 
         //Notify player if online
-        Player p = Bukkit.getPlayer(UUID.fromString(offPlayer.getUUID()));
+        Player p = Bukkit.getPlayer(UUID.fromString(offPlayer.getUUIDString()));
         if (p != null) {
             Util.msg(p, "You have been muted. Use /muted for more info.");
         }

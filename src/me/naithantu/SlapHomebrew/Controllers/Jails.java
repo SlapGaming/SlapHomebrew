@@ -1,19 +1,18 @@
 package me.naithantu.SlapHomebrew.Controllers;
 
-import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import me.naithantu.SlapHomebrew.Storage.JailSerializables.Jail;
 import me.naithantu.SlapHomebrew.Storage.JailSerializables.JailTime;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 import me.naithantu.SlapHomebrew.Util.DateUtil;
 import me.naithantu.SlapHomebrew.Util.Log;
 import me.naithantu.SlapHomebrew.Util.Util;
+import nl.stoux.SlapPlayers.Model.Profile;
+import nl.stoux.SlapPlayers.SlapPlayers;
 import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -203,9 +202,9 @@ public class Jails extends AbstractController {
      * @param jailTime The time left (in milliseconds)
      * @param jailerID The ID of the player who jailed this player
      */
-    public void jailPlayer(UUIDControl.UUIDProfile player, String reason, String jail, long jailTime, int jailerID) {
+    public void jailPlayer(Profile player, String reason, String jail, long jailTime, int jailerID) {
         //Create the JailTime
-        final JailTime jailSentence = new JailTime(player.getUserID(), reason, jailerID, jail.toLowerCase(), jailTime);
+        final JailTime jailSentence = new JailTime(player.getID(), reason, jailerID, jail.toLowerCase(), jailTime);
 
         //Check if the player is online
         Player jailedPlayer = player.getPlayer();
@@ -241,12 +240,12 @@ public class Jails extends AbstractController {
             jailSentence.inJail = true;
 
             //Put it in the online map
-            onlineJailTimeMap.put(player.getUUID(), jailSentence);
+            onlineJailTimeMap.put(player.getUUIDString(), jailSentence);
 
             Util.msg(jailedPlayer, "You have been jailed! See " + ChatColor.GRAY + "/timeleft" + ChatColor.WHITE + " for more info!");
         } else {
             //Put it in the offline map
-            offlineJailTimeMap.put(player.getUUID(), jailSentence);
+            offlineJailTimeMap.put(player.getUUIDString(), jailSentence);
         }
 
         //Save it in the Config
@@ -258,8 +257,8 @@ public class Jails extends AbstractController {
      * @param player The Player's Profile
      * @return successful (True = Success, False = Failed/Not Jailed, Null = Successful, but still in jail while offline)
      */
-    public Boolean unjailPlayer(UUIDControl.UUIDProfile player) {
-        String UUID = player.getUUID();
+    public Boolean unjailPlayer(Profile player) {
+        String UUID = player.getUUIDString();
         //Check if online or offline
         JailTime sentence;
         if (onlineJailTimeMap.containsKey(UUID)) {
@@ -447,8 +446,8 @@ public class Jails extends AbstractController {
      * @param staff The staffmember
      * @param jailedPlayer The Profile of the jailed player
      */
-    public void sendStaffJailInfo(CommandSender staff, UUIDControl.UUIDProfile jailedPlayer) {
-        String UUID = jailedPlayer.getUUID();
+    public void sendStaffJailInfo(CommandSender staff, Profile jailedPlayer) {
+        String UUID = jailedPlayer.getUUIDString();
 
         //Get the JailTime
         JailTime sentence = offlineJailTimeMap.get(UUID);
@@ -463,7 +462,7 @@ public class Jails extends AbstractController {
 
 
         //Get the jailer's name
-        String jailerName = UUIDControl.getInstance().getUUIDProfile(sentence.jailerID).getCurrentName();
+        String jailerName = SlapPlayers.getUUIDController().getProfile(sentence.jailerID).getCurrentName();
         //Get the date
         String date = DateUtil.format("dd/MM/yyyy HH:mm", sentence.jailedOn);
 
@@ -510,7 +509,7 @@ public class Jails extends AbstractController {
             //=> Loop through IDs
             for (Integer userID : unjailPlayerIDs) {
                 //=> Unjail the player
-                UUIDControl.UUIDProfile profile = UUIDControl.getInstance().getUUIDProfile(userID);
+                Profile profile = SlapPlayers.getUUIDController().getProfile(userID);
                 unjailPlayer(profile);
                 Util.msg(profile.getPlayer(), "Your jail sentence has ended!");
             }

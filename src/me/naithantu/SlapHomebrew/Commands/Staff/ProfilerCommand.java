@@ -8,9 +8,9 @@ import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.NoteControl;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.Profilable;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.SessionLogger;
 import me.naithantu.SlapHomebrew.Controllers.Profiler;
-import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import me.naithantu.SlapHomebrew.Util.Helpers.FancyMessageMenu;
 import me.naithantu.SlapHomebrew.Util.Util;
+import nl.stoux.SlapPlayers.Model.Profile;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
@@ -33,7 +33,7 @@ public class ProfilerCommand extends AbstractCommand {
         //usage
         if (args.length == 0) throw new UsageException("profiler addnote <Player> <Note...> | show <Player> [-flags]");
 
-        final UUIDControl.UUIDProfile offPlayer;
+        final Profile offPlayer;
 
         //Switch on first arg
         switch (args[0].toLowerCase()) {
@@ -47,7 +47,7 @@ public class ProfilerCommand extends AbstractCommand {
                 offPlayer = getOfflinePlayer(args[1]);
 
                 //Add the note
-                NoteControl.addNote(sender, offPlayer.getUUID(), Util.buildString(args, " ", 2));
+                NoteControl.addNote(sender, offPlayer.getUUIDString(), Util.buildString(args, " ", 2));
                 hMsg("Note added!");
                 break;
 
@@ -102,7 +102,7 @@ public class ProfilerCommand extends AbstractCommand {
                 }
 
                 //Get the UserID
-                final int userID = offPlayer.getUserID();
+                final int userID = offPlayer.getID();
 
                 //Start doing the heavy stuff
                 addDoingCommand();
@@ -173,7 +173,7 @@ public class ProfilerCommand extends AbstractCommand {
                             //Create the new FancyMessageMenu
                             FancyMessageMenu fmMenu = new FancyMessageMenu(allProfilables, 18, true, offPlayer.getCurrentName() + "'s Profile", "profiler page");
                             //=> Store the menu
-                            plugin.getProfiler().storeMenu(getUUIDProfile().getUserID(), fmMenu);
+                            plugin.getProfiler().storeMenu(getUUIDProfile().getID(), fmMenu);
 
                             //Display the first page
                             fmMenu.showPage(sender, 1);
@@ -202,7 +202,7 @@ public class ProfilerCommand extends AbstractCommand {
 
                 Profiler profiler = plugin.getProfiler();
                 //Check if the player has a menu
-                int requesterID = getUUIDProfile().getUserID();
+                int requesterID = getUUIDProfile().getID();
                 if (!profiler.hasMenu(requesterID)) throw new CommandException("There is no Profile loaded!");
 
                 //Get the menu

@@ -1,12 +1,12 @@
 package me.naithantu.SlapHomebrew.Controllers;
 
-import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import me.naithantu.SlapHomebrew.Storage.HorseSerializables.MutatedHorsesCollection;
 import me.naithantu.SlapHomebrew.Storage.HorseSerializables.SavedHorse;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 import me.naithantu.SlapHomebrew.Util.Util;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import nl.stoux.SlapPlayers.SlapPlayers;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
@@ -323,7 +323,7 @@ public class Horses extends AbstractController {
         playerToHorses.remove(currentOwner, savedHorse);
 
         //Set the Owner ID
-        savedHorse.ownerID = UUIDControl.getUserID(newOwner);
+        savedHorse.ownerID = SlapPlayers.getUUIDController().getProfile(newOwner).getID();
         //Remove the list of allowed players
         savedHorse.allowedPlayers = null;
 
@@ -583,7 +583,7 @@ public class Horses extends AbstractController {
      */
     public void onTameEvent(Player player, Horse tamedHorse) {
         //Get the UserID of the player
-        int userID = UUIDControl.getUserID(player);
+        int userID = SlapPlayers.getUUIDController().getProfile(player).getID();
 
         //Create the SavedHorse object
         SavedHorse savedHorse = new SavedHorse(userID, tamedHorse);

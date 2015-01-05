@@ -5,13 +5,13 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.HashSet;
 
-import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
+import nl.stoux.SlapPlayers.Model.Profile;
+import nl.stoux.SlapPlayers.SlapPlayers;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 
 import me.naithantu.SlapHomebrew.Controllers.AbstractController;
 import me.naithantu.SlapHomebrew.Util.Log;
-import me.naithantu.SlapHomebrew.Util.SQLPool;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 public abstract class AbstractLogger extends AbstractController {
@@ -83,7 +83,7 @@ public abstract class AbstractLogger extends AbstractController {
 	}
 	
 	private void executeBatch(String sqlStatement, HashSet<Batchable> batch) {
-		Connection con = SQLPool.getConnection(); //Get connection
+		Connection con = plugin.getSQLPool().getConnection(); //Get connection
 		try {
 			PreparedStatement prep = con.prepareStatement(sqlStatement);
 			for (Batchable batchable : batch) { //Prepare batch
@@ -94,7 +94,7 @@ public abstract class AbstractLogger extends AbstractController {
 		} catch (SQLException e) {
 			Log.severe("Failed to insert batch. Batchable class: " + batch.iterator().next().getClass().getName() + " | Exception: " + e.getMessage());
 		} finally {
-			SQLPool.returnConnection(con); //Return connection
+            plugin.getSQLPool().returnConnection(con); //Return connection
 		}
 	}
 	
@@ -112,8 +112,8 @@ public abstract class AbstractLogger extends AbstractController {
      * @return the user id or -1 if there's no profile found
      */
     protected static int getUserID(String UUID) {
-        UUIDControl.UUIDProfile profile = UUIDControl.getInstance().getUUIDProfile(UUID);
-        return (profile == null ? -1 : profile.getUserID());
+        Profile profile = SlapPlayers.getUUIDController().getProfile(UUID);
+        return (profile == null ? -1 : profile.getID());
     }
 
     /**
@@ -122,7 +122,7 @@ public abstract class AbstractLogger extends AbstractController {
      * @return The playername or null
      */
     protected static String getPlayernameOnID(int userID) {
-        UUIDControl.UUIDProfile profile = UUIDControl.getInstance().getUUIDProfile(userID);
+        Profile profile = SlapPlayers.getUUIDController().getProfile(userID);
         if (profile == null) {
             return null;
         }
@@ -136,9 +136,9 @@ public abstract class AbstractLogger extends AbstractController {
 	 * @throws SQLException if failed
 	 */
 	protected int executeUpdate(String query) throws SQLException {
-		Connection con = SQLPool.getConnection(); //Get Connection
+		Connection con = plugin.getSQLPool().getConnection(); //Get Connection
 		int result = con.createStatement().executeUpdate(query); //Execute update
-		SQLPool.returnConnection(con); //Return connection
+        plugin.getSQLPool().returnConnection(con); //Return connection
 		return result; //Return result
 	}
 	

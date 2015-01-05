@@ -1,14 +1,13 @@
 package me.naithantu.SlapHomebrew.Controllers.PlayerLogging;
 
+import nl.stoux.SlapPlayers.Model.Profile;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.HashSet;
-
-import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
-import me.naithantu.SlapHomebrew.Util.SQLPool;
 
 public class AFKLogger extends AbstractLogger {
 	
@@ -83,13 +82,13 @@ public class AFKLogger extends AbstractLogger {
 	 * @param profile The player's UUIDProfile
 	 * @return time afk, or -1 if failed
 	 */
-	public static long getAFKTime(final UUIDControl.UUIDProfile profile) {
+	public static long getAFKTime(final Profile profile) {
 		if (instance == null) { //Check if initialzed
 			return -1L;
 		}
 		long afkTime = 0;
-        int userID = profile.getUserID();
-        String UUID = profile.getUUID();
+        int userID = profile.getID();
+        String UUID = profile.getUUIDString();
 		
 		for (Batchable batchable : instance.finishedSessions) { //Get from unbatched
 			AFKSession session = (AFKSession) batchable;
@@ -97,7 +96,7 @@ public class AFKLogger extends AbstractLogger {
 				afkTime += (session.leftAFK - session.wentAFK); //Add to time
 			}
 		}
-		Connection con = SQLPool.getConnection(); //Get a connection
+		Connection con = instance.plugin.getSQLPool().getConnection(); //Get a connection
 		try {
 			PreparedStatement prep = con.prepareStatement( //Get from DB
 				"SELECT SUM(`left_afk`) - SUM(`went_afk`) FROM `sh_logger_afk` WHERE `user_id` = ?;"
@@ -114,7 +113,7 @@ public class AFKLogger extends AbstractLogger {
 			e.printStackTrace();
 			afkTime = -1;
 		} finally {
-			SQLPool.returnConnection(con); //Return con
+            instance.plugin.getSQLPool().returnConnection(con); //Return con
 		}
 		return afkTime;
 	}

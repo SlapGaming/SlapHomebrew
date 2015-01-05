@@ -10,7 +10,6 @@ import java.util.Set;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Util.DateUtil;
 import me.naithantu.SlapHomebrew.Util.Log;
-import me.naithantu.SlapHomebrew.Util.SQLPool;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.ChatColor;
@@ -44,7 +43,7 @@ public class PlotControl extends AbstractLogger {
 	 * Get the current iteration & ID
 	 */
 	private void getIteration() {
-		Connection con = SQLPool.getConnection(); //Get con
+		Connection con = plugin.getSQLPool().getConnection(); //Get con
 		try {
 			//Get current iteration
 			ResultSet itRS = con.createStatement().executeQuery("SELECT MAX(`iteration`) FROM `sh_logger_plots`;");
@@ -86,7 +85,7 @@ public class PlotControl extends AbstractLogger {
 			enabled = false;
 			Log.severe("Failed to get iteration for PlotControl. Exception: " + e.getMessage());
 		} finally {
-			SQLPool.returnConnection(con);
+			plugin.getSQLPool().returnConnection(con);
 		}
 	}
 	
@@ -186,7 +185,7 @@ public class PlotControl extends AbstractLogger {
 			Util.runASync(new Runnable() {
 				@Override
 				public void run() {
-					Connection con = SQLPool.getConnection();
+					Connection con = plugin.getSQLPool().getConnection();
 					try {
 						PlotMark pm = getPlotMarkSQL(con, iteration, id);
 						pm.sendInfo(p);
@@ -196,7 +195,7 @@ public class PlotControl extends AbstractLogger {
 					} catch (CommandException e) { //Plot not found
 						Util.badMsg(p, e.getMessage());
 					} finally {
-						SQLPool.returnConnection(con);
+						plugin.getSQLPool().returnConnection(con);
 						doingCommand.remove(p.getName());
 					}
 				}
@@ -218,7 +217,7 @@ public class PlotControl extends AbstractLogger {
 		Util.runASync(new Runnable() {
 			@Override
 			public void run() {
-				Connection con = SQLPool.getConnection();
+				Connection con = plugin.getSQLPool().getConnection();
 				try {
 					PreparedStatement prep = con.prepareStatement(
 						"INSERT INTO `sh_logger_plots` (" +
@@ -249,7 +248,7 @@ public class PlotControl extends AbstractLogger {
 					Log.severe("Failed to mark plot location. Exception: " + e.getMessage());
 					Util.badMsg(p, "Failed to mark plot. Warn Stoux if he's around.");
 				} finally {
-					SQLPool.returnConnection(con);
+					plugin.getSQLPool().returnConnection(con);
 					doingCommand.remove(p.getName());
 				}
 			}
@@ -297,7 +296,7 @@ public class PlotControl extends AbstractLogger {
 				
 				@Override
 				public void run() {
-					Connection con = SQLPool.getConnection(); //Get connection
+					Connection con = plugin.getSQLPool().getConnection(); //Get connection
 					try {
 						PreparedStatement prep = con.prepareStatement(
 							"UPDATE `sh_logger_plots` SET `handled_by` = ?, `handled_time` = ?, `handled_comment` = ? " +
@@ -324,7 +323,7 @@ public class PlotControl extends AbstractLogger {
 						uPM.handledBy = null;
 						addToUnfinishedMap(uPM);
 					} finally {
-						SQLPool.returnConnection(con); //Return connection
+						plugin.getSQLPool().returnConnection(con); //Return connection
 						doingCommand.remove(p.getName());
 					}
 				}
@@ -401,7 +400,7 @@ public class PlotControl extends AbstractLogger {
 			Util.runASync(new Runnable() { //Get Plot Location
 				@Override
 				public void run() {
-					Connection con = SQLPool.getConnection();
+					Connection con = plugin.getSQLPool().getConnection();
 					try {
 						final PlotMark pm = getPlotMarkSQL(con, iteration, id); //Get PlotMark
 						Util.run(new Runnable() { //Run in Sync
@@ -420,7 +419,7 @@ public class PlotControl extends AbstractLogger {
 					} catch (CommandException e) { //No PlotMark with this ID
 						Util.badMsg(p, e.getMessage());
 					} finally {
-						SQLPool.returnConnection(con);
+						plugin.getSQLPool().returnConnection(con);
 						doingCommand.remove(p.getName());
 					}
 				}

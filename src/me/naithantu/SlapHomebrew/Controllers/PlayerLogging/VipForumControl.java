@@ -11,11 +11,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
-import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import me.naithantu.SlapHomebrew.Util.DateUtil;
 import me.naithantu.SlapHomebrew.Util.Log;
-import me.naithantu.SlapHomebrew.Util.SQLPool;
 
+import nl.stoux.SlapPlayers.SlapPlayers;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -62,7 +61,7 @@ public class VipForumControl extends AbstractLogger {
 	 * Load all unfinished plot marks
 	 */
 	private void loadStoredData() {
-		Connection con = SQLPool.getConnection(); //Get a connection
+		Connection con = plugin.getSQLPool().getConnection(); //Get a connection
 		try {
 			//Get Highest current iteration
 			ResultSet rs = con.createStatement().executeQuery("SELECT MAX(`iteration`) FROM `sh_vip_forum`;");
@@ -89,7 +88,7 @@ public class VipForumControl extends AbstractLogger {
 				ForumPromotion fp = new ForumPromotion( //Create new Promotion 
 						unfinishedRS.getInt(1),
 						unfinishedRS.getInt(2),
-						UUIDControl.getInstance().getUUIDProfile(unfinishedRS.getInt(3)).getUUID(),
+						SlapPlayers.getUUIDController().getProfile(unfinishedRS.getInt(3)).getUUIDString(),
 						unfinishedRS.getLong(4),
 						unfinishedRS.getBoolean(5),
 						null,
@@ -103,7 +102,7 @@ public class VipForumControl extends AbstractLogger {
 			enabled = false;
 			Log.severe("Failed to load saved data for VipForumControl.");
 		} finally {
-			SQLPool.returnConnection(con);
+			plugin.getSQLPool().returnConnection(con);
 		}
 	}
 	

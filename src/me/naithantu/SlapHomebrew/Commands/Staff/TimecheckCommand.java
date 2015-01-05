@@ -8,10 +8,12 @@ import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.SessionLogger;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.SessionLogger.LeaderboardEntry;
-import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import me.naithantu.SlapHomebrew.Util.DateUtil;
 import me.naithantu.SlapHomebrew.Util.Util;
 
+import nl.stoux.SlapPlayers.Control.UUIDControl;
+import nl.stoux.SlapPlayers.Model.Profile;
+import nl.stoux.SlapPlayers.SlapPlayers;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -57,7 +59,7 @@ public class TimecheckCommand extends AbstractCommand {
 					@Override
 					public void run() {
                         //Create lists
-						HashSet<UUIDControl.UUIDProfile> profiles = new HashSet<>();
+						HashSet<Profile> profiles = new HashSet<>();
                         HashMap<Integer, PermissionUser> idToUser = new HashMap<>();
 						List<PermissionGroup> groups = PermissionsEx.getPermissionManager().getGroupList(); //Get all groups
 
@@ -69,11 +71,11 @@ public class TimecheckCommand extends AbstractCommand {
 							case "superadmin": case "admin": case "mod":
 								for (PermissionUser user : group.getUsers()) { //Get all users
                                     //Get Profile
-                                    UUIDControl.UUIDProfile profile = UUIDControl.getInstance().getUUIDProfile(user.getIdentifier());
+                                    Profile profile = SlapPlayers.getUUIDController().getProfile(user.getIdentifier());
                                     //Put in Map & Set
                                     if (profile != null) {
                                         profiles.add(profile);
-                                        idToUser.put(profile.getUserID(), user);
+                                        idToUser.put(profile.getID(), user);
                                     }
 								}
 								break;
@@ -81,7 +83,7 @@ public class TimecheckCommand extends AbstractCommand {
 						}
 
                         //Create an array of all Profiles
-                        UUIDControl.UUIDProfile[] profileArray = profiles.toArray(new UUIDControl.UUIDProfile[profiles.size()]);
+                        Profile[] profileArray = profiles.toArray(new Profile[profiles.size()]);
 						HashMap<Integer, Long> playedMap = logger.getPlayedTimes(profileArray, staffDates[0], staffDates[1]); //Get played times
 						ArrayList<LeaderboardEntry> entries = logger.createSortLeaderboardEntries(playedMap); //Create Leaderboard out the times
 						hMsg("Staff onlinetimes. " + (guides ? " (With guides)" : "")); //Hmsg
@@ -133,13 +135,13 @@ public class TimecheckCommand extends AbstractCommand {
 					@Override
 					public void run() {
 						Set<PermissionUser> permissionUsers = group.getUsers(); //Get users
-						UUIDControl.UUIDProfile[] userArray = new UUIDControl.UUIDProfile[permissionUsers.size()];
+						Profile[] userArray = new Profile[permissionUsers.size()];
 
-                        UUIDControl uuidControl = UUIDControl.getInstance();
+                        UUIDControl uuidControl = SlapPlayers.getUUIDController();
 
 						int x = 0;
 						for (PermissionUser user : permissionUsers) {
-                            userArray[x] = uuidControl.getUUIDProfile(user.getIdentifier());
+                            userArray[x] = uuidControl.getProfile(user.getIdentifier());
                             x++;
 						}
 						HashMap<Integer, Long> map = logger.getPlayedTimes(userArray, groupDates[0], groupDates[1]); //Get played times, from all players
@@ -186,7 +188,7 @@ public class TimecheckCommand extends AbstractCommand {
 			break;
 			
 		default: //Get time for a player
-			final UUIDControl.UUIDProfile offPlayer = getOfflinePlayer(args[0]); //Get player
+			final Profile offPlayer = getOfflinePlayer(args[0]); //Get player
 			final Date[] playerDates = parseDates(1); //Parse dates, if given
 			addDoingCommand(); //Add doing command
 			Util.runASync(new Runnable() {
@@ -246,7 +248,7 @@ public class TimecheckCommand extends AbstractCommand {
 	private void sendLeaderboard(ArrayList<LeaderboardEntry> lb) {
 		int rank = 1;
 		for (LeaderboardEntry entry : lb) { //Loop thru entries
-			String playername = UUIDControl.getInstance().getUUIDProfile(entry.getUserID()).getCurrentName();
+			String playername = SlapPlayers.getUUIDController().getProfile(entry.getUserID()).getCurrentName();
 			sender.sendMessage(ChatColor.GREEN + String.valueOf(rank) + ". " + ChatColor.GOLD + playername +  ChatColor.WHITE + " - " + Util.getTimePlayedString(entry.getPlaytime())); //Send score
 			rank++;
 		}

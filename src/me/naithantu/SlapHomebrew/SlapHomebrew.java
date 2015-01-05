@@ -16,7 +16,6 @@ import me.naithantu.SlapHomebrew.Listeners.Player.*;
 import me.naithantu.SlapHomebrew.Listeners.World.ChunkLoadListener;
 import me.naithantu.SlapHomebrew.Listeners.World.ChunkUnloadListener;
 import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
-import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import me.naithantu.SlapHomebrew.Storage.HorseSerializables.MutatedHorsesCollection;
 import me.naithantu.SlapHomebrew.Storage.HorseSerializables.SavedHorse;
 import me.naithantu.SlapHomebrew.Storage.JailSerializables.Jail;
@@ -26,10 +25,11 @@ import me.naithantu.SlapHomebrew.Timing.HandlerControl;
 import me.naithantu.SlapHomebrew.Util.DateUtil;
 import me.naithantu.SlapHomebrew.Util.Helpers.HelpMenu;
 import me.naithantu.SlapHomebrew.Util.Log;
-import me.naithantu.SlapHomebrew.Util.SQLPool;
 import me.naithantu.SlapHomebrew.Util.Util;
 import net.milkbowl.vault.economy.Economy;
 
+import nl.stoux.SlapPlayers.SlapPlayers;
+import nl.stoux.SlapPlayers.Util.SQLPool;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.Configuration;
@@ -179,7 +179,6 @@ public class SlapHomebrew extends JavaPlugin {
 		disableListeners();
 		disableControllers();
 		disableStatics();
-		pool.shutdown();
 	}
 
 	@Override
@@ -252,18 +251,15 @@ public class SlapHomebrew extends JavaPlugin {
 			logBlock = (LogBlock) logBlockPlugin;
 		}
 
-		//Create SQL Pool
-        config = getConfig();
-        String host = config.getString("sql.host");
-        int port = config.getInt("sql.port");
-        String db = config.getString("sql.db");
-        String user = config.getString("sql.user");
-        String pass = config.getString("sql.password");
-		pool = new SQLPool(host, port, db, user, pass);
+        //Get SlapPlayers
+        Plugin slapPlayersPlugin = getServer().getPluginManager().getPlugin("SlapPlayers");
+        if (slapPlayersPlugin == null || !slapPlayersPlugin.isEnabled() && !(slapPlayersPlugin instanceof SlapPlayers)) {
+            throw new RuntimeException("Failed to enable: Missing SlapPlayers.");
+        }
 
-        //UUID Control
-        UUIDControl.initializeUUIDControl();
-	}
+		//Create SQL Pool
+        pool = SlapPlayers.getSQLPool();
+    }
 
 	private void initializeYamlStoragesConfigs() {
 		config = getConfig();
@@ -453,7 +449,7 @@ public class SlapHomebrew extends JavaPlugin {
 	public static SlapHomebrew getInstance() {
 		return instance;
 	}
-	
+
 	
 	/*
 	 **************************************
@@ -597,8 +593,12 @@ public class SlapHomebrew extends JavaPlugin {
 	public LogBlock getLogBlock() {
 		return logBlock;
 	}
-	
-	/*
+
+    public SQLPool getSQLPool() {
+        return pool;
+    }
+
+    /*
 	 **************************************
 	 * Others
 	 **************************************

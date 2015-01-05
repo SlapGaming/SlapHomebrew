@@ -6,9 +6,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
-import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
-import me.naithantu.SlapHomebrew.Util.SQLPool;
 import mkremins.fanciful.FancyMessage;
+import nl.stoux.SlapPlayers.SlapPlayers;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -130,7 +129,7 @@ public class KickLogger extends AbstractLogger implements Listener {
         ArrayList<Profilable> kicks = new ArrayList<>();
 
         //Get a connection
-        Connection con = SQLPool.getConnection();
+        Connection con = instance.plugin.getSQLPool().getConnection();
         try {
             //Get the kicks
             PreparedStatement prep = con.prepareStatement("SELECT `kicked_time`, `kicked_by`, `reason` FROM `sh_logger_kicks` WHERE `user_id` = ?;");
@@ -154,7 +153,7 @@ public class KickLogger extends AbstractLogger implements Listener {
             e.printStackTrace();
             throw new CommandException("An error occurred! Notify Stoux!");
         } finally {
-            SQLPool.returnConnection(con);
+            instance.plugin.getSQLPool().returnConnection(con);
         }
 
         return kicks;
@@ -222,7 +221,7 @@ public class KickLogger extends AbstractLogger implements Listener {
 
             //Check if the player is kicked by a mod
             if (kickedByID != null) {
-                kick = kick.then(" by ").then(UUIDControl.getInstance().getUUIDProfile(kickedByID).getCurrentName()).color(ChatColor.GOLD);
+                kick = kick.then(" by ").then(SlapPlayers.getUUIDController().getProfile(kickedByID).getCurrentName()).color(ChatColor.GOLD);
             }
 
             //Add the rest

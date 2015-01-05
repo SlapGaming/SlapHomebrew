@@ -2,17 +2,16 @@ package me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegion;
 
 import com.sk89q.worldguard.bukkit.commands.region.RegionPrintoutBuilder;
 import com.sk89q.worldguard.domains.DefaultDomain;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.IRGException;
 import me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegionCommand.Perm;
-
-import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import me.naithantu.SlapHomebrew.Util.Log;
 import me.naithantu.SlapHomebrew.Util.Util;
+import nl.stoux.SlapPlayers.Control.UUIDControl;
+import nl.stoux.SlapPlayers.SlapPlayers;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -92,14 +91,14 @@ public class InfoCommand extends AbstractImprovedRegionCommand {
 	}
 
     private String uuidSetToString(DefaultDomain domain) {
-        UUIDControl uuidControl = UUIDControl.getInstance();
+        UUIDControl uuidControl = SlapPlayers.getUUIDController();
         Set<UUID> set = domain.getUniqueIds();
         if (set.isEmpty()) {
             return ChatColor.RED + "(none)";
         } else {
             HashSet<String> names = new HashSet<>();
             for (UUID owner : domain.getUniqueIds()) {
-                names.add(uuidControl.getUUIDProfile(owner).getCurrentName());
+                names.add(uuidControl.getProfile(owner).getCurrentName());
             }
             return ChatColor.YELLOW + Util.buildString(names, ", ");
         }

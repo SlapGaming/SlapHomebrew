@@ -6,11 +6,10 @@ import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
 import me.naithantu.SlapHomebrew.Controllers.Vip;
-import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import me.naithantu.SlapHomebrew.Util.DateUtil;
 
+import nl.stoux.SlapPlayers.Model.Profile;
 import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 
 public class PromotionVIPCommand extends AbstractCommand {
@@ -29,7 +28,7 @@ public class PromotionVIPCommand extends AbstractCommand {
 		}
 		
 		Vip vip = plugin.getVip(); //Get VIP
-		UUIDControl.UUIDProfile offPlayer; int days; //params
+		Profile offPlayer; int days; //params
 		
 		switch (args[1].toLowerCase()) {
 		case "add": case "addvip": case "addvipdays": //Add VIP days to a player
@@ -37,7 +36,7 @@ public class PromotionVIPCommand extends AbstractCommand {
 			if (args.length != 4) throw new UsageException("promotion vip addVipDays [Player] [Days]"); //Usage
 			offPlayer = getOfflinePlayer(args[2]); //Get player
 			days = parseIntPositive(args[3]); //Parse days
-			vip.addVipDays(offPlayer.getUUID(), days); //Add VIP days
+			vip.addVipDays(offPlayer.getUUIDString(), days); //Add VIP days
 			hMsg("Added " + days + (days == 1 ? " day" : " days") + " VIP to player: " + offPlayer.getCurrentName()); //Message
 			break;
 			
@@ -46,7 +45,7 @@ public class PromotionVIPCommand extends AbstractCommand {
 			if (args.length != 4) throw new UsageException("promotion vip setVipDays [Player] [Days]"); //Usage
 			offPlayer = getOfflinePlayer(args[2]); //Get player
 			days = parseIntPositive(args[3]); //Parse days
-			vip.setVipDays(offPlayer.getUUID(), days); //Add VIP days
+			vip.setVipDays(offPlayer.getUUIDString(), days); //Add VIP days
 			hMsg("Set " + offPlayer.getCurrentName() +"'s VIP to " + days + (days == 1 ? " day." : " days.")); //message
 			break;
 			
@@ -54,7 +53,7 @@ public class PromotionVIPCommand extends AbstractCommand {
 			testPermission("removevip"); //Test perm
 			if (args.length != 3) throw new UsageException("promotion vip removeVip [Player]"); //Usage
 			offPlayer = getOfflinePlayer(args[2]); //Get player
-			vip.removeVIP(offPlayer.getUUID()); //Remove VIP
+			vip.removeVIP(offPlayer.getUUIDString()); //Remove VIP
 			hMsg("Removed " + offPlayer.getCurrentName() + "'s VIP.");
 			break;
 			
@@ -62,7 +61,7 @@ public class PromotionVIPCommand extends AbstractCommand {
 			testPermission("setlifetimevip"); //Test perm
 			if (args.length != 3) throw new UsageException("promotion vip setlifetimevip [Player]"); //Usage
 			offPlayer = getOfflinePlayer(args[2]); //Get player
-			vip.setLifetimeVIP(offPlayer.getUUID()); //Set lifetime
+			vip.setLifetimeVIP(offPlayer.getUUIDString()); //Set lifetime
 			hMsg("Set " + offPlayer.getCurrentName() + "'s VIP to Lifetime."); //Message
 			break;
 			
@@ -71,10 +70,10 @@ public class PromotionVIPCommand extends AbstractCommand {
 			if (args.length != 3) throw new UsageException("promotion vip getvipdays [Player]"); //Usage
 			offPlayer = getOfflinePlayer(args[2]); //Get player
 			String playername = offPlayer.getCurrentName();
-			if (vip.isLifetimeVIP(offPlayer.getUUID())) {
+			if (vip.isLifetimeVIP(offPlayer.getUUIDString())) {
 				hMsg(playername + " is lifetime VIP!");
 			} else {
-				long vipEnds = vip.getVIPExpiration(offPlayer.getUUID());
+				long vipEnds = vip.getVIPExpiration(offPlayer.getUUIDString());
 				hMsg(playername + "'s VIP ends on: " + ChatColor.GREEN + DateUtil.format("dd MMM. yyyy HH:mm zzz", vipEnds));
 			}
 			break;

@@ -13,13 +13,12 @@ import me.naithantu.SlapHomebrew.Commands.Exception.AlreadyVIPException;
 import me.naithantu.SlapHomebrew.Commands.Exception.NotVIPException;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.PromotionLogger;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.VipForumControl;
-import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 import me.naithantu.SlapHomebrew.Util.DateUtil;
 import me.naithantu.SlapHomebrew.Util.Log;
-import me.naithantu.SlapHomebrew.Util.SQLPool;
 import me.naithantu.SlapHomebrew.Util.Util;
 
+import nl.stoux.SlapPlayers.SlapPlayers;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -59,10 +58,6 @@ public class Vip extends AbstractController {
 	private FileConfiguration config;
 	
 	public Vip(TabController tabController) {
-		if (!SQLPool.isSetup()) {
-			setup = false;
-			return;
-		}
 		this.tabController = tabController;
 		temporaryVIPs = new ConcurrentHashMap<>();
 		lifetimeVIPs = new HashSet<>();
@@ -93,7 +88,7 @@ public class Vip extends AbstractController {
 	 * Load all VIPs from DB
 	 */
 	private void loadVIPs() {
-		Connection con = SQLPool.getConnection();
+		Connection con = plugin.getSQLPool().getConnection();
 		try {
 			ResultSet rs = con.createStatement().executeQuery("SELECT `user_id`, `till_time`, `lifetime` FROM `sh_vip_time`;"); //Get All VIPs from DB
 			while (rs.next()) {
@@ -101,7 +96,7 @@ public class Vip extends AbstractController {
 				int userID = rs.getInt(1);
 				Long tillTime = rs.getLong(2);
 				boolean lifetime = rs.getBoolean(3);
-                String UUID = UUIDControl.getInstance().getUUIDProfile(userID).getUUID();
+                String UUID = SlapPlayers.getUUIDController().getProfile(userID).getUUIDString();
 				
 				if (lifetime) { //If lifetime VIP
 					lifetimeVIPs.add(UUID); //Add to lifetime VIP set
@@ -113,7 +108,7 @@ public class Vip extends AbstractController {
 			e.printStackTrace();
 			setup = false;
 		} finally {
-			SQLPool.returnConnection(con);
+            plugin.getSQLPool().returnConnection(con);
 		}
 	}
 	
@@ -386,14 +381,14 @@ public class Vip extends AbstractController {
 		Util.runASync(new Runnable() {
 			@Override
 			public void run() {
-				Connection con = SQLPool.getConnection();
+				Connection con = plugin.getSQLPool().getConnection();
 				try {
 					PreparedStatement prep = con.prepareStatement(
 						"INSERT INTO `sh_vip_time` (`user_id`, `till_time`, `lifetime`) VALUES (?, ?, ?) " +
 						"ON DUPLICATE KEY UPDATE `till_time` = ?, `lifetime` = ?;"
 					);
 					//Insert
-					prep.setInt(1, UUIDControl.getInstance().getUUIDProfile(UUID).getUserID());
+					prep.setInt(1, SlapPlayers.getUUIDController().getProfile(UUID).getID());
 					if (lifetime) {
 						prep.setNull(2, java.sql.Types.BIGINT);
 					} else {
@@ -415,7 +410,7 @@ public class Vip extends AbstractController {
 					e.printStackTrace();
 					plugin.getMail().sendConsoleMail(Bukkit.getConsoleSender(), "Stoux2", "Warning! Failed to update vip time. Player: " + UUID + " | Till: " + tillTime + " | Lifetime: " + lifetime);
 				} finally {
-					SQLPool.returnConnection(con);
+                    plugin.getSQLPool().returnConnection(con);
 				}
 			}
 		});
@@ -429,16 +424,16 @@ public class Vip extends AbstractController {
 		Util.runASync(new Runnable() {
 			@Override
 			public void run() {
-				Connection con = SQLPool.getConnection(); //Get connection
+				Connection con = plugin.getSQLPool().getConnection(); //Get connection
 				try {
 					PreparedStatement prep = con.prepareStatement("DELETE FROM `sh_vip_time` WHERE `user_id` = ?"); //Prep statement
-					prep.setInt(1, UUIDControl.getInstance().getUUIDProfile(UUID).getUserID()); //Set name
+					prep.setInt(1, SlapPlayers.getUUIDController().getProfile(UUID).getID()); //Set name
 					prep.executeUpdate(); //Execute update
 				} catch (SQLException e) {
 					e.printStackTrace();
 					plugin.getMail().sendConsoleMail(Bukkit.getConsoleSender(), "Stoux2", "Warning! Failed to remove VIP. Player: " + UUID); //Warn Stoux if failed
 				} finally {
-					SQLPool.returnConnection(con); //Return the connection
+                    plugin.getSQLPool().returnConnection(con); //Return the connection
 				}
 			}
 		});

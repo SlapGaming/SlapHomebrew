@@ -2,9 +2,8 @@ package me.naithantu.SlapHomebrew.Controllers.PlayerLogging;
 
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
-import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
-import me.naithantu.SlapHomebrew.Util.SQLPool;
 import mkremins.fanciful.FancyMessage;
+import nl.stoux.SlapPlayers.SlapPlayers;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -83,7 +82,7 @@ public class NoteControl extends AbstractLogger {
         ArrayList<Profilable> notes = new ArrayList<>();
 
         //Get a connection
-        Connection con = SQLPool.getConnection();
+        Connection con = instance.plugin.getSQLPool().getConnection();
         try {
             //Get the notes for this user from the list
             PreparedStatement prep = con.prepareStatement("SELECT `timestamp`, `added_by`, `note` FROM `sh_logger_notes` WHERE `user_id` = ?;");
@@ -115,7 +114,7 @@ public class NoteControl extends AbstractLogger {
             e.printStackTrace();
             throw new CommandException("An error occurred! Notify Stoux!");
         } finally {
-            SQLPool.returnConnection(con);
+            instance.plugin.getSQLPool().returnConnection(con);
         }
 
         //Return the notes
@@ -168,7 +167,7 @@ public class NoteControl extends AbstractLogger {
             FancyMessage timestamp = super.asFancyMessage();
             return timestamp
                     .then("Note (by ")
-                    .then(UUIDControl.getInstance().getUUIDProfile(addedByID).getCurrentName()).color(ChatColor.GOLD)
+                    .then(SlapPlayers.getUUIDController().getProfile(addedByID).getCurrentName()).color(ChatColor.GOLD)
                     .then("): ")
                     .then(note);
         }

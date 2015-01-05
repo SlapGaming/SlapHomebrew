@@ -6,7 +6,6 @@ import java.util.Map;
 
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.AFKLogger;
 
-import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import me.naithantu.SlapHomebrew.Util.Util;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;

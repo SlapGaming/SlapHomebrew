@@ -13,9 +13,7 @@ import java.util.Map.Entry;
 
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
-import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import me.naithantu.SlapHomebrew.Util.DateUtil;
-import me.naithantu.SlapHomebrew.Util.SQLPool;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.ChatColor;
@@ -135,7 +133,7 @@ public class DeathLogger extends AbstractLogger implements Listener {
 					}
 				}
 
-				Connection con = SQLPool.getConnection(); //Get connection
+				Connection con = instance.plugin.getSQLPool().getConnection(); //Get connection
 				try {
                     //Prepare Statement to get Deaths from SQL
 					PreparedStatement prep = con.prepareStatement(
@@ -166,7 +164,7 @@ public class DeathLogger extends AbstractLogger implements Listener {
 					Util.badMsg(p, "Something went wrong!");
 					e.printStackTrace();
 				} finally {
-					SQLPool.returnConnection(con); //Return connection
+                    instance.plugin.getSQLPool().returnConnection(con); //Return connection
 					AbstractCommand.removeDoingCommand(p);
 				}
 			}
@@ -255,7 +253,7 @@ public class DeathLogger extends AbstractLogger implements Listener {
 					}
 				}
 
-				Connection con = SQLPool.getConnection(); //Get connection
+				Connection con = instance.plugin.getSQLPool().getConnection(); //Get connection
 				try {
 					PreparedStatement prep = con.prepareStatement( //Query for getting kills out of SQL
 						"SELECT `killed_player`, `killed_by` FROM `sh_logger_kills` WHERE `killed_player` = ? OR `killed_by` = ?;"
@@ -320,7 +318,7 @@ public class DeathLogger extends AbstractLogger implements Listener {
 					Util.badMsg(p, "Something went wrong!");
 					e.printStackTrace();
 				} finally {
-					SQLPool.returnConnection(con); //Return connection
+                    instance.plugin.getSQLPool().returnConnection(con); //Return connection
 					AbstractCommand.removeDoingCommand(p);
 				}
 			}
@@ -343,7 +341,7 @@ public class DeathLogger extends AbstractLogger implements Listener {
             @Override
             public void run() {
                 //Get a connection
-                Connection con = SQLPool.getConnection();
+                Connection con = instance.plugin.getSQLPool().getConnection();
                 try {
                     //Monthly strings
                     String monthly = "";
@@ -401,7 +399,7 @@ public class DeathLogger extends AbstractLogger implements Listener {
                     Util.badMsg(p, "An error occurred!");
                     e.printStackTrace(); //Debug
                 } finally {
-                    SQLPool.returnConnection(con); //Return connection
+                    instance.plugin.getSQLPool().returnConnection(con); //Return connection
                     AbstractCommand.removeDoingCommand(p);
                 }
             }

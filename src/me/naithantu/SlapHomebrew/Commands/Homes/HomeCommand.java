@@ -38,7 +38,7 @@ public class HomeCommand extends AbstractCommand {
 				new HomesCommand(p, args).handle();
 				return true;
 			}
-			int homesAllowed = homes.getTotalNumberOfHomes(getUUIDProfile().getUserID()); //Get number of allowed homes
+			int homesAllowed = homes.getTotalNumberOfHomes(getUUIDProfile().getID()); //Get number of allowed homes
 			if (homesAllowed == 1 && homelistSize == 1) { //If only 1 home set, and 1 home allowed
 				
 				homes.teleportToHome(p, homeList.get(0));

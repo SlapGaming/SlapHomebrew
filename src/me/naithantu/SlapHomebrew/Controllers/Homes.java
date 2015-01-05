@@ -6,10 +6,10 @@ import java.util.UUID;
 
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.HomeException;
-import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 import me.naithantu.SlapHomebrew.Util.Util;
 
+import nl.stoux.SlapPlayers.SlapPlayers;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -144,7 +144,7 @@ public class Homes extends AbstractController {
 	 * @return default number of homes
 	 */
 	private int getDefaultNumberOfHomes(int userID) {
-        UUID uuid = UUID.fromString(UUIDControl.getInstance().getUUIDProfile(userID).getUUID());
+        UUID uuid = UUID.fromString(SlapPlayers.getUUIDController().getProfile(userID).getUUIDString());
 		PermissionUser user = PermissionsEx.getPermissionManager().getUser(uuid); //Get user
 		if (user == null) return 0; //If user is null, return 0
 		return defaultNumberOfHomes.get(user.getGroups()[0].getName()); //Get DefaultNumber

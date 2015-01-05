@@ -1,16 +1,11 @@
 package me.naithantu.SlapHomebrew.Commands.Jail;
 
-import java.util.List;
-
-import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
 import me.naithantu.SlapHomebrew.Controllers.Jails;
-import me.naithantu.SlapHomebrew.Util.Util;
 
-import org.bukkit.OfflinePlayer;
+import nl.stoux.SlapPlayers.Model.Profile;
 import org.bukkit.command.CommandSender;
 
 public class UnjailCommand extends AbstractCommand {
@@ -28,10 +23,10 @@ public class UnjailCommand extends AbstractCommand {
 		Jails jails = plugin.getJails();
 
         //Get player
-		UUIDControl.UUIDProfile offPlayer = getOfflinePlayer(args[0]);
+		Profile offPlayer = getOfflinePlayer(args[0]);
 
         //Check if jailed
-        if (!jails.isJailed(offPlayer.getUUID())) throw new CommandException(ErrorMsg.notInJail);
+        if (!jails.isJailed(offPlayer.getUUIDString())) throw new CommandException(ErrorMsg.notInJail);
 
         //Unjail the player
         Boolean unjailed = jails.unjailPlayer(offPlayer);

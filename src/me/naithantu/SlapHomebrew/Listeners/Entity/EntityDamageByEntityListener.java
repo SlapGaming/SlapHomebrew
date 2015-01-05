@@ -5,9 +5,9 @@ import java.util.HashSet;
 import me.naithantu.SlapHomebrew.Controllers.Flag;
 import me.naithantu.SlapHomebrew.Controllers.Horses;
 import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
-import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import me.naithantu.SlapHomebrew.Util.Util;
 
+import nl.stoux.SlapPlayers.SlapPlayers;
 import org.bukkit.Location;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Entity;
@@ -73,7 +73,7 @@ public class EntityDamageByEntityListener extends AbstractListener {
                 String horseUUID = horse.getUniqueId().toString();
                 if (horses.hasOwner(horseUUID)) {
                     //Get the ID of the damager
-                    int damagerID = UUIDControl.getUserID(player);
+                    int damagerID = SlapPlayers.getUUIDController().getProfile(player).getID();
 
                     //Get the ID of the owner
                     int ownerID = horses.getOwnerID(horseUUID);

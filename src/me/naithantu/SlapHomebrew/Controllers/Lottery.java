@@ -3,9 +3,11 @@ package me.naithantu.SlapHomebrew.Controllers;
 import java.util.*;
 
 import me.naithantu.SlapHomebrew.Controllers.FancyMessage.FancyMessage;
-import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import me.naithantu.SlapHomebrew.Util.Util;
 
+import nl.stoux.SlapPlayers.Control.UUIDControl;
+import nl.stoux.SlapPlayers.Model.Profile;
+import nl.stoux.SlapPlayers.SlapPlayers;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -154,10 +156,10 @@ public class Lottery extends AbstractController {
         //Create the winning players string
         List<String> winningPlayers = new ArrayList<String>();
         //=> Use UUID Control to find the names
-        UUIDControl uuidControl = UUIDControl.getInstance();
+        UUIDControl uuidControl = SlapPlayers.getUUIDController();
         for (String winningUUID : winningUUIDs) {
             //=> Get the UUID Profile
-            UUIDControl.UUIDProfile profile = uuidControl.getUUIDProfile(winningUUID);
+            Profile profile = uuidControl.getProfile(winningUUID);
 
             //=> Add the name to the list
             winningPlayers.add(profile.getCurrentName());

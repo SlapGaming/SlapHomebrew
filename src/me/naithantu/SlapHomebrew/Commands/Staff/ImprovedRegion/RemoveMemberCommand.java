@@ -9,9 +9,9 @@ import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.RegionLogger;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.RegionLogger.ChangeType;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.RegionLogger.ChangerIsA;
-import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import me.naithantu.SlapHomebrew.Util.Util;
 
+import nl.stoux.SlapPlayers.Model.Profile;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -51,7 +51,7 @@ public class RemoveMemberCommand extends AbstractImprovedRegionCommand {
 			}
 		}
 		
-		ArrayList<UUIDControl.UUIDProfile> offPlayers = new ArrayList<>();
+		ArrayList<Profile> offPlayers = new ArrayList<>();
 		for (int x = firstMember; x < (skipLastTwo ? args.length - 2 : args.length); x++) { //Get players
 			offPlayers.add(getOfflinePlayer(args[x]));
 		}
@@ -61,8 +61,8 @@ public class RemoveMemberCommand extends AbstractImprovedRegionCommand {
         HashSet<String> playernames = new HashSet<>();
         //Remove the members
 		DefaultDomain memberDomain = region.getMembers();
-		for (UUIDControl.UUIDProfile player : offPlayers) { //Get players
-            UUID playerUUID = UUID.fromString(player.getUUID());
+		for (Profile player : offPlayers) { //Get players
+            UUID playerUUID = UUID.fromString(player.getUUIDString());
 			if (memberDomain.contains(playerUUID)) {
 				memberDomain.removePlayer(playerUUID);
                 playernames.add(player.getCurrentName());

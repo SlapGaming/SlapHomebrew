@@ -5,9 +5,9 @@ import java.util.Collections;
 import java.util.UUID;
 
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
-import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import me.naithantu.SlapHomebrew.Util.Util;
 
+import nl.stoux.SlapPlayers.SlapPlayers;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -89,7 +89,7 @@ public class SeenGroupCommand extends AbstractImprovedRegionCommand {
      */
 	private SeenObject parsePlayer(SeenObject player) {
         //Get the current name
-        String currentName = UUIDControl.getInstance().getUUIDProfile(player.playerUUID).getCurrentName();
+        String currentName = SlapPlayers.getUUIDController().getProfile(player.playerUUID).getCurrentName();
 
         //Get the prefix & suffix from PEX
 		String name = "";

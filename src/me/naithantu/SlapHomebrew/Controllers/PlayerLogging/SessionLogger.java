@@ -14,12 +14,12 @@ import java.util.Map.Entry;
 
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
-import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import me.naithantu.SlapHomebrew.Util.DateUtil;
-import me.naithantu.SlapHomebrew.Util.SQLPool;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import mkremins.fanciful.FancyMessage;
+import nl.stoux.SlapPlayers.Model.Profile;
+import nl.stoux.SlapPlayers.SlapPlayers;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -103,7 +103,7 @@ public class SessionLogger extends AbstractLogger implements Listener {
         ArrayList<Profilable> sessions = new ArrayList<>();
 
         //Get the sessions
-        Connection con = SQLPool.getConnection();
+        Connection con = instance.plugin.getSQLPool().getConnection();
         try {
             //Prepare a statement
             PreparedStatement prep = con.prepareStatement("SELECT `join_time`, `quit_time`, `ip` FROM `sh_logger_times` WHERE `user_id` = ?;");
@@ -124,7 +124,7 @@ public class SessionLogger extends AbstractLogger implements Listener {
             e.printStackTrace();
             throw new CommandException("An error occurred! Notify Stoux!");
         } finally {
-            SQLPool.returnConnection(con);
+            instance.plugin.getSQLPool().returnConnection(con);
         }
 
 
@@ -250,11 +250,11 @@ public class SessionLogger extends AbstractLogger implements Listener {
 
         //Get info
 		String UUID = p.getUniqueId().toString();
-        UUIDControl.UUIDProfile profile = UUIDControl.getInstance().getUUIDProfile(UUID);
+        Profile profile = SlapPlayers.getUUIDController().getProfile(UUID);
         if (profile == null) {
             throw new CommandException("Your UserID is not known yet.");
         }
-        int userID = profile.getUserID();
+        int userID = profile.getID();
 		long playtime = 0L;
 		
 		for (Batchable batchable : instance.finishedSessions) { //Loop thru unbatched sessions
@@ -264,7 +264,7 @@ public class SessionLogger extends AbstractLogger implements Listener {
 			}
 		}
 		
-		Connection con = SQLPool.getConnection();
+		Connection con = instance.plugin.getSQLPool().getConnection();
 		try {
 			PreparedStatement prep = con.prepareStatement( //Get Total time from DB
 				"SELECT SUM( `quit_time` ) - SUM( `join_time` ) AS `playtime` FROM `sh_logger_times` WHERE `user_id` = ?;"
@@ -291,7 +291,7 @@ public class SessionLogger extends AbstractLogger implements Listener {
 			e.printStackTrace();
 			Util.badMsg(p, "Woops! Something went wrong.");
 		} finally {
-			SQLPool.returnConnection(con);
+			instance.plugin.getSQLPool().returnConnection(con);
 			AbstractCommand.removeDoingCommand(p);
 		}
 	}
@@ -323,7 +323,7 @@ public class SessionLogger extends AbstractLogger implements Listener {
 	 * @param toDate To date, can be null
 	 * @return Map with all players and their play times, possible that a player isn't in the map.
 	 */
-	public HashMap<Integer, Long> getPlayedTimes(UUIDControl.UUIDProfile[] players, Date fromDate, Date toDate) {
+	public HashMap<Integer, Long> getPlayedTimes(Profile[] players, Date fromDate, Date toDate) {
 		long[] times = parseDates(fromDate, toDate);
 		return getPlayedTimes(times[0], times[1], 0, players);
 	}
@@ -335,13 +335,13 @@ public class SessionLogger extends AbstractLogger implements Listener {
 	 * @param toDate Till date, if null = till now.
 	 * @return time of that player, or 0 if not played
 	 */
-	public long getPlayedTime(UUIDControl.UUIDProfile playerProfile, Date fromDate, Date toDate) {
+	public long getPlayedTime(Profile playerProfile, Date fromDate, Date toDate) {
 		long[] times = parseDates(fromDate, toDate); //Parse times
 		HashMap<Integer, Long> map = getPlayedTimes(times[0], times[1], 0, playerProfile); //Get map
 		if (map.isEmpty()) {
 			return 0;
 		} else {
-			return map.get(playerProfile.getUserID());
+			return map.get(playerProfile.getID());
 		}
 	}
 	
@@ -373,10 +373,10 @@ public class SessionLogger extends AbstractLogger implements Listener {
 	 * @param players All the players that should be searched
 	 * @return HashMap with all played times Key:[UserID] => Value:[TimePlayed]
 	 */
-	private HashMap<Integer, Long> getPlayedTimes(long fromTime, long toTime, int limit, UUIDControl.UUIDProfile... players) {
+	private HashMap<Integer, Long> getPlayedTimes(long fromTime, long toTime, int limit, Profile... players) {
 		batch(sqlQuery, finishedSessions, true); //Batch in sync with this thread
 		
-		Connection con = SQLPool.getConnection();
+		Connection con = plugin.getSQLPool().getConnection();
 
         //Time map
         //K:[UserID] => V:[Time Played]
@@ -438,8 +438,8 @@ public class SessionLogger extends AbstractLogger implements Listener {
 			
 			//Players
 			int x = 13;
-			for (UUIDControl.UUIDProfile player : players) { //Set players if there are any
-				prep.setInt(x++, player.getUserID());
+			for (Profile player : players) { //Set players if there are any
+				prep.setInt(x++, player.getID());
 			}
 			
 			//Limit
@@ -455,15 +455,15 @@ public class SessionLogger extends AbstractLogger implements Listener {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
-			SQLPool.returnConnection(con);
+			plugin.getSQLPool().returnConnection(con);
 		}
 		
 		long quit = System.currentTimeMillis();
 		for (Session session : new HashMap<String, Session>(activeSessions).values()) { //Look thru active sessions
 			if (checkingPlayers) { //If checking for certain players
 				boolean found = false;
-				for (UUIDControl.UUIDProfile player : players) { //Loop thru given players
-					if (player.getUUID().equalsIgnoreCase(session.UUID)) {
+				for (Profile player : players) { //Loop thru given players
+					if (player.getUUIDString().equalsIgnoreCase(session.UUID)) {
 						found = true; //If player found, break this loop
 						break;
 					}
@@ -475,7 +475,7 @@ public class SessionLogger extends AbstractLogger implements Listener {
 			
 			if ((join > fromTime && join < toTime) || (quit > fromTime && quit < toTime) ) { //If Join or Quit time in the TimeFrame
 				long played = (quit > toTime ? toTime : quit) - (join < fromTime ? fromTime : join); //Calculate played time
-                int userID = UUIDControl.getInstance().getUUIDProfile(session.UUID).getUserID();
+                int userID = SlapPlayers.getUUIDController().getProfile(session.UUID).getID();
 				if (timesMap.containsKey(userID)) { //If already in map
 					played += timesMap.get(userID); //Add to time
 				}

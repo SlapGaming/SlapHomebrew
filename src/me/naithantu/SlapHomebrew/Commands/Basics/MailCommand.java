@@ -8,11 +8,11 @@ import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
 import me.naithantu.SlapHomebrew.Controllers.Mail;
 import me.naithantu.SlapHomebrew.Controllers.Mail.MailGroups;
-import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import me.naithantu.SlapHomebrew.Storage.MailSQL;
 import me.naithantu.SlapHomebrew.Storage.MailSQL.CheckType;
 import me.naithantu.SlapHomebrew.Util.Util;
 
+import nl.stoux.SlapPlayers.Model.Profile;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -29,7 +29,7 @@ public class MailCommand extends AbstractCommand {
 		if (!(sender instanceof Player)) { //Console can send mails
  			if (args.length < 3 || !args[0].equalsIgnoreCase("send")) throw new UsageException("/mail send [player] [mail..]"); //Check usage
  			
- 			UUIDControl.UUIDProfile offPlayer = getOfflinePlayer(args[1]); //Get player
+ 			Profile offPlayer = getOfflinePlayer(args[1]); //Get player
  			plugin.getMail().sendConsoleMail(sender, offPlayer.getCurrentName(), createMailMessage()); //Send mail
 			return true;
 		}
@@ -37,7 +37,7 @@ public class MailCommand extends AbstractCommand {
 		Player p = getPlayer();
 		testPermission("mail");
 		
-		UUIDControl.UUIDProfile offPlayer; int mailID, page;
+		Profile offPlayer; int mailID, page;
 		
 		Mail mail = plugin.getMail(); //Get mail
 				

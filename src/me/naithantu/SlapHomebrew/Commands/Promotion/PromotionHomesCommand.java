@@ -7,7 +7,7 @@ import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
 import me.naithantu.SlapHomebrew.Controllers.Homes;
 
-import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
+import nl.stoux.SlapPlayers.Model.Profile;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 
@@ -26,7 +26,7 @@ public class PromotionHomesCommand extends AbstractCommand {
 		
 		Homes homeControl = plugin.getHomes();
 		
-		UUIDControl.UUIDProfile offPlayer;
+		Profile offPlayer;
         int homes;
         String currentName;
 		
@@ -37,7 +37,7 @@ public class PromotionHomesCommand extends AbstractCommand {
 			offPlayer = getOfflinePlayer(args[2]); //Get player
 			homes = parseIntPositive(args[3]);
             currentName = offPlayer.getCurrentName();
-			homeControl.addHomesToPlayer(offPlayer.getUserID(), homes); //Add homes to a player
+			homeControl.addHomesToPlayer(offPlayer.getID(), homes); //Add homes to a player
 			hMsg("Added " + homes + (homes == 1 ? " home" : " homes") + " to the player: " + currentName); //Msg
 			break;
 			
@@ -47,7 +47,7 @@ public class PromotionHomesCommand extends AbstractCommand {
 			offPlayer = getOfflinePlayer(args[2]); //Get player
 			homes = parseIntPositive(args[3]);
             currentName = offPlayer.getCurrentName();
-			homeControl.removeHomesFromPlayer(offPlayer.getUserID(), homes); //Try to remove homes
+			homeControl.removeHomesFromPlayer(offPlayer.getID(), homes); //Try to remove homes
 			hMsg("Removed " + homes + (homes == 1 ? " home " : " homes ") + " from player: " + currentName); //Message how many homes removed
 			break;
 			
@@ -56,7 +56,7 @@ public class PromotionHomesCommand extends AbstractCommand {
 			if (args.length != 3) throw new UsageException("promotion homes gethomes [Player]"); //Usage
 			offPlayer = getOfflinePlayer(args[2]); //Get player
             currentName = offPlayer.getCurrentName();
-			homes = homeControl.getNumberOfBoughtHomes(offPlayer.getUserID()); //Get number of bought homes
+			homes = homeControl.getNumberOfBoughtHomes(offPlayer.getID()); //Get number of bought homes
 			hMsg(currentName + " has bought " + homes + (homes == 1 ? " home." : " homes.")); //Message
 			break;
 		

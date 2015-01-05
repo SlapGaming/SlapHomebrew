@@ -26,7 +26,7 @@ public class SetHomeCommand extends AbstractCommand {
 		Homes homeControl = plugin.getHomes();
 		List<String> homes = homeControl.getHomes(p.getName());
 		int currentHomes = homes.size();
-		int allowedHomes = homeControl.getTotalNumberOfHomes(getUUIDProfile().getUserID());
+		int allowedHomes = homeControl.getTotalNumberOfHomes(getUUIDProfile().getID());
 		
 		if (currentHomes > allowedHomes) { //Check if not already over their limit
 			throw new CommandException("You have more homes than you're allowed to set. You cannot set anymore homes.");

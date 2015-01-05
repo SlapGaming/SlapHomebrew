@@ -7,17 +7,19 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Logger;
 
-import me.naithantu.SlapHomebrew.Util.SQLPool;
-
+import me.naithantu.SlapHomebrew.SlapHomebrew;
+import nl.stoux.SlapPlayers.Util.SQLPool;
 import org.bukkit.Bukkit;
 
 public class MailSQL {
 
     private Logger logger;
+    private SQLPool sqlPool;
     	
 	public MailSQL() {
 		logger = Bukkit.getLogger();
 		createTables();
+        sqlPool = SlapHomebrew.getInstance().getSQLPool();
 	}    
     
     /* Tables */
@@ -31,7 +33,7 @@ public class MailSQL {
     public boolean sendMail(String sender, String reciever, String message, String responseToIdInSend, String responseToIdInRecieved){
     	boolean messageFailed; int messageID = -1;
     	//Create message
-    	Connection con = SQLPool.getConnection(); //Get connection
+    	Connection con = sqlPool.getConnection(); //Get connection
     	try {
     		PreparedStatement messageStatement = con.prepareStatement("INSERT INTO `messages` (`message_id` ,`message`) VALUES (NULL , ?);", Statement.RETURN_GENERATED_KEYS);
     		messageStatement.setString(1, message);
@@ -45,7 +47,7 @@ public class MailSQL {
     		messageFailed = true;
     		logError(e.getMessage());
     	} finally {
-    		SQLPool.returnConnection(con);
+    		sqlPool.returnConnection(con);
     	}
     	
     	//Message inserted
@@ -75,7 +77,7 @@ public class MailSQL {
     
     public int insertMessage(String message){
     	int messageID = -1;
-    	Connection con = SQLPool.getConnection(); //Get connection
+    	Connection con = sqlPool.getConnection(); //Get connection
     	//Create message
     	try {
     		PreparedStatement messageStatement = con.prepareStatement("INSERT INTO `messages` (`message_id` ,`message`) VALUES (NULL , ?);", Statement.RETURN_GENERATED_KEYS);
@@ -88,7 +90,7 @@ public class MailSQL {
     	} catch (SQLException e) {
     		logError(e.getMessage());
     	} finally {
-    		SQLPool.returnConnection(con);
+    		sqlPool.returnConnection(con);
     	}
     	return messageID;
     }
@@ -118,7 +120,7 @@ public class MailSQL {
     
     // Insert into tables
     private boolean insertInSenderTable(int mailID, String sender, String reciever, String responseTo, int messageID){
-    	Connection con = SQLPool.getConnection(); //Get connection
+    	Connection con = sqlPool.getConnection(); //Get connection
     	try {
     		PreparedStatement senderStatement = con.prepareStatement("INSERT INTO `send_mail` (`mail_id`, `sender`, `reciever`, `date`, `response_to`, `message_id`) VALUES (?, ?, ?, NOW(), ?, ?);");
     		senderStatement.setInt(1, mailID);
@@ -133,12 +135,12 @@ public class MailSQL {
     	} catch (SQLException e) {
     		logError(e.getMessage());
     	} finally {
-    		SQLPool.returnConnection(con);
+    		sqlPool.returnConnection(con);
     	}
     	return false;
     }
     private boolean insertInRecieverTable(int mailID, String sender, String reciever, String responseTo, int messageID){
-    	Connection con = SQLPool.getConnection(); //Get connection
+    	Connection con = sqlPool.getConnection(); //Get connection
     	try {
     		PreparedStatement recieverStatement = con.prepareStatement("INSERT INTO `recieved_mail` (`mail_id`, `sender`, `reciever`, `date`, `has_read`, `removed`, `marked`, `response_to`, `message_id`) VALUES (?, ?, ?, NOW(), '0', '0', '0', ?, ?);");
     		recieverStatement.setInt(1, mailID);
@@ -153,7 +155,7 @@ public class MailSQL {
     	} catch (SQLException e) {
     		logError(e.getMessage());
     	} finally {
-    		SQLPool.returnConnection(con);
+    		sqlPool.returnConnection(con);
     	}
     	return false;
     }
@@ -162,7 +164,7 @@ public class MailSQL {
     //Get mailIDs
     private int getNextSenderMailID(String sender) {
     	int returnInt = -1;
-    	Connection con = SQLPool.getConnection(); //Get connection
+    	Connection con = sqlPool.getConnection(); //Get connection
     	try {
     		PreparedStatement idStatement = con.prepareStatement("SELECT MAX(`mail_id`) FROM `send_mail` WHERE `sender` = ? ;");
     		idStatement.setString(1, sender);
@@ -173,14 +175,14 @@ public class MailSQL {
     	} catch (SQLException e) {
     		logError(e.getMessage());
     	} finally {
-    		SQLPool.returnConnection(con);
+    		sqlPool.returnConnection(con);
     	}
     	return returnInt;
     }
     
     private int getNextRecieverMailID(String reciever) {
     	int returnInt = -1;
-    	Connection con = SQLPool.getConnection(); //Get connection
+    	Connection con = sqlPool.getConnection(); //Get connection
     	try {
     		PreparedStatement idStatement = con.prepareStatement("SELECT MAX(`mail_id`) FROM `recieved_mail` WHERE `reciever` = ? ;");
     		idStatement.setString(1, reciever);
@@ -191,7 +193,7 @@ public class MailSQL {
     	} catch (SQLException e) {
     		logError(e.getMessage());
     	} finally {
-    		SQLPool.returnConnection(con);
+    		sqlPool.returnConnection(con);
     	}
     	return returnInt;
     }
@@ -200,7 +202,7 @@ public class MailSQL {
     //Get reponse info -- CommandIssuer
     public Object[] getIdFromPlayerRecieved(String commandIssuer, String mailSender) {
     	Object[] returnObjects = null;
-    	Connection con = SQLPool.getConnection(); //Get connection
+    	Connection con = sqlPool.getConnection(); //Get connection
     	try {
     		PreparedStatement idStatement = con.prepareStatement("SELECT `mail_id`, `message_id` FROM `recieved_mail` WHERE `sender` = ? AND `reciever` = ? ORDER BY `date` DESC LIMIT 0, 1;");
     		idStatement.setString(1, mailSender);
@@ -214,13 +216,13 @@ public class MailSQL {
     	} catch (SQLException e) {
     		logError(e.getMessage());
     	} finally {
-    		SQLPool.returnConnection(con);
+    		sqlPool.returnConnection(con);
     	}
     	return returnObjects;
     }
     public Object[] getPlayerFromIDRecieved(String commandIssuer, int MailID) {
     	Object[] returnObjects = null;
-    	Connection con = SQLPool.getConnection(); //Get connection
+    	Connection con = sqlPool.getConnection(); //Get connection
     	try {
     		PreparedStatement idStatement = con.prepareStatement("SELECT `sender`, `message_id` FROM `recieved_mail` WHERE `mail_id` = ? AND `reciever` = ? ORDER BY `date` DESC LIMIT 0, 1;");
     		idStatement.setInt(1, MailID);
@@ -234,7 +236,7 @@ public class MailSQL {
     	} catch (SQLException e) {
     		logError(e.getMessage());
     	} finally {
-    		SQLPool.returnConnection(con);
+    		sqlPool.returnConnection(con);
     	}
     	return returnObjects;
     }
@@ -242,7 +244,7 @@ public class MailSQL {
     //Get response info -- Reciever
     public int getIdForReciever(String sender, String reciever, int messageID){
     	int returnInt = -1;
-    	Connection con = SQLPool.getConnection(); //Get connection
+    	Connection con = sqlPool.getConnection(); //Get connection
     	try {
     		PreparedStatement idStatement = con.prepareStatement("SELECT `mail_id` FROM `send_mail` WHERE `sender` = ? AND `reciever` = ? AND `message_id` = ? LIMIT 0, 1;");
     		idStatement.setString(1, reciever);
@@ -255,7 +257,7 @@ public class MailSQL {
     	} catch (SQLException e) {
     		logError(e.getMessage());
     	} finally {
-    		SQLPool.returnConnection(con);
+    		sqlPool.returnConnection(con);
     	}
     	return returnInt;
     }
@@ -263,7 +265,7 @@ public class MailSQL {
     //Get mail
     public Object[] getRecievedMail(String reciever, int mailID){
     	Object[] returnObjects = null;
-    	Connection con = SQLPool.getConnection(); //Get connection
+    	Connection con = sqlPool.getConnection(); //Get connection
     	try {
     		PreparedStatement mailStatement = con.prepareStatement("SELECT `sender`, `date`, `has_read`, `removed`, `marked`, `response_to`, `message_id` FROM `recieved_mail` WHERE `mail_id` = ? AND `reciever` = ?");
     		mailStatement.setInt(1, mailID);
@@ -287,14 +289,14 @@ public class MailSQL {
     	} catch (SQLException e) {
     		logError(e.getMessage());
     	} finally {
-    		SQLPool.returnConnection(con);
+    		sqlPool.returnConnection(con);
     	}
     	return returnObjects;
     }
     
     public Object[] getSendMail(String sender, int mailID){
     	Object[] returnObjects = null;
-    	Connection con = SQLPool.getConnection(); //Get connection
+    	Connection con = sqlPool.getConnection(); //Get connection
     	try {
     		PreparedStatement mailStatement = con.prepareStatement("SELECT `reciever`, `date`, `response_to`, `message_id` FROM `send_mail` WHERE `mail_id` = ? AND `sender` = ? ;");
     		mailStatement.setInt(1, mailID);
@@ -311,7 +313,7 @@ public class MailSQL {
     	} catch (SQLException e) {
     		logError(e.getMessage());
     	} finally {
-    		SQLPool.returnConnection(con);
+    		sqlPool.returnConnection(con);
     	}
     	return returnObjects;
     }
@@ -333,7 +335,7 @@ public class MailSQL {
     
     public int checkNrOfPages(String player, CheckType type) {
     	int returnInt = -1;
-    	Connection con = SQLPool.getConnection(); //Get connection
+    	Connection con = sqlPool.getConnection(); //Get connection
     	try {
     		PreparedStatement typeStatement = null;
     		switch (type) {
@@ -363,14 +365,14 @@ public class MailSQL {
     	} catch (SQLException e) {
     		logError(e.getMessage());
     	} finally {
-    		SQLPool.returnConnection(con);
+    		sqlPool.returnConnection(con);
     	}
     	return returnInt;
     }
     
     public Object[][] getMailPage(String player, CheckType type, int startAt) {
     	Object[][] returnMails = null;
-    	Connection con = SQLPool.getConnection(); //Get connection
+    	Connection con = sqlPool.getConnection(); //Get connection
     	try {
     		PreparedStatement pageStatement = null;
     		switch (type) {
@@ -412,14 +414,14 @@ public class MailSQL {
     	} catch (SQLException e) {
     		logError(e.getMessage());
     	} finally {
-    		SQLPool.returnConnection(con);
+    		sqlPool.returnConnection(con);
     	}
     	return returnMails;
     }
     
     public int checkNrOfNewMails(String player) {
     	int returnInt = -1;
-    	Connection con = SQLPool.getConnection(); //Get connection
+    	Connection con = sqlPool.getConnection(); //Get connection
     	try {
     		PreparedStatement countStatement = con.prepareStatement("SELECT COUNT(*) as `mails` FROM `recieved_mail` where `reciever` = ? AND `has_read` = 0;");
     		countStatement.setString(1, player);
@@ -430,7 +432,7 @@ public class MailSQL {
     	} catch (SQLException e) {
     		logError(e.getMessage());
     	} finally {
-    		SQLPool.returnConnection(con);
+    		sqlPool.returnConnection(con);
     	}
     	return returnInt;
     }
@@ -438,7 +440,7 @@ public class MailSQL {
     //Get Mail Conversation
     public int checkNrOfMailsConversation(String player, String otherPlayer) {
     	int returnInt = -1;
-    	Connection con = SQLPool.getConnection(); //Get connection
+    	Connection con = sqlPool.getConnection(); //Get connection
     	try {
     		PreparedStatement convPageStatement = con.prepareStatement("SELECT " +
     			"(SELECT COUNT(*) FROM `recieved_mail` WHERE `sender` = ? AND `reciever` = ?) " +
@@ -456,14 +458,14 @@ public class MailSQL {
     	} catch (SQLException e) {
     		logError(e.getMessage());
     	} finally {
-    		SQLPool.returnConnection(con);
+    		sqlPool.returnConnection(con);
     	}
     	return returnInt;
     }
     
     public Object[][] getMailConversation(String player, String otherPlayer, int startAt) {
     	Object[][] returnObjects = null;
-    	Connection con = SQLPool.getConnection(); //Get connection
+    	Connection con = sqlPool.getConnection(); //Get connection
     	try {
     		PreparedStatement convStatement = con.prepareStatement("SELECT `mail_id`, `date`, `message_id`, 'R' as type FROM `recieved_mail` WHERE `sender` = ? AND `reciever` = ? " +
     				"UNION ALL " +
@@ -488,7 +490,7 @@ public class MailSQL {
     	} catch (SQLException e) {
     		logError(e.getMessage());
     	} finally {
-    		SQLPool.returnConnection(con);
+    		sqlPool.returnConnection(con);
     	}
     	return returnObjects;
     }
@@ -496,7 +498,7 @@ public class MailSQL {
     //Updaters
     private boolean setReadMail(int mailID, String reciever) {
     	boolean returnBool = false;
-    	Connection con = SQLPool.getConnection(); //Get connection
+    	Connection con = sqlPool.getConnection(); //Get connection
     	try {
     		PreparedStatement readStatement = con.prepareStatement("UPDATE `recieved_mail` SET `has_read` = '1' WHERE  `mail_id` = ? AND `reciever` = ? ;");
     		readStatement.setInt(1, mailID);
@@ -508,14 +510,14 @@ public class MailSQL {
     	} catch (SQLException e) {
     		logError(e.getMessage());
     	} finally {
-    		SQLPool.returnConnection(con);
+    		sqlPool.returnConnection(con);
     	}
     	return returnBool;
     }
     
     public int setReadAll(String reciever) {
     	int affectedMails = -1;
-    	Connection con = SQLPool.getConnection(); //Get connection
+    	Connection con = sqlPool.getConnection(); //Get connection
     	try {
     		PreparedStatement readStatement = con.prepareStatement("UPDATE `recieved_mail` SET `has_read` = 1 WHERE `has_read` = 0 AND `reciever` = ? ;");
     		readStatement.setString(1, reciever);
@@ -523,14 +525,14 @@ public class MailSQL {
     	} catch (SQLException e) {
     		logError(e.getMessage());
     	} finally {
-    		SQLPool.returnConnection(con);
+    		sqlPool.returnConnection(con);
     	}
     	return affectedMails;
     }
     
     public boolean setDeleted(int mailID, String reciever, boolean deleted) {
     	boolean returnBool = false;
-    	Connection con = SQLPool.getConnection(); //Get connection
+    	Connection con = sqlPool.getConnection(); //Get connection
     	try {
     		PreparedStatement delStatement = con.prepareStatement("UPDATE `recieved_mail` SET `removed` = ?, `has_read` = 1 WHERE `mail_id` = ? AND `reciever` = ? ;");
     		delStatement.setBoolean(1, deleted);
@@ -543,14 +545,14 @@ public class MailSQL {
     	} catch (SQLException e) {
     		logError(e.getMessage());
     	} finally {
-    		SQLPool.returnConnection(con);
+    		sqlPool.returnConnection(con);
     	}
     	return returnBool;
     }
     
     public boolean setMarked(int mailID, String reciever, boolean marked) {
     	boolean returnBool = false;
-    	Connection con = SQLPool.getConnection(); //Get connection
+    	Connection con = sqlPool.getConnection(); //Get connection
     	try {
     		PreparedStatement markStatement = con.prepareStatement("UPDATE `recieved_mail` SET `marked` = ?, `has_read` = 1 WHERE `mail_id` = ? AND `reciever` = ? ;");
     		markStatement.setBoolean(1, marked);
@@ -563,7 +565,7 @@ public class MailSQL {
     	} catch (SQLException e) {
     		logError(e.getMessage());
     	} finally {
-    		SQLPool.returnConnection(con);
+    		sqlPool.returnConnection(con);
     	}
     	return returnBool;
     }
@@ -574,14 +576,14 @@ public class MailSQL {
 
     public int countX(String from, String where) {
     	int returnInt = -1;
-    	Connection con = SQLPool.getConnection(); //Get connection
+    	Connection con = sqlPool.getConnection(); //Get connection
     	try {
     		ResultSet countRS = con.createStatement().executeQuery("SELECT COUNT(*) FROM `" + from + "` WHERE " + where);
     		if (countRS.next()) {
     			returnInt = countRS.getInt(1);
     		}
     	} catch (SQLException e) {} finally {
-    		SQLPool.returnConnection(con);
+    		sqlPool.returnConnection(con);
     	}
     	return returnInt;
     }

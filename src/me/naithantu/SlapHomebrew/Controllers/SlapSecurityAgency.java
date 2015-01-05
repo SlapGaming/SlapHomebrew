@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.*;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 import me.naithantu.SlapHomebrew.Util.Log;
-import me.naithantu.SlapHomebrew.Util.SQLPool;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.configuration.file.FileConfiguration;
@@ -25,11 +24,6 @@ public class SlapSecurityAgency extends AbstractController {
 		config = yaml.getConfig();
 		if (!config.contains("enabled") || config.getBoolean("enabled") == false) { //Check if enabled
 			Log.info("Slap Security Agency - Player Logging is disabled.");
-			return;
-		}
-		
-		if (!SQLPool.isSetup()) { //SQL Disabled
-			Log.warn("[SSA] No SQL Connection available. SSA is disabled.");
 			return;
 		}
 		

@@ -3,7 +3,7 @@ package me.naithantu.SlapHomebrew.Commands.Promotion;
 import java.util.List;
 import java.util.UUID;
 
-import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
+import nl.stoux.SlapPlayers.Model.Profile;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -41,7 +41,7 @@ public class PromotionRankCommand extends AbstractCommand {
 				senderRank = Rank.SuperAdmin; //Console = OP/SuperAdmin
 			}
 			
-			UUIDControl.UUIDProfile targetPlayer;
+			Profile targetPlayer;
 			PermissionUser targetUser;
 			Rank toRank, fromRank;
 			boolean changed;
@@ -53,7 +53,7 @@ public class PromotionRankCommand extends AbstractCommand {
 				
 				//Get player info
 				targetPlayer = getOfflinePlayer(args[2]); //Get player
-				targetUser = PermissionsEx.getPermissionManager().getUser(UUID.fromString(targetPlayer.getUUID())); //Get user
+				targetUser = PermissionsEx.getPermissionManager().getUser(targetPlayer.getUUID()); //Get user
 				fromRank = Rank.parseRank(targetUser); //Get the current rank of that player
 				
 				//Do checks
@@ -75,12 +75,12 @@ public class PromotionRankCommand extends AbstractCommand {
 				fromRank.fromRank(targetUser); //Remove rank leftovers
 				toRank.toRank(targetUser); //Promote to rank
 
-				changed = plugin.getVip().checkRank(targetPlayer.getUUID(), false, false); //Check if any VIP changes have to be made (Guide -> VIPGuide etc)
+				changed = plugin.getVip().checkRank(targetPlayer.getUUIDString(), false, false); //Check if any VIP changes have to be made (Guide -> VIPGuide etc)
 				if (changed) { //If the VIP check changed the rank
 					toRank = Rank.parseRank(targetUser); //Parse that rank
 				}
-				PromotionLogger.logRankChange(targetPlayer.getUUID(), fromRank.name(), toRank.name(), true, "Command - " + sender.getName()); //Log it
-                Player onPlayer = Bukkit.getPlayer(UUID.fromString(targetPlayer.getUUID()));
+				PromotionLogger.logRankChange(targetPlayer.getUUIDString(), fromRank.name(), toRank.name(), true, "Command - " + sender.getName()); //Log it
+                Player onPlayer = Bukkit.getPlayer(targetPlayer.getUUID());
                 if (onPlayer != null) { //Check if player is online
 					plugin.getTabController().playerSwitchGroup(onPlayer); //Update TAB
 				}
@@ -115,13 +115,13 @@ public class PromotionRankCommand extends AbstractCommand {
 				fromRank.fromRank(targetUser); //Remove rank leftovers
 				toRank.toRank(targetUser); //Promote to rank
 
-				changed = plugin.getVip().checkRank(targetPlayer.getUUID(), false, false); //Check if any VIP changes have to be made (Guide -> VIPGuide etc)
+				changed = plugin.getVip().checkRank(targetPlayer.getUUIDString(), false, false); //Check if any VIP changes have to be made (Guide -> VIPGuide etc)
 				if (changed) { //If the VIP check changed the rank
 					toRank = Rank.parseRank(targetUser); //Parse that rank
 				}
-				PromotionLogger.logRankChange(targetPlayer.getUUID(), fromRank.name(), toRank.name(), false, "Command - " + sender.getName()); //Log it
+				PromotionLogger.logRankChange(targetPlayer.getUUIDString(), fromRank.name(), toRank.name(), false, "Command - " + sender.getName()); //Log it
 
-                onPlayer = Bukkit.getPlayer(UUID.fromString(targetPlayer.getUUID()));
+                onPlayer = Bukkit.getPlayer(UUID.fromString(targetPlayer.getUUIDString()));
                 if (onPlayer != null) { //Check if player is online
                     plugin.getTabController().playerSwitchGroup(onPlayer); //Update TAB
                 }

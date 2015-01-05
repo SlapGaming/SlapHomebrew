@@ -11,7 +11,6 @@ import java.util.HashSet;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Util.DateUtil;
-import me.naithantu.SlapHomebrew.Util.SQLPool;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.ChatColor;
@@ -88,10 +87,10 @@ public class RegionLogger extends AbstractLogger {
 						foundChanges.add(change);
 					}
 				}
-				Connection con = SQLPool.getConnection();
+				Connection con = instance.plugin.getSQLPool().getConnection();
 				try {
 					PreparedStatement prep = con.prepareStatement( //Prep Statement for getting changes
-						"SELECT `changed_time`, `changed_by`, `changer_is_a`, `type`, `parameter` FROM `sh_logger_regions` " +
+						"SELECT `changed_time`, `changed_by`, `changer_is_a`, `type`, `parameters` FROM `sh_logger_regions` " +
 						"WHERE `world` = ? AND `region` = ?;"
 					);
 					prep.setString(1, world);

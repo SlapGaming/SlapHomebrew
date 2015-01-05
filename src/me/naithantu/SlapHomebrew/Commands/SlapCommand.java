@@ -11,11 +11,11 @@ import me.naithantu.SlapHomebrew.Controllers.TabController;
 import me.naithantu.SlapHomebrew.Controllers.MessageStringer.MultiChatCombiner;
 import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
 import me.naithantu.SlapHomebrew.PlayerExtension.SlapPlayer;
-import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import me.naithantu.SlapHomebrew.Util.Util;
 import net.minecraft.server.v1_8_R1.EntityPlayer;
 import net.minecraft.server.v1_8_R1.PacketPlayOutSpawnEntityLiving;
 
+import nl.stoux.SlapPlayers.Model.Profile;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -67,7 +67,7 @@ public class SlapCommand extends AbstractCommand {
 		}
 		
 		//Values
-		UUIDControl.UUIDProfile offPlayer; EntityPlayer nmsPlayer; Player targetPlayer;
+		Profile offPlayer; EntityPlayer nmsPlayer; Player targetPlayer;
 		
 		switch (args[0].toLowerCase()) {
 		case "reload": //Reload the plugin
@@ -147,7 +147,7 @@ public class SlapCommand extends AbstractCommand {
 			TabController tabController = plugin.getTabController();
 			
 			if (args.length == 2) { //Checking TabSection
-				String tabSection = tabController.getTabSectionForPlayer(offPlayer.getUUID()); //Get the TabSection the player is in
+				String tabSection = tabController.getTabSectionForPlayer(offPlayer.getUUIDString()); //Get the TabSection the player is in
 				if (tabSection == null) {
 					hMsg(offPlayer.getCurrentName() + " is in their default TabSection.");
 				} else {
@@ -155,12 +155,12 @@ public class SlapCommand extends AbstractCommand {
 				}
 			} else { //Setting TabSection
 				if (args[2].equalsIgnoreCase("delete") || args[2].equalsIgnoreCase("remove")) { //Check if removing from TabSections
-					boolean removed = tabController.removeTabSectionForPlayer(offPlayer.getUUID());
+					boolean removed = tabController.removeTabSectionForPlayer(offPlayer.getUUIDString());
 					hMsg(offPlayer.getCurrentName() + " is " + (removed ? "back in their default TabSection." : "not in a TabSection."));
 				} else {
 					if (!tabController.isTabSection(args[2])) throw new CommandException("This is not a valid TabSection. Check: /slap TabSections");
-					tabController.setTabSectionForPlayer(offPlayer.getUUID(), args[2]);
-					hMsg(offPlayer.getCurrentName() + " is now in TabSection " + tabController.getTabSectionForPlayer(offPlayer.getUUID()));
+					tabController.setTabSectionForPlayer(offPlayer.getUUIDString(), args[2]);
+					hMsg(offPlayer.getCurrentName() + " is now in TabSection " + tabController.getTabSectionForPlayer(offPlayer.getUUIDString()));
 				}
 			}
 			break;
@@ -593,18 +593,18 @@ public class SlapCommand extends AbstractCommand {
 				offPlayer = getOfflinePlayer(args[1]);
 				String targetname = offPlayer.getCurrentName();
 				PlayerLogger pl = plugin.getPlayerLogger(); //Get PL
-				boolean isCS = pl.isCommandSpy(offPlayer.getUUID());
+				boolean isCS = pl.isCommandSpy(offPlayer.getUUIDString());
 				if (args.length == 2) {
 					hMsg(targetname + " is currently " + (isCS ? ChatColor.GREEN + "a" : ChatColor.RED + "not a") + ChatColor.WHITE + " CommandSpy!");
 				} else {
 					switch (args[2].toLowerCase()) {
 					case "on": //Turn CommandSpy for player on
 						if (isCS) throw new CommandException(targetname + " is already a CommandSpy!");
-						pl.addCommandSpy(offPlayer.getUUID());
+						pl.addCommandSpy(offPlayer.getUUIDString());
 						break;
 					case "off": //Turn CommandSpy for player off
 						if (!isCS) throw new CommandException(targetname + "'s CommandSpy is already disabled.");
-						pl.removeFromCommandSpy(offPlayer.getUUID());
+						pl.removeFromCommandSpy(offPlayer.getUUIDString());
 						break;
 					default: //Doing it wrong -> Usage
 						throw new UsageException("slap commandspy [Player] <on|off>");

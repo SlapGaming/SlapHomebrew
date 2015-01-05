@@ -10,7 +10,6 @@ import me.naithantu.SlapHomebrew.Storage.MailSQL.CheckType;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 import me.naithantu.SlapHomebrew.Util.DateUtil;
 import me.naithantu.SlapHomebrew.Util.Log;
-import me.naithantu.SlapHomebrew.Util.SQLPool;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.ChatColor;
@@ -44,11 +43,8 @@ public class Mail extends AbstractController {
 			pluginConfig.set("devserver", false);
 			plugin.saveConfig();
 		}
+        devServer = true;
 		if (!devServer) {
-			if (!SQLPool.isSetup()) { //Check if SQL Pool is setup.
-				Log.warn("[MAIL] No SQL Connections. Disabling Mail.");
-				return;
-			}
 			mailSQL = new MailSQL();
 			crunchingData = new HashMap<>();
 			mailYML = new YamlStorage(plugin, "mail");
@@ -391,7 +387,8 @@ public class Mail extends AbstractController {
 			@Override
 			public void run() {
 				int mails = mailSQL.checkNrOfNewMails(player.getName());
-				if (mails == 1) {					player.sendMessage(Util.getHeader() + "You have " + mails + " new mail. " + ChatColor.GRAY + "Use " + ChatColor.RED + "/mail check" + ChatColor.GRAY + " to check your mail.");
+				if (mails == 1) {
+					player.sendMessage(Util.getHeader() + "You have " + mails + " new mail. " + ChatColor.GRAY + "Use " + ChatColor.RED + "/mail check" + ChatColor.GRAY + " to check your mail.");
 				} else if (mails > 1) {
 					player.sendMessage(Util.getHeader() + "You have " + mails + " new mails. " + ChatColor.GRAY + "Use " + ChatColor.RED + "/mail check" + ChatColor.GRAY + " to check your mail.");
 				}

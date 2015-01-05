@@ -5,7 +5,6 @@ import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
 import me.naithantu.SlapHomebrew.Controllers.Horses;
-import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import me.naithantu.SlapHomebrew.Storage.HorseSerializables.SavedHorse;
 import me.naithantu.SlapHomebrew.Util.Helpers.HelpMenu;
 import me.naithantu.SlapHomebrew.Util.Util;
@@ -13,6 +12,9 @@ import mkremins.fanciful.FancyMessage;
 import net.minecraft.server.v1_8_R1.AttributeInstance;
 import net.minecraft.server.v1_8_R1.EntityInsentient;
 import net.minecraft.server.v1_8_R1.GenericAttributes;
+import nl.stoux.SlapPlayers.Control.UUIDControl;
+import nl.stoux.SlapPlayers.Model.Profile;
+import nl.stoux.SlapPlayers.SlapPlayers;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_8_R1.entity.CraftLivingEntity;
@@ -46,10 +48,10 @@ public class HorseCommand extends AbstractCommand {
             }
 
             //Get the player
-            UUIDControl.UUIDProfile donatingPlayer = getOfflinePlayer(args[1]);
+            Profile donatingPlayer = getOfflinePlayer(args[1]);
 
             //Add the horses
-            plugin.getHorses().allowMoreMutatedHorses(donatingPlayer.getUserID(), addingHorses);
+            plugin.getHorses().allowMoreMutatedHorses(donatingPlayer.getID(), addingHorses);
 
             //Notify & Return
             hMsg("Added " + addingHorses + " " + (addingHorses == 1 ? "horse" : "horses") + " to " + donatingPlayer.getCurrentName());
@@ -123,22 +125,22 @@ public class HorseCommand extends AbstractCommand {
                 horse = getOwnedHorse(hController, player);
 
                 //Get the ID of the owner
-                ownerID = getUUIDProfile().getUserID();
+                ownerID = getUUIDProfile().getID();
 
                 //Parse the names
                 HashSet<Integer> allowedPlayers = new HashSet<>();
                 ArrayList<String> allowedPlayerNames = new ArrayList<>();
                 for (int i = 1; i < args.length; i++) {
                     //Get the offline player
-                    UUIDControl.UUIDProfile offPlayer = getOfflinePlayer(args[i]);
+                    Profile offPlayer = getOfflinePlayer(args[i]);
 
                     //Check if the player isn't the owner
-                    if (offPlayer.getUserID() == ownerID) {
+                    if (offPlayer.getID() == ownerID) {
                         continue;
                     }
 
                     //Add to sets
-                    if (allowedPlayers.add(offPlayer.getUserID())) {
+                    if (allowedPlayers.add(offPlayer.getID())) {
                         //Only add the name if the ID was added, thus preventing doubles
                         allowedPlayerNames.add(offPlayer.getCurrentName());
                     }
@@ -161,16 +163,16 @@ public class HorseCommand extends AbstractCommand {
                 horse = getOwnedHorse(hController, player);
 
                 //Get ownerID
-                ownerID = getUUIDProfile().getUserID();
+                ownerID = getUUIDProfile().getID();
 
                 //Parse the player
-                UUIDControl.UUIDProfile deniedPlayer = getOfflinePlayer(args[1]);
+                Profile deniedPlayer = getOfflinePlayer(args[1]);
 
                 //Check if not denying themself
-                if (deniedPlayer.getUserID() == ownerID) throw new CommandException("You cannot deny yourself from a horse.");
+                if (deniedPlayer.getID() == ownerID) throw new CommandException("You cannot deny yourself from a horse.");
 
                 //Deny the user
-                hController.denyFromHorse(horse.getUniqueId().toString(), deniedPlayer.getUserID());
+                hController.denyFromHorse(horse.getUniqueId().toString(), deniedPlayer.getID());
 
                 //Notify the sender
                 hMsg(deniedPlayer.getCurrentName() + " is no longer allowed on this horse!");
@@ -196,7 +198,7 @@ public class HorseCommand extends AbstractCommand {
                 checkDoingCommand();
 
                 //Get the userID
-                int userID = getUUIDProfile().getUserID();
+                int userID = getUUIDProfile().getID();
 
                 //Get all horses
                 final HashSet<SavedHorse> savedHorses = hController.getAllHorsesFromUser(userID);
@@ -277,7 +279,7 @@ public class HorseCommand extends AbstractCommand {
                 if (!hController.hasOwner(horseUUID)) throw new CommandException("There is no horse known with this UUID. (Possibly already dead?)");
                 //=> Check if the player is the owner of that horse
                 ownerID = hController.getOwnerID(horseUUID);
-                int playerID = getUUIDProfile().getUserID();
+                int playerID = getUUIDProfile().getID();
                 if (ownerID != playerID) throw new CommandException("You aren't the owner of that horse.");
 
                 //Add the horse to the hitlist
@@ -302,18 +304,18 @@ public class HorseCommand extends AbstractCommand {
                         horse = getOwnedHorse(hController, player);
 
                         //Get UUIDProfile
-                        UUIDControl.UUIDProfile profile = getUUIDProfile();
+                        Profile profile = getUUIDProfile();
 
                         //Check if the player is VIP
-                        boolean isVIP = plugin.getVip().isVip(profile.getUUID());
+                        boolean isVIP = plugin.getVip().isVip(profile.getUUIDString());
 
                         //Check if the player can mutate horses at all
-                        if (hController.getTotalAllowedMutations(profile.getUserID(), isVIP) == 0) {
+                        if (hController.getTotalAllowedMutations(profile.getID(), isVIP) == 0) {
                             throw new CommandException("You cannot mutate any horses. Get VIP or donate for mutations!");
                         }
 
                         //Check if the player can mutate a horse
-                        int mutatesLeft = hController.getMutatesLeft(profile.getUserID(), isVIP);
+                        int mutatesLeft = hController.getMutatesLeft(profile.getID(), isVIP);
                         if (mutatesLeft < 1) throw new CommandException("You cannot mutate any more horses. (Donate for more or kill existing ones)");
 
                         //Prepare the horse
@@ -335,7 +337,7 @@ public class HorseCommand extends AbstractCommand {
                         }
                         horse.setVariant(variant);
                         //=> Add the horse to the controller
-                        hController.addMutatedHorse(profile.getUserID(), horse.getUniqueId().toString());
+                        hController.addMutatedHorse(profile.getID(), horse.getUniqueId().toString());
 
                         //Notify the user
                         hMsg("The horse is now mutated!");
@@ -357,13 +359,13 @@ public class HorseCommand extends AbstractCommand {
                         }
 
                         //Check if VIP
-                        isVIP = plugin.getVip().isVip(profile.getUUID());
+                        isVIP = plugin.getVip().isVip(profile.getUUIDString());
 
                         //Get the number of allowed horses
-                        final int allowedHorses = hController.getTotalAllowedMutations(profile.getUserID(), isVIP);
+                        final int allowedHorses = hController.getTotalAllowedMutations(profile.getID(), isVIP);
 
                         //Get horses
-                        final List<SavedHorse> mutatedHorses = hController.getMutatedHorses(profile.getUserID());
+                        final List<SavedHorse> mutatedHorses = hController.getMutatedHorses(profile.getID());
                         //=> Count howmany horses mutated
                         final int nrOfMutatedHorses = mutatedHorses.size();
 
@@ -510,7 +512,7 @@ public class HorseCommand extends AbstractCommand {
         int ownerID = hController.getOwnerID(horse.getUniqueId().toString());
 
         //Get the Player's ID
-        int playerID = UUIDControl.getUserID(player);
+        int playerID = SlapPlayers.getUUIDController().getProfile(player).getID();
 
         //Return the result
         return (playerID == ownerID);
@@ -527,11 +529,11 @@ public class HorseCommand extends AbstractCommand {
         //Get the ID of the owner
         int ownerID = hController.getOwnerID(horseUUID);
         //=> Get profiles
-        UUIDControl uuidControl = UUIDControl.getInstance();
-        UUIDControl.UUIDProfile ownerProfile = uuidControl.getUUIDProfile(ownerID);
-        UUIDControl.UUIDProfile playerProfile = uuidControl.getUUIDProfile(player.getUniqueId().toString());
+        UUIDControl uuidControl = SlapPlayers.getUUIDController();
+        Profile ownerProfile = uuidControl.getProfile(ownerID);
+        Profile playerProfile = uuidControl.getProfile(player.getUniqueId());
         //=> Check if owner
-        boolean isOwner = (playerProfile.getUserID() == ownerID);
+        boolean isOwner = (playerProfile.getID() == ownerID);
 
 
         //Send info
@@ -550,7 +552,7 @@ public class HorseCommand extends AbstractCommand {
                 //Create a list of all playernames
                 List<String> playerNames = new ArrayList<>();
                 for (Integer userID : allowedIDs) {
-                    playerNames.add(uuidControl.getUUIDProfile(userID).getCurrentName());
+                    playerNames.add(uuidControl.getProfile(userID).getCurrentName());
                 }
                 //Send msg
                 player.sendMessage(arrow + "Allowed players: " + ChatColor.GRAY + Util.buildString(playerNames, ", ", " & "));

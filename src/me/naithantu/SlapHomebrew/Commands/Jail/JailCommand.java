@@ -3,7 +3,6 @@ package me.naithantu.SlapHomebrew.Commands.Jail;
 import java.util.Arrays;
 import java.util.List;
 
-import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
@@ -12,6 +11,8 @@ import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
 import me.naithantu.SlapHomebrew.Controllers.Jails;
 import me.naithantu.SlapHomebrew.Util.Util;
 
+import nl.stoux.SlapPlayers.Model.Profile;
+import nl.stoux.SlapPlayers.SlapPlayers;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -28,7 +29,7 @@ public class JailCommand extends AbstractCommand {
 		testPermission("jail"); //Test permission
 		if (args.length == 0) return false; //Check usage
 		
-		UUIDControl.UUIDProfile offPlayer;
+		Profile offPlayer;
 		
 		//Get jails controller
 		Jails jails = plugin.getJails();
@@ -95,7 +96,7 @@ public class JailCommand extends AbstractCommand {
             offPlayer = getOfflinePlayer(args[1]);
 
             //Check if in jail
-            if (!jails.isJailed(offPlayer.getUUID())) throw new CommandException(ErrorMsg.notInJail);
+            if (!jails.isJailed(offPlayer.getUUIDString())) throw new CommandException(ErrorMsg.notInJail);
 
             //Get JailTime info
             jails.sendStaffJailInfo(sender, offPlayer);
@@ -113,9 +114,9 @@ public class JailCommand extends AbstractCommand {
             if (!jails.doesJailExist(jail)) throw new CommandException(ErrorMsg.invalidJail);
 
             //Check if the player can be jailed
-            if (Util.checkPermission(offPlayer.getUUID(), "jail.exempt")) throw new CommandException("This player cannot be jailed.");
+            if (Util.checkPermission(offPlayer.getUUIDString(), "jail.exempt")) throw new CommandException("This player cannot be jailed.");
             //=> Or already jailed
-            if (jails.isJailed(offPlayer.getUUID())) throw new CommandException("Player is already jailed.");
+            if (jails.isJailed(offPlayer.getUUIDString())) throw new CommandException("Player is already jailed.");
 
             //Parse Argument
             long time = Util.parseToTime(args[2]);
@@ -126,7 +127,7 @@ public class JailCommand extends AbstractCommand {
 
             //Get the jailer ID
             String jailerUUID = (sender instanceof Player ? ((Player) sender).getUniqueId().toString() : "CONSOLE");
-            int jailerID = UUIDControl.getInstance().getUUIDProfile(jailerUUID).getUserID();
+            int jailerID = SlapPlayers.getUUIDController().getProfile(jailerUUID).getID();
 
             //Jail the player
             jails.jailPlayer(offPlayer, reason, jail, time, jailerID);

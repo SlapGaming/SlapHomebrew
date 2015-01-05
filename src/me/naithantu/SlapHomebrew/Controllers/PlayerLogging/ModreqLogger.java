@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import me.naithantu.SlapHomebrew.Util.Log;
-import me.naithantu.SlapHomebrew.Util.SQLPool;
 import me.naithantu.SlapHomebrew.Util.Util;
 
 import org.bukkit.event.EventHandler;
@@ -55,7 +54,7 @@ public class ModreqLogger extends AbstractLogger implements Listener {
 	 * Find the current iteration in the database
 	 */
 	private void findIteration() {
-		Connection con = SQLPool.getConnection();
+		Connection con = plugin.getSQLPool().getConnection();
 		try {
 			ResultSet rs = con.createStatement().executeQuery("SELECT MAX(`iteration`) FROM `logger_modreqs`;"); //Get max current iteration
 			rs.next();
@@ -67,7 +66,7 @@ public class ModreqLogger extends AbstractLogger implements Listener {
 			enabled = false;
 			Log.severe("Failed to find iteration (ModreqLogger). Exception: " + e.getMessage());
 		} finally {
-			SQLPool.returnConnection(con);
+            plugin.getSQLPool().returnConnection(con);
 		}
 	}
 		

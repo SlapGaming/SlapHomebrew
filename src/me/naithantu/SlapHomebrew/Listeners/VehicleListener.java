@@ -2,8 +2,8 @@ package me.naithantu.SlapHomebrew.Listeners;
 
 import me.naithantu.SlapHomebrew.Controllers.Horses;
 
-import me.naithantu.SlapHomebrew.PlayerExtension.UUIDControl;
 import me.naithantu.SlapHomebrew.Util.Util;
+import nl.stoux.SlapPlayers.SlapPlayers;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Vehicle;
@@ -55,7 +55,7 @@ public class VehicleListener extends AbstractListener {
                     //Allow if staff
                     if (Util.testPermission(player, "horse.staff")) return;
 
-                    int userID = UUIDControl.getUserID(player);
+                    int userID = SlapPlayers.getUUIDController().getProfile(player).getID();
                     //Allow if owner
                     if (horses.getOwnerID(horseUUID) == userID) return;
                     //Allow if on allowed list
