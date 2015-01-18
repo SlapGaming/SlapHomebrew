@@ -9,6 +9,7 @@ import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
 import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
 import me.naithantu.SlapHomebrew.PlayerExtension.SlapPlayer;
 
+import me.naithantu.SlapHomebrew.Util.Util;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -62,6 +63,15 @@ public class PlayerQuitListener extends AbstractListener {
 		
 		//Remove player from PlayerControl
 		PlayerControl.getInstance().removeSlapPlayer(player);
-		
-	}
+
+        //Send TabHeader
+        Util.runLater(new Runnable() {
+            @Override
+            public void run() {
+                //Send online update
+                Util.sendTabHeader();
+            }
+        }, 1);
+
+    }
 }

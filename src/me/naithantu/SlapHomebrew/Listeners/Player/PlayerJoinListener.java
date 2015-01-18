@@ -116,9 +116,11 @@ public class PlayerJoinListener extends AbstractListener {
 				if (Util.testPermission(player, "vipforum")) {
 					VipForumControl.sendNumberOfUnfinishedPromotions(player);
 				}
+
+                //Send online update
+                Util.sendTabHeader();
 			}
 		}, 10);
-		
 	}
 	
 }

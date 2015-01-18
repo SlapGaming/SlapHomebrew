@@ -1,9 +1,16 @@
 package me.naithantu.SlapHomebrew.Util;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
+import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.reflect.StructureModifier;
+import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Controllers.Flag;
@@ -714,6 +721,40 @@ public class Util {
 
                 //Return current time + calculated time
                 return addTime;
+        }
+    }
+
+    /**
+     * Send a predefined TabHeader package to all players
+     */
+    public static void sendTabHeader() {
+        String header = "{text:\"--- Welcome to SlapGaming ---\",color:gold}";
+        String footer = "[{text:\"--- Players \",color:blue},{text:\"X\",color:white},{text:\"/\",color:blue},{text:\"50\",color:white},{text:\" ---\",color:blue}]".replace("X", Util.getOnlinePlayers().size() + "");
+        sendTabHeaderPackage(header, footer);
+    }
+
+    /**
+     * Send all players the TabHeader package with a title and a subtitle
+     * @param title The title as JSON
+     * @param subtitle The subtitle as JSON
+     */
+    public static void sendTabHeaderPackage(String title, String subtitle) {
+        ProtocolManager manager = ProtocolLibrary.getProtocolManager();
+        //Create the packet
+        PacketContainer packet = manager.createPacket(PacketType.Play.Server.PLAYER_LIST_HEADER_FOOTER);
+        StructureModifier<WrappedChatComponent> comps = packet.getChatComponents();
+
+        //Modify the title & subtitle
+        comps.write(0, WrappedChatComponent.fromJson(title));
+        comps.write(1, WrappedChatComponent.fromJson(subtitle));
+
+        //Send to players
+        for (Player player : getOnlinePlayers()) {
+            try {
+                manager.sendServerPacket(player, packet);
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
         }
     }
     
