@@ -288,3 +288,7 @@ commands:
     description: "Player history command"
     usage: "Usage: /profiler <addnote|show|page>"
     aliases: [muted]
+  emptybucket:
+    description: "Empty a bucket"
+    usage: "Usage: /emptybucket"
+    aliases: [empty]

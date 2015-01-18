@@ -58,6 +58,7 @@ public class CommandHandler {
 		case "chattoggle":		commandObj = new ChatToggleCommand(sender, args);				break;
 		case "creativeextra":	commandObj = new CreativeextraCommand(sender, args);			break;
 		case "deaths":			commandObj = new DeathsCommand(sender, args);					break;
+        case "emptybucket":     commandObj = new EmptyBucketCommand(sender, args);              break;
 		case "fancymessage":	commandObj = new FancyChatCommand(sender, args);				break;
 		case "fireworkshow":	commandObj = new FireworkCommand(sender, args);					break;
 		case "flyspeed":		commandObj = new FlySpeedCommand(sender, args);					break;
