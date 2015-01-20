@@ -91,7 +91,7 @@ public class RegionLogger extends AbstractLogger {
 				try {
 					PreparedStatement prep = con.prepareStatement( //Prep Statement for getting changes
 						"SELECT `changed_time`, `changed_by`, `changer_is_a`, `type`, `parameters` FROM `sh_logger_regions` " +
-						"WHERE `world` = ? AND `region` = ?;"
+						"WHERE `world` = ? AND `regionname` = ?;"
 					);
 					prep.setString(1, world);
 					prep.setString(2, region);
