@@ -50,6 +50,9 @@ public class WorldCommand extends AbstractCommand {
 		case "sonic":
 			hMsg("You are in the mini-games world.");
 			break;
+        case "projects":
+            hMsg("You are in the projects world. Check the rules at spawn.");
+            break;
 		default:
 			hMsg("You are in an undefined world!");
 			break;
