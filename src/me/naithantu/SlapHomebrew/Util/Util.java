@@ -729,7 +729,7 @@ public class Util {
      */
     public static void sendTabHeader() {
         String header = "{text:\"--- Welcome to SlapGaming ---\",color:gold}";
-        String footer = "[{text:\"--- Players \",color:blue},{text:\"X\",color:white},{text:\"/\",color:blue},{text:\"50\",color:white},{text:\" ---\",color:blue}]".replace("X", Util.getOnlinePlayers().size() + "");
+        String footer = "[{text:\"--- Players \",color:gold},{text:\"X\",color:white},{text:\"/\",color:gold},{text:\"50\",color:white},{text:\" ---\",color:gold}]".replace("X", Util.getOnlinePlayers().size() + "");
         sendTabHeaderPackage(header, footer);
     }
 

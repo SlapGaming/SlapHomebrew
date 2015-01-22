@@ -100,7 +100,7 @@ public class RegionLogger extends AbstractLogger {
 						foundChanges.add(instance.new RegionChange( //Add changes
 								world, region, 
 								rs.getLong(1), 
-								rs.getString(2), 
+								rs.getString(2), //TODO This is a UserID | Not a String
 								ChangerIsA.valueOf(rs.getString(3)), 
 								ChangeType.valueOf(rs.getString(4)), 
 								rs.getString(5))
