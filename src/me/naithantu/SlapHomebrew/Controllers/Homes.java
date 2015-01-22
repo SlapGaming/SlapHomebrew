@@ -147,7 +147,18 @@ public class Homes extends AbstractController {
         UUID uuid = UUID.fromString(SlapPlayers.getUUIDController().getProfile(userID).getUUIDString());
 		PermissionUser user = PermissionsEx.getPermissionManager().getUser(uuid); //Get user
 		if (user == null) return 0; //If user is null, return 0
-		return defaultNumberOfHomes.get(user.getGroups()[0].getName()); //Get DefaultNumber
+
+        //Loop through groups to find highest value
+        int nrOfHomes = 0;
+        for (String group : user.getGroupNames()) {
+            if (defaultNumberOfHomes.containsKey(group)) {
+                int foundHomes = defaultNumberOfHomes.get(group);
+                if (nrOfHomes < foundHomes) {
+                    nrOfHomes = foundHomes;
+                }
+            }
+        }
+        return nrOfHomes;
 	}
 	
 	/**
