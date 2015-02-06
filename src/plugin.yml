@@ -3,7 +3,7 @@ main: me.naithantu.SlapHomebrew.SlapHomebrew
 depend: [Essentials, Vault, PermissionsEx, SlapPlayers]
 softdepend: [TabAPI, ReportRTS, MCBans, SlapBridged]
 authors: [naithantu, Stoux2]
-version: 4.2.3
+version: 4.2.4
 description: A custom plugin which adds lots of extra features to the SlapGaming minecraft server.
 commands:
   vip:
@@ -292,3 +292,6 @@ commands:
     description: "Empty a bucket"
     usage: "Usage: /emptybucket"
     aliases: [empty]
+  names:
+    description: "See the previous names of a player"
+    usage: "Usage: /names [Player]"

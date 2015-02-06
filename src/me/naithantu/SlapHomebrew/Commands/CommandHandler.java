@@ -86,6 +86,7 @@ public class CommandHandler {
 		case "mod":				commandObj = new ChatCommand(sender, "modchat", args);			break;
 		case "msg":				commandObj = new MsgCommand(sender, args);						break;
         case "mute":            commandObj = new MuteCommand(sender, args);                     break;
+        case "names":			commandObj = new NamesCommand(sender, args);				    break;
 		case "note":			commandObj = new NoteCommand(sender, args);						break;
 		case "onlinetime":		commandObj = new OnlineTimeCommand(sender, args);				break;
 		case "pay":				commandObj = new PayCommand(sender, args);						break;
