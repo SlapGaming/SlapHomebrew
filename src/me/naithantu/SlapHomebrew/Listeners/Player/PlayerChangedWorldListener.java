@@ -42,6 +42,9 @@ public class PlayerChangedWorldListener extends AbstractListener {
 		
 		//Check if the player has new mail
 		mail.hasNewMail(player);
+
+        //Reset the player time
+        player.resetPlayerTime();
 	}
 
 }
