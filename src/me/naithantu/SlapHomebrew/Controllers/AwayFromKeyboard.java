@@ -31,6 +31,9 @@ public class AwayFromKeyboard extends AbstractController {
         String UUID = player.getUniqueId().toString();
         String playername = player.getName();
 
+        //Toggle AFK Sleeping flag
+        player.setSleepingIgnored(true);
+
         //Put the AFK Reason in the map
     	afkReasons.put(UUID, reason);
 
@@ -63,6 +66,9 @@ public class AwayFromKeyboard extends AbstractController {
     public void leaveAfk(Player player){
         //Get UUID
         String UUID = player.getUniqueId().toString();
+
+        //Toggle AFK Sleeping flag
+        player.setSleepingIgnored(false);
 
         //Get reason & remove it
         String reason = afkReasons.get(UUID);
