@@ -1,17 +1,15 @@
 package me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegion;
 
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
+import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
 import java.util.UUID;
-
-import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
-import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
-
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
-
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 public class ListCommand extends AbstractImprovedRegionCommand {
 

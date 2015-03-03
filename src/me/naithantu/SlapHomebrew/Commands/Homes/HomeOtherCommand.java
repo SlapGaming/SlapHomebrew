@@ -1,19 +1,18 @@
 package me.naithantu.SlapHomebrew.Commands.Homes;
 
-import java.util.List;
-
+import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
+import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
+import me.naithantu.SlapHomebrew.Controllers.Homes;
+import me.naithantu.SlapHomebrew.SlapHomebrew;
+import me.naithantu.SlapHomebrew.Util.Util;
 import nl.stoux.SlapPlayers.Model.Profile;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
-import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
-import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
-import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
-import me.naithantu.SlapHomebrew.Controllers.Homes;
-import me.naithantu.SlapHomebrew.Util.Util;
+import java.util.List;
 
 public class HomeOtherCommand extends AbstractCommand {
 

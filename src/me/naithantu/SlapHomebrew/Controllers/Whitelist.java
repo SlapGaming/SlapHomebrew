@@ -1,13 +1,12 @@
 package me.naithantu.SlapHomebrew.Controllers;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-
-import org.bukkit.configuration.file.FileConfiguration;
-
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 import me.naithantu.SlapHomebrew.Util.Log;
+import org.bukkit.configuration.file.FileConfiguration;
+
+import java.util.ArrayList;
+import java.util.HashSet;
 
 public class Whitelist extends AbstractController {
 

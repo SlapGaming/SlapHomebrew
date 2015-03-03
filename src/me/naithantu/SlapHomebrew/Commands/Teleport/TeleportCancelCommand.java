@@ -4,7 +4,6 @@ import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.PlayerExtension.PlayerTeleporter.AbstractTeleportRequest;
 import me.naithantu.SlapHomebrew.PlayerExtension.SlapPlayer;
-
 import org.bukkit.command.CommandSender;
 
 public class TeleportCancelCommand extends AbstractCommand {

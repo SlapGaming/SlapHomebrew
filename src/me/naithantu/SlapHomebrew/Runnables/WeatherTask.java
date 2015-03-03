@@ -1,12 +1,11 @@
 package me.naithantu.SlapHomebrew.Runnables;
 
-import java.util.ArrayList;
-import java.util.Random;
-
 import me.naithantu.SlapHomebrew.SlapHomebrew;
-
 import org.bukkit.World;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.ArrayList;
+import java.util.Random;
 
 public class WeatherTask extends BukkitRunnable {
 	

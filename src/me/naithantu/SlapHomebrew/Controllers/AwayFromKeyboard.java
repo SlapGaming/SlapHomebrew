@@ -1,14 +1,13 @@
 package me.naithantu.SlapHomebrew.Controllers;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.AFKLogger;
-
 import me.naithantu.SlapHomebrew.Util.Util;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 
 public class AwayFromKeyboard extends AbstractController {
 	

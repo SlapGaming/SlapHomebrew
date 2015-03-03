@@ -1,5 +1,14 @@
 package me.naithantu.SlapHomebrew.Controllers.PlayerLogging;
 
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
+import me.naithantu.SlapHomebrew.Util.Util;
+import nl.stoux.SlapPlayers.Util.DateUtil;
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -7,17 +16,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-
-import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
-import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
-import me.naithantu.SlapHomebrew.Util.DateUtil;
-import me.naithantu.SlapHomebrew.Util.Util;
-
-import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 public class RegionLogger extends AbstractLogger {
 

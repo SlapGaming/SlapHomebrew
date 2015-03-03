@@ -1,11 +1,10 @@
 package me.naithantu.SlapHomebrew.Listeners.Player;
 
+import me.naithantu.SlapHomebrew.Controllers.Whitelist;
+import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent.Result;
-
-import me.naithantu.SlapHomebrew.Controllers.Whitelist;
-import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
 
 public class PlayerLoginListener extends AbstractListener {
 

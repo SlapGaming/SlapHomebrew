@@ -5,13 +5,13 @@ import lombok.Getter;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
-import me.naithantu.SlapHomebrew.Util.DateUtil;
 import me.naithantu.SlapHomebrew.Util.Util;
 import mkremins.fanciful.FancyMessage;
 import nl.stoux.SlapPlayers.Control.UUIDControl;
 import nl.stoux.SlapPlayers.Model.Name;
 import nl.stoux.SlapPlayers.Model.Profile;
 import nl.stoux.SlapPlayers.SlapPlayers;
+import nl.stoux.SlapPlayers.Util.DateUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 

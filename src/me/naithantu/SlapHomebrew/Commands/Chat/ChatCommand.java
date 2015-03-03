@@ -1,10 +1,9 @@
 package me.naithantu.SlapHomebrew.Commands.Chat;
 
-import org.bukkit.command.CommandSender;
-
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Controllers.ChatChannels;
+import org.bukkit.command.CommandSender;
 
 public class ChatCommand extends AbstractCommand {
 

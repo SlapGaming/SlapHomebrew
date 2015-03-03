@@ -1,11 +1,6 @@
 package me.naithantu.SlapHomebrew.Controllers;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-
 import me.naithantu.SlapHomebrew.Util.Util;
-
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -19,6 +14,10 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
 
 public class DuelArena extends AbstractController {
 

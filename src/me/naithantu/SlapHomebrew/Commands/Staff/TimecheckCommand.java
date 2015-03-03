@@ -1,26 +1,23 @@
 package me.naithantu.SlapHomebrew.Commands.Staff;
 
-import java.text.ParseException;
-import java.util.*;
-
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.SessionLogger;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.SessionLogger.LeaderboardEntry;
-import me.naithantu.SlapHomebrew.Util.DateUtil;
 import me.naithantu.SlapHomebrew.Util.Util;
-
 import nl.stoux.SlapPlayers.Control.UUIDControl;
 import nl.stoux.SlapPlayers.Model.Profile;
 import nl.stoux.SlapPlayers.SlapPlayers;
+import nl.stoux.SlapPlayers.Util.DateUtil;
 import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
-
 import ru.tehkode.permissions.PermissionGroup;
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
+
+import java.text.ParseException;
+import java.util.*;
 
 public class TimecheckCommand extends AbstractCommand {
 

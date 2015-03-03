@@ -1,13 +1,12 @@
 package me.naithantu.SlapHomebrew.Runnables;
 
-import java.util.ArrayList;
-
 import me.naithantu.SlapHomebrew.Controllers.ApplyChecker;
 import me.naithantu.SlapHomebrew.Storage.XMLParser;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
-
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.ArrayList;
 
 public class ApplyGathererTask extends BukkitRunnable {
 

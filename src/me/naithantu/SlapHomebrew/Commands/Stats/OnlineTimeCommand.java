@@ -1,18 +1,17 @@
 package me.naithantu.SlapHomebrew.Commands.Stats;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.SessionLogger;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.SessionLogger.LeaderboardEntry;
 import me.naithantu.SlapHomebrew.Util.Util;
-
 import nl.stoux.SlapPlayers.SlapPlayers;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class OnlineTimeCommand extends AbstractCommand {
 

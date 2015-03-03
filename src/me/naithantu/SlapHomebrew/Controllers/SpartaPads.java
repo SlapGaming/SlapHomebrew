@@ -1,7 +1,8 @@
 package me.naithantu.SlapHomebrew.Controllers;
 
-import java.util.HashMap;
-
+import me.naithantu.SlapHomebrew.Storage.YamlStorage;
+import me.naithantu.SlapHomebrew.Util.Log;
+import me.naithantu.SlapHomebrew.Util.Util;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
@@ -9,9 +10,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import me.naithantu.SlapHomebrew.Storage.YamlStorage;
-import me.naithantu.SlapHomebrew.Util.Log;
-import me.naithantu.SlapHomebrew.Util.Util;
+import java.util.HashMap;
 
 public class SpartaPads extends AbstractController {
 

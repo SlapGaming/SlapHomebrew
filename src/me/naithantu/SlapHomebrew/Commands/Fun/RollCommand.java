@@ -1,13 +1,10 @@
 package me.naithantu.SlapHomebrew.Commands.Fun;
 
-import java.util.Random;
-
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
 import me.naithantu.SlapHomebrew.Controllers.Lottery;
 import me.naithantu.SlapHomebrew.Util.Util;
-
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 

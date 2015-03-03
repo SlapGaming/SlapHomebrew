@@ -1,12 +1,11 @@
 package me.naithantu.SlapHomebrew.Commands.Staff;
 
-import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
-
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
 import me.naithantu.SlapHomebrew.Util.Util;
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 
 public class ServerBroadcastCommand extends AbstractCommand {
 

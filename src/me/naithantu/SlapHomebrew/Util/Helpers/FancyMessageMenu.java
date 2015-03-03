@@ -1,6 +1,5 @@
 package me.naithantu.SlapHomebrew.Util.Helpers;
 
-import com.earth2me.essentials.utils.StringUtil;
 import me.naithantu.SlapHomebrew.Util.Util;
 import mkremins.fanciful.FancyMessage;
 import org.apache.commons.lang.StringUtils;

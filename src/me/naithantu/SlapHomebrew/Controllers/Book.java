@@ -1,7 +1,6 @@
 package me.naithantu.SlapHomebrew.Controllers;
 
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
-
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;

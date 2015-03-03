@@ -1,13 +1,12 @@
 package me.naithantu.SlapHomebrew.Controllers;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.StateException;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
-
 import org.bukkit.configuration.file.FileConfiguration;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class Mention extends AbstractController {
 

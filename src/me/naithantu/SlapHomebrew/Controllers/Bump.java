@@ -1,9 +1,8 @@
 package me.naithantu.SlapHomebrew.Controllers;
 
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
-import me.naithantu.SlapHomebrew.Util.DateUtil;
 import me.naithantu.SlapHomebrew.Util.Util;
-
+import nl.stoux.SlapPlayers.Util.DateUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;

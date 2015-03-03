@@ -1,13 +1,12 @@
 package me.naithantu.SlapHomebrew.Commands.Teleport;
 
-import org.bukkit.command.CommandSender;
-
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Controllers.FancyMessage.FancyMessageControl;
 import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
 import me.naithantu.SlapHomebrew.PlayerExtension.SlapPlayer;
 import me.naithantu.SlapHomebrew.Util.Util;
+import org.bukkit.command.CommandSender;
 
 public class TeleportAskCommand extends AbstractCommand {
 

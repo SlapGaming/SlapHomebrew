@@ -1,27 +1,23 @@
 package me.naithantu.SlapHomebrew.Controllers;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-
+import com.earth2me.essentials.User;
+import com.earth2me.essentials.UserMap;
 import me.naithantu.SlapHomebrew.Storage.MailSQL;
 import me.naithantu.SlapHomebrew.Storage.MailSQL.CheckType;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
-import me.naithantu.SlapHomebrew.Util.DateUtil;
-import me.naithantu.SlapHomebrew.Util.Log;
 import me.naithantu.SlapHomebrew.Util.Util;
-
+import nl.stoux.SlapPlayers.Util.DateUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
-import com.earth2me.essentials.User;
-import com.earth2me.essentials.UserMap;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 public class Mail extends AbstractController {
 

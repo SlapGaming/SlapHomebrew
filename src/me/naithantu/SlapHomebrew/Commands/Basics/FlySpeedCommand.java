@@ -1,12 +1,11 @@
 package me.naithantu.SlapHomebrew.Commands.Basics;
 
-import java.util.List;
-
+import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
-import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
+import java.util.List;
 
 public class FlySpeedCommand extends AbstractCommand {
 

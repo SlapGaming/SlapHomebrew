@@ -1,8 +1,6 @@
 package me.naithantu.SlapHomebrew.Commands;
 
-import java.util.List;
-
-import me.naithantu.SlapHomebrew.SlapHomebrew;
+import com.earth2me.essentials.Essentials;
 import me.naithantu.SlapHomebrew.Commands.AFK.AfkInfoCommand;
 import me.naithantu.SlapHomebrew.Commands.Basics.FlySpeedCommand;
 import me.naithantu.SlapHomebrew.Commands.Basics.MailCommand;
@@ -15,28 +13,20 @@ import me.naithantu.SlapHomebrew.Commands.Fun.RideCommand;
 import me.naithantu.SlapHomebrew.Commands.Homes.HomeCommand;
 import me.naithantu.SlapHomebrew.Commands.Homes.HomeOtherCommand;
 import me.naithantu.SlapHomebrew.Commands.Jail.JailCommand;
-import me.naithantu.SlapHomebrew.Commands.Jail.UnjailCommand;
 import me.naithantu.SlapHomebrew.Commands.Lists.ChangeLogCommand;
 import me.naithantu.SlapHomebrew.Commands.Lists.StaffListCommand;
 import me.naithantu.SlapHomebrew.Commands.Promotion.PromotionCommand;
-import me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegionCommand;
-import me.naithantu.SlapHomebrew.Commands.Staff.MessageCommand;
-import me.naithantu.SlapHomebrew.Commands.Staff.PlotCommand;
-import me.naithantu.SlapHomebrew.Commands.Staff.SearchregionCommand;
-import me.naithantu.SlapHomebrew.Commands.Staff.TimecheckCommand;
-import me.naithantu.SlapHomebrew.Commands.Staff.VipForumCommand;
-import me.naithantu.SlapHomebrew.Commands.Staff.WhitelistCommand;
-import me.naithantu.SlapHomebrew.Commands.Staff.XRayCommand;
+import me.naithantu.SlapHomebrew.Commands.Staff.*;
 import me.naithantu.SlapHomebrew.Commands.Stats.OnlineTimeCommand;
 import me.naithantu.SlapHomebrew.Commands.Teleport.TeleportAcceptCommand;
 import me.naithantu.SlapHomebrew.Commands.VIP.VipCommand;
-
+import me.naithantu.SlapHomebrew.SlapHomebrew;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
 
-import com.earth2me.essentials.Essentials;
+import java.util.List;
 
 public class TabHandler {
 

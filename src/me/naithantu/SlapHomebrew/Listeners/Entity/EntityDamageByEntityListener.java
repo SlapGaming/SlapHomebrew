@@ -1,23 +1,16 @@
 package me.naithantu.SlapHomebrew.Listeners.Entity;
 
-import java.util.HashSet;
-
 import me.naithantu.SlapHomebrew.Controllers.Flag;
 import me.naithantu.SlapHomebrew.Controllers.Horses;
 import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
 import me.naithantu.SlapHomebrew.Util.Util;
-
 import nl.stoux.SlapPlayers.SlapPlayers;
 import org.bukkit.Location;
-import org.bukkit.entity.Animals;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Horse;
-import org.bukkit.entity.NPC;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+
+import java.util.HashSet;
 
 public class EntityDamageByEntityListener extends AbstractListener {
 	

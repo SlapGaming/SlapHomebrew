@@ -1,22 +1,19 @@
 package me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegion;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.UUID;
-
-import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
-import me.naithantu.SlapHomebrew.Util.Util;
-
-import nl.stoux.SlapPlayers.SlapPlayers;
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
-
-import ru.tehkode.permissions.PermissionUser;
-import ru.tehkode.permissions.bukkit.PermissionsEx;
-
 import com.earth2me.essentials.User;
 import com.earth2me.essentials.UserMap;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
+import me.naithantu.SlapHomebrew.Util.Util;
+import nl.stoux.SlapPlayers.SlapPlayers;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+import ru.tehkode.permissions.PermissionUser;
+import ru.tehkode.permissions.bukkit.PermissionsEx;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.UUID;
 
 public class SeenGroupCommand extends AbstractImprovedRegionCommand {
 	

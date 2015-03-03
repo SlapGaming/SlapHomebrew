@@ -1,12 +1,12 @@
 package me.naithantu.SlapHomebrew.Controllers;
 
+import org.bukkit.Bukkit;
+import org.bukkit.scoreboard.Team;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-
-import org.bukkit.Bukkit;
-import org.bukkit.scoreboard.Team;
 
 public class Extras extends AbstractController {
 	HashSet<String> pvpWorld = new HashSet<String>();

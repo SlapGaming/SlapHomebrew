@@ -1,25 +1,22 @@
 package me.naithantu.SlapHomebrew.Controllers;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
-
+import com.earth2me.essentials.User;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.HomeException;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 import me.naithantu.SlapHomebrew.Util.Util;
-
 import nl.stoux.SlapPlayers.SlapPlayers;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-
 import ru.tehkode.permissions.PermissionGroup;
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
-import com.earth2me.essentials.User;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 public class Homes extends AbstractController {
 

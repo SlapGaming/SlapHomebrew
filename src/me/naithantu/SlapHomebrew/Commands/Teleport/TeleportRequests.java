@@ -1,10 +1,5 @@
 package me.naithantu.SlapHomebrew.Commands.Teleport;
 
-import java.util.HashSet;
-
-import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
-
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Controllers.FancyMessage.FancyMessageControl;
@@ -12,6 +7,10 @@ import me.naithantu.SlapHomebrew.PlayerExtension.PlayerTeleporter;
 import me.naithantu.SlapHomebrew.PlayerExtension.PlayerTeleporter.AbstractTeleportRequest;
 import me.naithantu.SlapHomebrew.PlayerExtension.SlapPlayer;
 import me.naithantu.SlapHomebrew.Util.Util;
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
+
+import java.util.HashSet;
 
 public class TeleportRequests extends AbstractCommand {
 

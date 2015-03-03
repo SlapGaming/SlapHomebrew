@@ -1,16 +1,15 @@
 package me.naithantu.SlapHomebrew.Controllers.FancyMessage;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.minecraft.server.v1_8_R1.NBTTagCompound;
-
 import org.bukkit.Achievement;
 import org.bukkit.ChatColor;
 import org.bukkit.craftbukkit.libs.com.google.gson.JsonArray;
 import org.bukkit.craftbukkit.libs.com.google.gson.JsonObject;
 import org.bukkit.craftbukkit.v1_8_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FancyMessage {
 

@@ -2,7 +2,6 @@ package me.naithantu.SlapHomebrew.Listeners.Player;
 
 import me.naithantu.SlapHomebrew.Controllers.DuelArena;
 import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
-
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

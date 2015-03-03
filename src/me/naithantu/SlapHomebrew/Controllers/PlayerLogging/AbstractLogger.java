@@ -1,18 +1,17 @@
 package me.naithantu.SlapHomebrew.Controllers.PlayerLogging;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.HashSet;
-
+import me.naithantu.SlapHomebrew.Controllers.AbstractController;
+import me.naithantu.SlapHomebrew.Util.Log;
+import me.naithantu.SlapHomebrew.Util.Util;
 import nl.stoux.SlapPlayers.Model.Profile;
 import nl.stoux.SlapPlayers.SlapPlayers;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 
-import me.naithantu.SlapHomebrew.Controllers.AbstractController;
-import me.naithantu.SlapHomebrew.Util.Log;
-import me.naithantu.SlapHomebrew.Util.Util;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.HashSet;
 
 public abstract class AbstractLogger extends AbstractController {
 

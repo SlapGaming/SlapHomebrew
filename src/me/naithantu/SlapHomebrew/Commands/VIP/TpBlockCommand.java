@@ -1,11 +1,10 @@
 package me.naithantu.SlapHomebrew.Commands.VIP;
 
-import java.util.HashSet;
-
 import me.naithantu.SlapHomebrew.Commands.AbstractVipCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
-
 import org.bukkit.command.CommandSender;
+
+import java.util.HashSet;
 
 public class TpBlockCommand extends AbstractVipCommand {
 
@@ -15,7 +14,8 @@ public class TpBlockCommand extends AbstractVipCommand {
 
 	public boolean handle() throws CommandException {
 		testPermission("tpblock");
-		
+
+        //TODO: Update to UUIDs
 		HashSet<String> tpBlocks = plugin.getTpBlocks();
 		if (tpBlocks.contains(sender.getName())) {
 			tpBlocks.remove(sender.getName());

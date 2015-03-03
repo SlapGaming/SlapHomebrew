@@ -1,21 +1,20 @@
 package me.naithantu.SlapHomebrew.Commands.Fun;
 
+import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
+import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
+import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
+import me.naithantu.SlapHomebrew.Controllers.MessageStringer.MessageCombiner;
+import me.naithantu.SlapHomebrew.Controllers.SpartaPads;
+import me.naithantu.SlapHomebrew.Controllers.SpartaPads.SpartaPad;
+import me.naithantu.SlapHomebrew.PlayerExtension.SlapPlayer;
+import me.naithantu.SlapHomebrew.Util.Util;
+import nl.stoux.SlapPlayers.Util.DateUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
-import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
-import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
-import me.naithantu.SlapHomebrew.Controllers.SpartaPads;
-import me.naithantu.SlapHomebrew.Controllers.MessageStringer.MessageCombiner;
-import me.naithantu.SlapHomebrew.Controllers.SpartaPads.SpartaPad;
-import me.naithantu.SlapHomebrew.PlayerExtension.SlapPlayer;
-import me.naithantu.SlapHomebrew.Util.DateUtil;
-import me.naithantu.SlapHomebrew.Util.Util;
 
 public class SpartaPadsCommand extends AbstractCommand {
 

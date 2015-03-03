@@ -2,7 +2,6 @@ package me.naithantu.SlapHomebrew.Listeners.Entity;
 
 import me.naithantu.SlapHomebrew.Controllers.Horses;
 import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
-
 import me.naithantu.SlapHomebrew.Util.Util;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Horse;

@@ -2,9 +2,7 @@ package me.naithantu.SlapHomebrew.Commands.Staff;
 
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
-
 import org.bukkit.command.CommandSender;
-
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 

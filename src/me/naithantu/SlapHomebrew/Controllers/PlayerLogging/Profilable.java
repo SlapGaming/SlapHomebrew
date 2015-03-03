@@ -1,8 +1,8 @@
 package me.naithantu.SlapHomebrew.Controllers.PlayerLogging;
 
-import me.naithantu.SlapHomebrew.Util.DateUtil;
 import me.naithantu.SlapHomebrew.Util.Helpers.FancyLine;
 import mkremins.fanciful.FancyMessage;
+import nl.stoux.SlapPlayers.Util.DateUtil;
 import org.bukkit.ChatColor;
 
 /**

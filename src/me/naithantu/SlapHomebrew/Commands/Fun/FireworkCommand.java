@@ -1,16 +1,15 @@
 package me.naithantu.SlapHomebrew.Commands.Fun;
 
-import java.util.List;
-
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
 import me.naithantu.SlapHomebrew.Controllers.FireworkShow;
 import me.naithantu.SlapHomebrew.PlayerExtension.SlapPlayer;
 import me.naithantu.SlapHomebrew.Util.Util;
-
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
+
+import java.util.List;
 
 public class FireworkCommand extends AbstractCommand {
 

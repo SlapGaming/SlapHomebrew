@@ -1,10 +1,9 @@
 package me.naithantu.SlapHomebrew.Commands.Exception;
 
-import java.util.HashSet;
-
+import me.naithantu.SlapHomebrew.Util.Util;
 import org.bukkit.ChatColor;
 
-import me.naithantu.SlapHomebrew.Util.Util;
+import java.util.HashSet;
 
 
 /**

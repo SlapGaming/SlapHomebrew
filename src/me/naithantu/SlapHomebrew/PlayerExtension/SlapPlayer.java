@@ -2,7 +2,6 @@ package me.naithantu.SlapHomebrew.PlayerExtension;
 
 import me.naithantu.SlapHomebrew.Controllers.MessageStringer.MessageCombiner;
 import me.naithantu.SlapHomebrew.Util.Util;
-
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;

@@ -1,15 +1,13 @@
 package me.naithantu.SlapHomebrew.Listeners.Player;
 
-import java.util.Collection;
-
+import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
+import me.naithantu.SlapHomebrew.Util.Util;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerChatTabCompleteEvent;
 
-import me.naithantu.SlapHomebrew.SlapHomebrew;
-import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
-import me.naithantu.SlapHomebrew.Util.Util;
+import java.util.Collection;
 
 public class PlayerTabCompleteListener extends AbstractListener {
 	

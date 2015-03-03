@@ -1,22 +1,20 @@
 package me.naithantu.SlapHomebrew.Controllers.PlayerLogging;
 
+import com.nyancraft.reportrts.ReportRTS;
+import com.nyancraft.reportrts.data.HelpRequest;
+import com.nyancraft.reportrts.event.ReportCompleteEvent;
+import me.naithantu.SlapHomebrew.Util.Log;
+import me.naithantu.SlapHomebrew.Util.Util;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.plugin.Plugin;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.HashSet;
-
-import me.naithantu.SlapHomebrew.Util.Log;
-import me.naithantu.SlapHomebrew.Util.Util;
-
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.plugin.Plugin;
-
-import com.nyancraft.reportrts.ReportRTS;
-import com.nyancraft.reportrts.data.HelpRequest;
-import com.nyancraft.reportrts.event.ReportCompleteEvent;
 
 public class ModreqLogger extends AbstractLogger implements Listener {
 

@@ -2,7 +2,6 @@ package me.naithantu.SlapHomebrew.Commands.Fun;
 
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
-
 import org.bukkit.Material;
 import org.bukkit.SkullType;
 import org.bukkit.command.CommandSender;

@@ -1,6 +1,5 @@
 package me.naithantu.SlapHomebrew.Storage.JailSerializables;
 
-import me.naithantu.SlapHomebrew.Util.Log;
 import me.naithantu.SlapHomebrew.Util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

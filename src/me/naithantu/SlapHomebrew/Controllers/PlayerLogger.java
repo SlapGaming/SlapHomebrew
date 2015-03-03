@@ -1,14 +1,13 @@
 package me.naithantu.SlapHomebrew.Controllers;
 
-import java.util.HashSet;
-import java.util.List;
-
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 import me.naithantu.SlapHomebrew.Util.Util;
-
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+
+import java.util.HashSet;
+import java.util.List;
 
 public class PlayerLogger extends AbstractController {
 

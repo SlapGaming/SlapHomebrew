@@ -1,17 +1,16 @@
 package me.naithantu.SlapHomebrew.Commands.VIP;
 
-import java.util.List;
-
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
 import me.naithantu.SlapHomebrew.Commands.Exception.NotVIPException;
 import me.naithantu.SlapHomebrew.Controllers.Vip;
-import me.naithantu.SlapHomebrew.Util.DateUtil;
-
+import nl.stoux.SlapPlayers.Util.DateUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.List;
 
 public class VipCommand extends AbstractCommand {
 		

@@ -1,12 +1,11 @@
 package me.naithantu.SlapHomebrew.Timing;
 
-import java.lang.reflect.Field;
-
 import me.naithantu.SlapHomebrew.Util.Util;
-
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.EventExecutor;
 import org.bukkit.plugin.RegisteredListener;
+
+import java.lang.reflect.Field;
 
 public class HandlerControl {
 

@@ -1,7 +1,6 @@
 package me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegion;
 
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
-
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 

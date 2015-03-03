@@ -1,23 +1,21 @@
 package me.naithantu.SlapHomebrew.Commands.Staff;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-
+import de.diddiz.LogBlock.BlockChange;
+import de.diddiz.LogBlock.LogBlock;
+import de.diddiz.LogBlock.QueryParams;
+import de.diddiz.LogBlock.QueryParams.BlockChangeType;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Basics.SpawnCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Util.Util;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 
-import de.diddiz.LogBlock.BlockChange;
-import de.diddiz.LogBlock.LogBlock;
-import de.diddiz.LogBlock.QueryParams;
-import de.diddiz.LogBlock.QueryParams.BlockChangeType;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class XRayCommand extends AbstractCommand {
 	

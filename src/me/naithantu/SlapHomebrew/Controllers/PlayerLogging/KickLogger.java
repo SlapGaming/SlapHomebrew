@@ -1,10 +1,6 @@
 package me.naithantu.SlapHomebrew.Controllers.PlayerLogging;
 
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-
+import com.mcbans.firestar.mcbans.MCBans;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import mkremins.fanciful.FancyMessage;
 import nl.stoux.SlapPlayers.SlapPlayers;
@@ -18,7 +14,10 @@ import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 
-import com.mcbans.firestar.mcbans.MCBans;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 
 public class KickLogger extends AbstractLogger implements Listener {
 

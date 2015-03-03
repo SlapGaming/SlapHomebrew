@@ -1,13 +1,12 @@
 package me.naithantu.SlapHomebrew.Commands.Lists;
 
-import java.util.ArrayList;
-
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
-
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+
+import java.util.ArrayList;
 
 public class PluginsCommand extends AbstractCommand {
 	

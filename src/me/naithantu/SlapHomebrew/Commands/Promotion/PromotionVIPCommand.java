@@ -1,16 +1,15 @@
 package me.naithantu.SlapHomebrew.Commands.Promotion;
 
-import java.util.List;
-
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
 import me.naithantu.SlapHomebrew.Controllers.Vip;
-import me.naithantu.SlapHomebrew.Util.DateUtil;
-
 import nl.stoux.SlapPlayers.Model.Profile;
+import nl.stoux.SlapPlayers.Util.DateUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+
+import java.util.List;
 
 public class PromotionVIPCommand extends AbstractCommand {
 

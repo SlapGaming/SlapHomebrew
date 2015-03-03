@@ -1,15 +1,14 @@
 package me.naithantu.SlapHomebrew.Controllers.FancyMessage;
 
+import me.naithantu.SlapHomebrew.Controllers.AbstractController;
+import org.bukkit.ChatColor;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
-
-import org.bukkit.ChatColor;
-
-import me.naithantu.SlapHomebrew.Controllers.AbstractController;
 
 public class FancyMessageControl extends AbstractController {
 

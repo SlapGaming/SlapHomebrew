@@ -1,14 +1,13 @@
 package me.naithantu.SlapHomebrew.Controllers;
 
-import java.util.List;
-
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Controllers.IconMenu.OptionClickEvent;
 import me.naithantu.SlapHomebrew.Util.Util;
-
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.List;
 
 public class HomeMenu extends AbstractController {
 

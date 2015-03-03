@@ -1,7 +1,6 @@
 package me.naithantu.SlapHomebrew.Timing;
 
 import me.naithantu.SlapHomebrew.Util.Log;
-
 import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
 import org.bukkit.event.EventPriority;

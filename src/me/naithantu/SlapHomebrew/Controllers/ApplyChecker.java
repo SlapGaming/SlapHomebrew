@@ -1,21 +1,18 @@
 package me.naithantu.SlapHomebrew.Controllers;
 
-import java.util.ArrayList;
-import java.util.logging.Logger;
-
+import com.earth2me.essentials.Essentials;
+import com.earth2me.essentials.User;
 import me.naithantu.SlapHomebrew.Runnables.ApplyGathererTask;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 import me.naithantu.SlapHomebrew.Util.Util;
-
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
-import com.earth2me.essentials.Essentials;
-import com.earth2me.essentials.User;
+import java.util.ArrayList;
+import java.util.logging.Logger;
 
 public class ApplyChecker extends AbstractController {
 	

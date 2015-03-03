@@ -1,32 +1,28 @@
 package me.naithantu.SlapHomebrew.Controllers;
 
+import me.naithantu.SlapHomebrew.Commands.Exception.AlreadyVIPException;
+import me.naithantu.SlapHomebrew.Commands.Exception.NotVIPException;
+import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.PromotionLogger;
+import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.VipForumControl;
+import me.naithantu.SlapHomebrew.Storage.YamlStorage;
+import me.naithantu.SlapHomebrew.Util.Log;
+import me.naithantu.SlapHomebrew.Util.Util;
+import nl.stoux.SlapPlayers.SlapPlayers;
+import nl.stoux.SlapPlayers.Util.DateUtil;
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
+import ru.tehkode.permissions.PermissionGroup;
+import ru.tehkode.permissions.PermissionUser;
+import ru.tehkode.permissions.bukkit.PermissionsEx;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Map.Entry;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-
-import me.naithantu.SlapHomebrew.Commands.Exception.AlreadyVIPException;
-import me.naithantu.SlapHomebrew.Commands.Exception.NotVIPException;
-import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.PromotionLogger;
-import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.VipForumControl;
-import me.naithantu.SlapHomebrew.Storage.YamlStorage;
-import me.naithantu.SlapHomebrew.Util.DateUtil;
-import me.naithantu.SlapHomebrew.Util.Log;
-import me.naithantu.SlapHomebrew.Util.Util;
-
-import nl.stoux.SlapPlayers.SlapPlayers;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
-
-import ru.tehkode.permissions.PermissionGroup;
-import ru.tehkode.permissions.PermissionUser;
-import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 public class Vip extends AbstractController {
 	

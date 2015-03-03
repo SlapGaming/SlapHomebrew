@@ -1,36 +1,19 @@
 package me.naithantu.SlapHomebrew.Commands.Staff;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import me.naithantu.SlapHomebrew.SlapHomebrew;
+import com.sk89q.worldguard.protection.flags.DefaultFlag;
+import com.sk89q.worldguard.protection.flags.Flag;
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
-import me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegion.AbstractImprovedRegionCommand;
-import me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegion.AddMemberCommand;
-import me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegion.AddOwnerCommand;
-import me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegion.DefineCommand;
-import me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegion.DeleteCommand;
-import me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegion.FlagCommand;
-import me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegion.HelpCommand;
-import me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegion.InfoCommand;
-import me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegion.ListCommand;
-import me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegion.PriorityCommand;
-import me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegion.RedefineCommand;
-import me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegion.RemoveMemberCommand;
-import me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegion.RemoveOwnerCommand;
-import me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegion.SeenGroupCommand;
-import me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegion.SelectCommand;
-import me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegion.TeleportCommand;
+import me.naithantu.SlapHomebrew.Commands.Staff.ImprovedRegion.*;
 import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
 import me.naithantu.SlapHomebrew.PlayerExtension.SlapPlayer;
-
+import me.naithantu.SlapHomebrew.SlapHomebrew;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.sk89q.worldguard.protection.flags.DefaultFlag;
-import com.sk89q.worldguard.protection.flags.Flag;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ImprovedRegionCommand extends AbstractCommand {
 		

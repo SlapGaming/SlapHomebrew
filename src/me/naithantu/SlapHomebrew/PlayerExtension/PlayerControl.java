@@ -1,11 +1,10 @@
 package me.naithantu.SlapHomebrew.PlayerExtension;
 
-import java.util.HashMap;
-
 import me.naithantu.SlapHomebrew.Controllers.AbstractController;
 import me.naithantu.SlapHomebrew.Util.Util;
-
 import org.bukkit.entity.Player;
+
+import java.util.HashMap;
 
 public class PlayerControl extends AbstractController {
 

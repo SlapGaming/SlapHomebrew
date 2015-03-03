@@ -1,14 +1,13 @@
 package me.naithantu.SlapHomebrew.Commands.Basics;
 
-import java.util.List;
-
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.PlayerExtension.SlapPlayer;
-
 import me.naithantu.SlapHomebrew.Util.Util;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
+
+import java.util.List;
 
 public class SpawnCommand extends AbstractCommand {
 

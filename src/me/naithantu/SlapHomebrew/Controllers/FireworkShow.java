@@ -1,7 +1,5 @@
 package me.naithantu.SlapHomebrew.Controllers;
 
-import java.util.HashMap;
-
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.FireworkEffect.Builder;
@@ -10,6 +8,8 @@ import org.bukkit.World;
 import org.bukkit.entity.Firework;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.scheduler.BukkitTask;
+
+import java.util.HashMap;
 
 public class FireworkShow extends AbstractController {
 	

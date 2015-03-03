@@ -1,15 +1,11 @@
 package me.naithantu.SlapHomebrew.Storage;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.logging.Logger;
-
 import me.naithantu.SlapHomebrew.SlapHomebrew;
 import nl.stoux.SlapPlayers.Util.SQLPool;
 import org.bukkit.Bukkit;
+
+import java.sql.*;
+import java.util.logging.Logger;
 
 public class MailSQL {
 

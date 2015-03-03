@@ -1,17 +1,16 @@
 package me.naithantu.SlapHomebrew.Controllers;
 
-import java.util.Collection;
-
 import me.naithantu.SlapHomebrew.Runnables.AFKChecker;
 import me.naithantu.SlapHomebrew.Runnables.WeatherTask;
 import me.naithantu.SlapHomebrew.Util.Util;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+
+import java.util.Collection;
 
 public class Schedulers extends AbstractController {
 	

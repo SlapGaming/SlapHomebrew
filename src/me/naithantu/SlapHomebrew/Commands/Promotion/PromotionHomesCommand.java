@@ -1,15 +1,13 @@
 package me.naithantu.SlapHomebrew.Commands.Promotion;
 
-import java.util.List;
-
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
 import me.naithantu.SlapHomebrew.Controllers.Homes;
-
 import nl.stoux.SlapPlayers.Model.Profile;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
+
+import java.util.List;
 
 public class PromotionHomesCommand extends AbstractCommand {
 

@@ -1,10 +1,7 @@
 package me.naithantu.SlapHomebrew.Controllers;
 
-import java.util.*;
-
 import me.naithantu.SlapHomebrew.Controllers.FancyMessage.FancyMessage;
 import me.naithantu.SlapHomebrew.Util.Util;
-
 import nl.stoux.SlapPlayers.Control.UUIDControl;
 import nl.stoux.SlapPlayers.Model.Profile;
 import nl.stoux.SlapPlayers.SlapPlayers;
@@ -14,6 +11,8 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
+
+import java.util.*;
 
 public class Lottery extends AbstractController {
 

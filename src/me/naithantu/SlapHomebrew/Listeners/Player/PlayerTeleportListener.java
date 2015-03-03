@@ -4,7 +4,6 @@ import me.naithantu.SlapHomebrew.Controllers.AwayFromKeyboard;
 import me.naithantu.SlapHomebrew.Controllers.Jails;
 import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
 import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
-
 import me.naithantu.SlapHomebrew.PlayerExtension.SlapPlayer;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;

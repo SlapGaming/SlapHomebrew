@@ -1,7 +1,6 @@
 package me.naithantu.SlapHomebrew.Listeners.Entity;
 
 import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
-
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;

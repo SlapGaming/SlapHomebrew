@@ -1,7 +1,6 @@
 package me.naithantu.SlapHomebrew.Listeners;
 
 import me.naithantu.SlapHomebrew.Controllers.Horses;
-
 import me.naithantu.SlapHomebrew.Util.Util;
 import nl.stoux.SlapPlayers.SlapPlayers;
 import org.bukkit.entity.Horse;

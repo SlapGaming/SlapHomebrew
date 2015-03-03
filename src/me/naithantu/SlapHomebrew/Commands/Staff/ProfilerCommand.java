@@ -238,6 +238,7 @@ public class ProfilerCommand extends AbstractCommand {
         LOGINS_IPS,
         BANS,
         NOTES,
+        NAMES,
         PROMOTIONS;
 
         /**

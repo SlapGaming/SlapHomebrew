@@ -1,13 +1,12 @@
 package me.naithantu.SlapHomebrew.Controllers;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
-
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ChangeLog extends AbstractController {
 

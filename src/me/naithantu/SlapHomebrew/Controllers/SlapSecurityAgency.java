@@ -1,15 +1,14 @@
 package me.naithantu.SlapHomebrew.Controllers;
 
-import java.util.ArrayList;
-
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.*;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 import me.naithantu.SlapHomebrew.Util.Log;
 import me.naithantu.SlapHomebrew.Util.Util;
-
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitTask;
+
+import java.util.ArrayList;
 
 public class SlapSecurityAgency extends AbstractController {
 

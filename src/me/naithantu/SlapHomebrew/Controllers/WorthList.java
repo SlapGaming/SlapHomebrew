@@ -1,14 +1,13 @@
 package me.naithantu.SlapHomebrew.Controllers;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
-
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class WorthList extends AbstractController {
 

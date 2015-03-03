@@ -1,11 +1,10 @@
 package me.naithantu.SlapHomebrew.Controllers.MessageStringer;
 
-import org.bukkit.ChatColor;
-
-import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.PlayerExtension.SlapPlayer;
+import me.naithantu.SlapHomebrew.SlapHomebrew;
 import me.naithantu.SlapHomebrew.Storage.YamlStorage;
 import me.naithantu.SlapHomebrew.Util.Util;
+import org.bukkit.ChatColor;
 
 public class MessageCommandCombiner extends MessageCombiner {
 

@@ -4,7 +4,6 @@ import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.ErrorMsg;
 import me.naithantu.SlapHomebrew.Controllers.WorthList;
-
 import org.bukkit.command.CommandSender;
 
 public class WorthListCommand extends AbstractCommand {

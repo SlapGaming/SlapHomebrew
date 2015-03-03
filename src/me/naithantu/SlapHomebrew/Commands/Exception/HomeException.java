@@ -1,10 +1,9 @@
 package me.naithantu.SlapHomebrew.Commands.Exception;
 
-import java.util.List;
-
 import me.naithantu.SlapHomebrew.Util.Util;
-
 import org.bukkit.ChatColor;
+
+import java.util.List;
 
 public class HomeException extends CommandException {
 

@@ -1,17 +1,15 @@
 package me.naithantu.SlapHomebrew.Controllers.MessageStringer;
 
-import java.util.Arrays;
-import java.util.HashSet;
-
+import me.naithantu.SlapHomebrew.PlayerExtension.SlapPlayer;
+import me.naithantu.SlapHomebrew.Util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
-import me.naithantu.SlapHomebrew.PlayerExtension.SlapPlayer;
-import me.naithantu.SlapHomebrew.Util.Util;
+
+import java.util.HashSet;
 
 public class MultiChatCombiner extends MessageCombiner {
 

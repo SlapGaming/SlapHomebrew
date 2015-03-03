@@ -2,7 +2,6 @@ package me.naithantu.SlapHomebrew.Listeners.Entity;
 
 import me.naithantu.SlapHomebrew.Controllers.Jails;
 import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
-
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageEvent;

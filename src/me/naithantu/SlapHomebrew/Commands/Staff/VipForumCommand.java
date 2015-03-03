@@ -1,14 +1,13 @@
 package me.naithantu.SlapHomebrew.Commands.Staff;
 
-import java.util.List;
-
-import org.bukkit.command.CommandSender;
-
 import me.naithantu.SlapHomebrew.Commands.AbstractCommand;
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.UsageException;
 import me.naithantu.SlapHomebrew.Controllers.PlayerLogging.VipForumControl;
 import me.naithantu.SlapHomebrew.Util.Util;
+import org.bukkit.command.CommandSender;
+
+import java.util.List;
 
 public class VipForumCommand extends AbstractCommand {
 

@@ -1,12 +1,11 @@
 package me.naithantu.SlapHomebrew.PlayerExtension;
 
-import java.util.HashMap;
-
 import me.naithantu.SlapHomebrew.Commands.Exception.CommandException;
 import me.naithantu.SlapHomebrew.Commands.Exception.NotPendingException;
 import me.naithantu.SlapHomebrew.Util.Util;
-
 import org.bukkit.Location;
+
+import java.util.HashMap;
 
 public class PlayerTeleporter {
 	

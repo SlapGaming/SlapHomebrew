@@ -1,14 +1,9 @@
 package me.naithantu.SlapHomebrew.Listeners.Player;
 
-import me.naithantu.SlapHomebrew.Controllers.AwayFromKeyboard;
-import me.naithantu.SlapHomebrew.Controllers.ChatChannels;
-import me.naithantu.SlapHomebrew.Controllers.Homes;
-import me.naithantu.SlapHomebrew.Controllers.Jails;
-import me.naithantu.SlapHomebrew.Controllers.TabController;
+import me.naithantu.SlapHomebrew.Controllers.*;
 import me.naithantu.SlapHomebrew.Listeners.AbstractListener;
 import me.naithantu.SlapHomebrew.PlayerExtension.PlayerControl;
 import me.naithantu.SlapHomebrew.PlayerExtension.SlapPlayer;
-
 import me.naithantu.SlapHomebrew.Util.Util;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
