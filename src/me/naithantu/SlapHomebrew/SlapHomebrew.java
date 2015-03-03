@@ -26,7 +26,7 @@ import me.naithantu.SlapHomebrew.Util.Util;
 import net.milkbowl.vault.economy.Economy;
 import nl.stoux.SlapPlayers.SlapPlayers;
 import nl.stoux.SlapPlayers.Util.DateUtil;
-import nl.stoux.SlapPlayers.Util.SQLPool;
+import nl.stoux.SlapPlayers.SQL.Pool.SQLPool;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.Configuration;
