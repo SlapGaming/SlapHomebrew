@@ -1,7 +1,7 @@
 package me.naithantu.SlapHomebrew.Storage;
 
 import me.naithantu.SlapHomebrew.SlapHomebrew;
-import nl.stoux.SlapPlayers.Util.SQLPool;
+import nl.stoux.SlapPlayers.SQL.Pool.SQLPool;
 import org.bukkit.Bukkit;
 
 import java.sql.*;
